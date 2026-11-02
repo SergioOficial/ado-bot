@@ -180,6 +180,8 @@ sock.ev.on("connection.update", async (update) => {
 
 
     // ⚔️ Comandos tipo CASE
+    
+    switch (comando) {
           case "menu":
 case "help": {
   const user = m.pushName || "Usuario";
@@ -1106,4 +1108,3 @@ function ask(promptText) {
 // 🚀 Iniciar el bot
 startLevi();
     
-    switch (comando) {
