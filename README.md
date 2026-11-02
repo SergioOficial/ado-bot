@@ -15,10 +15,58 @@
 
 </div>
 
----
+--<br>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
+<br>
+
+## 💬 Información 
+
+<div align="center">
+
+<p>Únete a nuestra comunidad para recibir ayuda, reportar bugs y estar al día con las actualizaciones.</p>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d">
+        <img src="assets/neko-canal.jpg" width="240" alt="Canal de WhatsApp" /><br><br>
+        <img src="https://img.shields.io/badge/📢_Canal-Oficial-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Canal" />
+      </a>
+      <br><br>
+      <sub><b>Novedades, anuncios y actualizaciones del bot</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE">
+        <img src="assets/levi-grupo.jpg" width="240" alt="Grupo de WhatsApp" /><br><br>
+        <img src="https://img.shields.io/badge/💬_Grupo-Soporte-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Grupo" />
+      </a>
+      <br><br>
+      <sub><b>Ayuda directa, dudas y comunidad</b></sub>
+    </td>
+  </tr>
+</table>
+
+<br>
+
+<p>
+  <sub>⚠️ <b>Importante:</b> el bot es <b>gratuito y open source</b>. Nadie del equipo te pedirá dinero por usarlo, configurarlo o resolver dudas.</sub>
+</p>
+
+</div>
+
+<br>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">-
 
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
+---
+
 ## ✨ Características
 
 - 🎮 **Sistema RPG** — `#trabajar`, `#cazar`, `#clase`, `#perfilrpg`
@@ -441,5 +489,5 @@ Hecho con 💫 desde Cuba/Colombia para el mundo
 https://img.shields.io/badge/Contacto-WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white
 https://img.shields.io/badge/Repositorio-Levi--bot--181717?style=flat&logo=github&logoColor=white
 
-<img src="https://whatsapp.com/channel/0029VbC2PSD60eBcVn60SK1v/637" width="180" alt="Levi-Bot"/>
+<img src="https://whatsapp.com/channel/0029VbC2PSD60eBcVn60SK1v/637" width="200" alt="Levi-Bot"/>
 </div>
