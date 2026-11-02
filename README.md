@@ -51,7 +51,9 @@ cd Levi-bot-
 npm install
 npm start
 
-### 📂TODAS LAS INSTALL QUE FALTAN
+---
+
+## 📂TODAS LAS INSTALL QUE FALTAN
 ```bash
 npm install pino
 ```
