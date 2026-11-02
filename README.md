@@ -455,6 +455,36 @@ npm start 2>&1 | tee bot.log
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ---
+### 🖥️ Hosting
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://github.com/brayanflores29925-ctrl">
+        <img src="https://github.com/brayanflores29925-ctrl.png" width="120" alt="Brayan Flores" style="border-radius:50%" /><br><br>
+        <b>Brayan Flores</b>
+      </a>
+      <br>
+      <sub>🖥️ <b>Hosting & Infraestructura</b></sub>
+      <br><br>
+      <a href="https://github.com/brayanflores29925-ctrl">
+        <img src="https://img.shields.io/badge/GitHub-Perfil-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <br>
+      <p>Gracias a <b>Brayan Flores</b> por proporcionar el <b>hosting y la infraestructura</b> que mantienen <b>Nekotoryu-MD</b> en línea 24/7.</p>
+      <p><sub>Sin su apoyo, este proyecto no podría estar disponible de forma estable y gratuita para toda la comunidad.</sub></p>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<br>
+---
 🤝 Créditos
 
 <table align="center">
