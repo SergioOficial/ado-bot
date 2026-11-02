@@ -342,6 +342,52 @@ npm start 2>&1 | tee bot.log
 
 ---
 
+## 👤 Soportes
+<br>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+
+<br>
+
+## 💬 Soporte
+
+<div align="center">
+
+<p>¿Tienes dudas, problemas o sugerencias? Contacta directamente con el equipo.</p>
+
+<table>
+  <tr>
+    <th>Rol</th>
+    <th>País</th>
+    <th>Número</th>
+    <th>Contactar</th>
+  </tr>
+  <tr>
+    <td>👑 <b>Creador</b></td>
+    <td>🇨🇴 Colombia</td>
+    <td><code>+57 300 5255807</code></td>
+    <td><a href="https://wa.me/573005255807"><img src="https://img.shields.io/badge/WhatsApp-Escribir-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" /></a></td>
+  </tr>
+  <tr>
+    <td>🤝 <b>Colaborador</b></td>
+    <td>🇨🇺 Cuba</td>
+    <td><code>+53 58090650</code></td>
+    <td><a href="https://wa.me/5358090650"><img src="https://img.shields.io/badge/WhatsApp-Escribir-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" /></a></td>
+  </tr>
+</table>
+
+<br>
+
+<p>
+  <sub>⚠️ <b>Importante:</b> el bot es <b>gratuito y open source</b>. Nadie del equipo te pedirá dinero por usarlo, configurarlo o resolver dudas. Si alguien lo hace en su nombre, es un fraude.</sub>
+</p>
+
+</div>
+
+<br>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+---
 🤝 Créditos
 
 <table align="center">
