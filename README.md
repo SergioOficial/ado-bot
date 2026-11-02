@@ -18,6 +18,8 @@
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ## ✨ Características
 
 - 🎮 **Sistema RPG** — `#trabajar`, `#cazar`, `#clase`, `#perfilrpg`
@@ -31,6 +33,8 @@
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ## 🚀 Instalación en Termux (Android)
 
 ### 1️⃣ Actualizar paquetes
@@ -90,6 +94,8 @@ npm start
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 💻 Instalación en PC / VPS / Linux
 
 1️⃣ Clonar el repositorio
@@ -127,6 +133,8 @@ En WhatsApp ve a Dispositivos vinculados → Vincular con número de teléfono e
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 📦 Dependencias individuales
 
 Si npm install falla o quieres instalar las dependencias una por una, ejecuta cada comando por separado:
@@ -205,6 +213,8 @@ qrcode-terminal QR alternativo si falla el parincode
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ⚙️ Configuración
 
 Edita config.js:
@@ -229,6 +239,8 @@ export const config = {
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 📁 Estructura del proyecto
 
 ```
@@ -244,6 +256,8 @@ Levi-bot-/
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 🧩 Comandos disponibles
 
 Categoría Comandos
@@ -258,6 +272,8 @@ Usa #menu dentro del bot para ver la lista completa actualizada.
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ☁️ Despliegue en la nube
 
 BotKeep
@@ -279,6 +295,8 @@ npm start
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ⚠️ Notas importantes
 
 · 🔐 El código de vinculación se introduce en WhatsApp sin guiones: A1B2C3D4, no A1B2-C3D4.
@@ -297,6 +315,8 @@ npm start
 
 ---
 
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 🆘 Problemas comunes
 
 Problema Solución
