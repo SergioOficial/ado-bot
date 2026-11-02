@@ -50,3 +50,13 @@ cd Levi-bot-
 ```
 npm install
 npm start
+
+### 📂TODAS LAS INSTALL QUE FALTAN
+```bash
+npm install pino
+```
+```
+npm install @whiskeysockets/baileys
+```
+```
+npm install hapi/boom
