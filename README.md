@@ -376,4 +376,5 @@ Hecho con 💫 desde Cuba/Colombia para el mundo
 https://img.shields.io/badge/Contacto-WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white
 https://img.shields.io/badge/Repositorio-Levi--bot--181717?style=flat&logo=github&logoColor=white
 
+<img src="https://whatsapp.com/channel/0029VbC2PSD60eBcVn60SK1v/637" width="180" alt="Levi-Bot"/>
 </div>
