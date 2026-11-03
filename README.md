@@ -34,7 +34,7 @@
     <td align="center" width="50%">
       <a href="https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d">
         <img src="assets/neko-canal.jpg" width="240" alt="Canal de WhatsApp" /><br><br>
-        <img src="https://img.shields.io/badge/📢_Canal-Oficial-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Canal" />
+        <img src="https://i.postimg.cc/Kv9GNNGj/IMG-20261103-WA0027.jpg/badge/📢_Canal-Oficial-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Canal" />
       </a>
       <br><br>
       <sub><b>Novedades, anuncios y actualizaciones del bot</b></sub>
