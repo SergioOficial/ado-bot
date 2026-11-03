@@ -5,13 +5,16 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
+    "@denzy-official/youtube_scraper": "^1.0.1",
     "@hapi/boom": "^10.0.1",
-    "@whiskeysockets/baileys": "^6.7.20",
+    "@img/sharp-wasm32": "^0.35.5",
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
     "cfonts": "^3.3.1",
     "chalk": "^5.6.2",
     "figlet": "^1.9.3",
     "gradient-string": "^3.0.0",
     "node-fetch": "^3.3.2",
-    "pino": "^9.4.0"
+    "pino": "^9.14.0",
+    "sharp": "^0.35.5"
   }
 }
