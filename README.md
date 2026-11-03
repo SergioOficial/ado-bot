@@ -77,6 +77,7 @@
 - ⚙️ **Utilidades** — `#ping`, `#info`, `#menu`
 - 🖼️ **Sticker → Imagen** con `sharp`
 - 🎵 **Descarga de audio** desde YouTube
+- #️⃣ **Sistema Sub Bot** `#Code`
 
 ---
 
