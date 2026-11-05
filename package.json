@@ -11,10 +11,30 @@
     "@whiskeysockets/baileys": "^7.0.0-rc14",
     "cfonts": "^3.3.1",
     "chalk": "^5.6.2",
+    "cheerio": "^1.2.0",
     "figlet": "^1.9.3",
     "gradient-string": "^3.0.0",
     "node-fetch": "^3.3.2",
     "pino": "^9.14.0",
-    "sharp": "^0.35.5"
-  }
+    "sharp": "^0.35.5",
+    "wa-sticker-formatter": "^4.4.4",
+    "yt-search": "^2.13.1"
+  },
+  "overrides": {
+    "sharp": "$sharp"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/levi-hub805/Levi-bot-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/levi-hub805/Levi-bot-/issues"
+  },
+  "homepage": "https://github.com/levi-hub805/Levi-bot-#readme"
 }

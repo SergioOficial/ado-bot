@@ -107,14 +107,6 @@ pkg install git
 
 pkg install nodejs-lts -y
 
-<<<<<<< HEAD
-```
-
-> 💡 Si `nodejs-lts` falla, usa:
-```
-
-
-=======
 ```
 
 > 💡 Si `nodejs-lts` falla, usa:
@@ -175,7 +167,7 @@ npm install
 4️⃣ Iniciar el bot
 
 ```
-npm start
+node index.js
 ```
 
 Al arrancar por primera vez te pedirá tu número de WhatsApp y generará un código de vinculación de 8 dígitos.

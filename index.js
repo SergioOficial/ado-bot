@@ -10,7 +10,7 @@ import makeWASocket, {
   fetchLatestBaileysVersion,
   fetchLatestWaWebVersion
 } from "@whiskeysockets/baileys";
-import sharp from "sharp";
+import  sharp from "sharp";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -19,28 +19,13 @@ import { config } from "./config.js";
 import fetch from "node-fetch";
 import chalk from "chalk";
 import cfonts from "cfonts";
-<<<<<<< HEAD
 import { exec } from "child_process";
-=======
-
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
-// 📂 BASE DE DATOS RPG
-const rpgFile = "./Archivos/rpg.json";
-if (!fs.existsSync("./Archivos")) fs.mkdirSync("./Archivos");
-if (!fs.existsSync(rpgFile)) fs.writeFileSync(rpgFile, JSON.stringify({}, null, 2));
-let rpgDB = JSON.parse(fs.readFileSync(rpgFile, "utf8"));
-const rpg = rpgDB;
-function saveRPG() {
-  fs.writeFileSync(rpgFile, JSON.stringify(rpgDB, null, 2));
-}
-
-// 📂 BASE DE DATOS PERFILES
-const perfilani = "./Archivos/perfiani.json";
-if (!fs.existsSync(perfilani)) fs.writeFileSync(perfilani, JSON.stringify({}, null, 2));
-let regix = JSON.parse(fs.readFileSync(perfilani, "utf8"));
-function dowani() {
-  fs.writeFileSync(perfilani, JSON.stringify(regix, null, 2));
-}
+import { spawn } from "child_process";
+import * as cheerio from "cheerio";
+import path from "path";
+import { Sticker, StickerTypes } from "wa-sticker-formatter";
+import './database.js'; 
+global.loadDatabase();
 
 // 🎨 HELPER DE COLOR
 const color = (text, colorName = "green") => {
@@ -75,6 +60,7 @@ function getActiveSubbots() { return activeSubbots; }
 function jidToNumber(jid) {
   return String(jid || "").split("@")[0].split(":")[0];
 }
+
 function isOwnerCheck(jid, sockInstance) {
   const num = jidToNumber(jid);
   const botNum = jidToNumber(sockInstance?.user?.id || "");
@@ -105,6 +91,46 @@ function setSessionEnabled(v) {
   fs.writeFileSync(SESSION_FILE, JSON.stringify({ enabled: v }, null, 2));
 }
 
+async function getAudioFromApis(url) {
+  // Si no tienes configurado global.APIs, aquí te dejo la estructura con las URLs públicas
+  const APIs = {
+    adonix: { url: 'https://api.adonix.com', key: 'Yuki-WaBot' },
+    ootaizumi: { url: 'https://api.ootaizumi.com' },
+    vreden: { url: 'https://api.vreden.my.id' },
+    stellar: { url: 'https://api.stellarwa.xyz', key: 'YukiWaBot' },
+    nekolabs: { url: 'https://api.nekolabs.com' }
+  };
+
+  const apis = [
+    { api: 'Adonix', endpoint: `${APIs.adonix.url}/download/ytaudio?apikey=${APIs.adonix.key}&url=${encodeURIComponent(url)}`, extractor: res => res?.data?.url },    
+    { api: 'Ootaizumi', endpoint: `${APIs.ootaizumi.url}/downloader/youtube/play?query=${encodeURIComponent(url)}`, extractor: res => res.result?.download },
+    { api: 'Vreden', endpoint: `${APIs.vreden.url}/api/v1/download/youtube/audio?url=${encodeURIComponent(url)}&quality=256`, extractor: res => res.result?.download?.url },
+    { api: 'Stellar', endpoint: `${APIs.stellar.url}/dl/ytmp3?url=${encodeURIComponent(url)}&quality=256&key=${APIs.stellar.key}`, extractor: res => res.data?.dl },
+    { api: 'Ootaizumi v2', endpoint: `${APIs.ootaizumi.url}/downloader/youtube?url=${encodeURIComponent(url)}&format=mp3`, extractor: res => res.result?.download },
+    { api: 'Vreden v2', endpoint: `${APIs.vreden.url}/api/v1/download/play/audio?query=${encodeURIComponent(url)}`, extractor: res => res.result?.download?.url },
+    { api: 'Nekolabs', endpoint: `${APIs.nekolabs.url}/downloader/youtube/v1?url=${encodeURIComponent(url)}&format=mp3`, extractor: res => res.result?.downloadUrl },
+    { api: 'Nekolabs v2', endpoint: `${APIs.nekolabs.url}/downloader/youtube/play/v1?q=${encodeURIComponent(url)}`, extractor: res => res.result?.downloadUrl },
+    { api: 'Allen Api', endpoint: `https://tester-web.onrender.com/api/download?url=${encodeURIComponent(url)}`, extractor: res => res.result?.downloadUrl }
+  ];
+
+  for (const { api, endpoint, extractor } of apis) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(endpoint, { signal: controller.signal }).then(r => r.json());
+      clearTimeout(timeout);
+      const link = extractor(res);
+      if (link) {
+        console.log(`✅ Audio obtenido desde: ${api}`);
+        return { url: link, api };
+      }
+    } catch (e) {
+      // Ignorar errores y pasar a la siguiente API
+    }
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  return null;
+}
 async function stopSubbot(phoneNumber) {
   const sub = activeSubbots.get(phoneNumber);
   if (!sub) return false;
@@ -358,7 +384,6 @@ const sender = getRealSender(m);
 
   switch (comando) {
 
-<<<<<<< HEAD
     case "menu":
     case "help": {
 const numero = sender.split("@")[0];
@@ -372,30 +397,11 @@ const numero = sender.split("@")[0];
       const GRUPO = "https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE";
       const bannerMenu = `
 🎄 ═══════ 🎅 ═══════ 🎄
-   ❄️ *¡Hola!* @${numero} ❄️
+> ❄️ *¡Hola!* @${numero} ❄️
     Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 ☃️
   🎁 *Menú Navideño* 🎁
 
 ╭┈ࠢ͜┅͜─༻ 🎄 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎄 ༺─┅ࠢ͜┈
-=======
-    // ═══════════════════════════════════════════
-    // MENU
-    // ═══════════════════════════════════════════
-    case "menu":
-    case "help": {
-      const numero = sender.split("@")[0];
-      const pfp = await sock.profilePictureUrl(sender, "image").catch(() => "https://i.postimg.cc/9fnHnptg/1761824297335.jpg");
-
-      const CANAL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
-      const GRUPO = "https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE";
-
-      const bannerMenu = `
-🕸️ ═══════ 🎃 ═══════ 🕸️
-> 🦇 *¡Hola!* @${numero} 🦇 Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 🧙‍♀️
-  🍬 *Menú de Halloween* 🍬
-
-╭┈ࠢ͜┅͜─༻ 🎃 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎃 ༺─┅ࠢ͜┈
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 💠 *Nombre:* ${BOT_NAME}
 │ ⚙️ *Versión:* ${VERSION}
 │ 👑 *Owner:* ${OWNER_NAME}
@@ -405,7 +411,6 @@ const numero = sender.split("@")[0];
 `;
 
       const secciones = `
-<<<<<<< HEAD
 ╭─ 🎁 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* ❄️
 │ 💵 ${PREFIX}work → Trabaja y gana coins
 │ 🎅 ${PREFIX}daily → Reclama tus coins diarios
@@ -421,41 +426,40 @@ const numero = sender.split("@")[0];
 ╰────────────────────────────╯
 
 ╭─ 🎄 *𝐌𝐔𝐋𝐓𝐈𝐌𝐄𝐃𝐈𝐀* 🎨
-=======
-╭─ 👻 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* 🎃
 │ 💵 ${PREFIX}work → Trabaja y gana coins
 │ 🎁 ${PREFIX}daily → Reclama tus coins diarios
 │ 💳 ${PREFIX}bal → Consulta tu balance
 ╰────────────────────────────╯
 
-╭─ 🦇 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* 🕸️
+╭─ 🔔 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* ⭐
 │ 🏓 ${PREFIX}ping → Mide latencia
+│ 🧪 ${PREFIX}prueba → Test de velocidad (preview)
 │ ℹ️ ${PREFIX}info → Info del bot
+│ 📢 ${PREFIX}canal → Canal oficial
 │ 👑 ${PREFIX}creadores → Contactos de creadores
+│ ♻️ ${PREFIX}fix → Actualizar bot (Owners)
 ╰────────────────────────────╯
 
-╭─ 🕯️ *𝐌𝐔𝐋𝐓𝐈𝐌𝐄𝐃𝐈𝐀* 🎨
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
+╭─ ☃️ *𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒* 🖌️
+│ 🎨 ${PREFIX}sticker / ${PREFIX}s → Crear sticker
+│ 🖼️ ${PREFIX}brat <texto> → Sticker estilo Brat
+│ 🔎 ${PREFIX}stickers <búsqueda> → Buscar packs
+╰────────────────────────────╯
+
+╭─ 🎄 *𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒* 🎨
 │ 📌 ${PREFIX}pinterest <búsqueda>
-│ 🎵 ${PREFIX}play <canción>
+│ 🎵 ${PREFIX}play <canción> → YouTube
+│ 🔍 ${PREFIX}ytsearch <texto> → Buscar en YouTube
 │ 🖼️ ${PREFIX}toimg → Sticker a imagen
 ╰────────────────────────────╯
 
-<<<<<<< HEAD
 ╭─ ☃️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🧠
-=======
-╭─ 🧙‍♀️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* ⚰️
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 🤖 ${PREFIX}ia <pregunta>
 │ 💬 ${PREFIX}chatgpt <pregunta>
 │ ⚡ ${PREFIX}gpt <pregunta>
 ╰────────────────────────────╯
 
-<<<<<<< HEAD
 ╭─ 🌟 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
-=======
-╭─ 🌙 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 🧍 ${PREFIX}reg <nombre> <edad> <género>
 │ 👤 ${PREFIX}perfil
 │ 🗑️ ${PREFIX}eliminarperfil
@@ -464,19 +468,12 @@ const numero = sender.split("@")[0];
 ╭─ ⚔️ *𝐀𝐕𝐄𝐍𝐓𝐔𝐑𝐀 𝐘 𝐑𝐏𝐆* 🏰
 │ ✦ ${PREFIX}trabajar → Gana oro
 │ ✦ ${PREFIX}cazar → Gana exp
-<<<<<<< HEAD
-=======
 │ ✦ ${PREFIX}perfilrpg
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ ✦ ${PREFIX}clase → guerrero/mago/arquero
 │ ✦ ${PREFIX}reiniciarrpg
 ╰────────────────────────────╯
 
-<<<<<<< HEAD
 ╭─ ⚙️ *𝐂𝐎𝐍𝐅𝐈𝐆 𝐃𝐄𝐋 𝐁𝐎𝐓* 🎅
-=======
-╭─ ⚙️ *𝐂𝐎𝐍𝐅𝐈𝐆 𝐃𝐄𝐋 𝐁𝐎𝐓* 🎃
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 📛 ${PREFIX}setbotname <nombre>
 │ 📝 ${PREFIX}setbotbio <texto>
 │ 🖼️ ${PREFIX}setbotpp → Responde a imagen
@@ -485,29 +482,21 @@ const numero = sender.split("@")[0];
 │ 💧 ${PREFIX}setbotwm <texto>
 ╰────────────────────────────╯
 
-<<<<<<< HEAD
 ╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🦌
-=======
-╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🕸️
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 🚀 ${PREFIX}jadibot <número> → Crear subbot
 │ 🛑 ${PREFIX}stopbot → Detener mi subbot
-│ 📋 ${PREFIX}listsubbots → Listar subbots
+│ 📋 ${PREFIX}bots → Listar subbots activos
 │ 👑 ${PREFIX}addowner → Añadir dueño
 │ 🗑️ ${PREFIX}delowner → Quitar dueño
 │ 🌐 ${PREFIX}botsesion on|off → Apagar global
 ╰────────────────────────────╯
 
-<<<<<<< HEAD
+
 ╭─ 🎁 *𝐑𝐀𝐍𝐊𝐈𝐍𝐆𝐒* 🏆
-=======
-╭─ 🎃 *𝐑𝐀𝐍𝐊𝐈𝐍𝐆𝐒* ⚔️
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ ✦ ${PREFIX}rankcoins
 │ ✦ ${PREFIX}ranknivel
 ╰────────────────────────────╯
 
-<<<<<<< HEAD
 ╭─ 📩 *𝐒𝐎𝐏𝐎𝐑𝐓𝐄* 💌
 │ 🐛 ${PREFIX}reporte <texto> → Reportar bug
 │ 💡 ${PREFIX}sugerencia <texto> → Enviar idea
@@ -524,7 +513,6 @@ ${GRUPO}
 
 =======
 🕸️ ═══════ 🎃 ═══════ 🕸️
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 ${FOOTER}
 `;
 // ✨ Se envía como texto, pero con la tarjeta (externalAdReply) y el "Ver canal"
@@ -738,7 +726,6 @@ case "sugerir": {
     await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
   }
 
-<<<<<<< HEAD
   break;
 }
 
@@ -782,61 +769,6 @@ case "update": {
 
   break;
 }
-
-=======
-      await sock.sendMessage(from, {
-        image: { url: pfp },
-        caption: bannerMenu + secciones,
-        mentions: [sender]
-      }, { quoted: m });
-
-      await sock.sendMessage(from, {
-        text: `🎃 *𝐒𝐈𝐆𝐔𝐄 𝐍𝐔𝐄𝐒𝐓𝐑𝐎𝐒 𝐂𝐀𝐍𝐀𝐋𝐄𝐒* 🎃\n\n📢 *Canal:*\n${CANAL}\n\n💬 *Grupo:*\n${GRUPO}`
-      }, { quoted: m });
-      break;
-    }
-
-    // ═══════════════════════════════════════════
-    // CREADORES
-    // ═══════════════════════════════════════════
-    case "creadores":
-    case "creators":
-    case "owners": {
-      const owners = config.owners || [];
-      if (!owners.length) return enviartexto("❌ No hay creadores configurados.");
-
-      const buildVCard = (name, number) => {
-        const cleanNumber = String(number).replace(/[^\d]/g, "");
-        return [
-          "BEGIN:VCARD",
-          "VERSION:3.0",
-          `FN:${name}`,
-          `ORG:${BOT_NAME};`,
-          `TEL;type=CELL;type=VOICE;waid=${cleanNumber}:+${cleanNumber}`,
-          "END:VCARD"
-        ].join("\n");
-      };
-
-      const contacts = owners.map(o => ({ vcard: buildVCard(o.name, o.number) }));
-
-      try {
-        await sock.sendMessage(from, {
-          contacts: {
-            displayName: owners.length > 1 ? `${owners.length} Creadores` : owners[0].name,
-            contacts
-          }
-        }, { quoted: m });
-      } catch (err) {
-        console.error("[Creadores] Error:", err.message);
-        const fallback = owners
-          .map(o => `👑 *${o.name}* — wa.me/${String(o.number).replace(/[^\d]/g, "")}`)
-          .join("\n");
-        await enviartexto(`*CREADORES DEL BOT*\n\n${fallback}`);
-      }
-      break;
-    }
-
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
     // ═══════════════════════════════════════════
     // PING
     // ═══════════════════════════════════════════
@@ -908,6 +840,309 @@ case "update": {
       break;
     }
 
+// ═══════════════════════════════════════════
+// STICKER AVANZADO — Formas, efectos y metadatos
+// ═══════════════════════════════════════════
+case "sticker":
+case "s": {
+  const ensureTmp = () => { if (!fs.existsSync('./tmp')) fs.mkdirSync('./tmp', { recursive: true }); };
+  const tmp = (name) => path.join('./tmp', name);
+  
+  const runFfmpeg = (cmdArgs) => new Promise((resolve, reject) => {
+    const p = spawn('ffmpeg', cmdArgs, { stdio: ['ignore', 'pipe', 'pipe'] });
+    let err = '';
+    p.stderr.on('data', (d) => (err += d.toString()));
+    p.on('close', (code) => code === 0 ? resolve(true) : reject(new Error(err)));
+  });
+
+  ensureTmp();
+
+  // Lista de ayuda
+  if (args[0] === "-list") {
+    return enviartexto(
+      `ꕥ Lista de Formas y Efectos Disponibles:\n\n` +
+      `✦ Formas:\n- -c : Circular\n- -t : Triángulo\n- -s : Estrella\n- -r : Esquinas redondeadas\n- -h : Hexágono\n- -d : Diamante\n- -f : Marco\n- -b : Borde\n- -w : Onda\n- -m : Espejado\n- -o : Octogonal\n- -y : Pentagonal\n- -e : Elíptico\n- -z : Cruz\n- -v : Corazón\n\n` +
+      `✧ Efectos:\n- -blur : Desenfoque\n- -sepia : Sepia\n- -sharpen : Nitidez\n- -brighten : Brillo\n- -darken : Oscurecer\n- -invert : Invertir\n- -grayscale : Escala de grises\n- -rotate90 : Rotar 90°\n- -flip : Espejo H\n- -flop : Espejo V\n- -negate : Negativo\n\n` +
+      `> Ejemplo: ${PREFIX}s -c -blur Mi Pack • Mi Nombre`
+    );
+  }
+
+  // Función para parsear los flags
+  const parseArgs = (argList) => {
+    const shapeArgs = { '-c': 'circle', '-t': 'triangle', '-s': 'star', '-r': 'roundrect', '-h': 'hexagon', '-d': 'diamond', '-f': 'frame', '-b': 'border', '-w': 'wave', '-m': 'mirror', '-o': 'octagon', '-y': 'pentagon', '-e': 'ellipse', '-z': 'cross', '-v': 'heart' };
+    const effectArgs = { '-blur': 'blur', '-sepia': 'sepia', '-sharpen': 'sharpen', '-brighten': 'brighten', '-darken': 'darken', '-invert': 'invert', '-grayscale': 'grayscale', '-rotate90': 'rotate90', '-rotate180': 'rotate180', '-flip': 'flip', '-flop': 'flop', '-normalice': 'normalise', '-negate': 'negate' };
+    
+    const picked = [];
+    const rest = [];
+    for (const a of argList) {
+      if (shapeArgs[a]) picked.push({ type: 'shape', value: shapeArgs[a] });
+      else if (effectArgs[a]) picked.push({ type: 'effect', value: effectArgs[a] });
+      else rest.push(a);
+    }
+    
+    const filteredText = rest.join(' ').trim();
+    const marca = filteredText.split(/[\u2022|]/).map((s) => s.trim()).filter(Boolean);
+    return { picked, marca };
+  };
+
+  const buildVF = (picked) => {
+    const W = 512, H = 512;
+    const shape = picked.find((x) => x.type === 'shape')?.value || null;
+    const effects = picked.filter((x) => x.type === 'effect').map((x) => x.value);
+    const vf = [];
+
+    vf.push(`scale=${W}:${H}:force_original_aspect_ratio=decrease`);
+    vf.push(`pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:color=0x00000000`);
+    vf.push('format=rgba');
+
+    for (const e of effects) {
+      if (e === 'blur') vf.push('gblur=sigma=6:steps=2');
+      else if (e === 'sepia') vf.push('colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131');
+      else if (e === 'sharpen') vf.push('unsharp=5:5:1.2:5:5:0.0');
+      else if (e === 'brighten') vf.push('eq=brightness=0.08');
+      else if (e === 'darken') vf.push('eq=brightness=-0.10');
+      else if (e === 'invert' || e === 'negate') vf.push('negate');
+      else if (e === 'grayscale') vf.push('hue=s=0');
+      else if (e === 'rotate90') vf.push('transpose=1');
+      else if (e === 'rotate180') vf.push('rotate=PI');
+      else if (e === 'flip') vf.push('hflip');
+      else if (e === 'flop') vf.push('vflip');
+    }
+
+    if (shape === 'mirror') vf.push('hflip');
+    if (shape === 'border') vf.push(`drawbox=x=0:y=0:w=${W}:h=${H}:color=white@0.90:t=14`);
+    if (shape === 'frame') vf.push(`drawbox=x=18:y=18:w=${W - 36}:h=${H - 36}:color=white@0.55:t=10`);
+
+    const cx = `${W}/2`, cy = `${H}/2`, minwh = `min(${W},${H})`, r = `(${minwh}/2)`;
+    const clamp255 = (expr) => `if(${expr},255,0)`;
+
+    const alphaExpr = (() => {
+      if (!shape || ['cover','contain','mirror','border','frame'].includes(shape)) return null;
+      if (shape === 'circle') return clamp255(`lte((X-${cx})*(X-${cx})+(Y-${cy})*(Y-${cy}),(${r}-6)*(${r}-6))`);
+      if (shape === 'diamond') return clamp255(`lte(abs(X-${cx})+abs(Y-${cy}),(${r}-6))`);
+      if (shape === 'triangle') {
+        const topY = `${H}*0.08`, botY = `${H}*0.94`;
+        return clamp255(`gte(Y,${topY})*lte(Y,${botY})*lte(abs(X-${cx}), ((${botY}-Y)*0.58))`);
+      }
+      // Formas complejas omitidas por brevedad, pero puedes añadir la lógica del original aquí.
+      return null;
+    })();
+
+    if (alphaExpr) vf.push(`geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='${alphaExpr}'`);
+    vf.push('format=yuva420p');
+    return vf.join(',');
+  };
+
+  const { picked, marca } = parseArgs(args);
+  const pack = marca[0] || BOT_NAME;
+  const author = marca.length > 1 ? marca[1] : OWNER_NAME;
+
+  try {
+    const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage || m.message;
+    const isImage = quoted.imageMessage;
+    const isVideo = quoted.videoMessage;
+    const isWebp = quoted.stickerMessage;
+
+    if (!isImage && !isVideo && !isWebp) {
+      return enviartexto(`《✧》 Por favor, responde a una imagen o video para hacer un sticker.\n> Usa *${PREFIX}s -list* para ver formas y efectos.`);
+    }
+
+    await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
+
+    const buffer = await downloadMediaMessage(
+      { key: m.key, message: quoted },
+      "buffer",
+      {},
+      { logger: pino({ level: "silent" }), reuploadRequest: sock.updateMediaMessage }
+    );
+
+    if (isVideo) {
+      // Si es video, usamos wa-sticker-formatter directamente (no soporta efectos ffmpeg aquí)
+      const sticker = new Sticker(buffer, { pack, author, type: 'full', quality: 70 });
+      await sock.sendMessage(from, { sticker: await sticker.toBuffer() }, { quoted: m });
+    } else {
+      // Si es imagen o webp estático, aplicamos los filtros de ffmpeg
+      const inFile = tmp(`in-${Date.now()}.png`);
+      const outFile = tmp(`out-${Date.now()}.webp`);
+      fs.writeFileSync(inFile, buffer);
+
+      const vf = buildVF(picked);
+      await runFfmpeg(['-y', '-i', inFile, '-vf', vf, '-an', '-fps_mode', 'passthrough', '-loop', '0', '-c:v', 'libwebp', '-preset', 'picture', '-compression_level', '6', '-q:v', '70', outFile]);
+
+      const webpBuffer = fs.readFileSync(outFile);
+      const sticker = new Sticker(webpBuffer, { pack, author, type: 'full', quality: 100 });
+      
+      await sock.sendMessage(from, { sticker: await sticker.toBuffer() }, { quoted: m });
+
+      fs.unlinkSync(inFile);
+      fs.unlinkSync(outFile);
+    }
+
+    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+  } catch (e) {
+    console.error("Error en sticker:", e);
+    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+    await enviartexto(`> Error al crear el sticker.\n> [Error: *${e.message}*]`);
+  }
+  break;
+}
+// ═══════════════════════════════════════════
+// STICKERS SEARCH — Buscar packs en GetStickerPack
+// ═══════════════════════════════════════════
+case "stickers":
+case "searchsticker": {
+  const raw = args.join(' ').trim();
+  if (!raw) return enviartexto('《✧》 Por favor, ingresa el nombre de los *stickers* a buscar.');
+
+  const ensureTmp = () => { if (!fs.existsSync('./tmp')) fs.mkdirSync('./tmp', { recursive: true }); };
+  ensureTmp();
+
+  try {
+    const parts = raw.split('|').map(x => x.trim()).filter(Boolean);
+    const query = parts[0];
+    const packname = parts[1] || BOT_NAME;
+    const author = parts[2] || OWNER_NAME;
+
+    await sock.sendMessage(from, { react: { text: "🔍", key: m.key } });
+
+    // 1. Buscar packs
+    const searchRes = await fetch(`https://getstickerpack.com/stickers?query=${encodeURIComponent(query)}`);
+    const searchHtml = await searchRes.text();
+    const $ = cheerio.load(searchHtml);
+
+    const packs = [];
+    $('.sticker-pack-cols a').each((_, el) => {
+      const title = $(el).find('.title').text().trim();
+      let href = $(el).attr('href');
+      if (title && href) {
+        if (!href.startsWith('http')) href = 'https://getstickerpack.com' + href;
+        packs.push({ title, url: href });
+      }
+    });
+
+    if (!packs.length) {
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      return enviartexto('《✧》 No se encontraron resultados.');
+    }
+
+    const pack = packs[0];
+    await enviartexto(`《✧》 Enviando *stickers* del pack: _*${pack.title}*_`);
+
+    // 2. Obtener stickers del pack
+    const packRes = await fetch(pack.url);
+    const packHtml = await packRes.text();
+    const $pack = cheerio.load(packHtml);
+    const links = [];
+
+    $pack('img.sticker-image').each((_, el) => {
+      let src = $pack(el).attr('data-src-large') || $pack(el).attr('src');
+      if (src) {
+        if (!src.startsWith('http')) src = 'https://getstickerpack.com' + src;
+        links.push(src);
+      }
+    });
+
+    if (!links.length) {
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      return enviartexto('《✧》 El pack no contiene stickers.');
+    }
+
+    // 3. Descargar y enviar (límite de 5)
+    const limit = 5;
+    for (let i = 0; i < Math.min(links.length, limit); i++) {
+      try {
+        const imgRes = await fetch(links[i], { headers: { Referer: 'https://getstickerpack.com' } });
+        const buffer = Buffer.from(await imgRes.arrayBuffer());
+        if (!buffer || buffer.length === 0) continue;
+
+        const sticker = new Sticker(buffer, { pack: packname, author, type: 'full', quality: 70 });
+        await sock.sendMessage(from, { sticker: await sticker.toBuffer() }, { quoted: m });
+        
+        await new Promise(r => setTimeout(r, 1000)); // Pequeña pausa para no saturar
+      } catch (e) {
+        console.error("Error en sticker individual:", e);
+      }
+    }
+
+    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
+  } catch (e) {
+    console.error("Error en stickers:", e);
+    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+    await enviartexto(`> Error: ${e.message}`);
+  }
+  break;
+}
+
+// ═══════════════════════════════════════════
+// BRAT — Sticker estilo "Brat" (texto)
+// ═══════════════════════════════════════════
+case "brat": {
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const fetchSticker = async (txt, attempt = 1) => {
+    try {
+      const res = await fetch(`https://skyzxu-brat.hf.space/brat?text=${encodeURIComponent(txt)}`);
+      
+      if (res.status === 429 && attempt <= 3) {
+        const retryAfter = res.headers.get('retry-after') || 5;
+        await delay(retryAfter * 1000);
+        return fetchSticker(txt, attempt + 1);
+      }
+      
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return Buffer.from(await res.arrayBuffer());
+    } catch (error) {
+      if (attempt <= 3) {
+        await delay(3000);
+        return fetchSticker(txt, attempt + 1);
+      }
+      throw error;
+    }
+  };
+
+  // 1. Obtener el texto (de los argumentos o del mensaje citado)
+  let textoBrat = args.join(" ").trim();
+  if (!textoBrat) {
+    const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    if (quoted) {
+      textoBrat = quoted.conversation || quoted.extendedTextMessage?.text;
+    }
+  }
+
+  if (!textoBrat) {
+    return enviartexto('《✧》 Por favor, responde a un mensaje o ingresa un texto para crear el Sticker.');
+  }
+
+  await sock.sendMessage(from, { react: { text: "🕒", key: m.key } });
+
+  try {
+    // 2. Descargar la imagen desde la API
+    const buffer = await fetchSticker(textoBrat);
+
+    // 3. Convertir a sticker con wa-sticker-formatter
+    const sticker = new Sticker(buffer, {
+      pack: BOT_NAME,
+      author: OWNER_NAME,
+      type: 'full', // Ajusta al tamaño sin recortar
+      quality: 70
+    });
+
+    const stickerBuffer = await sticker.toBuffer();
+
+    // 4. Enviar el sticker
+    await sock.sendMessage(from, { sticker: stickerBuffer }, { quoted: m });
+    await sock.sendMessage(from, { react: { text: "✔️", key: m.key } });
+
+  } catch (e) {
+    console.error("Error en #brat:", e);
+    await sock.sendMessage(from, { react: { text: "✖️", key: m.key } });
+    await enviartexto(`> Ocurrió un error al crear el sticker de brat.\n> [Error: *${e.message}*]`);
+  }
+
+  break;
+}
+
     // ═══════════════════════════════════════════
     // IA
     // ═══════════════════════════════════════════
@@ -961,17 +1196,27 @@ case "update": {
       break;
     }
 
-    // ═══════════════════════════════════════════
-    // REG
-    // ═══════════════════════════════════════════
     case "reg": {
       const [nombre, edad, genero] = args;
       if (!nombre || !edad || !genero) return enviartexto(`⚔️ Ejemplo: ${PREFIX}reg Levi 22 M`);
-      if (regix[sender]) return enviartexto("⚠️ Ya estás registrado.");
+
+      // Inicializar usuario si no existe
+      if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+      const user = global.db.data.users[sender];
+
+      if (user.nombre) return enviartexto("⚠️ Ya estás registrado.");
+
       const fecha = new Date().toLocaleDateString("es-PE", { timeZone: "America/Lima" });
       const numero = sender.split("@")[0];
-      regix[sender] = { id: sender, numero, nombre, edad, genero: genero.toUpperCase(), fecha };
-      dowani();
+
+      // Guardar datos (la base de datos se guardará sola luego)
+      user.id = sender;
+      user.numero = numero;
+      user.nombre = nombre;
+      user.edad = edad;
+      user.genero = genero.toUpperCase();
+      user.fecha = fecha;
+
       const textoReg = `
 ╭─╼┈━༻ ⚔️ *REGISTRO COMPLETADO* ⚔️ ༺━┈╾─╮
 │  ✨ *Bienvenido @${numero}*
@@ -980,12 +1225,11 @@ case "update": {
 │  ⚧ *Género:* ${genero.toUpperCase()}
 │  📅 *Fecha:* ${fecha}
 ╰────────────────────────────╯
-
 ${FOOTER}`.trim();
+
       await sock.sendMessage(from, { text: textoReg, mentions: [sender] }, { quoted: m });
       break;
     }
-
     // ═══════════════════════════════════════════
     // ELIMINAR PERFIL
     // ═══════════════════════════════════════════
@@ -999,363 +1243,528 @@ ${FOOTER}`.trim();
       }, { quoted: m });
       break;
     }
+case "trabajar": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
 
-    // ═══════════════════════════════════════════
-    // TRABAJAR (RPG)
-    // ═══════════════════════════════════════════
-    case "trabajar": {
-      if (!rpg[sender]) rpg[sender] = { oro: 0, exp: 0, nivel: 1, lastWork: 0 };
-      const now = Date.now();
-      const cooldown = 5 * 60 * 1000;
-      if (now - (rpg[sender].lastWork || 0) < cooldown) {
-        const remain = cooldown - (now - rpg[sender].lastWork);
-        const minutos = Math.floor(remain / 60000);
-        const segundos = Math.floor((remain % 60000) / 1000);
-        return enviartexto(`⌛ Vuelve en *${minutos}m ${segundos}s*.`);
-      }
-      const trabajos = ["mercader", "forjador", "aventurero", "alquimista", "minero", "vigilante", "cazador", "mago"];
-      const trabajo = trabajos[Math.floor(Math.random() * trabajos.length)];
-      const suerte = Math.random();
-      let oroGanado = 0, expGanada = 0, mensajeResultado = "";
-      if (suerte < 0.7) {
-        oroGanado = Math.floor(Math.random() * 35000) + 250000;
-        expGanada = Math.floor(Math.random() * 50) + 25;
-        rpg[sender].oro += oroGanado;
-        rpg[sender].exp += expGanada;
-        mensajeResultado = `✨ *Buen trabajo como ${trabajo}.*\nGanaste *¥${oroGanado.toLocaleString()}* y *${expGanada} exp.*`;
-      } else {
-        const perdida = Math.floor(Math.random() * 20000) + 5000;
-        rpg[sender].oro = Math.max(0, rpg[sender].oro - perdida);
-        expGanada = Math.floor(Math.random() * 10) + 5;
-        rpg[sender].exp += expGanada;
-        mensajeResultado = `💢 *Trabajo fallido como ${trabajo}...*\nPerdiste *¥${perdida.toLocaleString()}* y ganaste *${expGanada} exp.*`;
-      }
-      rpg[sender].lastWork = now;
-      saveRPG();
-      await enviartexto(
-        `${mensajeResultado}\n\n💰 Balance: *¥${rpg[sender].oro.toLocaleString()}*\n🏷️ Nivel: *${rpg[sender].nivel}*\n${FOOTER}`
-      );
-      break;
-    }
+  const now = Date.now();
+  const cooldown = 5 * 60 * 1000; // 5 minutos
 
-// ═══════════════════════════════════════════
-    // PERFIL
-    // ═══════════════════════════════════════════
+  if (now - (user.lastWork || 0) < cooldown) {
+    const remain = cooldown - (now - user.lastWork);
+    const minutos = Math.floor(remain / 60000);
+    const segundos = Math.floor((remain % 60000) / 1000);
+    return enviartexto(`⌛ Vuelve en *${minutos}m ${segundos}s*.`);
+  }
+
+  const trabajos = ["mercader", "forjador", "aventurero", "alquimista", "minero", "vigilante", "cazador", "mago"];
+  const trabajo = trabajos[Math.floor(Math.random() * trabajos.length)];
+  const suerte = Math.random();
+
+  let mensajeResultado = "";
+
+  if (suerte < 0.7) {
+    const oroGanado = Math.floor(Math.random() * 35000) + 250000;
+    const expGanada = Math.floor(Math.random() * 50) + 25;
+    user.oro = (user.oro || 0) + oroGanado;
+    user.exp = (user.exp || 0) + expGanada;
+    mensajeResultado = `✨ *Buen trabajo como ${trabajo}.*\nGanaste *¥${oroGanado.toLocaleString()}* y *${expGanada} exp.*`;
+  } else {
+    const perdida = Math.floor(Math.random() * 20000) + 5000;
+    const expGanada = Math.floor(Math.random() * 10) + 5;
+    user.oro = Math.max(0, (user.oro || 0) - perdida);
+    user.exp = (user.exp || 0) + expGanada;
+    mensajeResultado = `💢 *Trabajo fallido como ${trabajo}...*\nPerdiste *¥${perdida.toLocaleString()}* y ganaste *${expGanada} exp.*`;
+  }
+
+  user.lastWork = now;
+
+  await enviartexto(
+    `${mensajeResultado}\n\n💰 Balance: *¥${(user.oro || 0).toLocaleString()}*\n🏷️ Nivel: *${user.nivel || 1}*\n${FOOTER}`
+  );
+  break;
+}
+
+case "daily":
+case "diario": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
+
+  const now = Date.now();
+  const DAY = 24 * 60 * 60 * 1000;
+  const timeSinceLast = now - (user.lastDaily || 0);
+
+  if (timeSinceLast < DAY) {
+    const remain = DAY - timeSinceLast;
+    const h = Math.floor(remain / 3600000);
+    const mi = Math.floor((remain % 3600000) / 60000);
+    const s = Math.floor((remain % 60000) / 1000);
+    return enviartexto(`《✧》Ya reclamaste hoy. Vuelve en *${h}h ${mi}m ${s}s* ⏳`);
+  }
+
+  const missed = timeSinceLast > DAY * 2;
+  user.streak = missed ? 1 : (user.streak || 0) + 1;
+  
+  const BASE = 30000;
+  const BONUS = 1 + 0.15 * (user.streak - 1);
+  const reward = Math.floor(BASE * BONUS);
+
+  user.coins = (user.coins || 0) + reward;
+  user.lastDaily = now;
+
+  const next = Math.floor(BASE * (1 + 0.15 * user.streak));
+  
+  await enviartexto(
+    `「✿」*Recompensa Diaria*\n\n🔥 ¡Reclamado *¥${reward.toLocaleString()}*! (Día *${user.streak}*)\n> Día *${user.streak + 1}* » *+¥${next.toLocaleString()}*\n\n💰 Balance: *¥${user.coins.toLocaleString()}*\n${FOOTER}`
+  );
+  break;
+}
+
     case "perfil": {
-      const levi = regix[sender];
-      if (!levi) return enviartexto(`❗ No estás registrado. Usa ${PREFIX}reg`);
-      const datos = rpgDB[sender] || { coins: 0, exp: 0, nivel: 1, clase: "Novato" };
+      const user = global.db.data.users[sender];
+      if (!user || !user.nombre) return enviartexto(`❗ No estás registrado. Usa ${PREFIX}reg`);
+
       let pfp;
       try { pfp = await sock.profilePictureUrl(sender, "image"); }
-      catch { pfp = "https://i.postimg.cc/9fnHnptg/1761824297335.jpg"; }
-      const nivelMaxXP = datos.nivel * 100;
-      const progreso = Math.min(10, Math.floor((datos.exp / nivelMaxXP) * 10));
+      catch { pfp = "https://i.postimg.cc/Y95RC8Jt/IMG-20261104-WA0014(1).jpg"; }
+
+      const nivelMaxXP = (user.nivel || 1) * 100;
+      const progreso = Math.min(10, Math.floor(((user.exp || 0) / nivelMaxXP) * 10));
       const barraXP = "▰".repeat(progreso) + "▱".repeat(10 - progreso);
+
       const textoPerfil = `
 ╭─╼┈━༻ 💫 *TU PERFIL - ${BOT_NAME}* 💫 ༺━┈╾─╮
-│ 👤 *Nombre:* ${levi.nombre}
-│ 🎂 *Edad:* ${levi.edad}
-│ ⚧ *Género:* ${levi.genero}
-│ 📅 *Registro:* ${levi.fecha}
-│ 📞 *Número:* +${levi.numero}
+│ 👤 *Nombre:* ${user.nombre}
+│ 🎂 *Edad:* ${user.edad}
+│ ⚧ *Género:* ${user.genero}
+│ 📅 *Registro:* ${user.fecha}
 ╰────────────────────────────╯
 
 ╭─╼┈━༻ ⚔️ *RPG STATS* ⚔️ ༺━┈╾─╮
-│ 🎭 *Clase:* ${datos.clase}
-│ 💥 *Nivel:* ${datos.nivel}
-│ ✨ *Experiencia:* ${datos.exp}/${nivelMaxXP}
+│ 🎭 *Clase:* ${user.clase || "Novato"}
+│ 💥 *Nivel:* ${user.nivel || 1}
+│ ✨ *Experiencia:* ${user.exp || 0}/${nivelMaxXP}
 │ 🔋 *Progreso:* ${barraXP}
-│ 💰 *Coins:* ${datos.coins || datos.oro || 0} 🪙
+│ 💰 *Coins:* ${user.coins || user.oro || 0} 🪙
 ╰────────────────────────────╯
-
 ${FOOTER}`.trim();
+
       await sock.sendMessage(from, { image: { url: pfp }, caption: textoPerfil, mentions: [sender] }, { quoted: m });
       break;
     }
 
-    // ═══════════════════════════════════════════
-    // CAZAR
-    // ═══════════════════════════════════════════
-    case "cazar": {
-      if (!rpg[sender]) rpg[sender] = { oro: 0, exp: 0, nivel: 1 };
-      const expGanada = Math.floor(Math.random() * 40) + 10;
-      rpg[sender].exp += expGanada;
-      if (rpg[sender].exp >= 100) {
-        rpg[sender].nivel++;
-        rpg[sender].exp -= 100;
-        await enviartexto(`⚡ *¡Subiste al nivel ${rpg[sender].nivel}!* 🥳\n${FOOTER}`);
-      } else {
-        await enviartexto(`🏹 *Cazaste un monstruo y ganaste ${expGanada} exp.* ⭐\n${FOOTER}`);
-      }
-      saveRPG();
-      break;
-    }
+case "cazar": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
 
-    // ═══════════════════════════════════════════
-    // REINICIAR RPG
-    // ═══════════════════════════════════════════
-    case "reiniciarrpg": {
-      if (!rpg[sender]) return enviartexto("❌ No tienes datos RPG.");
-      delete rpg[sender];
-      saveRPG();
-      await enviartexto("♻️ *Progreso RPG reiniciado.*");
-      break;
-    }
+  const expGanada = Math.floor(Math.random() * 40) + 10;
+  user.exp = (user.exp || 0) + expGanada;
+  user.nivel = user.nivel || 1;
 
-    // ═══════════════════════════════════════════
-    // CLASE
-    // ═══════════════════════════════════════════
-    case "clase": {
-      const opciones = ["guerrero", "mago", "arquero"];
-      const eleccion = args[0]?.toLowerCase();
-      if (!rpg[sender]) rpg[sender] = { oro: 0, exp: 0, nivel: 1, clase: null };
-      if (!eleccion) return enviartexto(`🎭 *Elige:*\n\n⚔️ ${PREFIX}clase guerrero\n🔮 ${PREFIX}clase mago\n🏹 ${PREFIX}clase arquero`);
-      if (!opciones.includes(eleccion)) return enviartexto("❌ Clase inválida.");
-      rpg[sender].clase = eleccion.charAt(0).toUpperCase() + eleccion.slice(1);
-      saveRPG();
-      const desc = {
-        guerrero: "⚔️ *Guerrero:* Fuerte y valiente.",
-        mago: "🔮 *Mago:* Sabio y poderoso.",
-        arquero: "🏹 *Arquero:* Rápido y preciso."
-      };
-      await enviartexto(`✨ Elegiste: *${rpg[sender].clase}*\n\n${desc[eleccion]}`);
-      break;
-    }
+  if (user.exp >= (user.nivel * 100)) {
+    user.nivel++;
+    user.exp -= (user.nivel - 1) * 100; // Restar el XP del nivel anterior
+    await enviartexto(`⚡ *¡Subiste al nivel ${user.nivel}!* 🥳\n${FOOTER}`);
+  } else {
+    await enviartexto(`🏹 *Cazaste un monstruo y ganaste ${expGanada} exp.* ⭐\n${FOOTER}`);
+  }
+  break;
+}
+case "reiniciarrpg": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
 
-    // ═══════════════════════════════════════════
-    // BAL
-    // ═══════════════════════════════════════════
-    case "coins":
-    case "balance":
-    case "bal": {
-      if (!rpg[sender]) rpg[sender] = { coins: 0, oro: 0, exp: 0, nivel: 1 };
-      const user = rpg[sender];
-      const coins = user.coins || user.oro || 0;
-      const mensaje = `╭───「 *💰 Balance* 」\n│ 💳 @${sender.split("@")[0]}\n│ 🏅 Nivel: ${user.nivel || 1}\n│ 📈 Exp: ${(user.exp || 0).toLocaleString()}\n│ 💎 Riqueza: ¥${coins.toLocaleString()}\n╰───────────────────────\n${FOOTER}`;
-      await sock.sendMessage(from, { text: mensaje, mentions: [sender] }, { quoted: m });
-      break;
-    }
+  // Borramos solo las stats RPG, mantenemos el perfil (nombre, edad)
+  user.oro = 0;
+  user.exp = 0;
+  user.nivel = 1;
+  user.clase = "Novato";
 
-    // ═══════════════════════════════════════════
-    // DAILY
-    // ═══════════════════════════════════════════
-    case "daily":
-    case "diario": {
-      if (!rpg[sender]) rpg[sender] = { coins: 0, lastDaily: 0, streak: 0 };
-      const now = Date.now();
-      const DAY = 24 * 60 * 60 * 1000;
-      const timeSinceLast = now - (rpg[sender].lastDaily || 0);
-      if (timeSinceLast < DAY) {
-        const remain = DAY - timeSinceLast;
-        const h = Math.floor(remain / 3600000);
-        const mi = Math.floor((remain % 3600000) / 60000);
-        const s = Math.floor((remain % 60000) / 1000);
-        return enviartexto(`《✧》Ya reclamaste hoy. Vuelve en *${h}h ${mi}m ${s}s* ⏳`);
-      }
-      const missed = timeSinceLast > DAY * 2;
-      rpg[sender].streak = missed ? 1 : (rpg[sender].streak || 0) + 1;
-      const BASE = 30000;
-      const BONUS = 1 + 0.15 * (rpg[sender].streak - 1);
-      const reward = Math.floor(BASE * BONUS);
-      rpg[sender].coins = (rpg[sender].coins || 0) + reward;
-      rpg[sender].lastDaily = now;
-      saveRPG();
-      const next = Math.floor(BASE * (1 + 0.15 * rpg[sender].streak));
-      await enviartexto(
-        `「✿」*Recompensa Diaria*\n\n🔥 ¡Reclamado *¥${reward.toLocaleString()}*! (Día *${rpg[sender].streak}*)\n> Día *${rpg[sender].streak + 1}* » *+¥${next.toLocaleString()}*\n\n💰 Balance: *¥${rpg[sender].coins.toLocaleString()}*\n${FOOTER}`
-      );
-      break;
-    }
+  await enviartexto("♻️ *Tu progreso RPG ha sido reiniciado.*");
+  break;
+}
 
-    // ═══════════════════════════════════════════
-    // WORK (ECONOMÍA)
-    // ═══════════════════════════════════════════
-    case "work": {
-      if (!rpg[sender]) rpg[sender] = { coins: 0, lastWork: 0 };
-      const now = Date.now();
-      const cooldown = 5 * 60 * 1000;
-      if (now - (rpg[sender].lastWork || 0) < cooldown) {
-        const remain = cooldown - (now - rpg[sender].lastWork);
-        const min = Math.floor(remain / 60000);
-        const seg = Math.floor((remain % 60000) / 1000);
-        return enviartexto(`⏳ Vuelve en *${min}m ${seg}s* 🔔`);
-      }
-      const suerte = Math.random();
-      let reward, mensaje;
-      if (suerte < 0.7) {
-        reward = Math.floor(Math.random() * 35000) + 35000;
-        rpg[sender].coins += reward;
-        mensaje = `✿ Trabajaste duro y ganaste *¥${reward.toLocaleString()} coins 💷*`;
-      } else {
-        reward = Math.floor(Math.random() * 20000) + 5000;
-        rpg[sender].coins = Math.max(0, rpg[sender].coins - reward);
-        mensaje = `💢 Perdiste *¥${reward.toLocaleString()} coins 💷*`;
-      }
-      rpg[sender].lastWork = now;
-      saveRPG();
-      await enviartexto(`「✿」${mensaje}\n> 💰 Balance: *¥${rpg[sender].coins.toLocaleString()}*\n${FOOTER}`);
-      break;
-    }
+case "clase": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
 
-    // ═══════════════════════════════════════════
-    // RANKCOINS
-    // ═══════════════════════════════════════════
-    case "rankcoins": {
-      if (isGroup) {
-        const meta = await sock.groupMetadata(from);
-        const admins = meta.participants.filter(p => p.admin).map(p => p.id);
-        if (!admins.includes(sender)) return enviartexto("⚠️ Solo administradores del grupo.");
-      }
-      const ranking = Object.entries(rpgDB)
-        .map(([id, d]) => ({ id, nombre: regix[id]?.nombre || "Desconocido", coins: d.coins || d.oro || 0 }))
-        .sort((a, b) => b.coins - a.coins)
-        .slice(0, 10);
-      if (!ranking.length) return enviartexto("❌ No hay jugadores.");
-      let txt = `🏆 *TOP 10 COINS* 🪙\n\n`;
-      ranking.forEach((u, i) => {
-        const num = u.id.split("@")[0];
-        const tú = u.id === sender ? " 👑" : "";
-        txt += `*${i + 1}.* ${u.nombre} (${num}) — *${u.coins}*${tú}\n`;
-      });
-      await sock.sendMessage(from, { text: txt, mentions: [sender] }, { quoted: m });
-      break;
-    }
+  const opciones = ["guerrero", "mago", "arquero"];
+  const eleccion = args[0]?.toLowerCase();
 
-    // ═══════════════════════════════════════════
-    // RANKNIVEL
-    // ═══════════════════════════════════════════
-    case "ranknivel": {
-      if (isGroup) {
-        const meta = await sock.groupMetadata(from);
-        const admins = meta.participants.filter(p => p.admin).map(p => p.id);
-        if (!admins.includes(sender)) return enviartexto("⚠️ Solo administradores del grupo.");
-      }
-      const ranking = Object.entries(rpgDB)
-        .map(([id, d]) => ({
-          id,
-          nombre: regix[id]?.nombre || "Desconocido",
-          nivel: d.nivel || 1,
-          exp: d.exp || 0,
-          clase: d.clase || "Novato"
-        }))
-        .sort((a, b) => b.nivel === a.nivel ? b.exp - a.exp : b.nivel - a.nivel)
-        .slice(0, 10);
-      if (!ranking.length) return enviartexto("❌ No hay jugadores.");
-      let txt = `⚔️ *TOP 10 NIVEL* 💫\n\n`;
-      ranking.forEach((u, i) => {
-        const num = u.id.split("@")[0];
-        const tú = u.id === sender ? " 👑" : "";
-        txt += `*${i + 1}.* ${u.nombre} (${num}) — Nv.${u.nivel} [${u.clase}]${tú}\n`;
-      });
-      await sock.sendMessage(from, { text: txt, mentions: [sender] }, { quoted: m });
-      break;
-    }
+  if (!eleccion) return enviartexto(`🎭 *Elige:*\n\n⚔️ ${PREFIX}clase guerrero\n🔮 ${PREFIX}clase mago\n🏹 ${PREFIX}clase arquero`);
+  if (!opciones.includes(eleccion)) return enviartexto("❌ Clase inválida.");
 
-// ═══════════════════════════════════════════
-    // PINTEREST
-    // ═══════════════════════════════════════════
-    case "pinterest":
-    case "pin": {
-      const query = args.join(" ").trim();
-      if (!query) return enviartexto(`❌ Uso: ${PREFIX}pinterest <búsqueda>`);
-      await sock.sendMessage(from, { react: { text: "🔍", key: m.key } });
-      const waitMsg = await sock.sendMessage(from, { text: `🔍 Buscando: *${query}*...` }, { quoted: m });
-      const apis = [
-        `https://tester-web.onrender.com/api/pinterest?query=${encodeURIComponent(query)}&limit=1`,
-        `https://api.stellarwa.xyz/search/pinterest?query=${encodeURIComponent(query)}&key=YukiWaBot`,
-        `https://api.delirius.store/search/pinterest?text=${encodeURIComponent(query)}`,
-        `https://api.vreden.web.id/api/v1/search/pinterest?query=${encodeURIComponent(query)}`,
-        `https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(query)}&type=image`
-      ];
-      let mediaUrl = null;
-      for (const url of apis) {
-        try {
-          const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-          if (!res.ok) continue;
-          const data = await res.json();
-          let extracted = null;
-          if (url.includes("tester-web") && data.results?.[0]) {
-            extracted = data.results[0].descarga || data.results[0].url;
-          } else if (Array.isArray(data.result) && data.result[0]) {
-            extracted = data.result[0].url || data.result[0].image || data.result[0].thumbnail;
-          } else if (Array.isArray(data.data) && data.data[0]) {
-            extracted = data.data[0].url || data.data[0].image;
-          } else if (data.images?.[0]) extracted = data.images[0];
-          else if (data.url) extracted = data.url;
-          else if (data.image) extracted = data.image;
-          if (extracted?.startsWith("http")) { mediaUrl = extracted; break; }
-        } catch (err) { console.error("Pinterest API:", err.message); }
-      }
-      try { await sock.sendMessage(from, { delete: waitMsg.key }); } catch {}
-      if (!mediaUrl) {
-        await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-        return enviartexto(`❌ Sin resultados para *${query}*.`);
-      }
-      const isVideo = /\.(mp4|webm|mov)$/i.test(mediaUrl);
-      const caption = `📌 *Pinterest:* ${query}\n\n${FOOTER}`;
-      try {
-        if (isVideo) {
-          await sock.sendMessage(from, { video: { url: mediaUrl }, caption, mimetype: "video/mp4" }, { quoted: m });
-        } else {
-          await sock.sendMessage(from, { image: { url: mediaUrl }, caption }, { quoted: m });
-        }
-        await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
-      } catch (err) {
-        console.error("Error media:", err);
-        await enviartexto(`⚠️ No se pudo enviar.\n🔗 ${mediaUrl}`);
-      }
-      break;
-    }
+  user.clase = eleccion.charAt(0).toUpperCase() + eleccion.slice(1);
 
-// ═══════════════════════════════════════════
-// PLAY (Reparado con @denzy-official/youtube_scraper)
-// ═══════════════════════════════════════════
-case "play": {
-  if (!args[0]) {
-    return enviartexto(`✳️ Ejemplo: ${PREFIX}play jalebi baby`);
+  const desc = {
+    guerrero: "⚔️ *Guerrero:* Fuerte y valiente.",
+    mago: "🔮 *Mago:* Sabio y poderoso.",
+    arquero: "🏹 *Arquero:* Rápido y preciso."
+  };
+  await enviartexto(`✨ Elegiste: *${user.clase}*\n\n${desc[eleccion]}`);
+  break;
+}
+
+case "coins":
+case "balance":
+case "bal": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
+  
+  const coins = user.coins || user.oro || 0;
+  const nivel = user.nivel || 1;
+  const exp = user.exp || 0;
+
+  const mensaje = `╭───「 *💰 Balance* 」\n│ 💳 @${sender.split("@")[0]}\n│ 🏅 Nivel: ${nivel}\n│ 📈 Exp: ${exp.toLocaleString()}\n│ 💎 Riqueza: ¥${coins.toLocaleString()}\n╰───────────────────────\n${FOOTER}`;
+  
+  await sock.sendMessage(from, { text: mensaje, mentions: [sender] }, { quoted: m });
+  break;
+}
+
+case "work": 
+case "w": {
+  if (!global.db.data.users[sender]) global.db.data.users[sender] = {};
+  const user = global.db.data.users[sender];
+
+  const now = Date.now();
+  const cooldown = 5 * 60 * 1000;
+
+  if (now - (user.lastWork || 0) < cooldown) {
+    const remain = cooldown - (now - user.lastWork);
+    const min = Math.floor(remain / 60000);
+    const seg = Math.floor((remain % 60000) / 1000);
+    return enviartexto(`⏳ Vuelve en *${min}m ${seg}s* 🔔`);
   }
 
-  const query = args.join(" ");
-  await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
+  const suerte = Math.random();
+  let mensaje;
+
+  if (suerte < 0.7) {
+    const reward = Math.floor(Math.random() * 35000) + 35000;
+    user.coins = (user.coins || 0) + reward;
+    mensaje = `✿ Trabajaste duro y ganaste *¥${reward.toLocaleString()} coins 💷*`;
+  } else {
+    const reward = Math.floor(Math.random() * 20000) + 5000;
+    user.coins = Math.max(0, (user.coins || 0) - reward);
+    mensaje = `💢 Perdiste *¥${reward.toLocaleString()} coins 💷*`;
+  }
+
+  user.lastWork = now;
+
+  await enviartexto(`「✿」${mensaje}\n> 💰 Balance: *¥${(user.coins || 0).toLocaleString()}*\n${FOOTER}`);
+  break;
+}
+// ═══════════════════════════════════════════
+// RANKCOINS
+// ═══════════════════════════════════════════
+case "rankcoins": {
+  if (isGroup) {
+    const meta = await sock.groupMetadata(from);
+    const admins = meta.participants.filter(p => p.admin).map(p => p.id);
+    if (!admins.includes(sender)) return enviartexto("⚠️ Solo administradores del grupo.");
+  }
+
+  const users = global.db.data.users;
+  const ranking = Object.entries(users)
+    .map(([id, data]) => ({ id, nombre: data.nombre || "Desconocido", coins: data.coins || data.oro || 0 }))
+    .sort((a, b) => b.coins - a.coins)
+    .slice(0, 10);
+
+  if (!ranking.length) return enviartexto("❌ No hay jugadores registrados.");
+
+  let txt = `🏆 *TOP 10 COINS* 🪙\n\n`;
+  ranking.forEach((u, i) => {
+    const num = u.id.split("@")[0];
+    const tú = u.id === sender ? " 👑" : "";
+    txt += `*${i + 1}.* ${u.nombre} (${num}) — *${u.coins}*${tú}\n`;
+  });
+
+  await sock.sendMessage(from, { text: txt, mentions: [sender] }, { quoted: m });
+  break;
+}
+
+// ═══════════════════════════════════════════
+// RANKNIVEL
+// ═══════════════════════════════════════════
+case "ranknivel": {
+  if (isGroup) {
+    const meta = await sock.groupMetadata(from);
+    const admins = meta.participants.filter(p => p.admin).map(p => p.id);
+    if (!admins.includes(sender)) return enviartexto("⚠️ Solo administradores del grupo.");
+  }
+
+  const users = global.db.data.users;
+  const ranking = Object.entries(users)
+    .map(([id, data]) => ({
+      id,
+      nombre: data.nombre || "Desconocido",
+      nivel: data.nivel || 1,
+      exp: data.exp || 0,
+      clase: data.clase || "Novato"
+    }))
+    .sort((a, b) => b.nivel === a.nivel ? b.exp - a.exp : b.nivel - a.nivel)
+    .slice(0, 10);
+
+  if (!ranking.length) return enviartexto("❌ No hay jugadores registrados.");
+
+  let txt = `⚔️ *TOP 10 NIVEL* 💫\n\n`;
+  ranking.forEach((u, i) => {
+    const num = u.id.split("@")[0];
+    const tú = u.id === sender ? " 👑" : "";
+    txt += `*${i + 1}.* ${u.nombre} (${num}) — Nv.${u.nivel} [${u.clase}]${tú}\n`;
+  });
+
+  await sock.sendMessage(from, { text: txt, mentions: [sender] }, { quoted: m });
+  break;
+}
+// ═══════════════════════════════════════════
+// PINTEREST — Búsqueda y descarga múltiple (Álbum)
+// ═══════════════════════════════════════════
+case "pinterest":
+case "pin": {
+  const rawArgs = args.join(" ").trim();
+  if (!rawArgs) return enviartexto(`❌ Uso: ${PREFIX}pinterest <búsqueda> [cantidad]\nEjemplo: ${PREFIX}pinterest gatos 5`);
+
+  const match = rawArgs.match(/(.*?)(?:\s+(\d+))?$/);
+  const query = match[1].trim();
+  const limit = parseInt(match[2]) || 5; 
+  const maxImages = Math.min(limit, 10); 
+
+  if (!query) return enviartexto(`❌ Uso: ${PREFIX}pinterest <búsqueda> [cantidad]`);
+
+  await sock.sendMessage(from, { react: { text: "🔍", key: m.key } });
+  
+  const waitMsg = await sock.sendMessage(from, { text: `🔍 Buscando *${maxImages}* imágenes de: *${query}*...` }, { quoted: m });
+
+  // APIs actualizadas (sin dominios muertos)
+  const apis = [
+    `https://pinscrapper.vercel.app/api/search?q=${encodeURIComponent(query)}&limit=${maxImages}`,
+    `https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(query)}&type=image`
+  ];
+
+  let imageUrls = [];
+
+  for (const url of apis) {
+    try {
+      const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+      if (!res.ok) continue;
+      const data = await res.json();
+
+      let extracted = [];
+
+      // Lógica para Pinscrapper
+      if (data.result && Array.isArray(data.result)) {
+        extracted = data.result.map(item => item.image || item.url).filter(Boolean);
+      } else if (data.data && Array.isArray(data.data)) {
+        extracted = data.data.map(item => item.image || item.url).filter(Boolean);
+      } else if (data.results && Array.isArray(data.results)) {
+        extracted = data.results.map(item => item.image || item.url).filter(Boolean);
+      } else if (data.url || data.image) {
+        extracted = [data.url || data.image];
+      }
+
+      const validUrls = extracted.filter(u => typeof u === 'string' && u.startsWith('http'));
+      imageUrls = [...new Set([...imageUrls, ...validUrls])];
+
+      if (imageUrls.length >= maxImages) break;
+    } catch (err) {
+      console.error(`Error en API de Pinterest (${url}):`, err.message);
+    }
+  }
+
+  if (imageUrls.length === 0) {
+    await sock.sendMessage(from, { 
+      text: `❌ No se encontraron resultados para *${query}*. Intenta con otra búsqueda.`, 
+      edit: waitMsg.key 
+    });
+    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+    return;
+  }
+
+  const finalUrls = imageUrls.slice(0, maxImages);
 
   try {
-    // Importación dinámica para ESM
-    const yt = await import("@denzy-official/youtube_scraper");
+    await sock.sendMessage(from, { 
+      text: `✅ *Encontradas:* ${finalUrls.length} imágenes\n📤 *Enviando álbum de:* ${query}...`, 
+      edit: waitMsg.key 
+    });
+  } catch (e) { console.error("Error editando mensaje:", e); }
 
-    // 1. Buscar y descargar el MP3 directamente por el nombre
-    const result = await yt.ytmp3(query);
+  const albumMedia = finalUrls.map((url, index) => ({
+    image: { url },
+    caption: index === 0 ? `📌 *Pinterest:* ${query}` : undefined 
+  }));
 
-    if (!result || !result.status || !result.download || !result.download.url) {
-      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      return enviartexto("❌ No se encontró la canción o el enlace de descarga falló.");
-    }
-
-    const { metadata, download } = result;
-
-    // 2. Enviar la miniatura y el título
-    await sock.sendMessage(from, {
-      image: { url: metadata.thumbnail || "https://i.postimg.cc/9fnHnptg/1761824297335.jpg" },
-      caption: `🎵 *${metadata.title}*\n👤 *${metadata.author?.name || "Desconocido"}*\n\n💿 Enviando audio...`,
-    }, { quoted: m });
-
-    // 3. Enviar el audio usando la URL directa del MP3
-    await sock.sendMessage(from, {
-      audio: { url: download.url },
-      mimetype: "audio/mpeg",
-      fileName: `${metadata.title}.mp3`
-    }, { quoted: m });
-
+  try {
+    await sock.sendMessage(from, { album: albumMedia }, { quoted: m });
     await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
-
-  } catch (err) {
-    console.error("Error en #play (paquete):", err);
-    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-    await enviartexto(`❌ Error al procesar la música.\n_${err.message}_`);
+  } catch (albumErr) {
+    console.error("Error enviando álbum, enviando individualmente:", albumErr);
+    for (const url of finalUrls) {
+      try {
+        await sock.sendMessage(from, { image: { url }, caption: `📌 ${query}` }, { quoted: m });
+        await new Promise(r => setTimeout(r, 1000)); 
+      } catch (e) { console.error("Error enviando imagen individual:", e); }
+    }
+    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
   }
 
   break;
 }
 
+// ═══════════════════════════════════════════
+// PLAY — Descargar audio de YouTube (Multi-API)
+// ═══════════════════════════════════════════
+case "play":
+case "mp3":
+case "ytmp3":
+case "ytaudio":
+case "playaudio": {
+  const text = args.join(" ").trim();
+
+  if (!text) {
+    return enviartexto("《✧》Por favor, menciona el nombre o URL del video que deseas descargar.");
+  }
+
+  try {
+    await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
+
+    // Importación dinámica de yt-search
+    const { default: yts } = await import("yt-search");
+
+    const videoMatch = text.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/))([a-zA-Z0-9_-]{11})/);
+    const query = videoMatch ? "https://youtu.be/" + videoMatch[1] : text;
+    
+    let url = query;
+    let title = null;
+    let thumbBuffer = null;
+
+    // 1. Buscar información del video
+    try {
+      const search = await yts(query);
+      if (search.all.length) {
+        const videoInfo = videoMatch 
+          ? search.videos.find(v => v.videoId === videoMatch[1]) || search.all[0] 
+          : search.all[0];
+
+        url = videoInfo.url;
+        title = videoInfo.title;
+        
+        // Convertir miniatura a Buffer
+        const thumbRes = await fetch(videoInfo.image);
+        thumbBuffer = Buffer.from(await thumbRes.arrayBuffer());
+
+        const vistas = (videoInfo.views || 0).toLocaleString();
+        const canal = videoInfo.author?.name || "Desconocido";
+        
+        const infoMessage = `➩ Descargando › *${title}*\n\n` +
+          `> ❖ Canal › *${canal}*\n` +
+          `> ⴵ Duración › *${videoInfo.timestamp || "Desconocido"}*\n` +
+          `> ❀ Vistas › *${vistas}*\n` +
+          `> ✩ Publicado › *${videoInfo.ago || "Desconocido"}*\n` +
+          `> ❒ Enlace › *${url}*`;
+
+        await sock.sendMessage(from, { image: thumbBuffer, caption: infoMessage }, { quoted: m });
+      }
+    } catch (err) {
+      console.log("Error en yt-search:", err.message);
+    }
+
+    // 2. Descargar el audio usando las múltiples APIs
+    const audio = await getAudioFromApis(url);
+    if (!audio?.url) {
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      return enviartexto("《✧》 No se pudo descargar el *audio*, intenta más tarde.");
+    }
+
+    // 3. Convertir el audio a Buffer y enviarlo
+    const audioRes = await fetch(audio.url);
+    const audioBuffer = Buffer.from(await audioRes.arrayBuffer());
+
+    await sock.sendMessage(from, {
+      audio: audioBuffer,
+      fileName: `${title || "audio"}.mp3`,
+      mimetype: "audio/mpeg"
+    }, { quoted: m });
+
+    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
+  } catch (e) {
+    console.error("Error en play:", e);
+    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+    await enviartexto(`> Ocurrió un error inesperado al ejecutar *${PREFIX}play*.\n> [Error: *${e.message}*]`);
+  }
+  break;
+}
+
+// ═══════════════════════════════════════════
+// YTSEARCH / SEARCH — Buscar en YouTube (con preview)
+// ═══════════════════════════════════════════
+case "ytsearch":
+case "search": {
+  const query = args.join(" ").trim();
+  
+  if (!query) {
+    return enviartexto("《✧》 Por favor, ingrese el título de un vídeo.");
+  }
+
+  try {
+    await sock.sendMessage(from, { react: { text: "🔍", key: m.key } });
+
+    // Importación dinámica de yt-search
+    const { default: yts } = await import("yt-search");
+
+    // 1. Realizar la búsqueda
+    const ress = await yts(query);
+    if (!ress.all || ress.all.length === 0) {
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      return enviartexto("❌ No se encontraron resultados.");
+    }
+
+    // 2. Limitar a 5 resultados
+    const armar = ress.all.slice(0, 5);
+    
+    // 3. Obtener los datos del primer resultado para el preview
+    const firstResult = armar[0];
+
+    // 4. Construir el texto con los resultados
+    let teks2 = armar.map((v) => {
+      switch (v.type) {
+        case 'video':
+          return `➩ *Título ›* *${v.title}* \n\n> ⴵ *Duración ›* ${v.timestamp}\n> ❖ *Subido ›* ${v.ago}\n> ✿ *Vistas ›* ${v.views}\n> ❒ *Url ›* ${v.url}`.trim();
+        case 'channel':
+          return `> ❖ Canal › *${v.name}*\n> ❒ Url › ${v.url}\n> ❀ Subscriptores › ${v.subCountLabel} (${v.subCount})\n> ✿ Videos totales › ${v.videoCount}`.trim();
+        default:
+          return null;
+      }
+    }).filter((v) => v).join('\n\n╾۪〬─ ┄۫╌ ׄ┄┈۪ ─〬 ׅ┄╌ ۫┈ ─ׄ─۪〬 ┈ ┄۫╌ ┈┄۪ ─ׄ〬╼\n\n');
+
+    // 5. Enviar el resultado con la tarjeta de preview
+    await sock.sendMessage(from, { 
+      text: teks2,
+      contextInfo: {
+        externalAdReply: {
+          title: firstResult.title || 'YouTube Search',
+          body: `Canal: ${firstResult.author?.name || 'Desconocido'}`,
+          thumbnailUrl: firstResult.image,
+          sourceUrl: firstResult.url,
+          mediaType: 1,
+          showAdAttribution: true,
+          renderLargerThumbnail: true // 👈 Ponlo en false si quieres la tarjeta pequeña
+        }
+      }
+    }, { quoted: m });
+
+    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
+  } catch (e) {
+    console.error("Error en ytsearch:", e);
+    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+    await enviartexto(`> Ocurrió un error inesperado al ejecutar *${PREFIX}${comando}*.\n> [Error: *${e.message}*]`);
+  }
+
+  break;
+}
     // ═══════════════════════════════════════════
     // SUBBOTS — 12 COMANDOS
     // ═══════════════════════════════════════════
@@ -1399,32 +1808,83 @@ case "code": {
       break;
     }
 
-    case "listsubbots":
-    case "subbots":
-    case "bots":
-    case "botslist":
-    case "listbots": {
-      const active = getActiveSubbots();
-      if (active.size === 0) {
-        return enviartexto(
-          `ℹ️ *No hay sub-bots activos.*\n\n💡 Usa *${PREFIX}jadibot <número>* para crear uno.`
-        );
-      }
-      let list = `🤖 *SUB-BOTS ACTIVOS (${active.size}/${MAX_SUBBOTS})*\n\n`;
-      let i = 1;
-      for (const [num, sub] of active.entries()) {
-        const name = sub?.subconfig?.botname || "";
-        list += `${i}. @${num}${name ? ` — *${name}*` : ""}\n`;
-        i++;
-      }
-      list += `\n_Slots disponibles: ${MAX_SUBBOTS - active.size}_`;
-      await sock.sendMessage(from, {
-        text: list,
-        mentions: Array.from(active.keys()).map(n => `${n}@s.whatsapp.net`)
-      }, { quoted: m });
-      break;
-    }
+// ═══════════════════════════════════════════
+// BOTS / SOCKETS — Listar subbots activos
+// ═══════════════════════════════════════════
+case "bots":
+case "sockets":
+case "listsubbots":
+case "subbots":
+case "botslist":
+case "listbots": {
+  const mainBotNum = jidToNumber(sock.user.id);
+  const mainBotJid = mainBotNum + "@s.whatsapp.net";
+  const mainBotName = sock.subconfig?.botname || BOT_NAME;
 
+  let groupParticipants = [];
+  if (isGroup) {
+    const meta = await sock.groupMetadata(from).catch(() => null);
+    if (meta) {
+      // Extraemos los números de los participantes para comparar fácilmente
+      groupParticipants = meta.participants.map(p => jidToNumber(p.id) + "@s.whatsapp.net");
+    }
+  }
+
+  const subsDir = "./Sessions/SubBots";
+  let subNums = [];
+  
+  // Leer la carpeta de subbots para ver cuáles tienen credenciales
+  if (fs.existsSync(subsDir)) {
+    subNums = fs.readdirSync(subsDir).filter(f => fs.existsSync(`./Sessions/SubBots/${f}/creds.json`));
+  }
+
+  const categorized = { Owner: [], Sub: [] };
+  const mentions = [];
+  
+  // Verificar si el bot principal está en el grupo (o si es chat privado)
+  const isMainBotInGroup = !isGroup || groupParticipants.includes(mainBotJid);
+
+  if (isMainBotInGroup) {
+    mentions.push(mainBotJid);
+    categorized.Owner.push(`- [Owner *${mainBotName}*] › @${mainBotNum}`);
+  }
+
+  // Verificar cuáles subbots están en el grupo actual
+  subNums.forEach(num => {
+    const subJid = num + "@s.whatsapp.net";
+    if (!isGroup || groupParticipants.includes(subJid)) {
+      mentions.push(subJid);
+      const config = loadSubConfig(num);
+      const name = config.botname || "Sub-Bot";
+      categorized.Sub.push(`- [Sub *${name}*] › @${num}`);
+    }
+  });
+
+  const totalOwner = 1; // Siempre hay 1 bot principal
+  const totalSub = subNums.length;
+  const totalBots = totalOwner + totalSub;
+  const totalInGroup = categorized.Owner.length + categorized.Sub.length;
+
+  let message = `ꕥ Números de *bots* activos *(${totalBots})*\n\n`;
+  message += `❖ Principales › *${totalOwner}*\n`;
+  message += `✿ Subs › *${totalSub}*\n\n`;
+  message += `➭ *Bots en el grupo ›* ${totalInGroup}\n`;
+
+  if (categorized.Owner.length) {
+    message += categorized.Owner.join('\n') + '\n';
+  }
+  if (categorized.Sub.length) {
+    message += categorized.Sub.join('\n') + '\n';
+  }
+
+  // Enviar el mensaje con las menciones
+  await sock.sendMessage(from, { 
+    text: message.trim(), 
+    mentions 
+  }, { quoted: m });
+
+  break;
+}
     case "addowner":
     case "agregarowner": {
       if (!isOwnerCheck(sender, sock)) return enviartexto("⚠️ Solo el dueño puede usar esto.");
@@ -1514,26 +1974,27 @@ case "code": {
       break;
     }
 
-    case "setbotname":
-    case "botnombre": {
-      if (!isOwnerCheck(sender, sock)) return enviartexto("⚠️ Solo el dueño.");
-      const newName = args.join(" ").trim();
-      if (!newName) return enviartexto(`📛 *Nombre actual:* ${sock.subconfig?.botname || BOT_NAME}\n\nUso: ${PREFIX}setbotname <nombre>`);
-      try {
-        await sock.updateProfileName(newName);
-        const selfNum = jidToNumber(sock.user.id);
-        const cfg = loadSubConfig(selfNum);
-        cfg.botname = newName;
-        saveSubConfig(selfNum, cfg);
-        sock.subconfig = cfg;
-        await enviartexto(`✅ *Nombre cambiado a:* ${newName}`);
-      } catch (err) {
-        console.error(err);
-        await enviartexto("❌ Error al cambiar nombre.");
-      }
-      break;
-    }
+case "setbotname":
+case "botnombre": {
+  if (!isOwnerCheck(sender, sock)) return enviartexto("⚠️ Solo el dueño.");
+  const newName = args.join(" ").trim();
+  const botJid = jidToNumber(sock.user.id) + "@s.whatsapp.net";
+  
+  if (!newName) return enviartexto(`📛 *Nombre actual:* ${global.db.data.settings[botJid]?.botname || BOT_NAME}`);
 
+  try {
+    await sock.updateProfileName(newName);
+    
+    // Guardar en la base de datos
+    if (!global.db.data.settings[botJid]) global.db.data.settings[botJid] = {};
+    global.db.data.settings[botJid].botname = newName;
+    
+    await enviartexto(`✅ *Nombre cambiado a:* ${newName}`);
+  } catch (err) {
+    await enviartexto("❌ Error al cambiar nombre.");
+  }
+  break;
+}
     case "setbotpp": {
       if (!isOwnerCheck(sender, sock)) return enviartexto("⚠️ Solo el dueño.");
       const quotedMsg = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
@@ -1617,15 +2078,8 @@ case "code": {
 
 // 🚀 INICIAR
 startLevi().catch((err) => {
-<<<<<<< HEAD
 
 console.error("❌ Error fatal al iniciar:", err);
   process.exit(1);
 });
 
-=======
-
-console.error("❌ Error fatal al iniciar:", err);
-  process.exit(1);
-});
->>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
