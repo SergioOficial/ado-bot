@@ -4,7 +4,7 @@
 
 ### Bot de WhatsApp Multi-Device con Baileys
 
-<img src="https://i.postimg.cc/Y95RC8Jt/IMG-20261104-WA0014(1).jpg" width="180" alt="Levi-Bot"/>
+<img src="https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg" width="180" alt="Levi-Bot"/>
 
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/levi-hub805/Levi-bot-)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
