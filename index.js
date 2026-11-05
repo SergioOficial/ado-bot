@@ -19,7 +19,11 @@ import { config } from "./config.js";
 import fetch from "node-fetch";
 import chalk from "chalk";
 import cfonts from "cfonts";
+<<<<<<< HEAD
 import { exec } from "child_process";
+=======
+
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 // 📂 BASE DE DATOS RPG
 const rpgFile = "./Archivos/rpg.json";
 if (!fs.existsSync("./Archivos")) fs.mkdirSync("./Archivos");
@@ -354,6 +358,7 @@ const sender = getRealSender(m);
 
   switch (comando) {
 
+<<<<<<< HEAD
     case "menu":
     case "help": {
 const numero = sender.split("@")[0];
@@ -372,6 +377,25 @@ const numero = sender.split("@")[0];
   🎁 *Menú Navideño* 🎁
 
 ╭┈ࠢ͜┅͜─༻ 🎄 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎄 ༺─┅ࠢ͜┈
+=======
+    // ═══════════════════════════════════════════
+    // MENU
+    // ═══════════════════════════════════════════
+    case "menu":
+    case "help": {
+      const numero = sender.split("@")[0];
+      const pfp = await sock.profilePictureUrl(sender, "image").catch(() => "https://i.postimg.cc/9fnHnptg/1761824297335.jpg");
+
+      const CANAL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
+      const GRUPO = "https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE";
+
+      const bannerMenu = `
+🕸️ ═══════ 🎃 ═══════ 🕸️
+> 🦇 *¡Hola!* @${numero} 🦇 Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 🧙‍♀️
+  🍬 *Menú de Halloween* 🍬
+
+╭┈ࠢ͜┅͜─༻ 🎃 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎃 ༺─┅ࠢ͜┈
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 💠 *Nombre:* ${BOT_NAME}
 │ ⚙️ *Versión:* ${VERSION}
 │ 👑 *Owner:* ${OWNER_NAME}
@@ -381,6 +405,7 @@ const numero = sender.split("@")[0];
 `;
 
       const secciones = `
+<<<<<<< HEAD
 ╭─ 🎁 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* ❄️
 │ 💵 ${PREFIX}work → Trabaja y gana coins
 │ 🎅 ${PREFIX}daily → Reclama tus coins diarios
@@ -396,18 +421,41 @@ const numero = sender.split("@")[0];
 ╰────────────────────────────╯
 
 ╭─ 🎄 *𝐌𝐔𝐋𝐓𝐈𝐌𝐄𝐃𝐈𝐀* 🎨
+=======
+╭─ 👻 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* 🎃
+│ 💵 ${PREFIX}work → Trabaja y gana coins
+│ 🎁 ${PREFIX}daily → Reclama tus coins diarios
+│ 💳 ${PREFIX}bal → Consulta tu balance
+╰────────────────────────────╯
+
+╭─ 🦇 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* 🕸️
+│ 🏓 ${PREFIX}ping → Mide latencia
+│ ℹ️ ${PREFIX}info → Info del bot
+│ 👑 ${PREFIX}creadores → Contactos de creadores
+╰────────────────────────────╯
+
+╭─ 🕯️ *𝐌𝐔𝐋𝐓𝐈𝐌𝐄𝐃𝐈𝐀* 🎨
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 📌 ${PREFIX}pinterest <búsqueda>
 │ 🎵 ${PREFIX}play <canción>
 │ 🖼️ ${PREFIX}toimg → Sticker a imagen
 ╰────────────────────────────╯
 
+<<<<<<< HEAD
 ╭─ ☃️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🧠
+=======
+╭─ 🧙‍♀️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* ⚰️
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 🤖 ${PREFIX}ia <pregunta>
 │ 💬 ${PREFIX}chatgpt <pregunta>
 │ ⚡ ${PREFIX}gpt <pregunta>
 ╰────────────────────────────╯
 
+<<<<<<< HEAD
 ╭─ 🌟 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
+=======
+╭─ 🌙 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 🧍 ${PREFIX}reg <nombre> <edad> <género>
 │ 👤 ${PREFIX}perfil
 │ 🗑️ ${PREFIX}eliminarperfil
@@ -416,11 +464,19 @@ const numero = sender.split("@")[0];
 ╭─ ⚔️ *𝐀𝐕𝐄𝐍𝐓𝐔𝐑𝐀 𝐘 𝐑𝐏𝐆* 🏰
 │ ✦ ${PREFIX}trabajar → Gana oro
 │ ✦ ${PREFIX}cazar → Gana exp
+<<<<<<< HEAD
+=======
+│ ✦ ${PREFIX}perfilrpg
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ ✦ ${PREFIX}clase → guerrero/mago/arquero
 │ ✦ ${PREFIX}reiniciarrpg
 ╰────────────────────────────╯
 
+<<<<<<< HEAD
 ╭─ ⚙️ *𝐂𝐎𝐍𝐅𝐈𝐆 𝐃𝐄𝐋 𝐁𝐎𝐓* 🎅
+=======
+╭─ ⚙️ *𝐂𝐎𝐍𝐅𝐈𝐆 𝐃𝐄𝐋 𝐁𝐎𝐓* 🎃
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 📛 ${PREFIX}setbotname <nombre>
 │ 📝 ${PREFIX}setbotbio <texto>
 │ 🖼️ ${PREFIX}setbotpp → Responde a imagen
@@ -429,7 +485,11 @@ const numero = sender.split("@")[0];
 │ 💧 ${PREFIX}setbotwm <texto>
 ╰────────────────────────────╯
 
+<<<<<<< HEAD
 ╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🦌
+=======
+╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🕸️
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ 🚀 ${PREFIX}jadibot <número> → Crear subbot
 │ 🛑 ${PREFIX}stopbot → Detener mi subbot
 │ 📋 ${PREFIX}listsubbots → Listar subbots
@@ -438,11 +498,16 @@ const numero = sender.split("@")[0];
 │ 🌐 ${PREFIX}botsesion on|off → Apagar global
 ╰────────────────────────────╯
 
+<<<<<<< HEAD
 ╭─ 🎁 *𝐑𝐀𝐍𝐊𝐈𝐍𝐆𝐒* 🏆
+=======
+╭─ 🎃 *𝐑𝐀𝐍𝐊𝐈𝐍𝐆𝐒* ⚔️
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 │ ✦ ${PREFIX}rankcoins
 │ ✦ ${PREFIX}ranknivel
 ╰────────────────────────────╯
 
+<<<<<<< HEAD
 ╭─ 📩 *𝐒𝐎𝐏𝐎𝐑𝐓𝐄* 💌
 │ 🐛 ${PREFIX}reporte <texto> → Reportar bug
 │ 💡 ${PREFIX}sugerencia <texto> → Enviar idea
@@ -457,6 +522,9 @@ ${CANAL_URL}
 💬 *Grupo de soporte:*
 ${GRUPO}
 
+=======
+🕸️ ═══════ 🎃 ═══════ 🕸️
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
 ${FOOTER}
 `;
 // ✨ Se envía como texto, pero con la tarjeta (externalAdReply) y el "Ver canal"
@@ -670,6 +738,7 @@ case "sugerir": {
     await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
   }
 
+<<<<<<< HEAD
   break;
 }
 
@@ -714,6 +783,60 @@ case "update": {
   break;
 }
 
+=======
+      await sock.sendMessage(from, {
+        image: { url: pfp },
+        caption: bannerMenu + secciones,
+        mentions: [sender]
+      }, { quoted: m });
+
+      await sock.sendMessage(from, {
+        text: `🎃 *𝐒𝐈𝐆𝐔𝐄 𝐍𝐔𝐄𝐒𝐓𝐑𝐎𝐒 𝐂𝐀𝐍𝐀𝐋𝐄𝐒* 🎃\n\n📢 *Canal:*\n${CANAL}\n\n💬 *Grupo:*\n${GRUPO}`
+      }, { quoted: m });
+      break;
+    }
+
+    // ═══════════════════════════════════════════
+    // CREADORES
+    // ═══════════════════════════════════════════
+    case "creadores":
+    case "creators":
+    case "owners": {
+      const owners = config.owners || [];
+      if (!owners.length) return enviartexto("❌ No hay creadores configurados.");
+
+      const buildVCard = (name, number) => {
+        const cleanNumber = String(number).replace(/[^\d]/g, "");
+        return [
+          "BEGIN:VCARD",
+          "VERSION:3.0",
+          `FN:${name}`,
+          `ORG:${BOT_NAME};`,
+          `TEL;type=CELL;type=VOICE;waid=${cleanNumber}:+${cleanNumber}`,
+          "END:VCARD"
+        ].join("\n");
+      };
+
+      const contacts = owners.map(o => ({ vcard: buildVCard(o.name, o.number) }));
+
+      try {
+        await sock.sendMessage(from, {
+          contacts: {
+            displayName: owners.length > 1 ? `${owners.length} Creadores` : owners[0].name,
+            contacts
+          }
+        }, { quoted: m });
+      } catch (err) {
+        console.error("[Creadores] Error:", err.message);
+        const fallback = owners
+          .map(o => `👑 *${o.name}* — wa.me/${String(o.number).replace(/[^\d]/g, "")}`)
+          .join("\n");
+        await enviartexto(`*CREADORES DEL BOT*\n\n${fallback}`);
+      }
+      break;
+    }
+
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
     // ═══════════════════════════════════════════
     // PING
     // ═══════════════════════════════════════════
@@ -1494,8 +1617,15 @@ case "code": {
 
 // 🚀 INICIAR
 startLevi().catch((err) => {
+<<<<<<< HEAD
 
 console.error("❌ Error fatal al iniciar:", err);
   process.exit(1);
 });
 
+=======
+
+console.error("❌ Error fatal al iniciar:", err);
+  process.exit(1);
+});
+>>>>>>> c8b6d7d1e12bdfe1ed0302df82c0c9ad6ee95dc5
