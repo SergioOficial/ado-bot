@@ -1,69 +1,36 @@
 
+
+```markdown
 <div align="center">
 
 # ⚔️ Levi-Bot
 
 ### Bot de WhatsApp Multi-Device con Baileys
- <img src= "https://i.postimg.cc/v80bPmY0/IMG-20261101-WA0014.jpg" width="300" alt="Levi-Bot"/>
+
+<img src="https://i.postimg.cc/v80bPmY0/IMG-20261101-WA0014.jpg" width="180" alt="Levi-Bot"/>
 
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/levi-hub805/Levi-bot-)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Baileys](https://img.shields.io/badge/Baileys-6.7.x-blue?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
+[![Baileys](https://img.shields.io/badge/Baileys-7.0.x-blue?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 **Creado por [Jeferson Fernández](https://github.com/levi-hub805) en colaboración con [Sergio Gómez Gort](https://github.com/SergioOficial)**
 
 </div>
 
---<br>
+---
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+## 🚀 Últimas Novedades (Update Masivo)
 
-<br>
+Hemos estado trabajando duro para llevar a Levi-Bot al siguiente nivel. Estas son las actualizaciones más recientes:
 
-## 💬 Información 
-
-<div align="center">
-
-<p>Únete a nuestra comunidad para recibir ayuda, reportar bugs y estar al día con las actualizaciones.</p>
-
-<br>
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d">
-        <img src="https://i.postimg.cc/Kv9GNNGj/IMG-20261103-WA0027.jpg" width="240" alt="Canal de WhatsApp" /><br><br>
-        <img src="https://https://img.shields.io/badge/📢_Canal-Oficial-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Canal" />
-      </a>
-      <br><br>
-      <sub><b>Novedades, anuncios y actualizaciones del bot</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE">
-        <img src="assets/levi-grupo.jpg" width="240" alt="Grupo de WhatsApp" /><br><br>
-        <img src="https://img.shields.io/badge/💬_Grupo-Soporte-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Grupo" />
-      </a>
-      <br><br>
-      <sub><b>Ayuda directa, dudas y comunidad</b></sub>
-    </td>
-  </tr>
-</table>
-
-<br>
-
-<p>
-  <sub>⚠️ <b>Importante:</b> el bot es <b>gratuito y open source</b>. Nadie del equipo te pedirá dinero por usarlo, configurarlo o resolver dudas.</sub>
-</p>
-
-</div>
-
-<br>
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">-
-
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+- 🗄️ **Migración a Base de Datos Local (`database.json`)**: Ahora los datos de usuarios, economía y RPG se guardan en un solo archivo de forma segura y con auto-guardado.
+- 🎨 **Stickers PRO**: Nuevo sistema para crear stickers avanzados (`#s`), generar stickers estilo *Brat* (`#brat`) y buscar packs (`#stickers`).
+- 📌 **Pinterest Mejorado**: Ahora busca y envía **múltiples imágenes** (álbum deslizable) en lugar de una sola.
+- 🔍 **YouTube Search**: Nuevo comando `#ytsearch` con vista previa (preview) interactiva.
+- 🐛 **Sistema de Reportes**: Comandos `#reporte` y `#sugerencia` para enviar bugs directamente al GitHub.
+- ♻️ **Auto-Actualización**: Comando `#fix` para que los Owners actualicen el bot desde GitHub sin apagarlo manualmente.
+- 🛡️ **Seguridad**: El archivo `database.json` y las sesiones han sido añadidos al `.gitignore` para proteger los datos privados.
 
 ---
 
@@ -72,200 +39,97 @@
 - 🎮 **Sistema RPG** — `#trabajar`, `#cazar`, `#clase`, `#perfilrpg`
 - 💰 **Economía** — `#daily`, `#bal`, `#work`, `#rankcoins`
 - 🧾 **Perfiles** — `#reg`, `#perfil`, `#eliminarperfil`
-- 🎨 **Multimedia** — `#pinterest`, `#play`, `#toimg`
+- 🎨 **Multimedia** — `#pinterest`, `#play`, `#toimg`, `#ytsearch`
+- 🖌️ **Stickers** — `#s`, `#brat`, `#stickers`
 - 🧠 **Inteligencia Artificial** — `#ia`, `#chatgpt`, `#gpt`
-- ⚙️ **Utilidades** — `#ping`, `#info`, `#menu`
-- 🖼️ **Sticker → Imagen** con `sharp`
-- 🎵 **Descarga de audio** desde YouTube
-- #️⃣ **Sistema Sub Bot** `#Code`
+- 🤖 **Subbots** — `#jadibot`, `#bots`, `#stopbot`
+- ⚙️ **Utilidades** — `#ping`, `#info`, `#menu`, `#fix`
 
 ---
 
+## ⚠️ Errores Conocidos y Soluciones (¡Importante!)
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
+Como el bot depende de servicios de terceros (APIs), a veces podemos experimentar fallos ajenos a nuestro código. Aquí te explicamos los más comunes:
+
+### 🎵 Errores en el comando `#play` (YouTube)
+- **El problema:** El comando `play` intenta descargar el audio usando la librería `@denzy-official/youtube_scraper` y APIs de respaldo. YouTube cambia constantemente sus algoritmos de seguridad, lo que puede provocar errores como `Timed Out`, `fetch failed` o que el audio no se envíe.
+- **Solución:** Si el comando falla, intenta con otra canción. Si el error persiste por días, será necesario actualizar la librería en `package.json` o cambiar a un nuevo método de descarga en el código.
+
+### 📌 Errores en el comando `#pin` (Pinterest)
+- **El problema:** Antes usábamos APIs como `api.delirius.store` o `api.vreden.web.id`, las cuales cerraron sus servidores (Error `ENOTFOUND`). 
+- **Solución:** Hemos actualizado el código para usar `pinscrapper.vercel.app` y `api.siputzx.my.id`. Sin embargo, si Pinterest bloquea las IPs de estos servicios, el bot mostrará un mensaje de "No se encontraron resultados". Si esto pasa, habrá que buscar una nueva API.
+
+### 🤖 Errores al usar `#code` en grupos (LIDs)
+- **El problema:** WhatsApp ahora oculta los números de teléfono en los grupos por privacidad (usando LIDs, que son IDs largos). Si usas `#code` en un grupo, el bot podría intentar crear un subbot con un número inválido y fallar con `Error 408`.
+- **Solución:** Para crear un subbot, usa el comando desde el **privado del bot** o usa el comando `.jadibot <tu número con código de país>`.
+
+---
+
 ## 🚀 Instalación en Termux (Android)
 
 ### 1️⃣ Actualizar paquetes
 
-```
-
+```bash
 pkg update && pkg upgrade -y
-
 ```
 
-### 2️⃣ Instalar git
+2️⃣ Instalar git, Node.js y FFmpeg (necesario para stickers)
 
+```bash
+pkg install git nodejs-lts ffmpeg -y
 ```
 
-pkg install git
+3️⃣ Clonar el repositorio
 
-```
-
-### 3️⃣ Instalar Node.js LTS
-
-```
-
-pkg install nodejs-lts -y
-
-```
-
-> 💡 Si `nodejs-lts` falla, usa:
-```
-
-pkg install nodejs -y
-
-```
-
-4️⃣ Clonar el repositorio
-
-```
+```bash
 git clone https://github.com/levi-hub805/Levi-bot-.git
 ```
 
-5️⃣ Entrar a la carpeta
+4️⃣ Entrar a la carpeta
 
-```
+```bash
 cd Levi-bot-
 ```
 
-6️⃣ Instalar dependencias
+5️⃣ Instalar dependencias
 
-```
+```bash
 npm install
 ```
 
-7️⃣ Iniciar el bot
+⚠️ Nota sobre sharp en Termux: Si tienes problemas con sharp (por la arquitectura de Android), ejecuta:
 
+```bash
+npm install @img/sharp-wasm32 --force
+npm install sharp --force
 ```
+
+6️⃣ Iniciar el bot
+
+```bash
 npm start
 ```
 
 ---
 
+💻 Instalación en PC / VPS / BotKeep
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-💻 Instalación en PC / VPS / Linux
-
-1️⃣ Clonar el repositorio
-
-```
+```bash
 git clone https://github.com/levi-hub805/Levi-bot-.git
-```
-
-2️⃣ Entrar a la carpeta
-
-```
 cd Levi-bot-
-```
-
-3️⃣ Instalar dependencias
-
-```
 npm install
-```
-
-4️⃣ Iniciar el bot
-
-```
-node index.js
+npm start
 ```
 
 Al arrancar por primera vez te pedirá tu número de WhatsApp y generará un código de vinculación de 8 dígitos.
-
-```
-📱 Ingresa tu número de WhatsApp: 5354386852
-🔐 Tu código de vinculación es: A1B2C3D4
-```
 
 En WhatsApp ve a Dispositivos vinculados → Vincular con número de teléfono e ingresa el código sin guiones ni espacios.
 
 ---
 
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-📦 Dependencias individuales
-
-Si npm install falla o quieres instalar las dependencias una por una, ejecuta cada comando por separado:
-
-Baileys (conexión con WhatsApp)
-
-```
-npm install @whiskeysockets/baileys
-```
-
-Boom (manejo de errores)
-
-```
-npm install @hapi/boom
-```
-
-Pino (logger silencioso)
-
-```
-npm install pino
-```
-
-Chalk (colores en consola)
-
-```
-npm install chalk
-```
-
-Cfonts (banner de inicio)
-
-```
-npm install cfonts
-```
-
-Node-fetch (peticiones HTTP)
-
-```
-npm install node-fetch
-```
-
-Sharp (conversión de stickers)
-
-```
-npm install sharp
-```
-
-Qrcode-terminal (QR alternativo)
-
-```
-npm install qrcode-terminal
-```
-
-⚠️ En Termux, sharp puede fallar por falta de binarios para Android/ARM64. En ese caso instala la versión WebAssembly:
-
-```
-npm install @img/sharp-wasm32 --force
-```
-
-```
-npm install sharp --force
-```
-
-En BotKeep, VPS o cualquier Linux x64 funciona sin ajustes extra.
-
-📋 Lista de dependencias
-
-Paquete Uso
-@whiskeysockets/baileys Conexión con WhatsApp
-@hapi/boom Manejo de errores de Baileys
-pino Logger silencioso
-chalk Colores en la consola
-cfonts Banner de inicio
-node-fetch Peticiones HTTP (IA, Pinterest, YouTube)
-sharp Conversión de sticker a imagen
-qrcode-terminal QR alternativo si falla el parincode
-
----
-
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 ⚙️ Configuración
 
-Edita config.js:
+Edita config.js para personalizar los datos del bot:
 
 ```javascript
 export const config = {
@@ -275,217 +139,44 @@ export const config = {
     { name: "Jeferson Fernández 💫", number: "573005255807" },
     { name: "Sergio Gómez Gort 🎃",  number: "5358090650" }
   ],
-  ownerName: "Jeferson Fernández 💫 & Sergio Gómez Gort 🎃",
-  ownerNumber: "573005255807",
   version: "1.0.0",
-  footer: "⚔️ Levi-Bot by Jeferson Fernández from Sergio Gómez Gort",
-  apis: {
-    vihangayt: "lSq1epGYexsn4WmS"
-  }
+  footer: "⚔️ Levi-Bot by Jeferson Fernández from Sergio Gómez Gort"
 };
 ```
 
 ---
 
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
 📁 Estructura del proyecto
 
 ```
 Levi-bot-/
-├── index.js              # Archivo principal (todos los comandos)
+├── index.js              # Archivo principal (comandos)
+├── database.js           # Conexión y guardado de datos
+├── database.json         # Base de datos local (NO SUBIR)
 ├── config.js             # Configuración global
-├── package.json          # Dependencias y scripts
-├── Archivos/             # Base de datos (auto-creado)
-│   ├── rpg.json
-│   └── perfiani.json
-└── session/              # Sesión WhatsApp (auto-creado, NO subir)
+├── package.json          # Dependencias
+├── Sessions/             # Sesiones de subbots (NO SUBIR)
+└── session/              # Sesión principal (NO SUBIR)
 ```
 
 ---
 
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-🧩 Comandos disponibles
+🧩 Comandos Principales
 
 Categoría Comandos
 🎮 RPG trabajar, cazar, clase, reiniciarrpg, perfilrpg
-💰 Economía daily, work, bal, rankcoins
+💰 Economía daily, work, bal, rankcoins, ranknivel
 🧾 Perfil reg, perfil, eliminarperfil
-🎨 Multimedia pinterest, pin, play, toimg
+🎨 Multimedia pinterest, play, ytsearch, toimg
+🖌️ Stickers s, brat, stickers
 🧠 IA ia, chatgpt, gpt
-⚙️ Utilidades menu, ping, info
+🤖 Subbots jadibot, bots, stopbot, addowner, delowner
+⚙️ Utilidades menu, ping, prueba, info, fix, reporte
 
 Usa #menu dentro del bot para ver la lista completa actualizada.
 
 ---
 
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-☁️ Despliegue en la nube
-
-BotKeep
-
-1. Canjea el código promocional en Plans & billing
-2. Crea un nuevo servicio → Node.js → GitHub
-3. Selecciona el repo levi-hub805/Levi-bot-
-4. Añade la variable de entorno:
-   · WHATSAPP_NUMBER = tu número con código de país (sin +, sin espacios)
-5. Deploy y revisa los logs para copiar el código de vinculación
-
-Railway / Render / Fly.io
-
-Mismo proceso: conecta el repo, define WHATSAPP_NUMBER como variable de entorno, y asegúrate de que el comando de inicio sea:
-
-```
-npm start
-```
-
----
-
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-⚠️ Notas importantes
-
-· 🔐 El código de vinculación se introduce en WhatsApp sin guiones: A1B2C3D4, no A1B2-C3D4.
-· ⏱️ El código expira en ~60 segundos; si tarda más, reinicia el bot.
-· 🔄 Si el bot no conecta, borra la carpeta session/ y reintenta.
-
-🧹 Limpiar sesión y reiniciar
-
-```
-rm -rf session
-```
-
-```
-npm start
-```
-
----
-
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-🆘 Problemas comunes
-
-Problema Solución
-sharp no carga en Termux npm install @img/sharp-wasm32 --force
-El código de vinculación falla Borra session/, revisa que el número no tenga + ni espacios
-"Sesión cerrada" rm -rf session && npm start
-"Connection Closed" al pedir el parincode Espera a connecting, no pidas el código inmediatamente tras crear el socket
-El bot no responde Verifica que el prefijo en config.js coincida con el que usas en WhatsApp
-Cannot find module 'pino' Ejecuta npm install dentro de la carpeta del bot
-SyntaxError en config.js Asegúrate de no tener propiedades duplicadas ni comas faltantes
-
-🔧 Comandos útiles de diagnóstico
-
-Verificar versión de Node:
-
-```
-node -v
-```
-
-Verificar versión de npm:
-
-```
-npm -v
-```
-
-Verificar dependencias instaladas:
-
-```
-npm ls --depth=0
-```
-
-Verificar sintaxis de config.js:
-
-```
-node --check config.js
-```
-
-Ver logs detallados del bot:
-
-```
-npm start 2>&1 | tee bot.log
-```
-
----
-
-## 👤 Soportes
-<br>
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-
-<br>
-
-## 💬 Soporte
-
-<div align="center">
-
-<p>¿Tienes dudas, problemas o sugerencias? Contacta directamente con el equipo.</p>
-
-<table>
-  <tr>
-    <th>Rol</th>
-    <th>País</th>
-    <th>Número</th>
-    <th>Contactar</th>
-  </tr>
-  <tr>
-    <td>👑 <b>Creador</b></td>
-    <td>🇨🇴 Colombia</td>
-    <td><code>+57 300 5255807</code></td>
-    <td><a href="https://wa.me/573005255807"><img src="https://img.shields.io/badge/WhatsApp-Escribir-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" /></a></td>
-  </tr>
-  <tr>
-    <td>🤝 <b>Colaborador</b></td>
-    <td>🇨🇺 Cuba</td>
-    <td><code>+53 58090650</code></td>
-    <td><a href="https://wa.me/5358090650"><img src="https://img.shields.io/badge/WhatsApp-Escribir-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" /></a></td>
-  </tr>
-</table>
-
-<br>
-
-<p>
-  <sub>⚠️ <b>Importante:</b> el bot es <b>gratuito y open source</b>. Nadie del equipo te pedirá dinero por usarlo, configurarlo o resolver dudas. Si alguien lo hace en su nombre, es un fraude.</sub>
-</p>
-
-</div>
-
-<br>
-
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
----
-### 🖥️ Hosting
-
-<div align="center">
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://github.com/brayanflores29925-ctrl">
-        <img src="https://github.com/brayanflores29925-ctrl.png" width="120" alt="Brayan Flores" style="border-radius:50%" /><br><br>
-        <b>Brayan Flores</b>
-      </a>
-      <br>
-      <sub>🖥️ <b>Hosting & Infraestructura</b></sub>
-      <br><br>
-      <a href="https://github.com/brayanflores29925-ctrl">
-        <img src="https://img.shields.io/badge/GitHub-Perfil-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
-      </a>
-    </td>
-    <td align="center" width="50%">
-      <br>
-      <p>Gracias a <b>Brayan Flores</b> por proporcionar el <b>hosting y la infraestructura</b> que mantienen <b>Nekotoryu-MD</b> en línea 24/7.</p>
-      <p><sub>Sin su apoyo, este proyecto no podría estar disponible de forma estable y gratuita para toda la comunidad.</sub></p>
-    </td>
-  </tr>
-</table>
-
-</div>
-
-<br>
----
 🤝 Créditos
 
 <table align="center">
@@ -515,11 +206,10 @@ npm start 2>&1 | tee bot.log
 
 ⭐ Si te gusta el proyecto, dale una estrella ⭐
 
-Hecho con 💫 desde Cuba/Colombia para el mundo
+Hecho con 💫 desde Cuba para el mundo
 
 https://img.shields.io/badge/Contacto-WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white
 https://img.shields.io/badge/Repositorio-Levi--bot--181717?style=flat&logo=github&logoColor=white
 
-<img src="https://whatsapp.com/channel/0029VbC2PSD60eBcVn60SK1v/637" width="200" alt="Levi-Bot"/>
 </div>
->>>>>>> 8d4f8798fc90245974bd5a28baa462ae5d3af8fd
+```
