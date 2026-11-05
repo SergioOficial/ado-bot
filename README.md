@@ -1,6 +1,5 @@
 
 
-```markdown
 <div align="center">
 
 # ⚔️ Levi-Bot
@@ -212,4 +211,3 @@ https://img.shields.io/badge/Contacto-WhatsApp-25D366?style=flat&logo=whatsapp&l
 https://img.shields.io/badge/Repositorio-Levi--bot--181717?style=flat&logo=github&logoColor=white
 
 </div>
-```
