@@ -19,7 +19,7 @@ import { config } from "./config.js";
 import fetch from "node-fetch";
 import chalk from "chalk";
 import cfonts from "cfonts";
-
+import { exec } from "child_process";
 // 📂 BASE DE DATOS RPG
 const rpgFile = "./Archivos/rpg.json";
 if (!fs.existsSync("./Archivos")) fs.mkdirSync("./Archivos");
@@ -91,7 +91,6 @@ function getTargetFromMsg(msg, argList) {
   if (numArg) return { jid: `${String(numArg).replace(/\D/g, "")}@s.whatsapp.net` };
   return { jid: null };
 }
-
 const SESSION_FILE = "./Sessions/globalSession.json";
 function isSessionEnabled() {
   try { return JSON.parse(fs.readFileSync(SESSION_FILE, "utf8")).enabled !== false; }
@@ -110,19 +109,31 @@ async function stopSubbot(phoneNumber) {
   try { fs.rmSync(`${SUB_SESSION_DIR}/${phoneNumber}`, { recursive: true, force: true }); } catch {}
   return true;
 }
-
 async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   const phoneNumber = jidToNumber(senderJid);
+
+  // 🛑 Rechazar LIDs desde el inicio
+  if (!phoneNumber || phoneNumber.length < 8 || phoneNumber.length > 15 || /^1\d{14}$/.test(phoneNumber)) {
+    return reply(
+      `❌ *Número inválido:* \`${phoneNumber}\`\n\n` +
+      `Parece un LID (identificador interno de WhatsApp), no un teléfono real.\n\n` +
+      `👉 Usa: *${PREFIX}jadibot 5354386852*`
+    );
+  }
+
   if (activeSubbots.size >= MAX_SUBBOTS) {
     return reply(`⚠️ Límite de subbots alcanzado (${MAX_SUBBOTS}). Detén uno con #stopbot.`);
   }
+
   if (activeSubbots.has(phoneNumber)) {
     return reply(`⚠️ Ya tienes un subbot activo (${phoneNumber}). Deténlo con #stopbot.`);
   }
+
   ensureSubDirs();
   const sessionPath = `${SUB_SESSION_DIR}/${phoneNumber}`;
   const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
   const { version } = await fetchLatestWaWebVersion();
+
   const subSock = makeWASocket({
     version,
     auth: {
@@ -131,58 +142,58 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
     },
     logger: pino({ level: "silent" }),
     printQRInTerminal: false,
-connectTimeoutMs: 60_000, // 60s para conectar (antes 20s)
-  defaultQueryTimeoutMs: 120_000, // 120s para queries (antes 60s)
-  keepAliveIntervalMs: 25_000, // ping cada 25s para mantener vivo el socket  
-});
+    connectTimeoutMs: 60_000,
+    defaultQueryTimeoutMs: 120_000,
+    keepAliveIntervalMs: 25_000
+  });
+
   subSock.subconfig = loadSubConfig(phoneNumber);
   subSock.ev.on("creds.update", saveCreds);
-let pairingCodeRequested = false;
 
-subSock.ev.on("connection.update", async (update) => {
-  const { connection, lastDisconnect, qr } = update;
+  let pairingCodeRequested = false;
 
-  // ✅ Solo pedir el código cuando llega el evento 'qr' (señal de que el canal está listo)
-  if (
-    method === "code" &&
-    !subSock.authState.creds.registered &&
-    !pairingCodeRequested &&
-    qr // 👈 La clave: esperar al QR
-  ) {
-    pairingCodeRequested = true;
-    await new Promise(r => setTimeout(r, 2000)); // Pequeña pausa extra de seguridad
-    try {
-      const code = await subSock.requestPairingCode(phoneNumber);
-      // ... (tus mensajes decorados) ...
-      await parentSock.sendMessage(remoteJid, {
-        text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
-      });
-      await new Promise(r => setTimeout(r, 800));
-      await parentSock.sendMessage(remoteJid, { text: `\`\`\`\n${code}\n\`\`\`` });
-    } catch (err) {
+  subSock.ev.on("connection.update", async (update) => {
+    const { connection, lastDisconnect, qr } = update;
+
+    if (
+      method === "code" &&
+      !subSock.authState.creds.registered &&
+      !pairingCodeRequested &&
+      qr
+    ) {
+      pairingCodeRequested = true;
+      await new Promise(r => setTimeout(r, 2000));
+      try {
+        const code = await subSock.requestPairingCode(phoneNumber);
+        await parentSock.sendMessage(remoteJid, {
+          text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
+        });
+        await new Promise(r => setTimeout(r, 800));
+        await parentSock.sendMessage(remoteJid, { text: `\`\`\`\n${code}\n\`\`\`` });
+      } catch (err) {
+        pairingCodeRequested = false;
+        console.error("Error parincode subbot:", err.message);
+        await parentSock.sendMessage(remoteJid, { text: `❌ Error pidiendo parincode: ${err.message}` });
+      }
+    }
+
+    if (connection === "open") {
+      activeSubbots.set(phoneNumber, subSock);
+      await parentSock.sendMessage(remoteJid, { text: `✅ *Sub-bot conectado*\n📱 ${phoneNumber}` });
+    }
+
+    if (connection === "close") {
+      const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+      activeSubbots.delete(phoneNumber);
       pairingCodeRequested = false;
-      console.error("Error parincode subbot:", err.message);
-      await parentSock.sendMessage(remoteJid, { text: `❌ Error pidiendo parincode: ${err.message}` });
+      if (reason === DisconnectReason.loggedOut) {
+        await parentSock.sendMessage(remoteJid, { text: `❌ Sub-bot ${phoneNumber} cerró sesión.` });
+      } else {
+        console.log(`♻️ Subbot ${phoneNumber} cerrado (código ${reason}), no se reintenta automáticamente para evitar bucles.`);
+      }
     }
-  }
+  });
 
-  if (connection === "open") {
-    activeSubbots.set(phoneNumber, subSock);
-    await parentSock.sendMessage(remoteJid, { text: `✅ *Sub-bot conectado*\n📱 ${phoneNumber}` });
-  }
-
-  if (connection === "close") {
-    const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-    activeSubbots.delete(phoneNumber);
-    pairingCodeRequested = false; // Permitir reintento
-    if (reason === DisconnectReason.loggedOut) {
-      await parentSock.sendMessage(remoteJid, { text: `❌ Sub-bot ${phoneNumber} cerró sesión.` });
-    } else {
-      console.log(`♻️ Subbot ${phoneNumber} cerrado (código ${reason}), no se reintenta automáticamente para evitar bucles.`);
-      // NO llamar a startSubbot de nuevo aquí para evitar el bucle infinito
-    }
-  }
-});
   subSock.ev.on("messages.upsert", (ev) => handleMessages(subSock, ev));
 }
 
@@ -220,6 +231,29 @@ function ask(promptText) {
   return new Promise((resolve) => rl.question(promptText, (ans) => { rl.close(); resolve(ans.trim()); }));
 }
 
+function getRealSender(m) {
+  const k = m.key || {};
+  // Orden de preferencia: primero los "Pn" (Phone Number), luego los normales
+  const candidates = [
+    k.participantPn,
+    k.senderPn,
+    k.participantAlt,
+    k.remoteJidPn,
+    k.remoteJidAlt,
+    k.participant,
+    k.remoteJid
+  ];
+  for (const c of candidates) {
+    if (!c) continue;
+    const num = jidToNumber(c);
+    // Si tiene 8-15 dígitos y NO es un LID (15 dígitos empezando por 1) → es válido
+    if (num.length >= 8 && num.length <= 15 && !/^1\d{14}$/.test(num)) {
+      return c;
+    }
+  }
+  // Si ninguno sirve, devolver el participant/remoteJid original
+  return k.participant || k.remoteJid;
+}
 // 🚀 START — SOLO CONEXIÓN
 async function startLevi() {
   const { state, saveCreds } = await useMultiFileAuthState("./session");
@@ -307,12 +341,10 @@ async function handleMessages(sock, { messages, type }) {
   if (!texto) return;
   if (!texto.startsWith(PREFIX)) return;
 
-  const { remoteJid } = m.key;
-  const isGroup = remoteJid.endsWith("@g.us");
-  const from = remoteJid;
-const sender = isGroup
-  ? (m.key.participantPn || m.key.participant || remoteJid)
-  : (m.key.remoteJidPn || remoteJid);
+const { remoteJid } = m.key;
+const isGroup = remoteJid.endsWith("@g.us");
+const from = remoteJid;
+const sender = getRealSender(m);
   const args = texto.slice(PREFIX.length).trim().split(/\s+/);
   const comando = args.shift().toLowerCase();
   const enviartexto = (txt) => sock.sendMessage(from, { text: txt }, { quoted: m });
@@ -320,65 +352,62 @@ const sender = isGroup
   console.log(`💬 [${from}] ${texto}`);
   console.log(`🧩 Comando detectado: ${comando}`);
 
-  // Verificar sesión global
-  if (isGroup && !isSessionEnabled() && !isOwnerCheck(sender, sock)) {
-    return; // bot apagado globalmente
-  }
-
   switch (comando) {
 
-    // ═══════════════════════════════════════════
-    // MENU
-    // ═══════════════════════════════════════════
     case "menu":
     case "help": {
-      const numero = sender.split("@")[0];
-      const pfp = await sock.profilePictureUrl(sender, "image").catch(() => "https://i.postimg.cc/9fnHnptg/1761824297335.jpg");
+const numero = sender.split("@")[0];
+      
+      // La imagen que pediste
+      const pfp = "https://i.postimg.cc/Y95RC8Jt/IMG-20261104-WA0014(1).jpg";
 
-      const CANAL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
+      const CANAL_JID = "120363415858789528@newsletter";
+      const CANAL_URL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
+      const CANAL_NOMBRE = "⍪❖Ƭʜᴇ Kakashi—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
       const GRUPO = "https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE";
-
       const bannerMenu = `
-🕸️ ═══════ 🎃 ═══════ 🕸️
-   🦇 *¡Hola!* @${numero} 🦇
-    Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 🧙‍♀️
-  🍬 *Menú de Halloween* 🍬
+🎄 ═══════ 🎅 ═══════ 🎄
+   ❄️ *¡Hola!* @${numero} ❄️
+    Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 ☃️
+  🎁 *Menú Navideño* 🎁
 
-╭┈ࠢ͜┅͜─༻ 🎃 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎃 ༺─┅ࠢ͜┈
+╭┈ࠢ͜┅͜─༻ 🎄 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎄 ༺─┅ࠢ͜┈
 │ 💠 *Nombre:* ${BOT_NAME}
 │ ⚙️ *Versión:* ${VERSION}
 │ 👑 *Owner:* ${OWNER_NAME}
-│ 👥 *Usuarios:* ${Object.keys(regix).length || "1"}
+│ 👥 *Usuarios:* ${Object.keys(regix).length || "∞"}
 │ 🧩 *Librería:* Baileys Multi Device
 ╰──────────────────────────────╯
 `;
 
       const secciones = `
-╭─ 👻 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* 🎃
+╭─ 🎁 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* ❄️
 │ 💵 ${PREFIX}work → Trabaja y gana coins
-│ 🎁 ${PREFIX}daily → Reclama tus coins diarios
+│ 🎅 ${PREFIX}daily → Reclama tus coins diarios
 │ 💳 ${PREFIX}bal → Consulta tu balance
 ╰────────────────────────────╯
 
-╭─ 🦇 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* 🕸️
+╭─ 🔔 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* ⭐
 │ 🏓 ${PREFIX}ping → Mide latencia
+│ 🧪 ${PREFIX}prueba → Test de velocidad
 │ ℹ️ ${PREFIX}info → Info del bot
 │ 👑 ${PREFIX}creadores → Contactos de creadores
+│ 📢 ${PREFIX}canal → Canal oficial
 ╰────────────────────────────╯
 
-╭─ 🕯️ *𝐌𝐔𝐋𝐓𝐈𝐌𝐄𝐃𝐈𝐀* 🎨
+╭─ 🎄 *𝐌𝐔𝐋𝐓𝐈𝐌𝐄𝐃𝐈𝐀* 🎨
 │ 📌 ${PREFIX}pinterest <búsqueda>
 │ 🎵 ${PREFIX}play <canción>
 │ 🖼️ ${PREFIX}toimg → Sticker a imagen
 ╰────────────────────────────╯
 
-╭─ 🧙‍♀️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* ⚰️
+╭─ ☃️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🧠
 │ 🤖 ${PREFIX}ia <pregunta>
 │ 💬 ${PREFIX}chatgpt <pregunta>
 │ ⚡ ${PREFIX}gpt <pregunta>
 ╰────────────────────────────╯
 
-╭─ 🌙 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
+╭─ 🌟 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
 │ 🧍 ${PREFIX}reg <nombre> <edad> <género>
 │ 👤 ${PREFIX}perfil
 │ 🗑️ ${PREFIX}eliminarperfil
@@ -387,12 +416,11 @@ const sender = isGroup
 ╭─ ⚔️ *𝐀𝐕𝐄𝐍𝐓𝐔𝐑𝐀 𝐘 𝐑𝐏𝐆* 🏰
 │ ✦ ${PREFIX}trabajar → Gana oro
 │ ✦ ${PREFIX}cazar → Gana exp
-│ ✦ ${PREFIX}perfilrpg
 │ ✦ ${PREFIX}clase → guerrero/mago/arquero
 │ ✦ ${PREFIX}reiniciarrpg
 ╰────────────────────────────╯
 
-╭─ ⚙️ *𝐂𝐎𝐍𝐅𝐈𝐆 𝐃𝐄𝐋 𝐁𝐎𝐓* 🎃
+╭─ ⚙️ *𝐂𝐎𝐍𝐅𝐈𝐆 𝐃𝐄𝐋 𝐁𝐎𝐓* 🎅
 │ 📛 ${PREFIX}setbotname <nombre>
 │ 📝 ${PREFIX}setbotbio <texto>
 │ 🖼️ ${PREFIX}setbotpp → Responde a imagen
@@ -401,7 +429,7 @@ const sender = isGroup
 │ 💧 ${PREFIX}setbotwm <texto>
 ╰────────────────────────────╯
 
-╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🕸️
+╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🦌
 │ 🚀 ${PREFIX}jadibot <número> → Crear subbot
 │ 🛑 ${PREFIX}stopbot → Detener mi subbot
 │ 📋 ${PREFIX}listsubbots → Listar subbots
@@ -410,27 +438,104 @@ const sender = isGroup
 │ 🌐 ${PREFIX}botsesion on|off → Apagar global
 ╰────────────────────────────╯
 
-╭─ 🎃 *𝐑𝐀𝐍𝐊𝐈𝐍𝐆𝐒* ⚔️
+╭─ 🎁 *𝐑𝐀𝐍𝐊𝐈𝐍𝐆𝐒* 🏆
 │ ✦ ${PREFIX}rankcoins
 │ ✦ ${PREFIX}ranknivel
 ╰────────────────────────────╯
 
-🕸️ ═══════ 🎃 ═══════ 🕸️
+╭─ 📩 *𝐒𝐎𝐏𝐎𝐑𝐓𝐄* 💌
+│ 🐛 ${PREFIX}reporte <texto> → Reportar bug
+│ 💡 ${PREFIX}sugerencia <texto> → Enviar idea
+╰────────────────────────────╯
+
+🎄 ═══════ 🎅 ═══════ 🎄
+   🍪 *¡Feliz Navidad!* 🍪
+
+📢 *Canal oficial:*
+${CANAL_URL}
+
+💬 *Grupo de soporte:*
+${GRUPO}
+
 ${FOOTER}
 `;
-
+// ✨ Se envía como texto, pero con la tarjeta (externalAdReply) y el "Ver canal"
       await sock.sendMessage(from, {
-        image: { url: pfp },
-        caption: bannerMenu + secciones,
-        mentions: [sender]
+        text: bannerMenu + secciones,
+        mentions: [sender],
+        contextInfo: {
+          // ── Tarjeta con la imagen ──
+          externalAdReply: {
+            title: '🎄 Levi-Bot — Menú Navideño',
+            body: 'Toca aquí para ver el canal oficial',
+            thumbnailUrl: pfp,
+            sourceUrl: CANAL_URL,
+            mediaType: 1,
+            showAdAttribution: false,
+            renderLargerThumbnail: true
+          },
+          // ── Botón "Ver canal" ──
+          forwardingScore: 1,
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: CANAL_JID,
+            newsletterName: CANAL_NOMBRE,
+            serverMessageId: 1
+          }
+        }
       }, { quoted: m });
 
-      await sock.sendMessage(from, {
-        text: `🎃 *𝐒𝐈𝐆𝐔𝐄 𝐍𝐔𝐄𝐒𝐓𝐑𝐎𝐒 𝐂𝐀𝐍𝐀𝐋𝐄𝐒* 🎃\n\n📢 *Canal:*\n${CANAL}\n\n💬 *Grupo:*\n${GRUPO}`
-      }, { quoted: m });
       break;
     }
+// ═══════════════════════════════════════════
+// PRUEBA / PBA — Ping con preview y Ver Canal
+// ═══════════════════════════════════════════
+case "prueba":
+case "pba": {
+  const { performance } = await import("perf_hooks");
 
+  const CANAL_JID = "120363415858789528@newsletter";
+  const CANAL_NOMBRE = "⍪❖Ƭʜᴇ Kakashi—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
+
+  const start = performance.now();
+
+  // 1. Reacción
+  await sock.sendMessage(from, {
+    react: { text: "🌿", key: m.key }
+  });
+
+  const end = performance.now();
+  const latencia = (end - start).toFixed(3);
+
+  const pingMsg = `ׄ ⋆ ⚙🌿 ̊. *𝐏𝐎𝐍𝐆*\n> ʚଓ 𝙑𝙚𝙡𝙤𝙘𝙞𝙙𝙖𝙙: *${latencia}* ms`;
+
+  // 2. Mensaje con tarjeta (externalAdReply) Y Ver Canal (forwarded)
+  await sock.sendMessage(from, {
+    text: pingMsg,
+    contextInfo: {
+      // ── Tarjeta con imagen y título ──
+      externalAdReply: {
+        title: 'Ping test ಥ⁠‿⁠ಥ',
+        body: `Latencia: ${latencia}ms`,
+        thumbnailUrl: "https://i.postimg.cc/Y95RC8Jt/IMG-20261104-WA0014(1).jpg",
+        sourceUrl: 'https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d', // Tu canal real
+        mediaType: 1,
+        showAdAttribution: true,
+        renderLargerThumbnail: false
+      },
+      // ── "Ver canal" al pie ──
+      forwardingScore: 1,
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: CANAL_JID,
+        newsletterName: CANAL_NOMBRE,
+        serverMessageId: 1
+      }
+    }
+  }, { quoted: m });
+
+  break;
+}
     // ═══════════════════════════════════════════
     // CREADORES
     // ═══════════════════════════════════════════
@@ -470,6 +575,144 @@ ${FOOTER}
       }
       break;
     }
+// ═══════════════════════════════════════════
+// REPORTE / SUGERENCIA → GitHub Issues
+// ═══════════════════════════════════════════
+case "reporte":
+case "report":
+case "sugerencia":
+case "sugerir": {
+  const textoReporte = args.join(" ").trim();
+
+  if (!textoReporte) {
+    return enviartexto(
+      `❌ *Uso:*\n` +
+      `• ${PREFIX}reporte <descripción del problema>\n` +
+      `• ${PREFIX}sugerencia <idea o mejora>\n\n` +
+      `Ejemplo: ${PREFIX}reporte El comando #play no descarga audio`
+    );
+  }
+
+  // 🔐 Verificar que el token esté configurado
+  const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+  if (!GITHUB_TOKEN) {
+    console.error("[Reporte] GITHUB_TOKEN no configurado");
+    return enviartexto(
+      `⚠️ El sistema de reportes no está disponible.\n\n` +
+      `_Falta configurar_ \`GITHUB_TOKEN\` _en el servidor._`
+    );
+  }
+
+  const GITHUB_OWNER = process.env.GITHUB_OWNER || "SergioOficial";
+  const GITHUB_REPO = process.env.GITHUB_REPO || "reportes-bot";
+
+  const usuario = m.pushName || "Anónimo";
+  const numero = jidToNumber(sender);
+  const fecha = new Date().toISOString().replace("T", " ").slice(0, 19);
+  const tipo = comando === "sugerencia" || comando === "sugerir" ? "💡 Sugerencia" : "📩 Reporte";
+
+  await sock.sendMessage(from, { react: { text: "📤", key: m.key } });
+  const waitMsg = await sock.sendMessage(from, { text: `📤 Enviando reporte al sitio...` }, { quoted: m });
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${GITHUB_TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json",
+          "User-Agent": "Levi-Bot"
+        },
+        body: JSON.stringify({
+          title: `${tipo} de ${usuario}`,
+          body:
+            `### ${tipo}\n\n` +
+            `${textoReporte}\n\n` +
+            `---\n` +
+            `**👤 Usuario:** ${usuario}\n` +
+            `**📱 Número:** +${numero}\n` +
+            `**📅 Fecha:** ${fecha}\n` +
+            `**🤖 Bot:** ${BOT_NAME} v${VERSION}\n` +
+            `**🔍 Comando:** \`${comando}\``
+        })
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `HTTP ${res.status}`);
+    }
+
+    const issue = await res.json();
+
+    await sock.sendMessage(from, {
+      text: issue.html_url,
+      edit: waitMsg.key
+    }).catch(async () => {
+      // Si edit falla, envía como nuevo mensaje
+      await enviartexto(`✅ *Reporte enviado correctamente.*\n🔗 ${issue.html_url}`);
+    });
+
+    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
+  } catch (err) {
+    console.error("[Reporte] Error:", err.message);
+    try {
+      await sock.sendMessage(from, {
+        text: `❌ No se pudo enviar el reporte.\n_${err.message}_`,
+        edit: waitMsg.key
+      });
+    } catch {
+      await enviartexto(`❌ No se pudo enviar el reporte. Intenta más tarde.`);
+    }
+    await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+  }
+
+  break;
+}
+
+// ═══════════════════════════════════════════
+// FIX / UPDATE — Actualizar desde GitHub
+// ═══════════════════════════════════════════
+case "fix":
+case "update": {
+  // Solo el owner puede usarlo
+  if (!isOwnerCheck(sender, sock)) {
+    return enviartexto("⚠️ Solo el dueño del bot puede usar este comando.");
+  }
+
+  await enviartexto("⏳ *Buscando actualizaciones en GitHub...*");
+
+  // Ejecutar git pull en la carpeta actual
+  exec("git pull", async (error, stdout, stderr) => {
+    if (error) {
+      console.error(`[Update] Error de Git:`, error);
+      return enviartexto(`❌ *Error al actualizar:*\n_${error.message}_`);
+    }
+
+    const output = stdout.trim();
+
+    if (output.includes("Already up to date.") || output.includes("Ya está actualizado.")) {
+      return enviartexto("ꕥ *Estado:* Todo está actualizado. No hay cambios nuevos.");
+    }
+
+    await enviartexto(
+      `✅ *Actualización completada:*\n\n` +
+      `\`\`\`\n${output}\n\`\`\`\n\n` +
+      `♻️ *Reiniciando el bot para aplicar los cambios...*`
+    );
+
+    // 🔄 Reiniciar el proceso después de 3 segundos
+    setTimeout(() => {
+      console.log("♻️ Reiniciando el bot tras actualización desde GitHub...");
+      process.exit(0); // Sale del proceso. BotKeep lo reiniciará solo.
+    }, 3000);
+  });
+
+  break;
+}
 
     // ═══════════════════════════════════════════
     // PING
@@ -1008,6 +1251,19 @@ case "play": {
     }
 
 case "code": {
+  const num = jidToNumber(sender);
+  
+  // Si el sender no es un número real (es LID o inválido)
+  if (!num || num.length < 8 || num.length > 15 || /^1\d{14}$/.test(num)) {
+    return enviartexto(
+      `⚠️ *No puedo detectar tu número real desde aquí.*\n\n` +
+      `Esto pasa cuando usas el comando desde un grupo con LID.\n\n` +
+      `👉 Usa el comando con tu número explícito:\n` +
+      `*${PREFIX}jadibot <tu número con código de país>*\n\n` +
+      `Ejemplo: *${PREFIX}jadibot 5354386852*`
+    );
+  }
+  
   await startSubbot(sock, sender, from, enviartexto, "code");
   break;
 }
@@ -1242,3 +1498,4 @@ startLevi().catch((err) => {
 console.error("❌ Error fatal al iniciar:", err);
   process.exit(1);
 });
+

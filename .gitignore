@@ -3,3 +3,9 @@ session/
 Sessions/
 .env
 *.log
+Archivos/
+supbots-loader.js
+README.md
+config.js
+package-lock.json
+package.json

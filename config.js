@@ -6,7 +6,8 @@ export const config = {
   // Lista de owners (múltiples)
   owners: [
     { name: "Sergio Gómez Gort",  number: "5358090650" },
-    { name: "Jeferson Fernández", number: "573005255807" }
+    { name: "Jeferson Fernández", number: "573005255807" },
+    { name: "Soport", number: "5358275267" }
   ],
 
   // Compatibilidad con el resto del código (index.js actual)
