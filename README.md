@@ -1,12 +1,10 @@
-
-
 <div align="center">
 
 # ⚔️ Levi-Bot
 
 ### Bot de WhatsApp Multi-Device con Baileys
 
-<img src="https://i.postimg.cc/v80bPmY0/IMG-20261101-WA0014.jpg" width="180" alt="Levi-Bot"/>
+<img src="https://i.postimg.cc/Y95RC8Jt/IMG-20261104-WA0014(1).jpg" width="180" alt="Levi-Bot"/>
 
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/levi-hub805/Levi-bot-)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -46,20 +44,20 @@ Hemos estado trabajando duro para llevar a Levi-Bot al siguiente nivel. Estas so
 
 ---
 
-## ⚠️ Errores Conocidos y Soluciones (¡Importante!)
+## ⚠️ Errores Conocidos y Soluciones
 
 Como el bot depende de servicios de terceros (APIs), a veces podemos experimentar fallos ajenos a nuestro código. Aquí te explicamos los más comunes:
 
 ### 🎵 Errores en el comando `#play` (YouTube)
-- **El problema:** El comando `play` intenta descargar el audio usando la librería `@denzy-official/youtube_scraper` y APIs de respaldo. YouTube cambia constantemente sus algoritmos de seguridad, lo que puede provocar errores como `Timed Out`, `fetch failed` o que el audio no se envíe.
-- **Solución:** Si el comando falla, intenta con otra canción. Si el error persiste por días, será necesario actualizar la librería en `package.json` o cambiar a un nuevo método de descarga en el código.
+- **El problema:** El comando `play` intenta descargar el audio usando librerías externas. YouTube cambia constantemente sus algoritmos de seguridad, lo que puede provocar errores como `Timed Out`, `fetch failed` o que el audio no se envíe.
+- **Solución:** Si el comando falla, intenta con otra canción. Si el error persiste por días, será necesario actualizar la librería en `package.json` o cambiar el método de descarga en el código.
 
 ### 📌 Errores en el comando `#pin` (Pinterest)
-- **El problema:** Antes usábamos APIs como `api.delirius.store` o `api.vreden.web.id`, las cuales cerraron sus servidores (Error `ENOTFOUND`). 
+- **El problema:** Antes usábamos APIs como `api.delirius.store`, las cuales cerraron sus servidores (Error `ENOTFOUND`). 
 - **Solución:** Hemos actualizado el código para usar `pinscrapper.vercel.app` y `api.siputzx.my.id`. Sin embargo, si Pinterest bloquea las IPs de estos servicios, el bot mostrará un mensaje de "No se encontraron resultados". Si esto pasa, habrá que buscar una nueva API.
 
 ### 🤖 Errores al usar `#code` en grupos (LIDs)
-- **El problema:** WhatsApp ahora oculta los números de teléfono en los grupos por privacidad (usando LIDs, que son IDs largos). Si usas `#code` en un grupo, el bot podría intentar crear un subbot con un número inválido y fallar con `Error 408`.
+- **El problema:** WhatsApp ahora oculta los números de teléfono en los grupos por privacidad (usando LIDs). Si usas `#code` en un grupo, el bot podría intentar crear un subbot con un número inválido y fallar con `Error 408`.
 - **Solución:** Para crear un subbot, usa el comando desde el **privado del bot** o usa el comando `.jadibot <tu número con código de país>`.
 
 ---
@@ -176,7 +174,7 @@ Usa #menu dentro del bot para ver la lista completa actualizada.
 
 ---
 
-🤝 Créditos
+🤝 Créditos y Contacto
 
 <table align="center">
   <tr>
@@ -185,6 +183,9 @@ Usa #menu dentro del bot para ver la lista completa actualizada.
         <img src="https://github.com/levi-hub805.png" width="100" alt="Jeferson"/><br/>
         <b>Jeferson Fernández</b><br/>
         <sub>💫 Creador y desarrollador</sub>
+      </a><br/><br/>
+      <a href="https://wa.me/573005255807">
+        <img src="https://img.shields.io/badge/WhatsApp-+57 300 525 5807-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Jeferson"/>
       </a>
     </td>
     <td align="center">
@@ -192,6 +193,9 @@ Usa #menu dentro del bot para ver la lista completa actualizada.
         <img src="https://github.com/SergioOficial.png" width="100" alt="Sergio"/><br/>
         <b>Sergio Gómez Gort</b><br/>
         <sub>🎃 Colaborador y mantenimiento</sub>
+      </a><br/><br/>
+      <a href="https://wa.me/5358090650">
+        <img src="https://img.shields.io/badge/WhatsApp-+53 580 906 50-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Sergio"/>
       </a>
     </td>
   </tr>
@@ -207,7 +211,6 @@ Usa #menu dentro del bot para ver la lista completa actualizada.
 
 Hecho con 💫 desde Cuba para el mundo
 
-https://img.shields.io/badge/Contacto-WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white
 https://img.shields.io/badge/Repositorio-Levi--bot--181717?style=flat&logo=github&logoColor=white
 
 </div>
