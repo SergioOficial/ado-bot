@@ -39,6 +39,8 @@ export default {
 ╭─ 🔔 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* ⭐
 │ 🏓 ${PREFIX}ping → Mide latencia
 │ 🧪 ${PREFIX}prueba → Test de velocidad
+│ 🌍 ${PREFIX}traducir <texto> → Traducir texto
+│ ⛅ ${PREFIX}clima <ciudad> → Clima actual
 │ 📱 ${PREFIX}qr <texto> → Generar código QR
 │ ℹ️ ${PREFIX}info → Info del bot
 │ 👑 ${PREFIX}creadores → Contactos
@@ -50,6 +52,8 @@ export default {
 │ 😂 ${PREFIX}meme → Meme aleatorio
 │ 🚢 ${PREFIX}ship <@user> → Calcula el amor
 │ 🐱 ${PREFIX}gato → Foto de gato aleatoria
+│ 🌸 ${PREFIX}waifu / ${PREFIX}neko → Imagen anime
+│ 🎱 ${PREFIX}8ball <pregunta> → Bola mágica
 ╰────────────────────────────╯
 
 ╭─ ☃️ *𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒* 🖌️
@@ -64,12 +68,19 @@ export default {
 │ 🔍 ${PREFIX}ytsearch <texto>
 │ 🖼️ ${PREFIX}toimg → Sticker a imagen
 │ 📘 ${PREFIX}fb <url> → Descargar video de Facebook
+│ 🎵 ${PREFIX}tt <enlace> → Descargar TikTok
 ╰────────────────────────────╯
 
 ╭─ 🧠 *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🤖
 │ ✨ ${PREFIX}ia <pregunta>
 │ 🎙️ ${PREFIX}iaaudio <pregunta> → IA que responde con voz
 │ 🎨 ${PREFIX}imagen <prompt> → Generar imagen IA
+╰────────────────────────────╯
+
+╭─ 👑 *𝐀𝐃𝐌𝐈𝐍𝐈𝐒𝐓𝐑𝐀𝐂𝐈𝐎́𝐍* 🛡️
+│ 🔒 ${PREFIX}close → Cerrar grupo (solo admins)
+│ 🔓 ${PREFIX}open → Abrir grupo (todos escriben)
+│ 🗑️ ${PREFIX}del → Borrar mensaje (responde a él)
 ╰────────────────────────────╯
 
 ╭─ 🌟 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾

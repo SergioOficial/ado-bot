@@ -16,7 +16,7 @@ import { config } from "./config.js";
 import chalk from "chalk";
 import cfonts from "cfonts";
 import { loadPlugins, commands } from "./pluginLoader.js";
-import './lib/database.js'; 
+import './lib/database.js';
 
 global.loadDatabase();
 
@@ -32,7 +32,7 @@ const color = (text, colorName = "green") => {
 const SUB_CONFIG_DIR = "./sub/SubConfigs";
 const SUB_SESSION_DIR = "./sub/SubBots";
 const activeSubbots = new Map();
-const MAX_SUBBOTS = 3;
+const MAX_SUBBOTS = 4; // Actualizado a 4 por el sistema premium
 
 function ensureSubDirs() {
   if (!fs.existsSync(SUB_CONFIG_DIR)) fs.mkdirSync(SUB_CONFIG_DIR, { recursive: true });
@@ -126,13 +126,13 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
       await new Promise(r => setTimeout(r, 2000));
       try {
         const code = await subSock.requestPairingCode(phoneNumber);
-        
-        const msg1 = await parentSock.sendMessage(remoteJid, { 
-          text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.` 
+
+        const msg1 = await parentSock.sendMessage(remoteJid, {
+          text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
         });
-        
+
         await new Promise(r => setTimeout(r, 800));
-        
+
         const msg2 = await parentSock.sendMessage(remoteJid, { text: `\`\`\`\n${code}\n\`\`\`` });
 
         // 🕒 Auto-eliminar los mensajes después de 60 segundos (cuando el código expira)
@@ -159,18 +159,18 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
     if (connection === "close") {
       const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
       activeSubbots.delete(phoneNumber);
-      
+
       // 🔄 CÓDIGO 515: WhatsApp pide reiniciar el socket
       if (reason === DisconnectReason.restartRequired) {
         console.log(`🔄 Subbot ${phoneNumber} requiere reinicio (515). Reconectando automáticamente...`);
-        return startSubbot(parentSock, senderJid, remoteJid, reply, method); // Volver a intentar sin borrar sesión
+        return startSubbot(parentSock, senderJid, remoteJid, reply, method); 
       }
 
       // Si la sesión no se vinculó (falló o expiró)
       if (!subSock.authState.creds.registered) {
         try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch (e) {}
-        await parentSock.sendMessage(remoteJid, { 
-          text: `❌ *Fallo al vincular el Sub-bot.*\n\nLa sesión ha sido eliminada. Puedes reintentar con *${config.prefix}jadibot ${phoneNumber}*` 
+        await parentSock.sendMessage(remoteJid, {
+          text: `❌ *Fallo al vincular el Sub-bot.*\n\nLa sesión ha sido eliminada. Puedes reintentar con *${config.prefix}jadibot ${phoneNumber}*`
         }).catch(() => {});
       } else if (reason === DisconnectReason.loggedOut) {
         try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch (e) {}
@@ -183,6 +183,7 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
 
   subSock.ev.on("messages.upsert", (ev) => handleMessages(subSock, ev));
 }
+
 // 🧙 BANNER
 const banner = cfonts.render("Levi|Bot", { font: "block", align: "center", gradient: ["cyan", "magenta"], lineHeight: 1, letterSpacing: 1, space: true, env: "node" });
 const subBanner = cfonts.render("⚔️ by Jeferson Fernández 💫 from Sergio Gómez Gort", { font: "console", align: "center", gradient: ["yellow", "cyan"] });
@@ -284,14 +285,38 @@ async function handleMessages(sock, { messages, type }) {
   const isGroup = remoteJid.endsWith("@g.us");
   const from = remoteJid;
   const sender = getRealSender(m);
-  const args = texto.slice(PREFIX.length).trim().split(/\s+/);
-  const comando = args.shift().toLowerCase();
-  const enviartexto = (txt) => sock.sendMessage(from, { text: txt }, { quoted: m });
 
-  console.log(`💬 [${from}] ${texto}`);
+  // 🕵️‍♂️ LÓGICA DE PRIVACIDAD (Si el comando termina en '-')
+  let textoLimpio = texto.slice(PREFIX.length).trim();
+  let esPrivado = false;
+
+  if (textoLimpio.length > 0) {
+    const firstWord = textoLimpio.split(/\s+/)[0];
+    if (firstWord.endsWith("-")) {
+      esPrivado = true;
+      // Eliminamos el guion del comando (ej: ping- -> ping)
+      textoLimpio = textoLimpio.replace(/^([^-]+)-/, '$1');
+      
+      // Si estamos en un grupo, borramos el mensaje original para que no lo vean
+      if (isGroup) {
+        await sock.sendMessage(from, { delete: m.key }).catch(() => {});
+      }
+    }
+  }
+
+  const args = textoLimpio.trim().split(/\s+/);
+  const comando = args.shift().toLowerCase();
+  
+  // 👇 Si es privado, el chat de destino es el usuario. Si no, es el grupo/chat original.
+  const targetChat = esPrivado ? sender : from;
+  
+  // Si es privado, no citamos el mensaje (porque es de otro chat)
+  const enviartexto = (txt) => sock.sendMessage(targetChat, { text: txt }, { quoted: esPrivado ? null : m });
+
+  console.log(`💬 [${from}] ${texto} ${esPrivado ? "🔒 (Privado)" : ""}`);
 
   const plugin = commands.get(comando);
-  if (!plugin) return enviartexto(`❓ Comando no reconocido. Usa ${PREFIX}menu.`);
+  if (!plugin) return; 
 
   if (plugin.isOwner && !isOwnerCheck(sender, sock)) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
@@ -299,8 +324,19 @@ async function handleMessages(sock, { messages, type }) {
 
   // Contexto inyectado a todos los plugins
   const ctx = {
-    sock, m, from, sender, isGroup, args, comando, texto,
-    enviartexto, PREFIX, BOT_NAME, config, db: global.db.data,
+    sock, 
+    m, 
+    from: targetChat, // 👈 Los plugins responderán al chat destino
+    sender, 
+    isGroup, 
+    args, 
+    comando, 
+    texto: textoLimpio, 
+    enviartexto, 
+    PREFIX, 
+    BOT_NAME, 
+    config, 
+    db: global.db.data,
     isOwnerCheck, startSubbot, stopSubbot, getActiveSubbots, loadSubConfig, saveSubConfig, jidToNumber, getTargetFromMsg
   };
 

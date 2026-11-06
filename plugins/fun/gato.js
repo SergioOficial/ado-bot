@@ -1,18 +1,21 @@
-import axios from "axios";
-
 export default {
   command: ["gato", "cat", "meow"],
   execute: async (ctx) => {
     const { sock, from, m, enviartexto } = ctx;
-    
     await sock.sendMessage(from, { react: { text: "🐱", key: m.key } });
 
     try {
-      const res = await axios.get("https://api.thecatapi.com/v1/images/search");
-      const imgUrl = res.data[0].url;
+      // Obtener URL del gato
+      const res = await fetch("https://api.thecatapi.com/v1/images/search");
+      const data = await res.json();
+      const imgUrl = data[0].url;
 
-      const imgRes = await axios.get(imgUrl, { responseType: 'arraybuffer' });
-      const buffer = Buffer.from(imgRes.data, 'binary');
+      // Descargar con fetch
+      const imgRes = await fetch(imgUrl);
+      if (!imgRes.ok) throw new Error("Error al descargar la imagen del gato.");
+      
+      const buffer = Buffer.from(await imgRes.arrayBuffer());
+      if (buffer.length === 0) throw new Error("La imagen del gato llegó vacía.");
 
       await sock.sendMessage(from, {
         image: buffer,
@@ -21,7 +24,8 @@ export default {
 
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
     } catch (e) {
-      await enviartexto("❌ No se pudo obtener la foto del gato.");
+      console.error("Error en comando gato:", e.message);
+      await enviartexto(`❌ Error al obtener el gato: ${e.message}`);
     }
   }
 };

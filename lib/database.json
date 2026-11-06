@@ -10,8 +10,14 @@
       "streak": 1,
       "coins": 30000,
       "lastDaily": 1793949982404
+    },
+    "150062483169505@lid": {
+      "premium": true
     }
   },
   "settings": {},
-  "chats": {}
+  "chats": {},
+  "codes": {
+    "LEVI-K6SS": true
+  }
 }
