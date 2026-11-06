@@ -7,14 +7,15 @@ export const config = {
   owners: [
     { name: "Sergio Gómez Gort",  number: "5358090650" },
     { name: "Jeferson Fernández", number: "573005255807" },
-    { name: "Soport", number: "5358275267" }
+    { name: "Soport", number: "5358275267" },
+    { name: "atencion al cliente bots", number: "50494874330" }
   ],
 
   // Compatibilidad con el resto del código (index.js actual)
-  ownerName: "Sergio Gómez Gort 🎃 & Jeferson Fernández 💫",
+  ownerName: "Sergio Dev & Jeferson Fernández 💫",
   ownerNumber: "5358090650",
 
-  version: "1.0.0",
+  version: "1.0.2",
   footer: "Levi-Bot by Jeferson Fernández from Sergio Gómez Gort",
 
   // CLAVES DE API

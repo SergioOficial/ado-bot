@@ -1,8 +1,10 @@
 {
   "users": {
     "5358090650@s.whatsapp.net": {
-      "coins": 36644,
-      "lastWork": 1793913501013
+      "coins": 51914,
+      "lastWork": 1793940805531,
+      "streak": 1,
+      "lastDaily": 1793940814572
     }
   },
   "settings": {},
