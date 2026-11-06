@@ -1,8 +1,9 @@
+
 <div align="center">
 
 # ⚔️ Levi-Bot
 
-### Bot de WhatsApp Multi-Device con Baileys
+### Bot de WhatsApp Multi-Device con Arquitectura de Plugins (Baileys)
 
 <img src="https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg" width="180" alt="Levi-Bot"/>
 
@@ -17,91 +18,91 @@
 
 ---
 
-## 🚀 Últimas Novedades (Update Masivo)
+## 🚀 Últimas Novedades (Migración a Plugins)
 
-Hemos estado trabajando duro para llevar a Levi-Bot al siguiente nivel. Estas son las actualizaciones más recientes:
+Hemos reescrito la arquitectura del bot para hacerlo **100% modular**. Estas son las actualizaciones más recientes:
 
-- 🗄️ **Migración a Base de Datos Local (`database.json`)**: Ahora los datos de usuarios, economía y RPG se guardan en un solo archivo de forma segura y con auto-guardado.
+- 🧩 **Sistema de Plugins (Modular)**: El `index.js` ahora es ligero y solo maneja la conexión. Todos los comandos viven en la carpeta `plugins/` organizados por categorías (info, economía, RPG, stickers, etc.).
+- ⚡ **Recarga en Caliente**: El comando `#fix` ahora hace `git pull` y recarga los plugins en memoria sin necesidad de reiniciar el bot.
+- 🗄️ **Base de Datos Local (`database.json`)**: Auto-guardado para perfiles, economía y RPG, evitando corrupción de datos.
 - 🎨 **Stickers PRO**: Nuevo sistema para crear stickers avanzados (`#s`), generar stickers estilo *Brat* (`#brat`) y buscar packs (`#stickers`).
 - 📌 **Pinterest Mejorado**: Ahora busca y envía **múltiples imágenes** (álbum deslizable) en lugar de una sola.
 - 🔍 **YouTube Search**: Nuevo comando `#ytsearch` con vista previa (preview) interactiva.
-- 🐛 **Sistema de Reportes**: Comandos `#reporte` y `#sugerencia` para enviar bugs directamente al GitHub.
-- ♻️ **Auto-Actualización**: Comando `#fix` para que los Owners actualicen el bot desde GitHub sin apagarlo manualmente.
-- 🛡️ **Seguridad**: El archivo `database.json` y las sesiones han sido añadidos al `.gitignore` para proteger los datos privados.
-
----
-
-## ✨ Características
-
-- 🎮 **Sistema RPG** — `#trabajar`, `#cazar`, `#clase`, `#perfilrpg`
-- 💰 **Economía** — `#daily`, `#bal`, `#work`, `#rankcoins`
-- 🧾 **Perfiles** — `#reg`, `#perfil`, `#eliminarperfil`
-- 🎨 **Multimedia** — `#pinterest`, `#play`, `#toimg`, `#ytsearch`
-- 🖌️ **Stickers** — `#s`, `#brat`, `#stickers`
-- 🧠 **Inteligencia Artificial** — `#ia`, `#chatgpt`, `#gpt`
-- 🤖 **Subbots** — `#jadibot`, `#bots`, `#stopbot`
-- ⚙️ **Utilidades** — `#ping`, `#info`, `#menu`, `#fix`
 
 ---
 
 ## ⚠️ Errores Conocidos y Soluciones
 
-Como el bot depende de servicios de terceros (APIs), a veces podemos experimentar fallos ajenos a nuestro código. Aquí te explicamos los más comunes:
+El bot depende de servicios de terceros (APIs), por lo que a veces podemos experimentar fallos ajenos a nuestro código:
 
-### 🎵 Errores en el comando `#play` (YouTube)
-- **El problema:** El comando `play` intenta descargar el audio usando librerías externas. YouTube cambia constantemente sus algoritmos de seguridad, lo que puede provocar errores como `Timed Out`, `fetch failed` o que el audio no se envíe.
-- **Solución:** Si el comando falla, intenta con otra canción. Si el error persiste por días, será necesario actualizar la librería en `package.json` o cambiar el método de descarga en el código.
+### 🎵 Errores en `#play` (YouTube)
+- **Problema:** YouTube cambia constantemente sus algoritmos, lo que puede causar errores `Timed Out` o que el audio no se envíe.
+- **Solución:** Si falla, intenta con otra canción. Si persiste, actualiza las dependencias o revisa las APIs de descarga en `plugins/descargas/play.js`.
 
-### 📌 Errores en el comando `#pin` (Pinterest)
-- **El problema:** Antes usábamos APIs como `api.delirius.store`, las cuales cerraron sus servidores (Error `ENOTFOUND`). 
-- **Solución:** Hemos actualizado el código para usar `pinscrapper.vercel.app` y `api.siputzx.my.id`. Sin embargo, si Pinterest bloquea las IPs de estos servicios, el bot mostrará un mensaje de "No se encontraron resultados". Si esto pasa, habrá que buscar una nueva API.
+### 📌 Errores en `#pin` (Pinterest)
+- **Problema:** Algunas APIs de Pinterest cierran sus servidores (Error `ENOTFOUND`).
+- **Solución:** Usamos `pinscrapper.vercel.app` como principal. Si falla, el bot mostrará "No se encontraron resultados". Requiere actualizar el endpoint en el futuro si el servicio muere.
 
 ### 🤖 Errores al usar `#code` en grupos (LIDs)
-- **El problema:** WhatsApp ahora oculta los números de teléfono en los grupos por privacidad (usando LIDs). Si usas `#code` en un grupo, el bot podría intentar crear un subbot con un número inválido y fallar con `Error 408`.
-- **Solución:** Para crear un subbot, usa el comando desde el **privado del bot** o usa el comando `.jadibot <tu número con código de país>`.
+- **Problema:** WhatsApp oculta los números en grupos (LIDs). Usar `#code` en un grupo puede fallar con `Error 408`.
+- **Solución:** Usa el comando desde el **privado del bot** o usa `.jadibot <tu número con código de país>`.
 
 ---
 
-## 🚀 Instalación en Termux (Android)
+## 📁 Estructura del Proyecto (Modular)
 
-### 1️⃣ Actualizar paquetes
+```text
+Levi-bot-/
+├── index.js              # Núcleo (Conexión Baileys + Cargador de plugins)
+├── pluginLoader.js       # Buscador y cargador de comandos
+├── database.js           # Sistema de base de datos JSON auto-guardable
+├── database.json         # Datos de usuarios (NO SUBIR A GITHUB)
+├── config.js             # Configuración global (Prefijo, Owners, etc.)
+├── package.json          # Dependencias
+└── plugins/              # ¡Aquí viven todos los comandos!
+    ├── info/             # menu, ping, info, creadores, reporte
+    ├── economia/         # daily, work, bal, rankcoins
+    ├── rpg/              # trabajar, cazar, clase, ranknivel
+    ├── perfil/           # reg, perfil, eliminarperfil
+    ├── descargas/        # play, pinterest, ytsearch, toimg
+    ├── stickers/         # sticker, brat, stickers (búsqueda)
+    ├── ia/               # ia, chatgpt, gpt
+    ├── subbots/          # jadibot, code, stopbot, bots, addowner
+    └── owner/            # fix, setbotname, setbotbio, setbotpp
+```
+
+---
+
+🚀 Instalación en Termux (Android)
+
+1️⃣ Actualizar paquetes e instalar dependencias del sistema
 
 ```bash
 pkg update && pkg upgrade -y
+pkg install git nodejs-lts ffmpeg libvips -y
 ```
 
-2️⃣ Instalar git, Node.js y FFmpeg (necesario para stickers)
-
-```bash
-pkg install git nodejs-lts ffmpeg -y
-```
-
-3️⃣ Clonar el repositorio
+2️⃣ Clonar el repositorio
 
 ```bash
 git clone https://github.com/levi-hub805/Levi-bot-.git
-```
-
-4️⃣ Entrar a la carpeta
-
-```bash
 cd Levi-bot-
 ```
 
-5️⃣ Instalar dependencias
+3️⃣ Instalar dependencias de Node
 
 ```bash
 npm install
 ```
 
-⚠️ Nota sobre sharp en Termux: Si tienes problemas con sharp (por la arquitectura de Android), ejecuta:
+⚠️ Nota sobre sharp en Termux: Si tienes problemas de compilación, ejecuta:
 
 ```bash
 npm install @img/sharp-wasm32 --force
 npm install sharp --force
 ```
 
-6️⃣ Iniciar el bot
+4️⃣ Iniciar el bot
 
 ```bash
 npm start
@@ -124,9 +125,7 @@ En WhatsApp ve a Dispositivos vinculados → Vincular con número de teléfono e
 
 ---
 
-⚙️ Configuración
-
-Edita config.js para personalizar los datos del bot:
+⚙️ Configuración (config.js)
 
 ```javascript
 export const config = {
@@ -143,26 +142,11 @@ export const config = {
 
 ---
 
-📁 Estructura del proyecto
-
-```
-Levi-bot-/
-├── index.js              # Archivo principal (comandos)
-├── database.js           # Conexión y guardado de datos
-├── database.json         # Base de datos local (NO SUBIR)
-├── config.js             # Configuración global
-├── package.json          # Dependencias
-├── Sessions/             # Sesiones de subbots (NO SUBIR)
-└── session/              # Sesión principal (NO SUBIR)
-```
-
----
-
 🧩 Comandos Principales
 
 Categoría Comandos
-🎮 RPG trabajar, cazar, clase, reiniciarrpg, perfilrpg
-💰 Economía daily, work, bal, rankcoins, ranknivel
+🎮 RPG trabajar, cazar, clase, reiniciarrpg, ranknivel
+💰 Economía daily, work, bal, rankcoins
 🧾 Perfil reg, perfil, eliminarperfil
 🎨 Multimedia pinterest, play, ytsearch, toimg
 🖌️ Stickers s, brat, stickers
