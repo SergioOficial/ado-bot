@@ -82,14 +82,22 @@ async function stopSubbot(phoneNumber) {
 
 async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   const phoneNumber = jidToNumber(senderJid);
+
   if (!phoneNumber || phoneNumber.length < 8 || phoneNumber.length > 15 || /^1\d{14}$/.test(phoneNumber)) {
     return reply(`❌ *Número inválido:* \`${phoneNumber}\`\n\nParece un LID.\n👉 Usa: *${config.prefix}jadibot 5354386852*`);
   }
-  if (activeSubbots.size >= MAX_SUBBOTS) return reply(`⚠️ Límite de subbots alcanzado (${MAX_SUBBOTS}).`);
-  if (activeSubbots.has(phoneNumber)) return reply(`⚠️ Ya tienes un subbot activo.`);
 
-  ensureSubDirs();
-  const sessionPath = `${SUB_SESSION_DIR}/${phoneNumber}`;
+  if (activeSubbots.size >= MAX_SUBBOTS) {
+    return reply(`⚠️ Límite de subbots alcanzado (${MAX_SUBBOTS}).`);
+  }
+
+  if (activeSubbots.has(phoneNumber)) {
+    return reply(`⚠️ Ya tienes un subbot activo (${phoneNumber}).`);
+  }
+
+  const sessionPath = `./sub/${phoneNumber}`;
+  if (!fs.existsSync("./sub")) fs.mkdirSync("./sub", { recursive: true });
+
   const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
   const { version } = await fetchLatestWaWebVersion();
 
@@ -107,35 +115,66 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   subSock.ev.on("creds.update", saveCreds);
 
   let pairingCodeRequested = false;
+  let deleteTimeout = null;
 
   subSock.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
+    // 1. Pedir código y programar auto-eliminación
     if (method === "code" && !subSock.authState.creds.registered && !pairingCodeRequested && qr) {
       pairingCodeRequested = true;
       await new Promise(r => setTimeout(r, 2000));
       try {
         const code = await subSock.requestPairingCode(phoneNumber);
-        await parentSock.sendMessage(remoteJid, { text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.` });
+        
+        const msg1 = await parentSock.sendMessage(remoteJid, { 
+          text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.` 
+        });
+        
         await new Promise(r => setTimeout(r, 800));
-        await parentSock.sendMessage(remoteJid, { text: `\`\`\`\n${code}\n\`\`\`` });
+        
+        const msg2 = await parentSock.sendMessage(remoteJid, { text: `\`\`\`\n${code}\n\`\`\`` });
+
+        // 🕒 Auto-eliminar los mensajes después de 60 segundos (cuando el código expira)
+        if (deleteTimeout) clearTimeout(deleteTimeout);
+        deleteTimeout = setTimeout(async () => {
+          try { await parentSock.sendMessage(remoteJid, { delete: msg1.key }); } catch {}
+          try { await parentSock.sendMessage(remoteJid, { delete: msg2.key }); } catch {}
+        }, 60000);
+
       } catch (err) {
         pairingCodeRequested = false;
         await parentSock.sendMessage(remoteJid, { text: `❌ Error pidiendo parincode: ${err.message}` });
       }
     }
 
+    // 2. Si conecta correctamente
     if (connection === "open") {
+      if (deleteTimeout) clearTimeout(deleteTimeout); // Cancelar borrado si ya conectó
       activeSubbots.set(phoneNumber, subSock);
       await parentSock.sendMessage(remoteJid, { text: `✅ *Sub-bot conectado*\n📱 ${phoneNumber}` });
     }
 
+    // 3. Manejo de cierre y errores
     if (connection === "close") {
       const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
       activeSubbots.delete(phoneNumber);
-      pairingCodeRequested = false;
-      if (reason === DisconnectReason.loggedOut) {
-        await parentSock.sendMessage(remoteJid, { text: `❌ Sub-bot ${phoneNumber} cerró sesión.` });
+      
+      // 🔄 CÓDIGO 515: WhatsApp pide reiniciar el socket
+      if (reason === DisconnectReason.restartRequired) {
+        console.log(`🔄 Subbot ${phoneNumber} requiere reinicio (515). Reconectando automáticamente...`);
+        return startSubbot(parentSock, senderJid, remoteJid, reply, method); // Volver a intentar sin borrar sesión
+      }
+
+      // Si la sesión no se vinculó (falló o expiró)
+      if (!subSock.authState.creds.registered) {
+        try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch (e) {}
+        await parentSock.sendMessage(remoteJid, { 
+          text: `❌ *Fallo al vincular el Sub-bot.*\n\nLa sesión ha sido eliminada. Puedes reintentar con *${config.prefix}jadibot ${phoneNumber}*` 
+        }).catch(() => {});
+      } else if (reason === DisconnectReason.loggedOut) {
+        try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch (e) {}
+        await parentSock.sendMessage(remoteJid, { text: `❌ El Sub-bot ${phoneNumber} cerró sesión.` });
       } else {
         console.log(`♻️ Subbot ${phoneNumber} cerrado (código ${reason}).`);
       }
@@ -144,7 +183,6 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
 
   subSock.ev.on("messages.upsert", (ev) => handleMessages(subSock, ev));
 }
-
 // 🧙 BANNER
 const banner = cfonts.render("Levi|Bot", { font: "block", align: "center", gradient: ["cyan", "magenta"], lineHeight: 1, letterSpacing: 1, space: true, env: "node" });
 const subBanner = cfonts.render("⚔️ by Jeferson Fernández 💫 from Sergio Gómez Gort", { font: "console", align: "center", gradient: ["yellow", "cyan"] });

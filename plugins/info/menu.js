@@ -27,7 +27,7 @@ export default {
 │ 👥 *Usuarios:* ∞
 │ 🧩 *Librería:* Baileys Multi Device
 ╰──────────────────────────────╯
-`;
+> Usa ${PREFIX}code para ser sub-bot`;
 
     const secciones = `
 ╭─ 🎁 *𝐂𝐎𝐈𝐍𝐒 / 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* ❄️
@@ -84,15 +84,20 @@ export default {
 │ ✦ ${PREFIX}clase
 ╰────────────────────────────╯
 
-╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒* 🦌
-│ 🚀 ${PREFIX}jadibot <número>
-│ 🛑 ${PREFIX}stopbot
-│ 📋 ${PREFIX}bots
+╭─ 🤖 *𝐒𝐔𝐁-𝐁𝐎𝐓𝐒 / 𝐏𝐑𝐄𝐌* 🦌
+│ 🚀 ${PREFIX}code → Crear Sub-Bot (Gratis)
+│ 💎 ${PREFIX}canjear <código> → Activar Premium
+│ 💎 ${PREFIX}jadibot <número> → Crear Prem-Bot (Premium)
+│ 🛑 ${PREFIX}stopbot → Detener mi subbot
+│ 📋 ${PREFIX}bots → Listar subbots activos
 ╰────────────────────────────╯
 
 ╭─ ⚙️ *𝐎𝐖𝐍𝐄𝐑* 👑
 │ ♻️ ${PREFIX}fix → Actualizar desde GitHub
 │ 📤 ${PREFIX}backup → Guardar en GitHub
+│ 🔑 ${PREFIX}gencode → Crear código Premium
+│ 💎 ${PREFIX}addpremium @user → Dar Premium
+│ ❌ ${PREFIX}delpremium @user → Quitar Premium
 ╰────────────────────────────╯
 
 🎄 ═══════ 🎅 ═══════ 🎄
