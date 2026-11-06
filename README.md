@@ -1,3 +1,4 @@
+
 <div align="center">
 
 # ⚔️ Levi-Bot
@@ -17,34 +18,40 @@
 
 ---
 
-## 🚀 Últimas Novedades (Migración a Plugins)
+## 🚀 Últimas Novedades (Migración a Plugins y Premium)
 
 Hemos reescrito la arquitectura del bot para hacerlo **100% modular**. Estas son las actualizaciones más recientes:
 
-- 🧩 **Sistema de Plugins (Modular)**: El `index.js` ahora es ligero y solo maneja la conexión. Todos los comandos viven en la carpeta `plugins/` organizados por categorías (info, economía, RPG, stickers, etc.).
-- ⚡ **Recarga en Caliente**: El comando `#fix` ahora hace `git pull` y recarga los plugins en memoria sin necesidad de reiniciar el bot.
-- 🗄️ **Base de Datos Local (`database.json`)**: Auto-guardado para perfiles, economía y RPG, evitando corrupción de datos.
-- 🎨 **Stickers PRO**: Nuevo sistema para crear stickers avanzados (`#s`), generar stickers estilo *Brat* (`#brat`) y buscar packs (`#stickers`).
-- 📌 **Pinterest Mejorado**: Ahora busca y envía **múltiples imágenes** (álbum deslizable) en lugar de una sola.
-- 🔍 **YouTube Search**: Nuevo comando `#ytsearch` con vista previa (preview) interactiva.
+- 🧩 **Sistema de Plugins (Modular)**: El `index.js` ahora es ligero y solo maneja la conexión. Todos los comandos viven en la carpeta `plugins/` organizados por categorías.
+- 💎 **Sistema Premium**: Nuevo sistema de rangos. Los usuarios pueden canjear códigos (`#canjear`) para obtener acceso al comando `#jadibot` (Prem-Bots).
+- 🤖 **Sub-Bots vs Prem-Bots**: 
+  - `#code`: Crea un sub-bot con **tu propio número** (Gratis, límite de 4 por servidor).
+  - `#jadibot <número>`: Crea un bot clonado para **otro número** (Exclusivo Premium/Owners).
+- 🎙️ **IA de Voz**: El comando `#iaaudio` responde a tus preguntas con notas de voz generadas por IA.
+- ⚡ **Recarga en Caliente**: El comando `#fix` hace `git pull` y recarga los plugins sin reiniciar el bot.
+- 🗄️ **Base de Datos Local (`database.json`)**: Auto-guardado para perfiles, economía, RPG y códigos Premium.
 
 ---
 
 ## ⚠️ Errores Conocidos y Soluciones
 
-El bot depende de servicios de terceros (APIs), por lo que a veces podemos experimentar fallos ajenos a nuestro código:
-
-### 🎵 Errores en `#play` (YouTube)
-- **Problema:** YouTube cambia constantemente sus algoritmos, lo que puede causar errores `Timed Out` o que el audio no se envíe.
-- **Solución:** Si falla, intenta con otra canción. Si persiste, actualiza las dependencias o revisa las APIs de descarga en `plugins/descargas/play.js`.
-
-### 📌 Errores en `#pin` (Pinterest)
-- **Problema:** Algunas APIs de Pinterest cierran sus servidores (Error `ENOTFOUND`).
-- **Solución:** Usamos `pinscrapper.vercel.app` como principal. Si falla, el bot mostrará "No se encontraron resultados". Requiere actualizar el endpoint en el futuro si el servicio muere.
+El bot depende de servicios de terceros (APIs) y de la red de WhatsApp, por lo que a veces podemos experimentar fallos:
 
 ### 🤖 Errores al usar `#code` en grupos (LIDs)
-- **Problema:** WhatsApp oculta los números en grupos (LIDs). Usar `#code` en un grupo puede fallar con `Error 408`.
-- **Solución:** Usa el comando desde el **privado del bot** o usa `.jadibot <tu número con código de país>`.
+- **Problema:** WhatsApp oculta los números en los grupos (LIDs). Usar `#code` en un grupo puede fallar con `Error 408 Connection Closed` porque el bot intenta vincular un ID inválido.
+- **Solución:** Usa el comando `#code` desde el **privado del bot**. Si estás en un grupo, pide a un usuario Premium que use `#jadibot <número>`.
+
+### 🔄 Bucle de reconexión en Subbots (Error 515)
+- **Problema:** Al vincular un subbot, WhatsApp puede cerrar la conexión con el código `515` (Restart Required), haciendo que el bot se quede colgado.
+- **Solución:** Ya hemos añadido un auto-reinicio en el código. Si el subbot detecta el 515, se reiniciará automáticamente sin borrar la sesión para completar la vinculación.
+
+### 🎵 Errores en `#play` (YouTube)
+- **Problema:** YouTube cambia constantemente sus algoritmos, causando errores `Timed Out` o fallos al enviar el audio.
+- **Solución:** Si falla, intenta con otra canción. Si persiste, revisa las APIs de descarga en `plugins/descargas/play.js`.
+
+### 📌 Errores en `#pin` (Pinterest)
+- **Problema:** El error `Media upload failed on all hosts` ocurre cuando Baileys intenta subir la imagen directamente desde la URL.
+- **Solución:** Hemos actualizado el código para que descargue la imagen usando `axios` (como Buffer) antes de enviarla, evitando el bloqueo de WhatsApp.
 
 ---
 
@@ -65,9 +72,10 @@ Levi-bot-/
     ├── perfil/           # reg, perfil, eliminarperfil
     ├── descargas/        # play, pinterest, ytsearch, toimg
     ├── stickers/         # sticker, brat, stickers (búsqueda)
-    ├── ia/               # ia, chatgpt, gpt
-    ├── subbots/          # jadibot, code, stopbot, bots, addowner
-    └── owner/            # fix, setbotname, setbotbio, setbotpp
+    ├── ia/               # ia, iaaudio, imagen
+    ├── subbots/          # code, jadibot, stopbot, bots
+    ├── premium/          # canjear
+    └── owner/            # fix, gencode, addpremium, setbotname, etc.
 ```
 
 ---
@@ -128,7 +136,7 @@ En WhatsApp ve a Dispositivos vinculados → Vincular con número de teléfono e
 
 ```javascript
 export const config = {
-  prefix:".",
+  prefix: ".",
   botName: "Levi-Bot ⚔️",
 
   // Lista de owners (múltiples)
@@ -139,7 +147,7 @@ export const config = {
     { name: "atencion al cliente bots", number: "50494874330" }
   ],
 
-  // Compatibilidad con el resto del código (index.js actual)
+  // Compatibilidad con el resto del código
   ownerName: "Sergio Dev & Jeferson Fernández 💫",
   ownerNumber: "5358090650",
 
@@ -161,11 +169,13 @@ Categoría Comandos
 🎮 RPG trabajar, cazar, clase, reiniciarrpg, ranknivel
 💰 Economía daily, work, bal, rankcoins
 🧾 Perfil reg, perfil, eliminarperfil
-🎨 Multimedia pinterest, play, ytsearch, toimg
+🎨 Multimedia pinterest, play, ytsearch, toimg, gato
 🖌️ Stickers s, brat, stickers
-🧠 IA ia, chatgpt, gpt
-🤖 Subbots jadibot, bots, stopbot, addowner, delowner
-⚙️ Utilidades menu, ping, prueba, info, fix, reporte
+🧠 IA ia, iaaudio, imagen
+🤖 Subbots/Prem code (Gratis), jadibot <num> (Premium), bots, stopbot
+💎 Premium canjear <código>
+⚙️ Utilidades menu, ping, prueba, info, fix, reporte, wiki, qr, tts
+👑 Owners gencode, addpremium, delpremium, backup
 
 Usa #menu dentro del bot para ver la lista completa actualizada.
 
