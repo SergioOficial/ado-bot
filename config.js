@@ -15,8 +15,8 @@ export const config = {
   ownerName: "Sergio Dev & Jeferson Fernández 💫",
   ownerNumber: "5358090650",
 
-  version: "1.0.2",
-  footer: "Levi-Bot by Jeferson Fernández from Sergio Gómez Gort",
+  version: "1.0.3",
+  footer: "Levi-Bot by Wyra Studios",
 
   // CLAVES DE API
   apis: {

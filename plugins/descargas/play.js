@@ -1,39 +1,64 @@
+import axios from "axios";
+import playdl from "play-dl";
+
 export default {
   command: ["play", "mp3", "ytmp3", "ytaudio", "playaudio"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
     const text = args.join(" ").trim();
-    if (!text) return enviartexto("《✧》Menciona el nombre o URL del video.");
+
+    if (!text) {
+      return enviartexto(`《✧》Menciona el nombre o URL del video que deseas descargar.`);
+    }
+
     await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
+
     try {
+      // 1. Buscar el video con yt-search
       const { default: yts } = await import("yt-search");
-      const videoMatch = text.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/))([a-zA-Z0-9_-]{11})/);
-      const query = videoMatch ? "https://youtu.be/" + videoMatch[1] : text;
-      let url = query, title = null, thumbBuffer = null;
-      try {
-        const search = await yts(query);
-        if (search.all.length) {
-          const v = videoMatch ? search.videos.find(x => x.videoId === videoMatch[1]) || search.all[0] : search.all[0];
-          url = v.url; title = v.title;
-          const tr = await fetch(v.image); thumbBuffer = Buffer.from(await tr.arrayBuffer());
-          await sock.sendMessage(from, { image: thumbBuffer, caption: `➩ Descargando › *${title}*\n\n> ❖ Canal › *${v.author?.name || "Desconocido"}*\n> ⴵ Duración › *${v.timestamp}*` }, { quoted: m });
-        }
-      } catch (e) {}
-      // APIs de descarga (simplificado)
-      const APIs = { adonix: { url: 'https://api.adonix.com', key: 'Yuki-WaBot' }, stellar: { url: 'https://api.stellarwa.xyz', key: 'YukiWaBot' }, nekolabs: { url: 'https://api.nekolabs.com' } };
-      const apis = [
-        { endpoint: `${APIs.adonix.url}/download/ytaudio?apikey=${APIs.adonix.key}&url=${encodeURIComponent(url)}`, extractor: res => res?.data?.url },
-        { endpoint: `${APIs.stellar.url}/dl/ytmp3?url=${encodeURIComponent(url)}&quality=256&key=${APIs.stellar.key}`, extractor: res => res.data?.dl },
-        { endpoint: `https://tester-web.onrender.com/api/download?url=${encodeURIComponent(url)}`, extractor: res => res.result?.downloadUrl }
-      ];
-      let audioUrl = null;
-      for (const { endpoint, extractor } of apis) {
-        try { const r = await fetch(endpoint).then(x => x.json()); const link = extractor(r); if (link) { audioUrl = link; break; } } catch {}
+      const search = await yts(text);
+      
+      if (!search.all || search.all.length === 0) {
+        throw new Error("No se encontraron resultados en YouTube.");
       }
-      if (!audioUrl) return enviartexto("《✧》 No se pudo descargar el audio.");
-      const audioRes = await fetch(audioUrl); const audioBuffer = Buffer.from(await audioRes.arrayBuffer());
-      await sock.sendMessage(from, { audio: audioBuffer, fileName: `${title || "audio"}.mp3`, mimetype: "audio/mpeg" }, { quoted: m });
+
+      const videoUrl = search.all[0].url;
+      const title = search.all[0].title;
+
+      // 2. Obtener el enlace de audio con play-dl
+      const streamInfo = await playdl.stream(videoUrl, { quality: 2 });
+      const audioUrl = streamInfo.url;
+
+      if (!audioUrl) throw new Error("No se pudo obtener el enlace de audio.");
+
+      // 3. Descargar el audio con axios como Buffer
+      const audioRes = await axios.get(audioUrl, {
+        responseType: 'arraybuffer',
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "*/*",
+          "Range": "bytes=0-"
+        },
+        timeout: 30000
+      });
+
+      const buffer = Buffer.from(audioRes.data, 'binary');
+
+      if (buffer.length === 0) throw new Error("El archivo de audio llegó vacío.");
+
+      // 4. Enviar el audio
+      await sock.sendMessage(from, {
+        audio: buffer,
+        fileName: `${title}.mp3`,
+        mimetype: "audio/mpeg"
+      }, { quoted: m });
+
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
-    } catch (e) { await enviartexto(`❌ Error: ${e.message}`); }
+
+    } catch (e) {
+      console.error("Error en play (play-dl):", e.message);
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      await enviartexto(`❌ Error al procesar la música.\n_${e.message}_`);
+    }
   }
 };

@@ -1,7 +1,8 @@
 import fs from "fs";
+import axios from "axios";
 
 export default {
-  command: ["menu", "help"],
+  command: ["menu", "help", "menú", "ayuda"],
   execute: async (ctx) => {
     const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX } = ctx;
     const numero = sender.split("@")[0];
@@ -16,8 +17,7 @@ export default {
 
     const bannerMenu = `
 🎄 ═══════ 🎅 ═══════ 🎄
-> ❄️ *¡Hola!* @${numero} ❄️
-    Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 ☃️
+> ❄️ *¡Hola!* @${numero} ❄️ Soy 𝐋𝐄𝐕𝐈-𝐁𝐎𝐓 ☃️
   🎁 *Menú Navideño* 🎁
 
 ╭┈ࠢ͜┅͜─༻ 🎄 *𝐁𝐎𝐓 𝐈𝐍𝐅𝐎* 🎄 ༺─┅ࠢ͜┈
@@ -111,6 +111,22 @@ export default {
 │ ❌ ${PREFIX}delpremium @user → Quitar Premium
 ╰────────────────────────────╯
 
+╭─ *𝐏𝐑𝐔𝐄𝐕𝐀*
+> *PUEDE QUE YA FUNCIONEN ALGUNOS DE ESTOS PERO SUGERIMOS NO USARLOS*
+│ 😂 ${PREFIX}meme → Meme aleatorio
+│ 🐱 ${PREFIX}gato → Foto de gato aleatoria
+│ 🌸 ${PREFIX}waifu / ${PREFIX}neko → Imagen anime
+│ 🧍 ${PREFIX}reg <nombre> <edad> <género>
+│ 👤 ${PREFIX}perfil
+│ 🗑️ ${PREFIX}eliminarperfil
+│ 🎨 ${PREFIX}imagen <prompt> → Generar imagen IA
+│ 🖼️ ${PREFIX}toimg → Sticker a imagen
+│ 📘 ${PREFIX}fb <url> → Descargar video de Facebook
+│ 🎵 ${PREFIX}tt <enlace> → Descargar TikTok
+│ 📌 ${PREFIX}pinterest <búsqueda>
+│ 🎵 ${PREFIX}play <canción>
+│ 📚 ${PREFIX}wiki <búsqueda> → Buscar en Wikipedia
+╰────────────────────────────╯
 🎄 ═══════ 🎅 ═══════ 🎄
    🍪 *¡Feliz Navidad!* 🍪
 
@@ -124,7 +140,7 @@ export default {
       contextInfo: {
         externalAdReply: {
           title: '🎄 Levi-Bot — Menú',
-          body: 'Toca aquí para ver el canal oficial',
+          body: 'Wyra Studios Project',
           image: { url: localImagePath },
           sourceUrl: CANAL_URL,
           mediaType: 1,

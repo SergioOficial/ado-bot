@@ -1,4 +1,5 @@
 import axios from "axios";
+import sharp from "sharp";
 
 export default {
   command: ["waifu", "anime", "neko"],
@@ -6,43 +7,36 @@ export default {
     const { sock, from, m, enviartexto, comando } = ctx;
     await sock.sendMessage(from, { react: { text: "🌸", key: m.key } });
 
+    const tipo = comando === "neko" ? "neko" : "waifu";
+    const apis = [
+      { url: `https://nekos.best/api/v2/${tipo}`, extract: (d) => d.results[0]?.url },
+      { url: `https://api.waifu.im/search?included_tags=${tipo}&is_nsfw=false`, extract: (d) => d.images[0]?.url },
+      { url: `https://api.nekosia.cat/api/v1/images/${tipo}`, extract: (d) => d.image?.original?.url }
+    ];
+
     try {
-      const tipo = comando === "neko" ? "neko" : "waifu";
       let imgUrl = null;
-
-      // 🌐 Intentar API 1 (Nekos.best)
-      try {
-        const res = await axios.get(`https://nekos.best/api/v2/${tipo}`, { timeout: 8000 });
-        imgUrl = res.data.results[0].url;
-      } catch (err) {
-        console.log("Nekos.best falló, intentando Waifu.im...");
+      for (const api of apis) {
+        try {
+          const res = await axios.get(api.url, { timeout: 8000 });
+          const url = api.extract(res.data);
+          if (url && url.startsWith("http")) { imgUrl = url; break; }
+        } catch (e) { console.log("API de anime falló, intentando siguiente..."); }
       }
 
-      // 🌐 Intentar API 2 (Waifu.im) si la primera falla
-      if (!imgUrl) {
-        const tag = tipo === "neko" ? "maid" : "waifu"; // Waifu.im usa tags, no "neko" directo
-        const res = await axios.get(`https://api.waifu.im/search?included_tags=${tag}&is_nsfw=false`, { timeout: 8000 });
-        imgUrl = res.data.images[0].url;
-      }
+      if (!imgUrl) throw new Error("Todas las APIs de anime fallaron.");
 
-      if (!imgUrl) throw new Error("No se pudo obtener ninguna imagen de las APIs.");
-
-      // 📥 Descargar imagen en buffer
       const imgRes = await axios.get(imgUrl, { responseType: 'arraybuffer', timeout: 15000 });
-      const buffer = Buffer.from(imgRes.data);
+      const buffer = await sharp(Buffer.from(imgRes.data))
+        .resize({ width: 800, withoutEnlargement: true })
+        .jpeg({ quality: 80 })
+        .toBuffer();
 
-      if (buffer.length === 0) throw new Error("La imagen llegó vacía.");
-
-      await sock.sendMessage(from, {
-        image: buffer,
-        caption: `🌸 *${tipo.charAt(0).toUpperCase() + tipo.slice(1)} aleatorio (SFW)*`
-      }, { quoted: m });
-
+      await sock.sendMessage(from, { image: buffer, caption: `🌸 *${tipo.toUpperCase()} SFW*` }, { quoted: m });
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
-
     } catch (e) {
       console.error("Error en anime:", e.message);
-      await enviartexto(`❌ Error al obtener la imagen: ${e.message}`);
+      await enviartexto(`❌ Error: ${e.message}`);
     }
   }
 };
