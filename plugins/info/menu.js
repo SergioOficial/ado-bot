@@ -42,11 +42,14 @@ export default {
 │ 📱 ${PREFIX}qr <texto> → Generar código QR
 │ ℹ️ ${PREFIX}info → Info del bot
 │ 👑 ${PREFIX}creadores → Contactos
+│ 📚 ${PREFIX}wiki <búsqueda> → Buscar en Wikipedia
+│ 🎤 ${PREFIX}tts <texto> → Convertir texto en voz
 ╰────────────────────────────╯
 
 ╭─ 🎉 *𝐃𝐈𝐕𝐄𝐑𝐒𝐈𝐎𝐍* 🎮
 │ 😂 ${PREFIX}meme → Meme aleatorio
 │ 🚢 ${PREFIX}ship <@user> → Calcula el amor
+│ 🐱 ${PREFIX}gato → Foto de gato aleatoria
 ╰────────────────────────────╯
 
 ╭─ ☃️ *𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒* 🖌️
@@ -60,10 +63,12 @@ export default {
 │ 🎵 ${PREFIX}play <canción>
 │ 🔍 ${PREFIX}ytsearch <texto>
 │ 🖼️ ${PREFIX}toimg → Sticker a imagen
+│ 📘 ${PREFIX}fb <url> → Descargar video de Facebook
 ╰────────────────────────────╯
 
 ╭─ 🧠 *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🤖
 │ ✨ ${PREFIX}ia <pregunta>
+│ 🎙️ ${PREFIX}iaaudio <pregunta> → IA que responde con voz
 │ 🎨 ${PREFIX}imagen <prompt> → Generar imagen IA
 ╰────────────────────────────╯
 

@@ -1,78 +1,63 @@
+import axios from "axios";
+
 export default {
   command: ["pinterest", "pin"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
     const rawArgs = args.join(" ").trim();
     
-    if (!rawArgs) {
-      return enviartexto(`❌ Uso: ${config.prefix}pinterest <búsqueda> [cantidad]`);
-    }
+    if (!rawArgs) return enviartexto(`❌ Uso: ${config.prefix}pinterest <búsqueda> [cantidad]`);
 
     const match = rawArgs.match(/(.*?)(?:\s+(\d+))?$/);
     const query = match[1].trim();
     const limit = parseInt(match[2]) || 5;
-    const maxImages = Math.min(limit, 10);
+    const maxImages = Math.min(limit, 5); // Máximo 5 para no saturar
 
     await sock.sendMessage(from, { react: { text: "🔍", key: m.key } });
     const waitMsg = await sock.sendMessage(from, { text: `🔍 Buscando *${maxImages}* imágenes de: *${query}*...` }, { quoted: m });
 
-    // API activa de Siputzx (verificada)
-    const apiUrl = `https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(query)}&type=image`;
-    let imageUrls = [];
-
     try {
-      const res = await fetch(apiUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
-      if (res.ok) {
-        const json = await res.json();
-        // La respuesta real tiene la estructura: { status: true, data: [ { image_url: "..." }, ... ] }
-        if (json.data && Array.isArray(json.data)) {
-          imageUrls = json.data
-            .map(item => item.image_url || item.url) // Prioriza image_url
-            .filter(url => typeof url === 'string' && url.startsWith('http'));
-        }
+      const apiUrl = `https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(query)}&type=image`;
+      const res = await axios.get(apiUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
+      
+      let imageUrls = [];
+      if (res.data.data && Array.isArray(res.data.data)) {
+        imageUrls = res.data.data
+          .map(item => item.image_url || item.url)
+          .filter(url => typeof url === 'string' && url.startsWith('http'));
       }
-    } catch (err) {
-      console.error("Error en API de Pinterest:", err.message);
-    }
 
-    // Eliminar duplicados y limitar
-    imageUrls = [...new Set(imageUrls)].slice(0, maxImages);
+      imageUrls = [...new Set(imageUrls)].slice(0, maxImages);
 
-    if (imageUrls.length === 0) {
-      await sock.sendMessage(from, { 
-        text: `❌ No se encontraron resultados para *${query}*. Intenta con otra búsqueda.`, 
-        edit: waitMsg.key 
-      }).catch(() => {});
-      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      return;
-    }
+      if (imageUrls.length === 0) {
+        await sock.sendMessage(from, { text: `❌ No se encontraron resultados.`, edit: waitMsg.key }).catch(()=>{});
+        return sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      }
 
-    // Editar mensaje para indicar éxito
-    await sock.sendMessage(from, { 
-      text: `✅ *Encontradas:* ${imageUrls.length} imágenes\n📤 *Enviando álbum de:* ${query}...`, 
-      edit: waitMsg.key 
-    }).catch(() => {});
+      await sock.sendMessage(from, { text: `✅ *Encontradas:* ${imageUrls.length} imágenes\n📤 *Descargando y enviando...*`, edit: waitMsg.key }).catch(()=>{});
 
-    // Enviar como álbum
-    const albumMedia = imageUrls.map((url, index) => ({
-      image: { url },
-      caption: index === 0 ? `📌 *Pinterest:* ${query}` : undefined
-    }));
-
-    try {
-      await sock.sendMessage(from, { album: albumMedia }, { quoted: m });
-    } catch (albumErr) {
-      console.error("Error enviando álbum, enviando individualmente:", albumErr);
-      for (const url of imageUrls) {
+      for (let i = 0; i < imageUrls.length; i++) {
         try {
-          await sock.sendMessage(from, { image: { url }, caption: `📌 ${query}` }, { quoted: m });
-          await new Promise(r => setTimeout(r, 1000));
-        } catch (e) {
-          console.error("Error enviando imagen individual:", e);
+          // Descargar cada imagen con axios
+          const imgRes = await axios.get(imageUrls[i], { responseType: 'arraybuffer', timeout: 15000 });
+          const buffer = Buffer.from(imgRes.data, 'binary');
+
+          await sock.sendMessage(from, { 
+            image: buffer, 
+            caption: i === 0 ? `📌 *Pinterest:* ${query}` : undefined 
+          }, { quoted: m });
+          
+          await new Promise(r => setTimeout(r, 1000)); // Pausa entre imágenes
+        } catch (imgErr) {
+          console.error(`Error descargando imagen ${i}:`, imgErr.message);
         }
       }
-    }
 
-    await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+      await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
+    } catch (err) {
+      console.error("Error en Pinterest:", err.message);
+      await sock.sendMessage(from, { text: `❌ Error al buscar imágenes.\n_${err.message}_`, edit: waitMsg.key }).catch(()=>{});
+    }
   }
 };
