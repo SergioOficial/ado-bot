@@ -1,10 +1,12 @@
 import fs from "fs";
+
 export default {
   command: ["menu", "help"],
   execute: async (ctx) => {
     const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX } = ctx;
     const numero = sender.split("@")[0];
     const localImagePath = "/storage/emulated/0/Pictures/WhatsApp/IMG-20261103-WA0027.jpg";
+
     if (!fs.existsSync(localImagePath)) return enviartexto("❌ No se encontró la imagen del menú.");
 
     const CANAL_JID = "120363415858789528@newsletter";
@@ -37,9 +39,14 @@ export default {
 ╭─ 🔔 *𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒* ⭐
 │ 🏓 ${PREFIX}ping → Mide latencia
 │ 🧪 ${PREFIX}prueba → Test de velocidad
+│ 📱 ${PREFIX}qr <texto> → Generar código QR
 │ ℹ️ ${PREFIX}info → Info del bot
 │ 👑 ${PREFIX}creadores → Contactos
-│ ♻️ ${PREFIX}fix → Actualizar bot (Owners)
+╰────────────────────────────╯
+
+╭─ 🎉 *𝐃𝐈𝐕𝐄𝐑𝐒𝐈𝐎𝐍* 🎮
+│ 😂 ${PREFIX}meme → Meme aleatorio
+│ 🚢 ${PREFIX}ship <@user> → Calcula el amor
 ╰────────────────────────────╯
 
 ╭─ ☃️ *𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒* 🖌️
@@ -55,8 +62,9 @@ export default {
 │ 🖼️ ${PREFIX}toimg → Sticker a imagen
 ╰────────────────────────────╯
 
-╭─ ☃️ *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🧠
-│ 🤖 ${PREFIX}ia <pregunta>
+╭─ 🧠 *𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 𝐀𝐑𝐓𝐈𝐅𝐈𝐂𝐈𝐀𝐋* 🤖
+│ ✨ ${PREFIX}ia <pregunta>
+│ 🎨 ${PREFIX}imagen <prompt> → Generar imagen IA
 ╰────────────────────────────╯
 
 ╭─ 🌟 *𝐏𝐄𝐑𝐅𝐈𝐋𝐄𝐒* 🧾
@@ -75,6 +83,11 @@ export default {
 │ 🚀 ${PREFIX}jadibot <número>
 │ 🛑 ${PREFIX}stopbot
 │ 📋 ${PREFIX}bots
+╰────────────────────────────╯
+
+╭─ ⚙️ *𝐎𝐖𝐍𝐄𝐑* 👑
+│ ♻️ ${PREFIX}fix → Actualizar desde GitHub
+│ 📤 ${PREFIX}backup → Guardar en GitHub
 ╰────────────────────────────╯
 
 🎄 ═══════ 🎅 ═══════ 🎄

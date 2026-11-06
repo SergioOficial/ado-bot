@@ -16,7 +16,7 @@ import { config } from "./config.js";
 import chalk from "chalk";
 import cfonts from "cfonts";
 import { loadPlugins, commands } from "./pluginLoader.js";
-import './database.js'; 
+import './lib/database.js'; 
 
 global.loadDatabase();
 
@@ -29,8 +29,8 @@ const color = (text, colorName = "green") => {
 // ═══════════════════════════════════════════
 // SUBBOT MANAGER
 // ═══════════════════════════════════════════
-const SUB_CONFIG_DIR = "./Sessions/SubConfigs";
-const SUB_SESSION_DIR = "./Sessions/SubBots";
+const SUB_CONFIG_DIR = "./sub/SubConfigs";
+const SUB_SESSION_DIR = "./sub/SubBots";
 const activeSubbots = new Map();
 const MAX_SUBBOTS = 3;
 
