@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export default {
   command: ["meme", "memes"],
   execute: async (ctx) => {
@@ -5,25 +7,32 @@ export default {
     await sock.sendMessage(from, { react: { text: "😂", key: m.key } });
 
     try {
-      const res = await fetch("https://meme-api.com/gimme/memes");
-      const data = await res.json();
+      let memeData = null;
       
-      if (!data || !data.url) throw new Error("La API de memes no devolvió una URL válida.");
+      // Intentar buscar hasta 3 veces para asegurar que no salga NSFW
+      for (let i = 0; i < 3; i++) {
+        const res = await axios.get("https://meme-api.com/gimme/memes", { timeout: 10000 });
+        if (!res.data.nsfw && res.data.url) {
+          memeData = res.data;
+          break;
+        }
+      }
 
-      const imgRes = await fetch(data.url);
-      if (!imgRes.ok) throw new Error("Error al descargar la imagen del meme.");
+      if (!memeData) throw new Error("No se encontraron memes seguros.");
+
+      const imgRes = await axios.get(memeData.url, { responseType: 'arraybuffer', timeout: 15000 });
+      const buffer = Buffer.from(imgRes.data);
       
-      const buffer = Buffer.from(await imgRes.arrayBuffer());
-      if (buffer.length === 0) throw new Error("La imagen del meme llegó vacía.");
+      if (buffer.length === 0) throw new Error("La imagen llegó vacía.");
 
       await sock.sendMessage(from, {
         image: buffer,
-        caption: `😂 *${data.title}*\n\n> ⬆️ Upvotes: ${data.ups}\n> 📂 Subreddit: r/${data.subreddit}`
+        caption: `😂 *${memeData.title}*\n\n> ⬆️ Upvotes: ${memeData.ups}\n> 📂 Subreddit: r/${memeData.subreddit}`
       }, { quoted: m });
 
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
     } catch (e) {
-      console.error("Error en comando meme:", e.message);
+      console.error("Error en meme:", e.message);
       await enviartexto(`❌ No se pudo obtener un meme: ${e.message}`);
     }
   }

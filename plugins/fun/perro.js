@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export default {
   command: ["perro", "dog"],
   execute: async (ctx) => {
@@ -5,25 +7,18 @@ export default {
     await sock.sendMessage(from, { react: { text: "🐶", key: m.key } });
 
     try {
-      const res = await fetch("https://dog.ceo/api/breeds/image/random");
-      const data = await res.json();
+      const res = await axios.get("https://dog.ceo/api/breeds/image/random", { timeout: 10000 });
+      const imgUrl = res.data.message;
+
+      const imgRes = await axios.get(imgUrl, { responseType: 'arraybuffer', timeout: 15000 });
+      const buffer = Buffer.from(imgRes.data);
       
-      if (!data || !data.message) throw new Error("La API de perros no devolvió una URL.");
+      if (buffer.length === 0) throw new Error("La imagen llegó vacía.");
 
-      const imgRes = await fetch(data.message);
-      if (!imgRes.ok) throw new Error("Error al descargar la imagen del perro.");
-      
-      const buffer = Buffer.from(await imgRes.arrayBuffer());
-      if (buffer.length === 0) throw new Error("La imagen del perro llegó vacía.");
-
-      await sock.sendMessage(from, {
-        image: buffer,
-        caption: `🐶 *¡Guau!*`
-      }, { quoted: m });
-
+      await sock.sendMessage(from, { image: buffer, caption: `🐶 *¡Guau!*` }, { quoted: m });
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
     } catch (e) {
-      console.error("Error en comando perro:", e.message);
+      console.error("Error en perro:", e.message);
       await enviartexto(`❌ Error al obtener el perro: ${e.message}`);
     }
   }

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export default {
   command: ["gato", "cat", "meow"],
   execute: async (ctx) => {
@@ -5,26 +7,18 @@ export default {
     await sock.sendMessage(from, { react: { text: "🐱", key: m.key } });
 
     try {
-      // Obtener URL del gato
-      const res = await fetch("https://api.thecatapi.com/v1/images/search");
-      const data = await res.json();
-      const imgUrl = data[0].url;
+      const res = await axios.get("https://api.thecatapi.com/v1/images/search", { timeout: 10000 });
+      const imgUrl = res.data[0].url;
 
-      // Descargar con fetch
-      const imgRes = await fetch(imgUrl);
-      if (!imgRes.ok) throw new Error("Error al descargar la imagen del gato.");
+      const imgRes = await axios.get(imgUrl, { responseType: 'arraybuffer', timeout: 15000 });
+      const buffer = Buffer.from(imgRes.data);
       
-      const buffer = Buffer.from(await imgRes.arrayBuffer());
-      if (buffer.length === 0) throw new Error("La imagen del gato llegó vacía.");
+      if (buffer.length === 0) throw new Error("La imagen llegó vacía.");
 
-      await sock.sendMessage(from, {
-        image: buffer,
-        caption: `🐱 *¡Miau!*`
-      }, { quoted: m });
-
+      await sock.sendMessage(from, { image: buffer, caption: `🐱 *¡Miau!*` }, { quoted: m });
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
     } catch (e) {
-      console.error("Error en comando gato:", e.message);
+      console.error("Error en gato:", e.message);
       await enviartexto(`❌ Error al obtener el gato: ${e.message}`);
     }
   }
