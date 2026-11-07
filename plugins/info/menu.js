@@ -15,7 +15,7 @@ export default {
     const CANAL_JID = "120363415858789528@newsletter";
     const CANAL_NOMBRE = "⍪❖Ƭʜᴇ Kakashi—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const CANAL_URL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
-
+    const pfp = "https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg";
     let texto = "";
 
     // 🌟 MENÚ PRINCIPAL (Todas las secciones visibles)
@@ -293,7 +293,7 @@ export default {
 
     // Enviar el menú con la tarjeta de enlace y el canal
     await sock.sendMessage(from, {
-      image: "https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg",
+      image: {url:pfp},
       caption: texto.trim(),
       mentions: [sender],
       contextInfo: {
@@ -304,7 +304,7 @@ export default {
           sourceUrl: CANAL_URL,
           mediaType: 1,
           showAdAttribution: false,
-          renderLargerThumbnail: true
+          renderLargerThumbnail: false
         },
         forwardingScore: 1,
         isForwarded: true,
