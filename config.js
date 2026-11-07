@@ -1,6 +1,6 @@
 // configuración global.
 export const config = {
-  prefix:".",
+  prefix:"#",
   botName: "Levi-Bot ⚔️",
 
   // Lista de owners (múltiples)

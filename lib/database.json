@@ -1,10 +1,22 @@
 {
   "users": {
     "5358090650@s.whatsapp.net": {
-      "coins": 51914,
-      "lastWork": 1793940805531,
+      "coins": 54420,
+      "lastWork": 1794064768158,
       "streak": 1,
-      "lastDaily": 1793940814572
+      "lastDaily": 1793940814572,
+      "premium": true,
+      "id": "5358090650@s.whatsapp.net",
+      "numero": "5358090650",
+      "nombre": "SergioDev",
+      "edad": "16",
+      "genero": "M",
+      "fecha": "7/11/2026",
+      "nivel": 1,
+      "exp": 60,
+      "oro": 264834,
+      "clase": "Mago",
+      "lastMinar": 1794065615910
     },
     "573018460223@s.whatsapp.net": {
       "streak": 1,
@@ -24,7 +36,11 @@
       "premium": true
     }
   },
-  "settings": {},
+  "settings": {
+    "5352701061@s.whatsapp.net": {
+      "botname": "Anthony Bot"
+    }
+  },
   "chats": {},
   "codes": {
     "LEVI-K6SS": true

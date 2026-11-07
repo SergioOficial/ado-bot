@@ -1,7 +1,7 @@
 import axios from "axios";
 import sharp from "sharp";
 
-const MAX_CARDS = 8;
+const MAX_IMAGES = 5; // Enviamos 5 para no saturar
 
 function clean(value, max = 120) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, max);
@@ -40,78 +40,90 @@ async function fetchImageBuffer(url) {
     headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
   });
   
-  // 🗜️ Optimizamos la imagen para evitar el fallo de subida
+  // Comprimir a 600px y calidad 70 para que pese muy poco
   return await sharp(Buffer.from(imgRes.data))
-    .resize({ width: 800, withoutEnlargement: true })
-    .jpeg({ quality: 80 })
+    .resize({ width: 600, withoutEnlargement: true })
+    .jpeg({ quality: 70 })
     .toBuffer();
 }
 
 export default {
   command: ["pinterest", "pin", "pint", "pinterestimg"],
   execute: async (ctx) => {
-    const { sock, from, m, args, enviartexto, config } = ctx;
+    const { sock, from, m, args, enviartexto, config, BOT_NAME } = ctx;
     const query = args.join(" ").trim();
 
     if (!query) {
       return enviartexto(
-        `📌 *PINTEREST*\n\nUso: ${config.prefix}pin <búsqueda>\nEjemplo: ${config.prefix}pin paisajes de anime`
+        '📌 *PINTEREST*\n\n' +
+        `Uso: ${config.prefix}pin <búsqueda>\n` +
+        `Ejemplo: ${config.prefix}pin paisajes de anime\n\n` +
+        '_Recibirás las imágenes._'
       );
     }
 
     await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
 
+    // Detectar si estamos en modo privado (si 'from' es distinto al chat original)
+    const isPrivate = from !== m.key.remoteJid;
+    const quotedMsg = isPrivate ? null : m; 
+
     try {
       let results = [];
 
-      // 1. Intentar con la API de Natsu (la que me indicaste)
+      // 1. API Principal (Natsu)
       try {
-        // Nota: Asumimos que el endpoint es /api/pinterest y recibe ?q=
         const natsuUrl = `https://natsu-api.darkcore.xyz/api/pinterest?q=${encodeURIComponent(query)}`;
         const res = await axios.get(natsuUrl, { timeout: 10000 });
-        
-        // Adaptamos la respuesta según lo que espera tu código
-        if (res.data && res.data.results) {
-          results = res.data.results;
-        }
+        if (res.data && res.data.results) results = res.data.results;
       } catch (err) {
-        console.log("API de Natsu falló, usando Siputzx de respaldo...");
-        // 2. Fallback (Respaldo) a Siputzx
-        const siputzxUrl = `https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(query)}&type=image`;
-        const res = await axios.get(siputzxUrl);
-        if (res.data.data) {
-          // Mapeamos la respuesta de Siputzx al formato del código
-          results = res.data.data.map(item => ({ image: item.image_url || item.url }));
+        console.log("Natsu falló, usando Siputzx...");
+      }
+
+      // 2. API de Respaldo (Siputzx)
+      if (!results || results.length === 0) {
+        try {
+          const siputzxUrl = `https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(query)}&type=image`;
+          const res = await axios.get(siputzxUrl);
+          if (res.data.data) results = res.data.data.map(item => ({ image: item.image_url || item.url }));
+        } catch (err) {
+          console.log("Siputzx falló...");
         }
       }
 
       const normalized = normalizeResults(results);
-      if (!normalized.length) throw new Error("No se encontraron imágenes para esa búsqueda.");
+      if (!normalized.length) throw new Error("No encontré imágenes para esa búsqueda");
 
-      const picked = shuffle(normalized).slice(0, MAX_CARDS);
+      const picked = shuffle(normalized).slice(0, MAX_IMAGES);
       
-      // 3. Descargar y comprimir todas las imágenes
+      // Descargar y comprimir
       const buffers = await Promise.allSettled(picked.map(item => fetchImageBuffer(smallImage(item.image))));
       
       const loadedImages = buffers
         .filter(b => b.status === "fulfilled")
         .map(b => b.value);
 
-      if (!loadedImages.length) throw new Error("Las imágenes no pudieron ser descargadas.");
+      if (!loadedImages.length) throw new Error("Las imágenes no pudieron ser descargadas");
 
-      // 4. Enviar como Álbum de WhatsApp (Carrusel nativo)
-      const albumMedia = loadedImages.map((buffer, index) => ({
-        image: buffer,
-        caption: index === 0 ? `📌 *Pinterest:* ${clean(query, 50)}\n> Encontradas: ${loadedImages.length}` : undefined
-      }));
+      // 🎨 DECO: El mensaje de introducción
+      const intro = 
+        `📌 *PINTEREST*\n\n` +
+        `🔎 *${clean(query, 80)}*\n\n` +
+        `🖼️ ${loadedImages.length} imágenes encontradas`;
 
-      try {
-        await sock.sendMessage(from, { album: albumMedia }, { quoted: m });
-      } catch (albumErr) {
-        // Si falla el álbum, enviamos una por una
-        for (let i = 0; i < loadedImages.length; i++) {
-          await sock.sendMessage(from, { image: loadedImages[i] }, { quoted: m });
-          await new Promise(r => setTimeout(r, 1000));
+      await enviartexto(intro);
+
+      // 📤 Enviar imágenes una por una
+      for (let i = 0; i < loadedImages.length; i++) {
+        try {
+          await sock.sendMessage(from, { 
+            image: loadedImages[i], 
+            caption: i === 0 ? `📌 *Pinterest:* ${clean(query, 50)}\n\n> ${BOT_NAME}` : undefined 
+          }, { quoted: i === 0 ? quotedMsg : null }); // Solo citamos la primera y si no es privado
+          
+          await new Promise(r => setTimeout(r, 1200)); // Pausa de 1.2s entre imágenes
+        } catch (err) {
+          console.error(`Error enviando imagen ${i}:`, err.message);
         }
       }
 
