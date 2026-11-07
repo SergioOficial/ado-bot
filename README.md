@@ -88,7 +88,7 @@ cd Levi-bot-
 3️⃣ Instalar dependencias de Node
 
 ```bash
-node index.js
+npm install @whiskeysockets/baileys
 ```
 
 ⚠️ Nota sobre sharp en Termux: Si tienes problemas de compilación, ejecuta:
@@ -101,7 +101,7 @@ npm install sharp --force
 4️⃣ Iniciar el bot
 
 ```bash
-npm start
+node index.js
 ```
 
 ---
