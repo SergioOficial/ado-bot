@@ -1,4 +1,3 @@
-
 <div align="center">
 
 # ⚔️ Levi-Bot
@@ -18,40 +17,26 @@
 
 ---
 
-## 🚀 Últimas Novedades (Migración a Plugins y Premium)
+## 🚀 Últimas Novedades (Update Masivo)
 
-Hemos reescrito la arquitectura del bot para hacerlo **100% modular**. Estas son las actualizaciones más recientes:
+Hemos reescrito la arquitectura del bot para hacerlo **100% modular** y lleno de funciones. Estas son las actualizaciones más recientes:
 
-- 🧩 **Sistema de Plugins (Modular)**: El `index.js` ahora es ligero y solo maneja la conexión. Todos los comandos viven en la carpeta `plugins/` organizados por categorías.
-- 💎 **Sistema Premium**: Nuevo sistema de rangos. Los usuarios pueden canjear códigos (`#canjear`) para obtener acceso al comando `#jadibot` (Prem-Bots).
-- 🤖 **Sub-Bots vs Prem-Bots**: 
-  - `#code`: Crea un sub-bot con **tu propio número** (Gratis, límite de 4 por servidor).
-  - `#jadibot <número>`: Crea un bot clonado para **otro número** (Exclusivo Premium/Owners).
-- 🎙️ **IA de Voz**: El comando `#iaaudio` responde a tus preguntas con notas de voz generadas por IA.
-- ⚡ **Recarga en Caliente**: El comando `#fix` hace `git pull` y recarga los plugins sin reiniciar el bot.
-- 🗄️ **Base de Datos Local (`database.json`)**: Auto-guardado para perfiles, economía, RPG y códigos Premium.
+- 🕵️‍♂️ **Modo Privado (`-`)**: Escribe cualquier comando terminado en guion (ej. `.menu-`) y el bot borrará tu mensaje del grupo y te responderá **solo a tu privado**.
+- 🎨 **Nuevo Diseño (Neko Club)**: El menú y los perfiles ahora tienen un diseño minimalista, mostrando estadísticas dinámicas (tipo de bot, usuarios registrados, nivel, EXP y rango Premium/Free).
+- 🎮 **Expansión RPG**: Nuevos comandos para subir de nivel (`cazar`, `pescar`, `minar`, `explorar`).
+- 🧠 **Juegos de Trivia**: Juega con `.trivia` o `.mate`, responde con `.r` (o `.responder`) y gana coins.
+- 🖼️ **Descargas Blindadas**: Todos los comandos de imágenes (Pinterest, Gatos, Memes, Anime) ahora usan `axios` y `sharp` para comprimir las imágenes antes de enviarlas, **solucionando el error `Media upload failed`**.
+- 🛡️ **Herramientas de Admin**: Comandos `.close`, `.open` y `.del` para gestionar grupos (mejorados para evitar fallos con LIDs).
+- 💎 **Sistema Premium**: Canjea códigos con `.canjear` para obtener acceso al comando `.jadibot` (Prem-Bots).
+- ⚡ **Recarga en Caliente**: El comando `.fix` hace `git pull` y recarga los plugins sin reiniciar el bot.
 
 ---
 
 ## ⚠️ Errores Conocidos y Soluciones
 
-El bot depende de servicios de terceros (APIs) y de la red de WhatsApp, por lo que a veces podemos experimentar fallos:
-
-### 🤖 Errores al usar `#code` en grupos (LIDs)
-- **Problema:** WhatsApp oculta los números en los grupos (LIDs). Usar `#code` en un grupo puede fallar con `Error 408 Connection Closed` porque el bot intenta vincular un ID inválido.
-- **Solución:** Usa el comando `#code` desde el **privado del bot**. Si estás en un grupo, pide a un usuario Premium que use `#jadibot <número>`.
-
-### 🔄 Bucle de reconexión en Subbots (Error 515)
-- **Problema:** Al vincular un subbot, WhatsApp puede cerrar la conexión con el código `515` (Restart Required), haciendo que el bot se quede colgado.
-- **Solución:** Ya hemos añadido un auto-reinicio en el código. Si el subbot detecta el 515, se reiniciará automáticamente sin borrar la sesión para completar la vinculación.
-
 ### 🎵 Errores en `#play` (YouTube)
-- **Problema:** YouTube cambia constantemente sus algoritmos, causando errores `Timed Out` o fallos al enviar el audio.
-- **Solución:** Si falla, intenta con otra canción. Si persiste, revisa las APIs de descarga en `plugins/descargas/play.js`.
-
-### 📌 Errores en `#pin` (Pinterest)
-- **Problema:** El error `Media upload failed on all hosts` ocurre cuando Baileys intenta subir la imagen directamente desde la URL.
-- **Solución:** Hemos actualizado el código para que descargue la imagen usando `axios` (como Buffer) antes de enviarla, evitando el bloqueo de WhatsApp.
+- **Problema:** YouTube cambia constantemente sus algoritmos, causando bloqueos de IP o fallos en el envío del audio.
+- **Solución:** Se ha integrado `play-dl` y `axios` con cabeceras personalizadas para intentar evadir los bloqueos. Si falla, intenta con otra canción o verifica la conexión de red.
 
 ---
 
@@ -68,14 +53,16 @@ Levi-bot-/
 └── plugins/              # ¡Aquí viven todos los comandos!
     ├── info/             # menu, ping, info, creadores, reporte
     ├── economia/         # daily, work, bal, rankcoins
-    ├── rpg/              # trabajar, cazar, clase, ranknivel
-    ├── perfil/           # reg, perfil, eliminarperfil
-    ├── descargas/        # play, pinterest, ytsearch, toimg
+    ├── rpg/              # trabajar, cazar, pescar, minar, explorar, clase
+    ├── perfil/           # reg, perfil, delperfil
+    ├── descargas/        # play, pinterest, ytsearch, tiktok, facebook
     ├── stickers/         # sticker, brat, stickers (búsqueda)
     ├── ia/               # ia, iaaudio, imagen
+    ├── fun/              # trivia, mate, meme, ship, anime, gato, perro
+    ├── utils/            # del, close, open, qr, clima, wiki, traducir, tts
     ├── subbots/          # code, jadibot, stopbot, bots
     ├── premium/          # canjear
-    └── owner/            # fix, gencode, addpremium, setbotname, etc.
+    └── owner/            # fix, gencode, addpremium, setbotname, backup
 ```
 
 ---
@@ -86,6 +73,8 @@ Levi-bot-/
 
 ```bash
 pkg update && pkg upgrade -y
+```
+```
 pkg install git nodejs-lts ffmpeg libvips -y
 ```
 
@@ -99,7 +88,7 @@ cd Levi-bot-
 3️⃣ Instalar dependencias de Node
 
 ```bash
-npm install
+node index.js
 ```
 
 ⚠️ Nota sobre sharp en Termux: Si tienes problemas de compilación, ejecuta:
@@ -136,7 +125,7 @@ En WhatsApp ve a Dispositivos vinculados → Vincular con número de teléfono e
 
 ```javascript
 export const config = {
-  prefix: ".",
+  prefix: "#",
   botName: "Levi-Bot ⚔️",
 
   // Lista de owners (múltiples)
@@ -151,7 +140,7 @@ export const config = {
   ownerName: "Sergio Dev & Jeferson Fernández 💫",
   ownerNumber: "5358090650",
 
-  version: "1.0.2",
+  version: "1.0.5",
   footer: "Levi-Bot by Jeferson Fernández from Sergio Gómez Gort",
 
   // CLAVES DE API
@@ -166,18 +155,19 @@ export const config = {
 🧩 Comandos Principales
 
 Categoría Comandos
-🎮 RPG trabajar, cazar, clase, reiniciarrpg, ranknivel
+🎮 RPG trabajar, cazar, pescar, minar, explorar, clase, ranknivel
 💰 Economía daily, work, bal, rankcoins
-🧾 Perfil reg, perfil, eliminarperfil
-🎨 Multimedia pinterest, play, ytsearch, toimg, gato
-🖌️ Stickers s, brat, stickers
+🧾 Perfil reg, perfil, delperfil
+🎨 Descargas play, pinterest (o pin), tt (TikTok), fb, ytsearch, toimg
+🖌️ Stickers s (o sticker), brat, stickers
 🧠 IA ia, iaaudio, imagen
-🤖 Subbots/Prem code (Gratis), jadibot <num> (Premium), bots, stopbot
-💎 Premium canjear <código>
-⚙️ Utilidades menu, ping, prueba, info, fix, reporte, wiki, qr, tts
+🎮 Juegos trivia, mate, 8ball, ship, meme, gato, perro, neko
+🛡️ Admin close, open, del
+⚙️ Utilidades menu, ping, info, traducir, clima, qr, tts, wiki, fix, reporte
+🤖 Subbots/Prem code (Gratis), jadibot <num> (Premium), bots, stopbot, canjear
 👑 Owners gencode, addpremium, delpremium, backup
 
-Usa #menu dentro del bot para ver la lista completa actualizada.
+Tip: Recuerda que puedes usar cualquier comando en el grupo de forma privada añadiendo un - al final (Ej: .menu-).
 
 ---
 
@@ -199,7 +189,7 @@ Usa #menu dentro del bot para ver la lista completa actualizada.
       <a href="https://github.com/SergioOficial">
         <img src="https://github.com/SergioOficial.png" width="100" alt="Sergio"/><br/>
         <b>Sergio Gómez Gort</b><br/>
-        <sub>🎃 Colaborador y mantenimiento</sub>
+        <sub>Colaborador y mantenimiento</sub>
       </a><br/><br/>
       <a href="https://wa.me/5358090650">
         <img src="https://img.shields.io/badge/WhatsApp-+53 580 906 50-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Sergio"/>
