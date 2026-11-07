@@ -52,6 +52,7 @@ export default {
 │ 😂 ${PREFIX}meme → Meme aleatorio
 │ 🚢 ${PREFIX}ship <@user> → Calcula el amor
 │ 🐱 ${PREFIX}gato → Foto de gato aleatoria
+│ 🐶 ${PREFIX}perro → Foto de perro aleatoria
 │ 🌸 ${PREFIX}waifu / ${PREFIX}neko → Imagen anime
 │ 🎱 ${PREFIX}8ball <pregunta> → Bola mágica
 ╰────────────────────────────╯
@@ -113,8 +114,6 @@ export default {
 
 ╭─ *𝐏𝐑𝐔𝐄𝐕𝐀*
 > *PUEDE QUE YA FUNCIONEN ALGUNOS DE ESTOS PERO SUGERIMOS NO USARLOS*
-│ 😂 ${PREFIX}meme → Meme aleatorio
-│ 🐱 ${PREFIX}gato → Foto de gato aleatoria
 │ 🌸 ${PREFIX}waifu / ${PREFIX}neko → Imagen anime
 │ 🧍 ${PREFIX}reg <nombre> <edad> <género>
 │ 👤 ${PREFIX}perfil
