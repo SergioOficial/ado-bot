@@ -110,9 +110,12 @@ export default {
 
 ┏━━━〔 ⚙️ 𝐎𝐖𝐍𝐄𝐑 〕━━━┓
 ┃ ➤ ${PREFIX}fix | ${PREFIX}backup
+┃ ➤ ${PREFIX}restart | ${PREFIX}clear
+┃ ➤ ${PREFIX}join <link>
+┃ ➤ ${PREFIX}leave (en grupo)
 ┃ ➤ ${PREFIX}gencode
 ┃ ➤ ${PREFIX}addpremium | ${PREFIX}delpremium
-┗━━━━━━━━━━━━━━━━━━━┛
+┗━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 ╭━━━━━━━━━━━━━━━━━━━╮
 ┃  🐾  𝐖𝐲𝐫𝐚 𝐒𝐭𝐮𝐝𝐢𝐨𝐬 𝐏𝐫𝐨𝐣𝐞𝐜𝐭 🐾 ┃
