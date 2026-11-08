@@ -316,23 +316,12 @@ export default {
       image: {url:pfp},
       caption: texto.trim(),
       mentions: [sender],
-      contextInfo: {
-        externalAdReply: {
-          title: '🐾 Levi-Bot — Menú Oficial',
-          body: 'Wyra Studios Project',
-          thumbnailUrl: pfp, 
-          sourceUrl: CANAL_URL,
-          mediaType: 1,
-          showAdAttribution: false,
-          renderLargerThumbnail: false
-        },
         forwardingScore: 1,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
           newsletterJid: CANAL_JID,
           newsletterName: CANAL_NOMBRE,
           serverMessageId: 1
-        }
       }
     }, { quoted: m });
   }
