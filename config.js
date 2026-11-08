@@ -7,7 +7,7 @@ export const config = {
   owners: [
     { name: "Sergio Gómez Gort",  number: "5358090650" },
     { name: "Jeferson Fernández", number: "573005255807" },
-    { name: "Soport", number: "5358275267" },
+    { name: "José Rodríguez", number: "584265610338" },
     { name: "atencion al cliente bots", number: "50494874330" }
   ],
 

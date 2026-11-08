@@ -100,6 +100,14 @@ export default {
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
+┃ 🐙 *GITHUB* 🐙
+┣━━━━━━━━━━━━━━━━━━┛
+┃ ➤ ${PREFIX}gitsearch <txt>
+┃ ➤ ${PREFIX}gituser <user>
+┃ ➤ ${PREFIX}gitclone <user/repo>
+┗━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━┓
 ┃ 🤖 *𝐒𝐔𝐁𝐁𝐎𝐓𝐒* 🤖
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}code | ${PREFIX}jadibot
@@ -131,6 +139,18 @@ export default {
 ┃ 🎅 » ${PREFIX}daily
 ┃ 💳 » ${PREFIX}bal
 ┃ 🏆 » ${PREFIX}rankcoins
+┗━━━━━━━━━━━━━━━━━━┛
+> Volver: *${PREFIX}menu*
+`;
+}
+   else if (tipo === 'github') {
+      texto = `
+⋆｡°✩ 🐙 *GITHUB* 🐙 ✩°｡⋆
+┏━━━━━━━━━━━━━━━━━━┓
+┃ ➤ ${PREFIX}gitsearch <txt>
+┃ ➤ ${PREFIX}gituser <user>
+┃ ➤ ${PREFIX}gitclone <user/repo>
+┗━━━━━━━━━━━━━━━━━━┛
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
