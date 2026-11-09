@@ -26,17 +26,7 @@ export default {
       const mentions = meta.participants.map(p => p.id);
       const textoExtra = args.join(" ") || "¡Atención a todos!";
 
-      let texto = `
-⋆｡°✩ 🔔 *𝐓𝐀𝐆 𝐀𝐋𝐋* 🔔 ✩°｡⋆
-
-📢 *Mensaje:* ${textoExtra}
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 👥 *Miembros:* ${mentions.length}
-┃ 👑 *Por:* @${sender.split("@")[0]}
-┗━━━━━━━━━━━━━━━━━━┛
-
-`;
+      let texto = `${textoExtra}`;
 
       // Añadir las menciones visuales (opcional, pero ayuda a que se vea bien)
       // En grupos grandes, esto puede hacer que el mensaje sea muy largo, 
