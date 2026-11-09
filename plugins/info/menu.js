@@ -121,6 +121,8 @@ export default {
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}fix | ${PREFIX}backup | ${PREFIX}restart
 ┃ ➤ ${PREFIX}join | ${PREFIX}leave | ${PREFIX}gencode
+┃ ➤ ${PREFIX}error (Ver logs del bot)
+┃ ➤ ${PREFIX}error clear (Borrar logs)
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
