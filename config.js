@@ -1,6 +1,9 @@
-7// configuración global.
+
+// Configuración global.
 export const config = {
-  prefix:"🇨🇺",
+  // 🔥 MULTI-PREFIJO: El bot responderá a cualquiera de estos
+  prefix: [".", "#", "/", "🇨🇺"],
+  
   botName: "Levi-Bot ⚔️",
 
   // Lista de owners (múltiples)
@@ -15,7 +18,7 @@ export const config = {
   ownerName: "Sergio Dev 💫",
   ownerNumber: "5358090650",
 
-  version: "1.0.4",
+  version: "1.0.5",
   footer: "Levi-Bot by Wyra Studios",
 
   // CLAVES DE API
