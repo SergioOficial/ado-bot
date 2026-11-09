@@ -2,9 +2,11 @@ export default {
   command: ["welcome", "bienvenida"],
   execute: async (ctx) => {
     const { sock, from, args, isGroup, enviartexto, isOwnerCheck, sender, db, config } = ctx;
-    
-    // 🛡️ 1. ENGÄNCHAR EL EVENTO A LA MEMORIA (Solo se ejecuta una vez)
-    if (!sock.ev.listeners("group-participants.update").length) {
+
+    // 🛡️ 1. ENGÄNCHAR EL EVENTO A LA MEMORIA (Evitando errores de Baileys v7)
+    if (!global._welcomeEventHooked) {
+      global._welcomeEventHooked = true;
+      
       sock.ev.on("group-participants.update", async (update) => {
         const { id, participants, action } = update;
         const database = global.db.data;
@@ -37,7 +39,7 @@ export default {
             }
           }
         } catch (e) {
-          console.error("Error en evento welcome:", e.message);
+          console.error("Error en evento welcome:", e.message || e);
         }
       });
       console.log("✅ Evento de Bienvenida/Despedida enganchado a la memoria.");
@@ -46,9 +48,24 @@ export default {
     // 🛡️ 2. CONFIGURACIÓN DEL COMANDO
     if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
     
-    const meta = await sock.groupMetadata(from);
-    const admins = meta.participants.filter(p => p.admin !== null).flatMap(p => [p.id, p.lid]);
-    if (!admins.includes(sender) && !isOwnerCheck(sender, sock)) return enviartexto("⚠️ Solo los administradores pueden configurar esto.");
+    // Intentar verificar si es admin (con protección contra errores)
+    let isAdmin = false;
+    try {
+      const meta = await sock.groupMetadata(from);
+      const adminIds = meta.participants
+        .filter(p => p.admin !== null)
+        .flatMap(p => [p.id, p.lid, p.phoneNumber])
+        .filter(Boolean);
+        
+      isAdmin = adminIds.includes(sender) || isOwnerCheck(sender, sock);
+    } catch (e) {
+      // Si falla la lectura de metadata, al menos dejamos pasar si es Owner
+      isAdmin = isOwnerCheck(sender, sock);
+    }
+
+    if (!isAdmin) {
+      return enviartexto("⚠️ Solo los administradores pueden configurar esto.");
+    }
 
     if (!db.chats[from]) db.chats[from] = {};
     const chat = db.chats[from];
@@ -86,7 +103,7 @@ export default {
 
     // Menú de ayuda
     return enviartexto(
-      `👋 *CONFIGURACIÓN DE BIENVENIDA Y DESPEDIDA*\n\n` +
+      `👋 *CONFIGURACIÓN DE BIENVENIDA*\n\n` +
       `🟢 *Bienvenida:* ${chat.welcome ? "ON" : "OFF"}\n` +
       `🔴 *Despedida:* ${chat.goodbye ? "ON" : "OFF"}\n\n` +
       `⚙️ *Comandos:*\n` +
