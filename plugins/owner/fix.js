@@ -1,35 +1,56 @@
 import { exec } from "child_process";
-import { loadPlugins } from "../../pluginLoader.js";
+import fs from "fs";
 
 export default {
   command: ["fix", "update"],
-  isOwner: true,
+  isOwner: true, // Solo tú y los owners pueden usarlo
   execute: async (ctx) => {
     const { enviartexto } = ctx;
     
     await enviartexto("⏳ *Buscando actualizaciones en GitHub...*");
 
-    // 1. Descargar la información más reciente del repositorio
-    exec("git fetch origin main", (errFetch) => {
-      if (errFetch) {
-        return enviartexto(`❌ *Error de red al buscar actualizaciones:*\n_${errFetch.message}_`);
-      }
+    try {
+      // 1. Respaldar la base de datos para no perder a los usuarios ni las configuraciones de los grupos
+      const dbBackup = fs.existsSync("./database.json") 
+        ? fs.readFileSync("./database.json", "utf8") 
+        : null;
 
-      // 2. Forzar la actualización descargando TODO de GitHub
-      exec("git reset --hard origin/main", async (errReset, stdoutReset) => {
-        if (errReset) {
-          return enviartexto(`❌ *Error al aplicar la actualización:*\n_${errReset.message}_`);
+      // 2. Descargar la información más reciente del repositorio
+      exec("git fetch origin main", (errFetch) => {
+        if (errFetch) {
+          return enviartexto(`❌ *Error de red al buscar actualizaciones:*\n_${errFetch.message}_`);
         }
 
-        // 3. Recargar los plugins en memoria sin reiniciar el bot
-        await loadPlugins();
+        // 3. Forzar la actualización de TODO el código (incluyendo el index.js si lo cambiaste en GitHub)
+        exec("git reset --hard origin/main", (errReset) => {
+          if (errReset) {
+            return enviartexto(`❌ *Error al aplicar la actualización:*\n_${errReset.message}_`);
+          }
 
-        await enviartexto(
-          `✅ *¡Actualización completada!*\n\n` +
-          `_Todos los archivos han sido restaurados a la versión oficial de GitHub._\n` +
-          `♻️ *Plugins recargados en memoria.*`
-        );
+          // 4. Restaurar la base de datos
+          try {
+            if (dbBackup) fs.writeFileSync("./database.json", dbBackup);
+          } catch (e) {
+            console.error("Error al restaurar la base de datos:", e);
+          }
+
+          // 5. Avisar al usuario y reiniciar el proceso
+          enviartexto(
+            `✅ *¡Actualización completada!*\n\n` +
+            `_El código ha sido sincronizado con GitHub._\n` +
+            `_La base de datos está a salvo._\n\n` +
+            `♻️ *Reiniciando el bot para aplicar los cambios...*`
+          ).then(() => {
+            // process.exit(0) cierra el bot. 
+            // En hostings (BotKeep, Railway, PM2), el sistema lo reinicia solo en 2 segundos.
+            setTimeout(() => {
+              process.exit(0);
+            }, 2000);
+          });
+        });
       });
-    });
+    } catch (error) {
+      await enviartexto(`❌ Error inesperado: ${error.message}`);
+    }
   }
 };
