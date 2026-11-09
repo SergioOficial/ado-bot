@@ -4,7 +4,7 @@ export default {
     const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args } = ctx;
     const numero = sender.split("@")[0];
     const tipo = args[0]?.toLowerCase();
-    
+
     // 👤 Info del usuario
     const user = db.users[sender] || {};
     const totalUsers = Object.keys(db.users || {}).length;
@@ -13,12 +13,13 @@ export default {
     const rangoTexto = user.nombre ? `Nv. ${nivelUser} | ${esPremium}` : "No registrado";
 
     const CANAL_JID = "120363415858789528@newsletter";
-    const CANAL_NOMBRE = "⍪❖Ƭʜᴇ Kakashi—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
+    const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const CANAL_URL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
     const pfp = "https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg";
+    
     let texto = "";
 
-    // 🌟 MENÚ PRINCIPAL (Todas las secciones visibles)
+    // 🌟 MENÚ PRINCIPAL
     if (!tipo) {
       texto = `
 ⋆｡°✩ 🐾 𝐋𝐄𝐕𝐈 - 𝐁𝐎𝐓 🐾 ✩°｡⋆
@@ -97,6 +98,7 @@ export default {
 ┃ 🛡️ *𝐀𝐃𝐌𝐈𝐍* 🛡️
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}close | ${PREFIX}open | ${PREFIX}del
+┃ ➤ ${PREFIX}tag <mensaje>
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -129,8 +131,8 @@ export default {
 
 > 💡 *Tip:* También puedes usar *${PREFIX}menu <tipo>* (ej: *${PREFIX}menu rpg*) para ver las categorías de forma más limpia.
 `;
-    } 
-    // 🎁 ECONOMÍA (Submenú)
+    }
+    // 🎁 ECONOMÍA
     else if (tipo === 'economia') {
       texto = `
 ⋆｡°✩ 🎁 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀 ✩°｡⋆
@@ -142,8 +144,9 @@ export default {
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
-}
-   else if (tipo === 'github') {
+    }
+    // 🐙 GITHUB
+    else if (tipo === 'github') {
       texto = `
 ⋆｡°✩ 🐙 *GITHUB* 🐙 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -151,11 +154,10 @@ export default {
 ┃ ➤ ${PREFIX}gituser <user>
 ┃ ➤ ${PREFIX}gitclone <user/repo>
 ┗━━━━━━━━━━━━━━━━━━┛
-┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
     }
-    // ⚔️ RPG (Submenú)
+    // ⚔️ RPG
     else if (tipo === 'rpg') {
       texto = `
 ⋆｡°✩ ⚔️ 𝐀𝐕𝐄𝐍𝐓𝐔𝐑𝐀 𝐘 𝐑𝐏𝐆 ✩°｡⋆
@@ -171,7 +173,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🌟 PERFIL (Submenú)
+    // 🌟 PERFIL
     else if (tipo === 'perfil') {
       texto = `
 ⋆｡°✩ 🌟 𝐏𝐄𝐑𝐅𝐈𝐋 ✩°｡⋆
@@ -183,7 +185,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🎄 DESCARGAS (Submenú)
+    // 🎄 DESCARGAS
     else if (tipo === 'descargas') {
       texto = `
 ⋆｡°✩ 🎄 𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒 ✩°｡⋆
@@ -198,7 +200,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // ☃️ STICKERS (Submenú)
+    // ☃️ STICKERS
     else if (tipo === 'stickers') {
       texto = `
 ⋆｡°✩ ☃️ 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 ✩°｡⋆
@@ -210,7 +212,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🧠 IA (Submenú)
+    // 🧠 IA
     else if (tipo === 'ia') {
       texto = `
 ⋆｡°✩ 🧠 𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 ✩°｡⋆
@@ -222,7 +224,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🎉 FUN (Submenú)
+    // 🎉 FUN
     else if (tipo === 'fun') {
       texto = `
 ⋆｡°✩ 🎉 𝐃𝐈𝐕𝐄𝐑𝐒𝐈𝐎𝐍 ✩°｡⋆
@@ -239,7 +241,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🔔 UTILS (Submenú)
+    // 🔔 UTILS
     else if (tipo === 'utils') {
       texto = `
 ⋆｡°✩ 🔔 𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒 ✩°｡⋆
@@ -256,7 +258,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🤖 SUBBOTS (Submenú)
+    // 🤖 SUBBOTS
     else if (tipo === 'subbots') {
       texto = `
 ⋆｡°✩ 🤖 𝐒𝐔𝐁-𝐁𝐎𝐓𝐒 ✩°｡⋆
@@ -270,7 +272,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 👑 OWNER (Submenú)
+    // 👑 OWNER
     else if (tipo === 'owner') {
       texto = `
 ⋆｡°✩ 👑 𝐎𝐖𝐍𝐄𝐑 ✩°｡⋆
@@ -285,7 +287,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🛡️ ADMIN (Submenú)
+    // 🛡️ ADMIN
     else if (tipo === 'admin') {
       texto = `
 ⋆｡°✩ 🛡️ 𝐀𝐃𝐌𝐈𝐍 ✩°｡⋆
@@ -297,7 +299,7 @@ export default {
 > Volver: *${PREFIX}menu*
 `;
     }
-    // 🧪 TEST (Submenú)
+    // 🧪 TEST
     else if (tipo === 'test') {
       texto = `
 ⋆｡°✩ 🧪 𝐁𝐎𝐓𝐎𝐍𝐄𝐒 ✩°｡⋆
@@ -311,17 +313,19 @@ export default {
       return enviartexto(`❌ La categoría *${tipo}* no existe.\nUsa *${PREFIX}menu* para ver las opciones.`);
     }
 
-    // Enviar el menú con la tarjeta de enlace y el canal
+    // ✅ AQUÍ ESTÁ LA MAGIA DEL "VER CANAL" (Bien estructurado)
     await sock.sendMessage(from, {
-      image: {url:pfp},
+      image: { url: pfp },
       caption: texto.trim(),
       mentions: [sender],
+      contextInfo: {
         forwardingScore: 1,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
           newsletterJid: CANAL_JID,
           newsletterName: CANAL_NOMBRE,
           serverMessageId: 1
+        }
       }
     }, { quoted: m });
   }
