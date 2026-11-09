@@ -1,3 +1,4 @@
+
 // CREADOR: Jeferson Fernández ⚔️ Colab Sergio Gómez Gort
 
 // 📦 IMPORTACIONES
@@ -32,7 +33,7 @@ const color = (text, colorName = "green") => {
 const SUB_CONFIG_DIR = "./sub/SubConfigs";
 const SUB_SESSION_DIR = "./sub/SubBots";
 const activeSubbots = new Map();
-const MAX_SUBBOTS = 4; // Actualizado a 4 por el sistema premium
+const MAX_SUBBOTS = 4;
 
 function ensureSubDirs() {
   if (!fs.existsSync(SUB_CONFIG_DIR)) fs.mkdirSync(SUB_CONFIG_DIR, { recursive: true });
@@ -84,7 +85,7 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   const phoneNumber = jidToNumber(senderJid);
 
   if (!phoneNumber || phoneNumber.length < 8 || phoneNumber.length > 15 || /^1\d{14}$/.test(phoneNumber)) {
-    return reply(`❌ *Número inválido:* \`${phoneNumber}\`\n\nParece un LID.\n👉 Usa: *${config.prefix}jadibot 5354386852*`);
+    return reply(`❌ *Número inválido:* \`${phoneNumber}\`\n\nParece un LID.\n👉 Usa: *${config.prefix[0]}jadibot 5354386852*`);
   }
 
   if (activeSubbots.size >= MAX_SUBBOTS) {
@@ -120,7 +121,6 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   subSock.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
-    // 1. Pedir código y programar auto-eliminación
     if (method === "code" && !subSock.authState.creds.registered && !pairingCodeRequested && qr) {
       pairingCodeRequested = true;
       await new Promise(r => setTimeout(r, 2000));
@@ -135,7 +135,6 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
 
         const msg2 = await parentSock.sendMessage(remoteJid, { text: `\`\`\`\n${code}\n\`\`\`` });
 
-        // 🕒 Auto-eliminar los mensajes después de 60 segundos (cuando el código expira)
         if (deleteTimeout) clearTimeout(deleteTimeout);
         deleteTimeout = setTimeout(async () => {
           try { await parentSock.sendMessage(remoteJid, { delete: msg1.key }); } catch {}
@@ -148,29 +147,25 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
       }
     }
 
-    // 2. Si conecta correctamente
     if (connection === "open") {
-      if (deleteTimeout) clearTimeout(deleteTimeout); // Cancelar borrado si ya conectó
+      if (deleteTimeout) clearTimeout(deleteTimeout);
       activeSubbots.set(phoneNumber, subSock);
       await parentSock.sendMessage(remoteJid, { text: `✅ *Sub-bot conectado*\n📱 ${phoneNumber}` });
     }
 
-    // 3. Manejo de cierre y errores
     if (connection === "close") {
       const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
       activeSubbots.delete(phoneNumber);
 
-      // 🔄 CÓDIGO 515: WhatsApp pide reiniciar el socket
       if (reason === DisconnectReason.restartRequired) {
         console.log(`🔄 Subbot ${phoneNumber} requiere reinicio (515). Reconectando automáticamente...`);
         return startSubbot(parentSock, senderJid, remoteJid, reply, method); 
       }
 
-      // Si la sesión no se vinculó (falló o expiró)
       if (!subSock.authState.creds.registered) {
         try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch (e) {}
         await parentSock.sendMessage(remoteJid, {
-          text: `❌ *Fallo al vincular el Sub-bot.*\n\nLa sesión ha sido eliminada. Puedes reintentar con *${config.prefix}jadibot ${phoneNumber}*`
+          text: `❌ *Fallo al vincular el Sub-bot.*\n\nLa sesión ha sido eliminada. Puedes reintentar con *${config.prefix[0]}jadibot ${phoneNumber}*`
         }).catch(() => {});
       } else if (reason === DisconnectReason.loggedOut) {
         try { fs.rmSync(sessionPath, { recursive: true, force: true }); } catch (e) {}
@@ -193,7 +188,6 @@ console.log(subBanner.string);
 console.log(color("💫 Levi-Bot se está iniciando...", "magenta"));
 
 // 🧠 VARIABLES GLOBALES
-const PREFIX = config.prefix;
 const BOT_NAME = config.botName;
 
 // 🧾 ASK (para Termux local)
@@ -215,7 +209,7 @@ function getRealSender(m) {
 
 // 🚀 START — SOLO CONEXIÓN
 async function startLevi() {
-  await loadPlugins(); // 👈 Carga los plugins
+  await loadPlugins(); 
   const { state, saveCreds } = await useMultiFileAuthState("./session");
   const { version, isLatest } = await fetchLatestBaileysVersion();
   console.log(`📦 Usando versión de Baileys: ${version.join(".")} (${isLatest ? "actual" : "desactualizada"})`);
@@ -271,7 +265,7 @@ async function startLevi() {
 }
 
 // ═══════════════════════════════════════════
-// HANDLE MESSAGES — EJECUTOR DE PLUGINS
+// HANDLE MESSAGES — MULTI-PREFIJO Y EJECUTOR
 // ═══════════════════════════════════════════
 async function handleMessages(sock, { messages, type }) {
   if (type !== "notify") return;
@@ -279,7 +273,11 @@ async function handleMessages(sock, { messages, type }) {
   if (!m.message || m.key.fromMe) return;
 
   const texto = m.message.conversation || m.message.extendedTextMessage?.text || m.message.imageMessage?.caption || m.message.videoMessage?.caption;
-  if (!texto || !texto.startsWith(PREFIX)) return;
+  if (!texto) return;
+
+  // 🔍 Detectar cuál de los prefijos del array se usó
+  const usedPrefix = config.prefix.find(p => texto.startsWith(p));
+  if (!usedPrefix) return; // Si no empieza con ningún prefijo, ignorar
 
   const { remoteJid } = m.key;
   const isGroup = remoteJid.endsWith("@g.us");
@@ -287,17 +285,14 @@ async function handleMessages(sock, { messages, type }) {
   const sender = getRealSender(m);
 
   // 🕵️‍♂️ LÓGICA DE PRIVACIDAD (Si el comando termina en '-')
-  let textoLimpio = texto.slice(PREFIX.length).trim();
+  let textoLimpio = texto.slice(usedPrefix.length).trim();
   let esPrivado = false;
 
   if (textoLimpio.length > 0) {
     const firstWord = textoLimpio.split(/\s+/)[0];
     if (firstWord.endsWith("-")) {
       esPrivado = true;
-      // Eliminamos el guion del comando (ej: ping- -> ping)
       textoLimpio = textoLimpio.replace(/^([^-]+)-/, '$1');
-      
-      // Si estamos en un grupo, borramos el mensaje original para que no lo vean
       if (isGroup) {
         await sock.sendMessage(from, { delete: m.key }).catch(() => {});
       }
@@ -307,10 +302,7 @@ async function handleMessages(sock, { messages, type }) {
   const args = textoLimpio.trim().split(/\s+/);
   const comando = args.shift().toLowerCase();
   
-  // 👇 Si es privado, el chat de destino es el usuario. Si no, es el grupo/chat original.
   const targetChat = esPrivado ? sender : from;
-  
-  // Si es privado, no citamos el mensaje (porque es de otro chat)
   const enviartexto = (txt) => sock.sendMessage(targetChat, { text: txt }, { quoted: esPrivado ? null : m });
 
   console.log(`💬 [${from}] ${texto} ${esPrivado ? "🔒 (Privado)" : ""}`);
@@ -322,18 +314,18 @@ async function handleMessages(sock, { messages, type }) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
   }
 
-  // Contexto inyectado a todos los plugins
+  // Contexto inyectado a todos los plugins (Pasamos el prefijo usado)
   const ctx = {
     sock, 
     m, 
-    from: targetChat, // 👈 Los plugins responderán al chat destino
+    from: targetChat, 
     sender, 
     isGroup, 
     args, 
     comando, 
     texto: textoLimpio, 
     enviartexto, 
-    PREFIX, 
+    PREFIX: usedPrefix, // 👈 Ahora PREFIX es el símbolo que usó el usuario (ej. ".")
     BOT_NAME, 
     config, 
     db: global.db.data,
