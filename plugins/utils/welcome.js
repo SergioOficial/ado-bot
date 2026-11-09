@@ -3,7 +3,7 @@ export default {
   execute: async (ctx) => {
     const { sock, from, args, isGroup, enviartexto, isOwnerCheck, sender, db, config } = ctx;
 
-    // 🛡️ 1. ENGÄNCHAR EL EVENTO A LA MEMORIA (Evitando errores de Baileys v7)
+    // 🛡️ 1. ENGÄNCHAR EL EVENTO A LA MEMORIA
     if (!global._welcomeEventHooked) {
       global._welcomeEventHooked = true;
       
@@ -16,26 +16,40 @@ export default {
         const chat = database.chats[id];
 
         try {
-          const meta = await sock.groupMetadata(id);
-          const groupName = meta.subject;
+          // Obtener el nombre del grupo de forma segura
+          let groupName = "el grupo";
+          try {
+            const meta = await sock.groupMetadata(id);
+            groupName = meta.subject;
+          } catch (e) {
+            console.log("No se pudo leer la metadata del grupo en welcome:", e.message);
+          }
 
-          for (const jid of participants) {
+          for (const p of participants) {
+            // 🛠️ SANITIZACIÓN: Extraer el string del participante si viene como objeto
+            const jid = typeof p === "string" ? p : (p.id || p.jid || p.phoneNumber || "");
+            if (!jid) continue; // Si no hay JID, saltar
+
             const num = String(jid).split("@")[0].split(":")[0];
 
             // Entrada
             if (action === "add" && chat.welcome) {
-              const text = (chat.welcomeMsg || "¡Hola @user! Bienvenido a *@group* 🎉")
-                .replace("@user", `@${num}`)
-                .replace("@group", groupName);
-              await sock.sendMessage(id, { text, mentions: [jid] });
+              const customMsg = chat.welcomeMsg || "¡Hola @user! Bienvenido a *@group* 🎉";
+              const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
+              
+              await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {
+                console.log(`Error al enviar bienvenida al grupo ${id} (puede que no sea admin).`);
+              });
             }
 
             // Salida
             if (action === "remove" && chat.goodbye) {
-              const text = (chat.goodbyeMsg || "Adiós @user, espero que vuelvas pronto 👋")
-                .replace("@user", `@${num}`)
-                .replace("@group", groupName);
-              await sock.sendMessage(id, { text, mentions: [jid] });
+              const customMsg = chat.goodbyeMsg || "Adiós @user, espero que vuelvas pronto 👋";
+              const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
+              
+              await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {
+                console.log(`Error al enviar despedida al grupo ${id}.`);
+              });
             }
           }
         } catch (e) {
@@ -48,18 +62,18 @@ export default {
     // 🛡️ 2. CONFIGURACIÓN DEL COMANDO
     if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
     
-    // Intentar verificar si es admin (con protección contra errores)
     let isAdmin = false;
     try {
       const meta = await sock.groupMetadata(from);
       const adminIds = meta.participants
-        .filter(p => p.admin !== null)
-        .flatMap(p => [p.id, p.lid, p.phoneNumber])
-        .filter(Boolean);
+        .filter(pa => pa.admin !== null)
+        .flatMap(pa => {
+          const pid = typeof pa === "string" ? pa : (pa.id || pa.lid || pa.phoneNumber);
+          return pid ? [String(pid)] : [];
+        });
         
       isAdmin = adminIds.includes(sender) || isOwnerCheck(sender, sock);
     } catch (e) {
-      // Si falla la lectura de metadata, al menos dejamos pasar si es Owner
       isAdmin = isOwnerCheck(sender, sock);
     }
 
@@ -111,7 +125,7 @@ export default {
       `➤ ${config.prefix[0]}welcome goodbye on/off\n` +
       `➤ ${config.prefix[0]}welcome set <texto>\n` +
       `➤ ${config.prefix[0]}welcome setgoodbye <texto>\n\n` +
-      `_Puedes usar @user para el usuario y @group para el nombre del grupo._`
+      `_Puedes usar @user y @group._`
     );
   }
 };
