@@ -1,6 +1,6 @@
 7// configuración global.
 export const config = {
-  prefix:"!",
+  prefix:"🇨🇺",
   botName: "Levi-Bot ⚔️",
 
   // Lista de owners (múltiples)
@@ -12,10 +12,10 @@ export const config = {
   ],
 
   // Compatibilidad con el resto del código (index.js actual)
-  ownerName: "Sergio Dev & Jeferson Fernández 💫",
+  ownerName: "Sergio Dev 💫",
   ownerNumber: "5358090650",
 
-  version: "1.0.3",
+  version: "1.0.4",
   footer: "Levi-Bot by Wyra Studios",
 
   // CLAVES DE API
