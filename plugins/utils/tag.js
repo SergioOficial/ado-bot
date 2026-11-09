@@ -35,7 +35,7 @@ export default {
       await sock.sendMessage(from, {
         text: texto.trim(),
         mentions: mentions // 👈 Aquí es donde WhatsApp hace la magia de etiquetar
-     
+     }
 
     } catch (e) {
       console.error("Error en tagall:", e.message);
