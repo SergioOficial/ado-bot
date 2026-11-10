@@ -1,7 +1,7 @@
 {
-  "name": "levi-bot",
+  "name": "ado-bot",
   "version": "1.0.5",
-  "description": "Levi-Bot con conexión por parincode (Baileys 2025)",
+  "description": "ado-Bot con conexión por parincode (Baileys 2025)",
   "main": "index.js",
   "type": "module",
   "dependencies": {
