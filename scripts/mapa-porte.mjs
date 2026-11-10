@@ -55,6 +55,14 @@ const porCat = {};
 for (const f of falta) (porCat[f.cat] ||= []).push(f);
 
 const total = shin.length;
+// La tabla de «portados a mano» la escribe una persona: se conserva tal cual.
+let portados = null;
+try {
+  const previo = readFileSync(join(LEVI, "docs", "PORTE.md"), "utf8");
+  const m = previo.match(/## Portados a mano[\s\S]*?(?=\n## )/);
+  if (m) portados = m[0].trimEnd();
+} catch {}
+
 const lineas = [
   "# Mapa del porteo desde Shin-MD",
   "",
@@ -68,14 +76,7 @@ const lineas = [
   "«Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.",
   "Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.",
   "",
-  "## Portados a mano (con cabecera de procedencia)",
-  "",
-  "| Comando | Archivo en Levi | Qué se corrigió al portarlo |",
-  "|---|---|---|",
-  "| `qr` | `plugins/utils/qr.js` | el QR se dibuja en el bot; antes dependía de api.qrserver.com |",
-  "| `morse` / `demorse` | `plugins/utils/morse.js` | dice cuántos grupos no reconoce en vez de tragárselos |",
-  "| `encuesta` | `plugins/utils/encuesta.js` + `lib/encuestas.js` | quiz nativo y voto múltiple; el secreto de 32 bytes y el nodo `meta polltype=creation` |",
-  "| `say` | `plugins/utils/say.js` | reenvía la foto/vídeo citado con pie de foto y menciona de verdad |",
+  portados || "## Portados a mano (sin registrar todavía)",
   "",
   "## Pendientes por categoría",
   "",

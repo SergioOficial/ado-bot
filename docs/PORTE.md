@@ -17,6 +17,8 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `morse` / `demorse` | `plugins/utils/morse.js` | dice cuántos grupos no reconoce en vez de tragárselos |
 | `encuesta` | `plugins/utils/encuesta.js` + `lib/encuestas.js` | quiz nativo y voto múltiple; el secreto de 32 bytes y el nodo `meta polltype=creation` |
 | `say` | `plugins/utils/say.js` | reenvía la foto/vídeo citado con pie de foto y menciona de verdad |
+| `read` / `readvo` | `plugins/utils/read.js` | desenvuelve también ViewOnceV2 y dice cuándo el archivo ya caducó |
+| `recordar` / `olvidar` | `plugins/utils/recordar.js` + `lib/recordatorios.js` | avisos en la base: sobreviven al reinicio (antes era un setTimeout) |
 
 ## Pendientes por categoría
 
