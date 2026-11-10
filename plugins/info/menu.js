@@ -109,8 +109,22 @@ export default {
 ┏━━━━━━━━━━━━━━━━━━┓
 ┃ 🛡️ *𝐀𝐃𝐌𝐈𝐍* 🛡️
 ┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}close | ${PREFIX}open | ${PREFIX}del
-┃ ➤ ${PREFIX}tag <mensaje>
+┃ 🔒 » ${PREFIX}close | ${PREFIX}open
+┃ 🗑️ » ${PREFIX}del
+┃ 👢 » ${PREFIX}kick <@user> [motivo]
+┃ 👑 » ${PREFIX}promote | ${PREFIX}demote
+┃ ⚖️ » ${PREFIX}warn | ${PREFIX}warns | ${PREFIX}delwarn
+┃ 📏 » ${PREFIX}setwarnlimit <1-10>
+┃ 📢 » ${PREFIX}hidetag <mensaje>
+┃ 🔗 » ${PREFIX}antilink on|off
+┃ 🤖 » ${PREFIX}bot on|off
+┃ 🔗 » ${PREFIX}link | ${PREFIX}revoke
+┃ ✏️ » ${PREFIX}setgpname | ${PREFIX}setgpdesc
+┃ 🖼️ » ${PREFIX}setgpbanner (citando foto)
+┃ 📌 » ${PREFIX}pin | ${PREFIX}unpin
+┃ 📊 » ${PREFIX}count | ${PREFIX}topcount | ${PREFIX}topinactive
+┃ 📋 » ${PREFIX}gp
+┃ ➤ ${PREFIX}testwelcome (Probar bienvenida)
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -347,6 +361,7 @@ export default {
 ┃ 📌 » ${PREFIX}pin | ${PREFIX}unpin
 ┃ 📊 » ${PREFIX}count | ${PREFIX}topcount | ${PREFIX}topinactive
 ┃ 📋 » ${PREFIX}gp
+┃ ➤ ${PREFIX}testwelcome (Probar bienvenida)
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
