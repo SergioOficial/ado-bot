@@ -56,6 +56,11 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `warmup` / `antiban` | `plugins/owner/antiban.js` | el tope y el riesgo a la vista; solo lectura |
 | **guía rápida del menú** y crédito | `lib/menu-ayuda.js` + `plugins/info/menu.js` | leyenda de símbolos y crédito de Shin-MD tal cual; las marcas Ⓓ/Ⓐ/Ⓟ salen de los plugins cargados |
 | **botones nativos** | `lib/botones.js` + `lib/wa-nodes.js` | de `src/commands/interactive.js` y `src/lib/wa-nodes.js`: lista desplegable, hoja inferior para >3 botones, nodos binarios, sin envoltorio `viewOnceMessage` |
+| **álbumes nativos** | `lib/album.js` | de `src/lib/album.js`: varias fotos en una tarjeta (`albumMessage` + `messageAssociation`), con la lista revisada antes de gastar envíos |
+| `compat` | `plugins/owner/compat.js` | de `cmds/owner/compat.js`: cuatro pruebas numeradas (texto, botones, hoja inferior, álbum) para saber qué no lee el teléfono |
+| `subir` | `plugins/owner/subir.js` | de `cmds/owner/subir.js`: escribir un archivo desde WhatsApp con la ruta encerrada en el repo y `.git/` protegido |
+| `eval` | `plugins/owner/evaluar.js` | de `cmds/owner/exec.js` (`.e`): ejecutar JavaScript y ver el resultado, con la salida recortada |
+| `restart` (relevo) + `scripts/vigia.mjs` + `scripts/supervisor.mjs` | `plugins/owner/restart.js` | de `cmds/owner/restart.js` y `scripts/{vigia,supervisor}.mjs`: el bot se levanta solo y no se queda apagado tras reiniciar |
 
 ## Pendientes por categoría
 

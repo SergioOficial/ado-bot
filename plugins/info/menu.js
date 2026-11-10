@@ -317,6 +317,12 @@ export default {
 ┃ 🔑 » ${PREFIX}gencode
 ┃ 💎 » ${PREFIX}addpremium
 ┃ ❌ » ${PREFIX}delpremium
+┃ 🩺 » ${PREFIX}compat (diagnóstico, solo privado)
+┃ 📤 » ${PREFIX}subir <ruta> | <contenido>
+┃ 🧠 » ${PREFIX}eval <código>
+┃ 🛡️ » ${PREFIX}warmup | ${PREFIX}antiban
+┃ 📄 » ${PREFIX}getplugin | ${PREFIX}botinfo
+┃ 🚫 » ${PREFIX}block | ${PREFIX}unblock
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
@@ -409,7 +415,7 @@ export default {
             {
               title: "Más",
               rows: [
-                { id: `${comando} utilidades`, title: "🔔 Utilidades", description: "qr, morse, encuesta, recordar" },
+                { id: `${comando} utils`, title: "🔔 Utilidades", description: "qr, morse, encuesta, recordar" },
                 { id: `${comando} ia`, title: "🧠 IA", description: "ia, iaaudio, imagen" },
                 { id: `${comando} stickers`, title: "🖌️ Stickers", description: "sticker, brat" },
                 { id: `${comando} owner`, title: "👑 Owner", description: "solo dueños" },

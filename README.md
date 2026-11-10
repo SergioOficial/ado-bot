@@ -106,9 +106,12 @@ internet. Nada más.
 10. Para que siga vivo al cerrar Termux, déjalo en segundo plano:
 
     ```bash
-    nohup npm start > bot.log 2>&1 &
+    nohup npm run vigia > bot.log 2>&1 &
     tail -f bot.log
     ```
+
+    `vigia` (en vez de `start`) es lo que hace que el bot se levante solo si se
+    cae o si reinicias desde WhatsApp con `.restart`.
 
 ### 🖥️ Servidor VPS (Ubuntu / Debian) — paso a paso
 
@@ -156,7 +159,8 @@ internet. Nada más.
    pm2 save && pm2 startup  # que arranque solo si reinicias el servidor
    ```
 
-   Sin `pm2`, basta `npm start` dentro de `tmux` o `screen`.
+   Sin `pm2`, usa **`npm run vigia`** dentro de `tmux` o `screen`: arranca el bot
+   y lo vuelve a levantar si se cae, sin instalar nada más.
 
 ### ☁️ Hosting con panel (BotKeep, Railway, Pterodactyl…)
 
@@ -195,9 +199,10 @@ vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 85 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run probar` | 91 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
+| `npm run vigia` | Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o `nohup`). |
 
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
 culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
@@ -224,6 +229,7 @@ Levi-bot/
 │   ├── economia.js       #   apuestas, plazos y formato del dinero
 │   ├── consultas.js      #   APIs externas con plazo y error claro
 │   ├── antiban.js        #   cola de envíos, ritmo, calentamiento y vigilante
+│   ├── album.js          #   álbumes nativos (varias fotos en una tarjeta)
 │   ├── red-segura.js     #   pedir URLs sin abrir la red interna
 │   ├── rutas.js          #   una sola ruta para las carpetas de datos
 │   └── database.js       #   base JSON con autoguardado
@@ -243,7 +249,7 @@ Levi-bot/
 │   ├── test/             # botones de prueba
 │   └── utils/            # qr, morse, encuesta, recordar, say, get, pfp, crypto
 ├── pruebas/              # Pruebas que corren sin abrir WhatsApp
-├── scripts/              # verificar · probar · humo · auditar · mapa-porte
+├── scripts/              # verificar · probar · humo · auditar · mapa-porte · vigia
 └── docs/                 # CLIENTE · COMANDOS · PORTE · RETORNO
 ```
 
@@ -300,7 +306,7 @@ incluidos.
 | 🔔 **Utilidades** | 70 | `ping` `info` `menu` `allmenu` `health` `traducir` `clima` `wiki` `tts` `qr` `morse` `demorse` `encuesta` `say` `read` `recordar` `pfp` `wastalk` `crypto` `letra` `acortar` `tourl` `tag` |
 | 🤖 **Sub-bots** | 13 | `code` `jadibot` `stopbot` `bots` `addowner` `delowner` |
 | 💎 **Premium** | 2 | `canjear` |
-| 👑 **Owner** | 61 | `fix` `restart` `reload` `backup` `exec` `getplugin` `nuevo` `delplugin` `block` `unblock` `blocklist` `botsesion` `setbotname` `setbotpp` `clear` `warmup` `antiban` |
+| 👑 **Owner** | 61 | `fix` `restart` `reload` `backup` `exec` `eval` `subir` `compat` `getplugin` `nuevo` `delplugin` `block` `unblock` `blocklist` `botsesion` `setbotname` `setbotpp` `clear` `warmup` `antiban` |
 | 🧪 **Test** | 7 | `botones` `boton1`…`boton6` |
 
 💡 Cualquier comando funciona en **modo privado** con un guion al final: `.menu-`.
@@ -349,7 +355,17 @@ incluidos.
   `.delplugin` para crearlos y borrarlos con confirmación, `.botinfo`,
   `.blocklist` y `.block`/`.unblock` comprobados contra la lista real.
 - 🩺 **Diagnóstico**: `.health`, `.runtime`, `.status`, `.lid` y `.cache` con
-  datos medidos (RAM, tiempo encendido, tamaño de la base).
+  datos medidos (RAM, tiempo encendido, tamaño de la base). Y **`.compat`**: manda
+  cuatro mensajes numerados (texto, botones, hoja inferior y álbum) para saber
+  cuál no lee un teléfono concreto, sin adivinar.
+- 📤 **Editar desde el móvil**: `.subir <ruta> | <contenido>` escribe un archivo
+  del bot sin abrir Termux (ruta encerrada en la carpeta del bot, `.git/`
+  protegido), `.eval <código>` ejecuta JavaScript y `.getplugin` enseña el código.
+- ♻️ **El bot ya no se queda apagado**: `npm run vigia` lo levanta solo si se cae
+  y `.restart` funciona también sin supervisor (antes hacía `process.exit` y en
+  Termux se quedaba muerto). Si se cae 5 veces en 2 minutos, se rinde y lo dice.
+- 🖼️ **Álbumes nativos** (`lib/album.js`): varias fotos en una sola tarjeta, la
+  misma mecánica que usa el teléfono.
 - 🧪 **`npm run humo`**: llama a los plugins con un contexto falso y caza los que
   revientan — lo que `node --check` no ve.
 - 🛠️ **`.fix` ya no borra tu trabajo**: si hay cambios sin subir, guarda un

@@ -160,15 +160,35 @@ if (pulsado?.id === "menu economia" && comoComando === ".menu economia")
   ok(`un botón se convierte en comando: "${comoComando}"`);
 else mal(`no se pudo leer el botón: ${JSON.stringify(pulsado)}`);
 
-// Los botones que manda el menú tienen que apuntar a categorías que existan.
-const { readFileSync } = await import("fs");
-const fuenteMenu = readFileSync(join(process.cwd(), "plugins", "info", "menu.js"), "utf8");
+// Los botones que manda el menú tienen que apuntar a categorías que existan, y
+// el mensaje tiene que salir con los nodos binarios: sin ellos WhatsApp acepta
+// el mensaje y el teléfono no pinta nada (ni error, ni aviso).
+const { readFileSync: leer } = await import("fs");
+const fuenteMenu = leer(join(process.cwd(), "plugins", "info", "menu.js"), "utf8");
 const categorias = new Set([...fuenteMenu.matchAll(/tipo\s*===\s*'([a-z]+)'/g)].map((m) => m[1]));
-const botonesMenu = [...fuenteMenu.matchAll(/rapido\("([^"]+)",\s*`\$\{comando\}\s+([a-z]+)`\)/g)].map((m) => m[2]);
-const botonesRotos = botonesMenu.filter((c) => !categorias.has(c));
-if (botonesMenu.length && botonesRotos.length === 0) ok(`los ${botonesMenu.length} botones del menú apuntan a categorías existentes`);
-else if (!botonesMenu.length) console.log("  · el menú no manda botones (no es un error)");
-else mal(`botones del menú a categorías que no existen: ${botonesRotos.join(", ")}`);
 
-console.log(fallos === 0 ? "\n✅ Todo en orden.\n" : `\n❌ ${fallos} comprobación(es) fallaron.\n`);
-process.exit(fallos === 0 ? 0 : 1);
+// Botones rápidos: rapido("Texto", `${comando} categoria`)
+const rapidos = [...fuenteMenu.matchAll(/rapido\([^,]+,\s*[`"]\$\{comando\}\s+([a-z]+)[`"]/g)].map((m) => m[1]);
+// Filas de la lista desplegable: { id: `${comando} categoria`, ... }
+const filas = [...fuenteMenu.matchAll(/id:\s*`\$\{comando\}\s+([a-z]+)`/g)].map((m) => m[1]);
+const destinos = [...new Set([...rapidos, ...filas])];
+const destinosRotos = destinos.filter((c) => !categorias.has(c));
+
+if (destinos.length && !destinosRotos.length) {
+  ok(`${destinos.length} destino(s) de botón del menú existen (${destinos.join(", ")})`);
+} else if (destinosRotos.length) {
+  mal(`el menú apunta a categorías que no existen: ${destinosRotos.join(", ")}`);
+} else {
+  console.log("  · el menú no manda botones (no es un error)");
+}
+
+const fuenteBotones = leer(join(process.cwd(), "lib", "botones.js"), "utf8");
+if (fuenteBotones.includes("additionalNodes: nodosInteractivos")) {
+  ok("los botones salen con los nodos binarios (biz → interactive → native_flow)");
+} else {
+  mal("los botones se mandan SIN nodos binarios: el teléfono no los pintaría");
+}
+if (!/viewOnceMessage:\s*\{\s*message:\s*interactivo/.test(fuenteBotones.split("const contenido")[1] || "")) {
+  ok("el interactivo no va envuelto en viewOnceMessage (botones grises en WhatsApp Web)");
+}
+

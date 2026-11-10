@@ -30,7 +30,7 @@ if (!existsSync(join(RAIZ, "node_modules"))) {
  */
 const NUNCA = new Set([
   "fix", "clear", "restart", "reload", "exec", "backup", "nuevo", "delplugin",
-  "botsesion", "broadcast", "join", "leave", "invite",
+  "botsesion", "broadcast", "join", "leave", "invite", "subir", "eval",
 ]);
 
 /**
