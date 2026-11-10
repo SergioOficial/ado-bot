@@ -3,8 +3,8 @@
 _Generado el 2026-11-10 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **74**
-- Pendientes de portar o de descartar: **145**
+- Ya existen en Levi (al menos con un nombre): **109**
+- Pendientes de portar o de descartar: **110**
 
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
@@ -27,6 +27,20 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `get` | `plugins/utils/get.js` + `lib/red-segura.js` | solo el dueño, con filtro de IPs privadas, DNS y sin seguir redirecciones |
 | `pfp` | `plugins/utils/pfp.js` | si la foto es privada lo dice; no manda una imagen de relleno |
 | `wastalk` | `plugins/utils/wastalk.js` | solo lo público (existe, estado, foto); respeta la privacidad |
+| `bot on/off` | `plugins/admin/bot.js` | el apagado lo respeta el router, no cada plugin |
+| `link` / `revoke` | `plugins/admin/link.js` | si el grupo no tiene enlace, se crea en vez de dar error |
+| `setgpname` / `setgpdesc` / `setgpbanner` | `plugins/admin/setgp.js` | comprueban en `groupMetadata` que el cambio se aplicó |
+| `pin` / `unpin` | `plugins/admin/pin.js` | avisa del tope de 7 días de WhatsApp |
+| `count` / `topcount` / `topinactive` | `plugins/admin/actividad-grupo.js` + `lib/actividad.js` | contador propio topado a 1000 personas por grupo |
+| `gp` | `plugins/admin/groupinfo.js` | ficha del grupo con lo que el bot tiene activado |
+| `setdesc`…`setbirth` y sus borrados | `plugins/perfil/ficha.js` | valida la fecha de verdad (rechaza 32/13/9999) |
+| `level` / `lboard` | `plugins/perfil/level.js` | una sola curva (100 × nivel), no una nueva |
+| `afk` | `plugins/perfil/afk.js` | avisa al mencionar con límite de 10 min por chat y se quita al escribir |
+| `health` `runtime` `status` `lid` `cache` `infobot` | `plugins/info/estado.js` | datos medidos (RAM, encendido, tamaños), no inventados |
+| `allmenu` / `menucat` | `plugins/info/allmenu.js` | la lista se genera leyendo los plugins cargados |
+| `weekly` / `monthly` | `plugins/economia/recompensas.js` | campos nuevos (`lastWeekly`, `lastMonthly`): no se reinicia la racha de `.daily` |
+| `ppt` / `roulette` / `casino` | `plugins/economia/apuestas.js` | ruleta europea de verdad con pagos ×2 y ×36 |
+| `coffer` | `plugins/economia/coffer.js` | lo guardado no lo toca `.rob`; sin intereses (no se fabrica dinero) |
 
 ## Pendientes por categoría
 
@@ -51,26 +65,19 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | twitter | `cmds/downloads/twitter.js` | twitter, x |
 | ytdlp | `cmds/downloads/ytdlp.js` | ytdlp, ytdl |
 
-### economy (16)
+### economy (9)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | adventure | `cmds/economy/adventure.js` | adventure, aventura |
-| casino | `cmds/economy/casino.js` | casino, apostar |
-| coffer | `cmds/economy/coffer.js` | coffer, cofre |
 | dungeon | `cmds/economy/dungeon.js` | dungeon, mazmorra |
 | economyboard | `cmds/economy/economyboard.js` | economyboard, eboard, baltop |
-| einfo | `cmds/economy/einfo.js` | einfo, infoeconomy, cooldowns, economyinfo |
 | heal | `cmds/economy/heal.js` | heal, curar, pocion, potion |
 | invoke | `cmds/economy/invoke.js` | invoke, ritual, invocar |
-| monthly | `cmds/economy/monthly.js` | monthly, mensual |
-| ppt | `cmds/economy/ppt.js` | ppt |
-| roulette | `cmds/economy/roulette.js` | roulette, rt, ruleta |
 | shop | `cmds/economy/shop.js` | shop, tienda, buy, comprar, inventory, inv, inventario |
 | slot | `cmds/economy/slot.js` | slot |
 | slut | `cmds/economy/slut.js` | slut, prostituirse |
 | transfer | `cmds/economy/transfer.js` | transfer |
-| weekly | `cmds/economy/weekly.js` | weekly, semanal |
 
 ### fun (1)
 
@@ -116,39 +123,21 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | kuro | `cmds/games/kuro.js` | kuro |
 | ttt | `cmds/games/ttt.js` | ttt |
 
-### group (16)
+### group (6)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | autotraducir | `cmds/group/autotraducir.js` | autotraducir, autotrad, autotr |
-| bot | `cmds/group/bot.js` | bot |
-| count | `cmds/group/count.js` | count, mensajes, messages, msgcount |
 | evento | `cmds/group/evento.js` | evento |
-| groupinfo | `cmds/group/groupinfo.js` | groupinfo, gp |
 | guardar | `cmds/group/guardar.js` | guardar |
-| link | `cmds/group/link.js` | link |
-| revoke | `cmds/group/revoke.js` | revoke, restablecer |
 | setgoodbye | `cmds/group/setgoodbye.js` | setgoodbye |
-| setgpbanner | `cmds/group/setgpbanner.js` | setgpbanner |
-| setgpdesc | `cmds/group/setgpdesc.js` | setgpdesc |
-| setgpname | `cmds/group/setgpname.js` | setgpname |
 | setprimary | `cmds/group/setprimary.js` | setprimary |
 | setwelcome | `cmds/group/setwelcome.js` | setwelcome |
-| topcount | `cmds/group/topcount.js` | topcount, topmensajes, topmsgcount, topmessages |
-| topinactive | `cmds/group/topinactive.js` | topinactive, topinactivos, topinactiveusers |
 
-### main (10)
+### main (2)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| allmenu | `cmds/main/allmenu.js` | allmenu |
-| cache | `cmds/main/cache.js` | cache, limpiarcache, clearcache |
-| health | `cmds/main/health.js` | health, statsbot, salud |
-| infobot | `cmds/main/infobot.js` | infobot, botinfo |
-| lid | `cmds/main/lid.js` | lid, miid, identidad |
-| menucat | `cmds/main/menucat.js` | menucat |
-| runtime | `cmds/main/runtime.js` | runtime |
-| status | `cmds/main/status.js` | status, estado |
 | terminos | `cmds/main/terminos.js` | terminos |
 | warmup | `cmds/main/warmup.js` | warmup |
 
@@ -178,23 +167,13 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | subir | `cmds/owner/subir.js` | subir |
 | subircookies | `cmds/owner/subircookies.js` | subircookies |
 
-### profile (13)
+### profile (3)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| afk | `cmds/profile/afk.js` | afk |
 | afktime | `cmds/profile/afktime.js` | afktime |
-| delbirth | `cmds/profile/delbirth.js` | delbirth |
-| deldesc | `cmds/profile/deldesc.js` | deldesc, deldescription |
-| delgenre | `cmds/profile/delgenre.js` | delgenre |
-| delhobby | `cmds/profile/delhobby.js` | delhobby, delpasatiempo, removehobby |
 | divorce | `cmds/profile/divorce.js` | divorce |
-| lboard | `cmds/profile/lboard.js` | lboard, lb, leaderboard |
 | marry | `cmds/profile/marry.js` | marry, casarse |
-| setbirth | `cmds/profile/setbirth.js` | setbirth |
-| setdesc | `cmds/profile/setdesc.js` | setdesc, setdescription |
-| setgenre | `cmds/profile/setgenre.js` | setgenre |
-| sethobby | `cmds/profile/sethobby.js` | sethobby, setpasatiempo |
 
 ### raíz (3)
 

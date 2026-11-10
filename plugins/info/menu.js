@@ -45,7 +45,10 @@ export default {
 ┃ ➤ ${PREFIX}pay <@user> <monto>
 ┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
 ┃ ➤ ${PREFIX}cf | ${PREFIX}slots | ${PREFIX}dice
-┃ ➤ ${PREFIX}rankcoins
+┃ ➤ ${PREFIX}ppt | ${PREFIX}roulette | ${PREFIX}casino
+┃ ➤ ${PREFIX}weekly | ${PREFIX}monthly
+┃ ➤ ${PREFIX}coffer (no lo toca .rob)
+┃ ➤ ${PREFIX}rankcoins | ${PREFIX}einfo
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
