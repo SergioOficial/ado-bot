@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export default {
   command: ["welcome", "bienvenida"],
   execute: async (ctx) => {
@@ -22,9 +20,7 @@ export default {
           try {
             const meta = await sock.groupMetadata(id);
             groupName = meta.subject;
-          } catch (e) {
-            console.log("No se pudo leer la metadata del grupo en welcome:", e.message);
-          }
+          } catch (e) {}
 
           for (const p of participants) {
             const jid = typeof p === "string" ? p : (p.id || p.jid || p.phoneNumber || "");
@@ -37,32 +33,14 @@ export default {
               const customMsg = chat.welcomeMsg || "꧁༺ 💤 𝐋𝐄𝐕𝐈 𝐁𝐎𝐓 🌌 ༻꧂\n\n🎄 *¡Bienvenido/a @user!* 🎄\n\n*❒ Te damos la bienvenida a @group.*\n• Esperamos que disfrutes tu estadía.\n\n       ♪ ¡PÁSALA GENIAL!  \n\n> Usa #help para ver mis comandos \n🐾━━━━━━━━━━━━🐾";
               const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
 
-              // 📸 Obtener foto de perfil del usuario
-              let userPfp = "https://i.pravatar.cc/300"; // Foto por defecto si no tiene
-              try {
-                const url = await sock.profilePictureUrl(jid, "image");
-                if (url) userPfp = url;
-              } catch (e) {}
+              // 🖼️ Imagen que pediste
+              const welcomeImage = "https://tse2.mm.bing.net/th/id/OIP.qoxIHiufIGEW45rXleS98gHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3&tema=rosa";
 
-              try {
-                // 🎨 Llamar a la API para generar la imagen de bienvenida
-                // ⚠️ CAMBIA "https://tu-dominio.com" POR TU URL REAL DE LA API
-                const apiUrl = `https://natsu-api.darkcore.xyz/api/maker/welcome?foto=${encodeURIComponent(userPfp)}`;
-                const res = await axios.get(apiUrl, { responseType: "arraybuffer", timeout: 15000 });
-                const imageBuffer = Buffer.from(res.data, "binary");
-
-                // Enviar la imagen con el texto de bienvenida
-                await sock.sendMessage(id, { 
-                  image: imageBuffer, 
-                  caption: text, 
-                  mentions: [jid] 
-                }).catch(() => {});
-
-              } catch (apiError) {
-                // Si la API falla, envía solo el texto para no dejar a la persona sin bienvenida
-                console.log("Error en API de bienvenida, enviando solo texto:", apiError.message);
-                await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {});
-              }
+              await sock.sendMessage(id, { 
+                image: { url: welcomeImage }, 
+                caption: text, 
+                mentions: [jid] 
+              }).catch(() => {});
             }
 
             // 🔴 SALIDA (DESPEDIDA NORMAL)
@@ -70,16 +48,14 @@ export default {
               const customMsg = chat.goodbyeMsg || "Adiós @user, espero que vuelvas pronto 👋";
               const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
 
-              await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {
-                console.log(`Error al enviar despedida al grupo ${id}.`);
-              });
+              await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {});
             }
           }
         } catch (e) {
           console.error("Error en evento welcome:", e.message || e);
         }
       });
-      console.log("✅ Evento de Bienvenida (API) / Despedida enganchado a la memoria.");
+      console.log("✅ Evento de Bienvenida (Imagen) / Despedida enganchado.");
     }
 
     // 🛡️ 2. CONFIGURACIÓN DEL COMANDO
@@ -100,21 +76,17 @@ export default {
       isAdmin = isOwnerCheck(sender, sock);
     }
 
-    if (!isAdmin) {
-      return enviartexto("⚠️ Solo los administradores pueden configurar esto.");
-    }
+    if (!isAdmin) return enviartexto("⚠️ Solo los administradores pueden configurar esto.");
 
     if (!db.chats[from]) db.chats[from] = {};
     const chat = db.chats[from];
     const action = args[0]?.toLowerCase();
 
-    // Prender / Apagar Bienvenida
     if (action === "on" || action === "off") {
       chat.welcome = action === "on";
       return enviartexto(`✅ La *bienvenida* ha sido ${chat.welcome ? "ACTIVADA 🟢" : "DESACTIVADA 🔴"}.`);
     }
 
-    // Prender / Apagar Despedida
     if (action === "goodbye" || action === "despedida") {
       const state = args[1]?.toLowerCase();
       if (state === "on" || state === "off") {
@@ -123,7 +95,6 @@ export default {
       }
     }
 
-    // Personalizar mensajes
     if (action === "set") {
       const text = args.slice(1).join(" ");
       if (!text) return enviartexto("⚠️ Escribe el mensaje usando *@user* y *@group*.");
@@ -138,7 +109,6 @@ export default {
       return enviartexto(`✅ Mensaje de despedida actualizado.`);
     }
 
-    // Menú de ayuda
     return enviartexto(
       `👋 *CONFIGURACIÓN DE BIENVENIDA*\n\n` +
       `🟢 *Bienvenida:* ${chat.welcome ? "ON" : "OFF"}\n` +
