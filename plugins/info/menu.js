@@ -279,6 +279,8 @@ export default {
 ┃ 📊 » ${PREFIX}allmenu | ${PREFIX}menucat
 ┃ 🩺 » ${PREFIX}health | ${PREFIX}runtime | ${PREFIX}status
 ┃ 🪪 » ${PREFIX}lid | ${PREFIX}cache | ${PREFIX}infobot
+┃ 💹 » ${PREFIX}crypto <btc> | ${PREFIX}letra <art> <tema>
+┃ 🔗 » ${PREFIX}acortar <url> | ${PREFIX}tourl
 ┃ 🎤 » ${PREFIX}tts <txt>
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*

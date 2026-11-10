@@ -3,8 +3,8 @@
 _Generado el 2026-11-10 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **109**
-- Pendientes de portar o de descartar: **110**
+- Ya existen en Levi (al menos con un nombre): **114**
+- Pendientes de portar o de descartar: **105**
 
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
@@ -41,6 +41,10 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `weekly` / `monthly` | `plugins/economia/recompensas.js` | campos nuevos (`lastWeekly`, `lastMonthly`): no se reinicia la racha de `.daily` |
 | `ppt` / `roulette` / `casino` | `plugins/economia/apuestas.js` | ruleta europea de verdad con pagos ×2 y ×36 |
 | `coffer` | `plugins/economia/coffer.js` | lo guardado no lo toca `.rob`; sin intereses (no se fabrica dinero) |
+| `crypto` | `plugins/utils/consultas.js` + `lib/consultas.js` | CoinGecko en vivo (probado): dólares y pesos con cambio de 24 h |
+| `letra` | `plugins/utils/consultas.js` | lyrics.ovh (probado); si no hay letra lo dice, no inventa |
+| `acortar` | `plugins/utils/enlaces-utils.js` | is.gd (probado), sin claves ni páginas intermedias |
+| `tourl` | `plugins/utils/enlaces-utils.js` | uguu.se (probado). Se descartaron 0x0.st (cerró subidas por spam de bots), catbox (rechaza servidores) y tmpfiles (solo medios) |
 
 ## Pendientes por categoría
 
@@ -158,13 +162,12 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | xnxx | `cmds/nsfw/xnxx.js` | xnxx |
 | xvideos | `cmds/nsfw/xvideos.js` | xvideos |
 
-### owner (4)
+### owner (3)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | compat | `cmds/owner/compat.js` | compat, diagnostico |
 | setmenu | `cmds/owner/setmenu.js` | setmenu |
-| subir | `cmds/owner/subir.js` | subir |
 | subircookies | `cmds/owner/subircookies.js` | subircookies |
 
 ### profile (3)
@@ -219,17 +222,13 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | setpackprivate | `cmds/stickers/setpackprivate.js` | setpackprivate, setpackpriv, packprivate |
 | setpackpublic | `cmds/stickers/setpackpublic.js` | setpackpublic, setpackpub, packpublic |
 
-### utils (10)
+### utils (6)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| acortar | `cmds/utils/acortar.js` | acortar, shorturl, shorten, acorta |
 | benchdl | `cmds/utils/benchdl.js` | benchdl |
 | carbon | `cmds/utils/carbon.js` | carbon, codigoimg, codeimg |
-| crypto | `cmds/utils/crypto.js` | crypto, btc, precio |
 | deepseek | `cmds/utils/deepseek.js` | deepseek, ds, deepthink, reasoning, r1 |
 | githubstalk | `cmds/utils/githubstalk.js` | githubstalk, ghstalk, gh |
 | hd | `cmds/utils/hd.js` | hd, enhance, remini |
-| letra | `cmds/utils/letra.js` | letra, lyrics, lyric |
 | ptv | `cmds/utils/ptv.js` | ptv |
-| tourl | `cmds/utils/tourl.js` | tourl |
