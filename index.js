@@ -1,4 +1,4 @@
-// CREADOR: Jeferson Fernández ⚔️ Colab Sergio Gómez Gort y Asistencia en Comandos de Shin MD
+// CREADOR: Sergio Gómez Gort con Asistencia en Comandos de Shin MD
 
 // 📦 IMPORTACIONES
 // El cliente sale de lib/baileys.js, que decide el paquete (fork u oficial).
@@ -53,7 +53,7 @@ const color = (text, colorName = "green") => {
 const SUB_CONFIG_DIR = SUB_CONFIGS;
 const SUB_SESSION_DIR = SUB_SESIONES;
 const activeSubbots = new Map();
-const MAX_SUBBOTS = 5;
+const MAX_SUBBOTS = 10;
 
 function ensureSubDirs() {
   if (!fs.existsSync(SUB_CONFIG_DIR)) fs.mkdirSync(SUB_CONFIG_DIR, { recursive: true });
@@ -193,7 +193,7 @@ const { version } = await fetchLatestBaileysVersion();
         const code = await subSock.requestPairingCode(phoneNumber);
 
         const msg1 = await parentSock.sendMessage(remoteJid, {
-          text: `> Levi-Bot✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
+          text: `> 𝙰𝚍𝚘-𝑩𝒐𝒕✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
         });
 
         await new Promise(r => setTimeout(r, 800));
@@ -257,12 +257,12 @@ const { version } = await fetchLatestBaileysVersion();
 }
 
 // 🧙 BANNER
-const banner = cfonts.render("Levi|Bot", { font: "block", align: "center", gradient: ["cyan", "magenta"], lineHeight: 1, letterSpacing: 1, space: true, env: "node" });
-const subBanner = cfonts.render("⚔️ by Jeferson Fernández 💫 from Sergio Gómez Gort", { font: "console", align: "center", gradient: ["yellow", "cyan"] });
+const banner = cfonts.render("Ado-Bot", { font: "block", align: "center", gradient: ["cyan", "magenta"], lineHeight: 1, letterSpacing: 1, space: true, env: "node" });
+const subBanner = cfonts.render("⚔️ by Sergio Dev", { font: "console", align: "center", gradient: ["yellow", "cyan"] });
 console.clear();
 console.log(banner.string);
 console.log(subBanner.string);
-console.log(color("💫 Levi-Bot se está iniciando...", "magenta"));
+console.log(color("💫 Ado-Bot se está iniciando...", "magenta"));
 
 // 🧠 VARIABLES GLOBALES
 const BOT_NAME = config.botName;
