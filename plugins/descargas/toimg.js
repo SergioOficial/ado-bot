@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { downloadMediaMessage } from "@whiskeysockets/baileys";
+import { downloadMediaMessage } from "../../lib/baileys.js";
 import pino from "pino";
 export default {
   command: ["toimg", "s2i", "sticker2img", "img"],

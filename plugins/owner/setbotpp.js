@@ -1,4 +1,4 @@
-import { downloadContentFromMessage } from "@whiskeysockets/baileys";
+import { downloadContentFromMessage } from "../../lib/baileys.js";
 export default {
   command: ["setbotpp"],
   isOwner: true,

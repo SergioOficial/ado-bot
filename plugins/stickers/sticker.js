@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { spawn } from "child_process";
-import { downloadMediaMessage } from "@whiskeysockets/baileys";
+import { downloadMediaMessage } from "../../lib/baileys.js";
 import { Sticker } from "wa-sticker-formatter";
 import pino from "pino";
 export default {

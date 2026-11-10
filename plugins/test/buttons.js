@@ -1,4 +1,4 @@
-import { proto, generateWAMessageFromContent, WA_DEFAULT_EPHEMERAL } from "@whiskeysockets/baileys";
+import { proto, generateWAMessageFromContent, WA_DEFAULT_EPHEMERAL } from "../../lib/baileys.js";
 
 async function sendInteractive(sock, msg, remoteJid, interactiveMessage) {
   const messageContent = proto.Message.fromObject({

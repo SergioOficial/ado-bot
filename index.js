@@ -1,13 +1,14 @@
 // CREADOR: Jeferson Fernández ⚔️ Colab Sergio Gómez Gort
 
 // 📦 IMPORTACIONES
+// El cliente sale de lib/baileys.js, que decide el paquete (fork u oficial).
 import makeWASocket, {
   DisconnectReason,
   useMultiFileAuthState,
   makeCacheableSignalKeyStore,
-  fetchLatestBaileysVersion,
-  fetchLatestWaWebVersion
-} from "@whiskeysockets/baileys";
+  paquete as PAQUETE_BAILEYS
+} from "./lib/baileys.js";
+import { versionParaLog } from "./lib/wa-version.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -204,6 +205,7 @@ console.log(color("💫 Levi-Bot se está iniciando...", "magenta"));
 
 // 🧠 VARIABLES GLOBALES
 const BOT_NAME = config.botName;
+let reconectando = false;
 
 // 🧾 ASK (para Termux local)
 function ask(promptText) {
@@ -226,8 +228,11 @@ function getRealSender(m) {
 async function startLevi() {
   await loadPlugins(); 
   const { state, saveCreds } = await useMultiFileAuthState("./session");
-  const { version, isLatest } = await fetchLatestBaileysVersion();
-  console.log(`📦 Usando versión de Baileys: ${version.join(".")} (${isLatest ? "actual" : "desactualizada"})`);
+  // La versión se pregunta a WhatsApp (no al repositorio de Baileys): con la
+  // del repositorio, WhatsApp cierra la conexión por «client out of date».
+  const { version, texto: textoVersion } = await versionParaLog();
+  console.log(`🔌 Cliente: ${PAQUETE_BAILEYS}`);
+  console.log(textoVersion);
 
   const sock = makeWASocket({
     version,
@@ -269,10 +274,25 @@ async function startLevi() {
       if (reason === DisconnectReason.loggedOut) {
         console.log("❌ Sesión cerrada. Borra /session y reinicia.");
         process.exit(1);
-      } else {
-        console.log("♻️ Reconectando...");
-        startLevi();
       }
+
+      // Si WhatsApp cierra por «client out of date» (405) el aviso tiene que
+      // decir qué pasa de verdad: no es el WhatsApp del móvil.
+      if (reason === 405) {
+        console.log("⚠️  WhatsApp rechazó la versión de Web que anuncia el bot (client out of date).");
+        console.log("    No es tu WhatsApp: es el número de revisión. Revisa la conexión a internet");
+        console.log("    del servidor, porque sin ella no se puede preguntar la versión a WhatsApp.");
+      }
+
+      // Un solo reconectador: antes, dos cierres seguidos arrancaban dos
+      // sockets vivos a la vez, cada uno con sus oyentes.
+      if (reconectando) return;
+      reconectando = true;
+      console.log("♻️ Reconectando...");
+      setTimeout(() => {
+        reconectando = false;
+        startLevi().catch((err) => console.error("❌ Falló la reconexión:", err.message));
+      }, 2000);
     }
   });
 
