@@ -35,46 +35,165 @@ un archivo que puedes leer, cambiar o borrar.
 | 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
 | 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
 | 🧠 **IA, economía y RPG** | Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
+| 🛡️ **Freno de envíos** | Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
 | ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 
 ---
 
 ## 🛠️ Instalación
 
-Una línea en Termux (Android):
+Requisitos en todos los casos: **Node.js 20 o superior**, `git` y conexión a
+internet. Nada más.
+
+### 📱 Termux (Android) — paso a paso
+
+1. Instala Termux **desde F-Droid o GitHub**, no desde Play Store (esa versión
+   está abandonada y no actualiza paquetes).
+
+   ```text
+   https://f-droid.org/es/packages/com.termux/
+   ```
+
+2. Abre Termux y actualiza los paquetes base:
+
+   ```bash
+   pkg update && pkg upgrade -y
+   ```
+
+3. Instala lo necesario. `python`, `make` y `clang` no son adorno: un paquete
+   del cliente es nativo y en ARM se compila.
+
+   ```bash
+   pkg install git nodejs-lts python make clang ffmpeg libvips -y
+   ```
+
+4. Evita que Android duerma el bot cuando apagues la pantalla:
+
+   ```bash
+   termux-wake-lock
+   ```
+
+5. Descarga el bot y entra en la carpeta:
+
+   ```bash
+   git clone https://github.com/SergioOficial/Levi-bot.git
+   cd Levi-bot
+   ```
+
+6. Instala las dependencias. En un móvil esto tarda **entre 10 y 25 minutos** y
+   parece colgado: está compilando. No cierres Termux.
+
+   ```bash
+   npm install
+   ```
+
+7. Comprueba que todo está en su sitio (no abre WhatsApp todavía):
+
+   ```bash
+   npm run verificar
+   ```
+
+8. Arranca:
+
+   ```bash
+   npm start
+   ```
+
+9. Escribe tu número con código de país cuando lo pida, sin `+` ni espacios
+   (ejemplo: `5215512345678`), y usa el código de 8 caracteres que aparece en
+   WhatsApp → **Dispositivos vinculados** → **Vincular con número de teléfono**.
+
+10. Para que siga vivo al cerrar Termux, déjalo en segundo plano:
+
+    ```bash
+    nohup npm start > bot.log 2>&1 &
+    tail -f bot.log
+    ```
+
+### 🖥️ Servidor VPS (Ubuntu / Debian) — paso a paso
+
+1. Entra por SSH y actualiza:
+
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+
+2. Instala Node 20 (el de los repositorios suele ser viejo) y las herramientas
+   de compilación:
+
+   ```bash
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt install -y nodejs git build-essential python3 ffmpeg libvips-dev
+   node -v   # debe decir v20.x o superior
+   ```
+
+3. Descarga el bot:
+
+   ```bash
+   git clone https://github.com/SergioOficial/Levi-bot.git
+   cd Levi-bot
+   ```
+
+4. Crea el archivo `.env` con tu número, para que no lo pregunte por consola:
+
+   ```bash
+   echo "WHATSAPP_NUMBER=5215512345678" > .env
+   ```
+
+5. Instala y comprueba:
+
+   ```bash
+   npm install
+   npm run verificar
+   ```
+
+6. Arranca con un vigilante que lo levanta si se cae (`pm2`):
+
+   ```bash
+   sudo npm install -g pm2
+   pm2 start index.js --name levi-bot
+   pm2 logs levi-bot        # aquí sale el código de vinculación
+   pm2 save && pm2 startup  # que arranque solo si reinicias el servidor
+   ```
+
+   Sin `pm2`, basta `npm start` dentro de `tmux` o `screen`.
+
+### ☁️ Hosting con panel (BotKeep, Railway, Pterodactyl…)
+
+1. Sube el repositorio a tu cuenta (o haz un fork) y conéctalo al panel.
+2. Pon el proyecto en **Node 20**.
+3. En *Variables de entorno* añade:
+   - `WHATSAPP_NUMBER` — tu número con código de país.
+   - `GITHUB_TOKEN` — opcional, solo para `.reporte` e `.invite`.
+4. Comando de inicio: `npm start` (o `node index.js`).
+5. Mira los **logs** del panel para copiar el código de vinculación.
+
+### 🔄 Actualizar el bot
+
+Desde WhatsApp, con el bot encendido: `.fix` (solo dueños). Si hay cambios
+locales sin subir, avisa y **no toca nada** hasta que lo confirmes otra vez; el
+parche queda guardado en `tmp/`.
+
+A mano:
 
 ```bash
-pkg install git nodejs-lts python make clang ffmpeg libvips -y && git clone https://github.com/SergioOficial/Levi-bot.git && cd Levi-bot && npm install && npm start
+git pull
+npm install          # solo si cambió package.json
+npm start
 ```
 
-En un VPS o hosting con Node 20+ ya instalado:
+### ⚠️ Antes de usar una cuenta
 
-```bash
-git clone https://github.com/SergioOficial/Levi-bot.git && cd Levi-bot && npm install && npm start
-```
-
-Al arrancar pide tu número (o toma `WHATSAPP_NUMBER` del entorno) y muestra el
-**código de vinculación**: WhatsApp → *Dispositivos vinculados* → *Vincular con
-número de teléfono*.
-
-<details>
-<summary><b>Si algo falla al instalar</b></summary>
-
-- **`sharp` no compila** (Termux viejo): `npm install @img/sharp-wasm32 --force && npm install sharp --force`.
-- **`better-sqlite3` falla**: faltan las herramientas de compilación; es un módulo nativo y en ARM se compila (`python`, `make`, `clang`). Si aun así falla, el bot arranca igual: el cliente principal es `@itsliaaa/baileys` y hay respaldo automático al oficial.
-- **El bot se desconecta solo**: mira la línea `📦 Versión de WhatsApp Web` del arranque. Si dice «del paquete, sin conexión a WhatsApp», el problema es la revisión anunciada, no tu teléfono.
-- Detalle del cliente y sus trampas: **[docs/CLIENTE.md](docs/CLIENTE.md)**.
-
-</details>
-
----
+Usa un número secundario, no el tuyo personal. Ningún bot puede garantizar que
+una cuenta no sea bloqueada; este lleva freno de ritmo, calentamiento y
+vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 
 ## 🧪 Comprobar que está bien (sin abrir WhatsApp)
 
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 52 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run probar` | 70 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
 
@@ -101,6 +220,7 @@ Levi-bot/
 │   ├── actividad.js      #   contador de quién habla en cada grupo
 │   ├── economia.js       #   apuestas, plazos y formato del dinero
 │   ├── consultas.js      #   APIs externas con plazo y error claro
+│   ├── antiban.js        #   cola de envíos, ritmo, calentamiento y vigilante
 │   ├── red-segura.js     #   pedir URLs sin abrir la red interna
 │   ├── rutas.js          #   una sola ruta para las carpetas de datos
 │   └── database.js       #   base JSON con autoguardado
@@ -175,7 +295,7 @@ incluidos.
 | 🔔 **Utilidades** | 70 | `ping` `info` `menu` `allmenu` `health` `traducir` `clima` `wiki` `tts` `qr` `morse` `demorse` `encuesta` `say` `read` `recordar` `pfp` `wastalk` `crypto` `letra` `acortar` `tourl` `tag` |
 | 🤖 **Sub-bots** | 13 | `code` `jadibot` `stopbot` `bots` `addowner` `delowner` |
 | 💎 **Premium** | 2 | `canjear` |
-| 👑 **Owner** | 61 | `fix` `restart` `reload` `backup` `exec` `getplugin` `nuevo` `delplugin` `block` `unblock` `blocklist` `botsesion` `setbotname` `setbotpp` `clear` |
+| 👑 **Owner** | 61 | `fix` `restart` `reload` `backup` `exec` `getplugin` `nuevo` `delplugin` `block` `unblock` `blocklist` `botsesion` `setbotname` `setbotpp` `clear` `warmup` `antiban` |
 | 🧪 **Test** | 7 | `botones` `boton1`…`boton6` |
 
 💡 Cualquier comando funciona en **modo privado** con un guion al final: `.menu-`.
@@ -184,6 +304,15 @@ incluidos.
 
 ## 🔧 Novedades de esta versión
 
+- 🛡️ **Anti-ban portado de Shin-MD** (`lib/antiban.js`): una sola cola para todos
+  los envíos, con espera al azar (no fija) entre mensajes, más espera en los
+  textos largos, y **calentamiento diario** (una cuenta nueva no manda 500
+  mensajes el primer día; el tope sube durante una semana y se guarda en la base,
+  así que reiniciar no lo pone a cero). Si la conexión se cae, el mensaje espera
+  y sale al volver; si un envío se queda sin respuesta, **no se repite** — mejor
+  perder uno que mandar dos iguales. Un vigilante mide el riesgo (desconexiones,
+  errores, fallos y un 403), pausa los envíos a partir de 80 y reconecta a partir
+  de 95, con tope de 3 intentos para no caer en un bucle. Se mira con `.warmup`.
 - 💰 **Economía completa**: `.weekly` y `.monthly` con racha y techo, `.roulette`
   con la ruleta europea de verdad (×2 color y paridad, ×36 número, el 0 para la
   casa), `.ppt`, `.casino` y `.coffer` — lo que guardas en la caja fuerte no lo

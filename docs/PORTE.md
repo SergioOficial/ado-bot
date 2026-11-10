@@ -3,8 +3,8 @@
 _Generado el 2026-11-10 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **114**
-- Pendientes de portar o de descartar: **105**
+- Ya existen en Levi (al menos con un nombre): **115**
+- Pendientes de portar o de descartar: **104**
 
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
@@ -52,6 +52,8 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `nuevo` / `delplugin` | `plugins/owner/nuevo.js` | escribe un plugin que ya responde; borrar pide confirmación |
 | `newsletter` / `canales` | `plugins/owner/canales.js` | se apuntan por evento: este cliente no tiene `sock.chats` |
 | `fix` (endurecido) | `plugins/owner/fix.js` | guarda parche y pide confirmación si hay cambios sin subir |
+| **anti-ban** (cola, ritmo, calentamiento, vigilante) | `lib/antiban.js` | puerto de `src/network/queue.js`, `src/core/engine/throttler.js`, `src/network/health.js` y `src/services/watchdog.js`: una cola para todo, jitter gaussiano, tope diario que sube por días, pausa por riesgo y reconexión con tope de intentos |
+| `warmup` / `antiban` | `plugins/owner/antiban.js` | el tope y el riesgo a la vista; solo lectura |
 
 ## Pendientes por categoría
 
@@ -145,12 +147,11 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | setprimary | `cmds/group/setprimary.js` | setprimary |
 | setwelcome | `cmds/group/setwelcome.js` | setwelcome |
 
-### main (2)
+### main (1)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | terminos | `cmds/main/terminos.js` | terminos |
-| warmup | `cmds/main/warmup.js` | warmup |
 
 ### media (1)
 

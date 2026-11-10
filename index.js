@@ -12,6 +12,7 @@ import { versionParaLog } from "./lib/wa-version.js";
 import { botonPulsado } from "./lib/botones.js";
 import { vencidos, textoAviso } from "./lib/recordatorios.js";
 import { esAdmin } from "./lib/grupo.js";
+import { crearLimitador, crearCola, crearSalud, crearVigilante, envolverSocket } from "./lib/antiban.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -165,6 +166,9 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
 
     if (connection === "close") {
       const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+      // La cola se para con su motivo: los envíos esperan en vez de perderse.
+      saludAntiban?.anotarDesconexion();
+      colaAntiban?.pausar("conexion");
       activeSubbots.delete(phoneNumber);
 
       if (reason === DisconnectReason.restartRequired) {
@@ -209,6 +213,52 @@ console.log(color("💫 Levi-Bot se está iniciando...", "magenta"));
 // 🧠 VARIABLES GLOBALES
 const BOT_NAME = config.botName;
 let reconectando = false;
+
+// 🛡️ ANTI-BAN — una sola cola para todo el proceso.
+// El ritmo, el calentamiento y el vigilante viven aquí y NO se recrean al
+// reconectar: si se recrearan, cada reconexión reiniciaría el tope diario y el
+// contador de reconexiones, que es justo lo que hay que vigilar.
+let sockActual = null;
+let limitadorAntiban = null;
+let colaAntiban = null;
+let saludAntiban = null;
+let vigilanteAntiban = null;
+
+// Los que deben responder aunque el tope diario esté alcanzado: son respuestas
+// directas a quien escribe (lo menos parecido a un bot que hay) y sin ellos
+// parece que el bot está muerto.
+const COMANDOS_URGENTES = new Set([
+  "menu", "allmenu", "menucat", "comandos", "help", "ayuda", "info",
+  "ping", "p", "prueba", "pba", "health", "salud", "status", "estado",
+  "runtime", "uptime", "bot", "boton", "botoff", "warmup",
+]);
+
+function prepararAntiban(sock) {
+  global.db.data.antiban ||= {};
+  limitadorAntiban ||= crearLimitador({ estado: global.db.data.antiban });
+  saludAntiban ||= crearSalud();
+  colaAntiban ||= crearCola({ limitador: limitadorAntiban, salud: saludAntiban });
+
+  envolverSocket(sock, { cola: colaAntiban });
+
+  vigilanteAntiban ||= crearVigilante({
+    cola: colaAntiban,
+    salud: saludAntiban,
+    obtenerSock: () => sockActual,
+  });
+  vigilanteAntiban.iniciar();
+
+  // A la vista para los plugins (`.warmup`, `.health`): el estado real, no una
+  // copia. Así lo que se cuenta en WhatsApp es lo que está pasando.
+  global.antiban = {
+    limitador: limitadorAntiban,
+    cola: colaAntiban,
+    salud: saludAntiban,
+    vigilante: vigilanteAntiban,
+  };
+
+  return colaAntiban;
+}
 
 // ⏰ VIGILANTE DE RECORDATORIOS
 // Los avisos viven en la base (lib/recordatorios.js) y este bucle los saca.
@@ -272,6 +322,9 @@ async function startLevi() {
     logger: pino({ level: "silent" })
   });
 
+  sockActual = sock;
+  prepararAntiban(sock);
+
   let pairingCodeRequested = false;
   let phoneNumber = null;
 
@@ -301,6 +354,9 @@ async function startLevi() {
     if (connection === "open") {
       console.log(`✅ ${BOT_NAME} conectado correctamente.`);
       iniciarVigilante(sock);
+      // La conexión volvió: los mensajes que esperaban en la cola salen ahora.
+      colaAntiban?.reanudar("conexion");
+      vigilanteAntiban?.latido();
     }
 
     if (connection === "close") {
@@ -356,6 +412,8 @@ async function startLevi() {
 // ═══════════════════════════════════════════
 async function handleMessages(sock, { messages, type }) {
   if (type !== "notify") return;
+  vigilanteAntiban?.latido(); // señal de vida para el vigilante
+  global.__contadorMensajes = (global.__contadorMensajes || 0) + 1;
   const m = messages[0];
   if (!m.message || m.key.fromMe) return;
 
@@ -404,8 +462,7 @@ async function handleMessages(sock, { messages, type }) {
 
   console.log(`💬 [${from}] ${texto} ${esPrivado ? "🔒 (Privado)" : ""}`);
 
-  // Contador para `.status` y `.health`: cuántos comandos se han atendido.
-  global.__contadorMensajes = (global.__contadorMensajes || 0) + 1;
+
 
   const plugin = commands.get(comando);
   if (!plugin) return;
@@ -449,9 +506,16 @@ async function handleMessages(sock, { messages, type }) {
   };
 
   try {
-    await plugin.execute(ctx);
+    // Ventana de prioridad: lo que envíe un comando urgente (.menu, .ping…)
+    // sale con la espera mínima y no lo frena el tope diario del calentamiento.
+    if (COMANDOS_URGENTES.has(comando) && colaAntiban) {
+      await colaAntiban.conPrioridad(() => plugin.execute(ctx));
+    } else {
+      await plugin.execute(ctx);
+    }
   } catch (error) {
     console.error(`❌ Error en #${comando}:`, error);
+    saludAntiban?.anotarError(error);
     await enviartexto(`⚠️ Error en *${comando}*.\n_${error.message || error}_`);
   }
 }

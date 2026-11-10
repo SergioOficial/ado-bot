@@ -278,6 +278,7 @@ export default {
 ┃ ⏰ » ${PREFIX}recordar <min>|<texto>
 ┃ 📊 » ${PREFIX}allmenu | ${PREFIX}menucat
 ┃ 🩺 » ${PREFIX}health | ${PREFIX}runtime | ${PREFIX}status
+┃ 🛡️ » ${PREFIX}warmup | ${PREFIX}antiban
 ┃ 🤖 » ${PREFIX}botinfo | ${PREFIX}newsletter
 ┃ 🚫 » ${PREFIX}blocklist | ${PREFIX}block | ${PREFIX}unblock
 ┃ 📄 » ${PREFIX}getplugin | ${PREFIX}nuevo | ${PREFIX}delplugin

@@ -117,8 +117,19 @@ export default {
       `│ Base › *${bytes(base)}* · ${usuarios} usuarios · ${grupos} chats`,
       `│ Mensajes atendidos › *${global.__contadorMensajes || 0}*`,
       `│ Conexión › ${sock.ws?.isOpen || sock.ws?.readyState === 1 ? "abierta 🟢" : "revisar 🟡"}`,
-      `╰─`,
     ];
+
+    // Anti-ban: el riesgo y lo que hay en la cola, si está en marcha.
+    const anti = global.antiban;
+    if (anti?.limitador) {
+      const r = anti.limitador.resumen();
+      const c = anti.cola?.estado?.() || { enEspera: 0, pausada: false, motivos: [] };
+      lineas.push(
+        `│ Envíos hoy › *${r.msgsHoy}/${r.tope}* · riesgo *${anti.salud?.estado?.().riesgo ?? 0}/100*`,
+        `│ Cola › *${c.enEspera}*${c.pausada ? ` ⏸️ (${c.motivos.join(", ")})` : ""}`
+      );
+    }
+    lineas.push(`╰─`);
 
     if (mem.rss > 700 * 1048576) {
       lineas.push("", "⚠️ Más de 700 MB de RAM: conviene reiniciar con `.restart`.");
