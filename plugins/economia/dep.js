@@ -1,5 +1,5 @@
 export default {
-  command: ["dep", "depositar", "deposit"],
+  command: ["dep", "depositar", "deposit", "d"],
   execute: async (ctx) => {
     const { sender, args, enviartexto, db, config } = ctx;
 
