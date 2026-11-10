@@ -25,12 +25,17 @@ export const pruebas = [
     igual(numeroDe("123456789012345@lid"), "123456789012345", "numeroDe saca los dígitos");
   }],
 
-  ["el dueño nuevo está en config y se reconoce por sus tres formas", () => {
+  ["Roxi está en config y se reconoce por sus tres formas", () => {
     const dueno = (config.owners || []).find((o) => String(o.number).includes("5574370309"));
+    igual(dueno?.name, "Roxi", "nombre en el comando .owner");
     esVerdad(Boolean(dueno), "está en la lista");
     for (const forma of ["5215574370309", "5574370309", "525574370309"]) {
       esVerdad(mismoNumero(dueno.number, forma), `coincide con ${forma}`);
     }
-    esVerdad((config.owners || []).length >= 5, "sigue habiendo más de cuatro dueños");
+    igual((config.owners || []).length, 4, "cuatro dueños (José ya no está)");
+    esVerdad(
+      !(config.owners || []).some((o) => String(o.number).includes("584245610338")),
+      "el número de José no quedó en la lista"
+    );
   }],
 ];
