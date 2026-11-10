@@ -85,6 +85,7 @@ npm install  @whiskeysockets/baileys
 npm install @img/sharp-wasm32 --force
 npm install sharp --force
 ```
+```
 npm start
 ```
 
