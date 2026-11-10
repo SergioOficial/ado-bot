@@ -39,8 +39,10 @@ export default {
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}work | ${PREFIX}daily | ${PREFIX}beg
 ┃ ➤ ${PREFIX}bal | ${PREFIX}nivel
+┃ ➤ ${PREFIX}dep | ${PREFIX}with (Banco)
 ┃ ➤ ${PREFIX}pay <@user> <monto>
 ┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
+┃ ➤ ${PREFIX}cf | ${PREFIX}slots | ${PREFIX}dice
 ┃ ➤ ${PREFIX}rankcoins
 ┗━━━━━━━━━━━━━━━━━━┛
 
@@ -144,8 +146,10 @@ export default {
 ┏━━━━━━━━━━━━━━━━━━┓
 ┃ ➤ ${PREFIX}work | ${PREFIX}daily | ${PREFIX}beg
 ┃ ➤ ${PREFIX}bal | ${PREFIX}nivel
+┃ ➤ ${PREFIX}dep | ${PREFIX}with (Banco)
 ┃ ➤ ${PREFIX}pay <@user> <monto>
 ┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
+┃ ➤ ${PREFIX}cf | ${PREFIX}slots | ${PREFIX}dice
 ┃ ➤ ${PREFIX}rankcoins
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
