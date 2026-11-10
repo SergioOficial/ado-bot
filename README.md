@@ -170,6 +170,11 @@ internet. Nada más.
    - `WHATSAPP_NUMBER` — tu número con código de país.
    - `GITHUB_TOKEN` — opcional, solo para `.reporte` e `.invite`.
    - `BOTONES=off` — opcional, manda los menús como texto sin botones.
+   - `BOTONES_FORMATO=moderno|plantilla|clasico` — opcional, cómo se mandan las
+     tarjetas: **moderno** (por defecto, el más bonito), **plantilla** (mismo
+     menú dentro de un mensaje de plantilla: lo entienden los WhatsApp viejos) o
+     **clasico** (`buttonsMessage`, lo pinta cualquiera; si un botón es lista o
+     enlace, se cae al moderno).
    - `BOTONES_VIEWONCE=1` — opcional, vuelve al envoltorio viejo de los interactivos.
 4. Comando de inicio: `npm start` (o `node index.js`).
 5. Mira los **logs** del panel para copiar el código de vinculación.
@@ -199,7 +204,7 @@ vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 99 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run probar` | 105 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
 | `npm run vigia` | Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o `nohup`). |
@@ -327,7 +332,9 @@ incluidos.
   binarios** que WhatsApp exige (`lib/wa-nodes.js`; sin ellos el servidor acepta
   el mensaje y el teléfono no pinta nada) y **más de tres botones piden la hoja
   inferior** en vez de perderse en silencio. Interruptores: `BOTONES=off` los
-  apaga todos y `BOTONES_VIEWONCE=1` recupera el envoltorio viejo.
+  apaga todos, `BOTONES_FORMATO=plantilla|clasico` cambia el formato cuando un
+  teléfono contesta «actualiza WhatsApp» y `BOTONES_VIEWONCE=1` recupera el
+  envoltorio viejo.
 - 🛡️ **Anti-ban portado de Shin-MD** (`lib/antiban.js`): una sola cola para todos
   los envíos, con espera al azar (no fija) entre mensajes, más espera en los
   textos largos, y **calentamiento diario** (una cuenta nueva no manda 500

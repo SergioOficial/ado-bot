@@ -53,6 +53,33 @@ Y lo peor: **a veces sale y a veces no, con el mismo mensaje**.
    O sea: **no hay que cambiar de librería para dejar de ver el aviso**, solo
    cambiar el camino.
 
+## Lo que se encontró al mirar nodo a nodo (10-nov)
+
+**El nodo `biz` que mandábamos estaba incompleto.** Ese nodo no es decoración:
+es la pista que le dice al teléfono con qué camino dibujar el mensaje. Nosotros
+lo escribíamos a mano en `lib/wa-nodes.js` y le faltaban dos cosas que sí pone
+el cliente oficial (y la propia librería, en `getBizBinaryNode`):
+
+```
+nuestro:   <quality_control source_type="third_party">
+librería:  <quality_control decision_id="c90c6024…" source_type="third_party">
+             <decision_source value="df"/>
+```
+
+Y lo peor: la librería **no añade el suyo si ve uno nuestro**
+(`alreadyHasBizNode`), así que nuestro nodo incompleto sustituía al completo.
+
+Ya está corregido: cuando la librería trae `getBizBinaryNode` se usa el suyo, y
+el respaldo escrito a mano lleva `decision_id` y `decision_source`. Comprobado
+comparando los dos nodos árbol por árbol.
+
+Además la librería sabe mandar los formatos de siempre sin cambiar de paquete
+(`Utils/messages.js`): `{buttons}` → `buttonsMessage`, `{sections}` →
+`listMessage`, `{templateButtons}` → `templateMessage`, y
+`{interactiveAsTemplate:true}` → el interactivo dentro de
+`templateMessage.interactiveMessageTemplate`, que es la salida para los clientes
+viejos.
+
 ## Lo que sigue siendo hipótesis (dicho como tal)
 
 - Que el aviso aparezca **solo cuando la tarjeta va citando otro mensaje**
@@ -64,8 +91,7 @@ Y lo peor: **a veces sale y a veces no, con el mismo mensaje**.
 ## Cómo se mide (sin adivinar)
 
 `.compat`, en privado, manda pruebas numeradas y se mira cuál sale con el
-aviso. Hoy manda texto, tarjeta moderna, hoja inferior y álbum. El siguiente
-paso es añadir tres pruebas más:
+aviso. Ahora manda **siete**:
 
 | Nº | Qué manda | Qué descarta |
 |---|---|---|
@@ -73,18 +99,18 @@ paso es añadir tres pruebas más:
 | 6 | `listMessage` legado (`SINGLE_SELECT`) | si el aviso viene de la lista |
 | 7 | la tarjeta con y sin `quoted` | si el aviso lo provoca la cita |
 
-## El arreglo probable (a falta de medirlo)
+## Los tres caminos que ya trae el bot
 
-1. Respuesta rápida → `buttonsMessage` clásico. Se pinta en todos los clientes y
-   lo que devuelve el teléfono es `buttonsResponseMessage`, que todo el mundo ve
-   como texto normal.
-2. Enlaces, copiar, llamar y lista desplegable **no tienen versión clásica
-   equivalente** para todos los clientes: si el aviso viene de ahí, la salida es
-   mandarlos como texto con la opción escrita (`respaldo`), no forzarlos.
-3. Selector en el entorno (`BOTONES_FORMATO=clasico|moderno`) para poder
-   cambiar sin tocar plugins, igual que `BOTONES=off`.
-4. Y el aviso nunca se queda sin respuesta: si el envío falla, el texto sale con
-   las opciones escritas.
+Se elige con una variable de entorno, sin tocar código ni plugins:
+
+| `BOTONES_FORMATO` | Qué sale en el cable | Cuándo usarlo |
+|---|---|---|
+| `moderno` (por defecto) | `interactiveMessage` + `nativeFlowMessage` | clientes al día: es el más bonito |
+| `plantilla` | el mismo interactivo dentro de `templateMessage` | cuando el teléfono contesta «actualiza»: se ve más sobrio, pero lo entiende |
+| `clasico` | `buttonsMessage` (solo respuestas rápidas) | lo pinta cualquier cliente; si un botón es lista, enlace o copiar, se cae al moderno avisando |
+
+Si el envío falla de todas formas, sale el texto con las opciones escritas
+(`respaldo`): el aviso nunca se queda sin respuesta.
 
 Nada de esto promete que WhatsApp deje de cambiar el formato: es su protocolo y
 lo mueve cuando quiere. Lo que sí se puede es mandar el formato que más clientes
