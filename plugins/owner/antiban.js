@@ -106,6 +106,19 @@ export default {
       "╰──────────────",
     ];
 
+    // El ritmo humano: conversaciones nuevas, reloj y tecleo.
+    const ritmo = anti.ritmo?.resumen?.();
+    if (ritmo) {
+      lineas.push(
+        "╭───「 🌙 *RITMO* 」───",
+        `│ Conversaciones nuevas hoy › *${ritmo.nuevosHoy}/${ritmo.cupoNuevos}*`,
+        `│ Mensajes última hora › *${ritmo.porHora}/${ritmo.limiteHora}*`,
+        `│ Hora del servidor › *${ritmo.hora}:00*${ritmo.madrugada ? " 🌙 madrugada" : ""}`,
+        `│ Escribiendo antes de mandar › *${ritmo.presencia ? "sí" : "no"}*`,
+        "╰──────────────"
+      );
+    }
+
     if (comando === "antiban") {
       lineas.push(
         "",
@@ -113,6 +126,8 @@ export default {
         "▸ Espera entre envíos: al azar alrededor de " + anti.limitador.ajustes.baseMs + " ms (no fija).",
         "▸ Los textos largos esperan más; las reacciones y borrados no gastan cuota.",
         "▸ `.menu`, `.ping` y los avisos del bot pasan aunque el tope esté alcanzado.",
+        "▸ El cupo real no son los mensajes: son las *conversaciones nuevas*. Contestar a quien te escribió no gasta cupo; escribirle a un desconocido, sí.",
+        "▸ De madrugada no se abre conversación nueva, y de noche todo va más despacio.",
         "▸ Si la conexión se cae, el mensaje espera y sale al volver (no se pierde).",
         "▸ Si un envío se queda sin respuesta, *no se repite*: mejor perder uno que mandar dos.",
         "",
@@ -122,6 +137,7 @@ export default {
         "> `WARMUP_START_MSGS=20 WARMUP_MAX_MSGS=500 WARMUP_DAYS=7`",
         "> `ANTIBAN_BASE_MS=1200` · `ANTIBAN=off` lo apaga del todo",
         "> `WARMUP_PERFIL=veterano` arranca ya sin rampa (o `.warmup veterano confirmar`)",
+        "> `NUEVOS_DIA=20 MENSAJES_HORA=30 POR_CHAT_HORA=15` · `PRESENCIA=off` quita el tecleo · `RITMO=off` apaga todo el ritmo",
         "",
         "*Perfiles* (sin reiniciar):",
         `> \`${comando} veterano\` lo explica · \`${comando} veterano confirmar\` lo activa`,

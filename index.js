@@ -24,6 +24,7 @@ import {
 } from "./lib/subbots.js";
 import { SUB_SESIONES, SUB_CONFIGS } from "./lib/rutas.js";
 import { crearLimitador, crearCola, crearSalud, crearVigilante, envolverSocket, AVISO_VETERANO } from "./lib/antiban.js";
+import { crearRitmo } from "./lib/ritmo.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -280,6 +281,7 @@ let limitadorAntiban = null;
 let colaAntiban = null;
 let saludAntiban = null;
 let vigilanteAntiban = null;
+let ritmoAntiban = null;
 
 // Los que deben responder aunque el tope diario esté alcanzado: son respuestas
 // directas a quien escribe (lo menos parecido a un bot que hay) y sin ellos
@@ -294,9 +296,14 @@ function prepararAntiban(sock) {
   global.db.data.antiban ||= {};
   limitadorAntiban ||= crearLimitador({ estado: global.db.data.antiban });
   saludAntiban ||= crearSalud();
-  colaAntiban ||= crearCola({ limitador: limitadorAntiban, salud: saludAntiban });
+  // El ritmo vive aparte del tope diario: cuenta conversaciones nuevas (no
+  // mensajes), mira la hora y se encarga del «escribiendo…». Su memoria también
+  // va a la base, así que reconectar no lo reinicia.
+  global.db.data.ritmo ||= {};
+  ritmoAntiban ||= crearRitmo({ estado: global.db.data.ritmo });
+  colaAntiban ||= crearCola({ limitador: limitadorAntiban, salud: saludAntiban, ritmo: ritmoAntiban });
 
-  envolverSocket(sock, { cola: colaAntiban });
+  envolverSocket(sock, { cola: colaAntiban, ritmo: ritmoAntiban });
 
   vigilanteAntiban ||= crearVigilante({
     cola: colaAntiban,
@@ -312,6 +319,7 @@ function prepararAntiban(sock) {
     cola: colaAntiban,
     salud: saludAntiban,
     vigilante: vigilanteAntiban,
+    ritmo: ritmoAntiban,
     avisoVeterano: AVISO_VETERANO,
   };
 
@@ -482,6 +490,10 @@ async function handleMessages(sock, { messages, type }) {
   global.__contadorMensajes = (global.__contadorMensajes || 0) + 1;
   const m = messages[0];
   if (!m.message || m.key.fromMe) return;
+
+  // Quien nos escribe enciende su chat: contestarle no cuenta como abrir una
+  // conversación nueva (que es lo único que de verdad gasta reputación).
+  ritmoAntiban?.anotarEntrante(m.key.remoteJid);
 
   // Si viene de un botón (quick_reply), el id del botón ES el comando.
   // Sin esto, pulsar un botón manda un mensaje que el router no entiende y no

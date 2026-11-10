@@ -14,7 +14,18 @@ import {
 } from "../lib/antiban.js";
 
 /** Ajustes rápidos para que las pruebas no esperen segundos de verdad. */
-const RAPIDO = { activo: true, baseMs: 5, minimoMs: 1, maximoMs: 10, diasCalentamiento: 7, inicioMsgsDia: 2, maxMsgsDia: 5 };
+// `circadiano: false` para que las pruebas no dependan de la hora del servidor:
+// el multiplicador nocturno es real, pero aquí se mide otra cosa.
+const RAPIDO = {
+  activo: true,
+  baseMs: 5,
+  minimoMs: 1,
+  maximoMs: 10,
+  diasCalentamiento: 7,
+  inicioMsgsDia: 2,
+  maxMsgsDia: 5,
+  circadiano: false,
+};
 
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 
