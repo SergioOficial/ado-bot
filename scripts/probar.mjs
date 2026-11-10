@@ -9,8 +9,16 @@
  * demás, para ver todo lo roto de una vez.
  */
 import { readdirSync } from "fs";
+import { existsSync } from "fs";
 import { join } from "path";
 import { pathToFileURL } from "url";
+
+// Sin dependencias instaladas no se puede comprobar nada: mejor decirlo claro
+// que escupir una traza de «módulo no encontrado».
+if (!existsSync(join(process.cwd(), "node_modules"))) {
+  console.error("⚠️  Falta node_modules. Ejecuta primero:  npm install");
+  process.exit(1);
+}
 
 const dir = join(process.cwd(), "pruebas");
 const archivos = readdirSync(dir).filter((f) => f.endsWith(".test.mjs")).sort();

@@ -14,9 +14,17 @@
  */
 
 import { readdirSync, statSync } from "fs";
+import { existsSync } from "fs";
 import { join, relative } from "path";
 import { pathToFileURL } from "url";
 import { execFileSync } from "child_process";
+
+// Sin dependencias instaladas no se puede comprobar nada: mejor decirlo claro
+// que escupir una traza de «módulo no encontrado».
+if (!existsSync(join(process.cwd(), "node_modules"))) {
+  console.error("⚠️  Falta node_modules. Ejecuta primero:  npm install");
+  process.exit(1);
+}
 
 let fallos = 0;
 const ok = (t) => console.log(`  ✅ ${t}`);
