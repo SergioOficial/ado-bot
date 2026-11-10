@@ -1,4 +1,4 @@
-kimport fs from "fs";
+import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 
