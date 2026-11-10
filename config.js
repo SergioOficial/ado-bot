@@ -4,7 +4,8 @@ export const config = {
   // 🔥 MULTI-PREFIJO: El bot responderá a cualquiera de estos
   prefix: [".", "#", "/", "🇨🇺"],
   
-  botName: "Levi-Bot ⚔️",
+  botName: "𝐀𝐝𝐨 𝐁𝐨𝐭 🩸", 
+  
 
   // Lista de owners (múltiples)
   owners: [
@@ -19,7 +20,7 @@ export const config = {
   ownerNumber: "5358090650",
 
   version: "1.0.6",
-  footer: "Levi-Bot by Wyra Studios",
+  footer: "𝐀𝐝𝐨 𝐁𝐨𝐭 by Wyra Studios",
 
   // CLAVES DE API
   apis: {
