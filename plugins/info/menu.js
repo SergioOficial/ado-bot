@@ -142,10 +142,11 @@ export default {
       texto = `
 ⋆｡°✩ 🎁 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
-┃ 💵 » ${PREFIX}work
-┃ 🎅 » ${PREFIX}daily
-┃ 💳 » ${PREFIX}bal
-┃ 🏆 » ${PREFIX}rankcoins
+┃ ➤ ${PREFIX}work | ${PREFIX}daily | ${PREFIX}beg
+┃ ➤ ${PREFIX}bal | ${PREFIX}nivel
+┃ ➤ ${PREFIX}pay <@user> <monto>
+┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
+┃ ➤ ${PREFIX}rankcoins
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
