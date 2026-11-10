@@ -126,6 +126,7 @@ en el log. Detalle de por qué y qué cambia: **[docs/CLIENTE.md](docs/CLIENTE.m
 npm run verificar   # cliente, botones, versión de WhatsApp, plugins y owners
 npm run probar      # 38 pruebas: recordatorios, encuestas, morse, red segura
 npm run auditar     # qué comandos dependen de una API externa (docs/COMANDOS.md)
+npm run humo        # llama a los 90 plugins con un contexto falso y caza los que revientan
 ```
 
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
@@ -191,6 +192,7 @@ export const config = {
 - 📅 **Versión de WhatsApp Web preguntada a WhatsApp** (`lib/wa-version.js`). La del paquete iba un mes por detrás y eso es lo que provoca el cierre «client out of date» que la gente lee como «actualiza WhatsApp».
 - 🔘 **Botones en `lib/botones.js`** (respuesta rápida, copiar, enlace, llamar, recordatorio) con respaldo en texto si el cliente no los pinta.
 - ✅ **`npm run verificar`**: seis comprobaciones sin abrir WhatsApp (cliente, botones, versión, sintaxis, carga real de los plugins, owners).
+- 🧪 **`npm run humo`**: llama a los plugins con un contexto falso (sin abrir WhatsApp) y señala los que revientan; los que borran archivos o reinician no se ejecutan nunca.
 - 🔎 **`npm run auditar`**: dice qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md).
 - ♻️ **Reconexión con candado**: dos cierres seguidos ya no abren dos sockets a la vez.
 - 🛡️ **Administración de grupo ampliada**: `.warn` `.warns` `.delwarn` `.setwarnlimit` `.kick` `.promote` `.demote` `.hidetag` y `.antilink`, con el candado de administrador en el router (no en cada plugin).

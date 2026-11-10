@@ -36,7 +36,9 @@
     "start": "node index.js",
     "verificar": "node scripts/verificar.mjs",
     "auditar": "node scripts/auditar-comandos.mjs",
-    "probar": "node scripts/probar.mjs"
+    "probar": "node scripts/probar.mjs",
+    "humo": "node scripts/humo.mjs",
+    "mapa": "node scripts/mapa-porte.mjs"
   },
   "repository": {
     "type": "git",
