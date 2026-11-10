@@ -42,13 +42,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SergioOficial/Levi-bot.git"
+    "url": "git+https://github.com/SergioOficial/ado-bot.git"
   },
   "keywords": [],
   "author": "",
   "license": "AGPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/SergioOficial/Levi-bot/issues"
+    "url": "https://github.com/SergioOficial/ado-bot/issues"
   },
-  "homepage": "https://github.com/SergioOficial/Levi-bot#readme"
+  "homepage": "https://github.com/SergioOficial/ado-bot#readme"
 }
