@@ -34,7 +34,17 @@ export default {
 
             // Entrada
             if (action === "add" && chat.welcome) {
-              const customMsg = chat.welcomeMsg || "¡Hola @user! Bienvenido a *@group* 🎉";
+              const customMsg = chat.welcomeMsg || "꧁༺ 💤 𝐋𝐄𝐕𝐈 𝐁𝐎𝐓 🌌 ༻꧂
+
+🎄 *¡Bienvenido/a @user!* 🎄
+
+*❒  Te damos la bienvenida a @group.*
+• Esperamos que disfrutes tu estadía.
+
+       ♪ ¡PÁSALA GENIAL!  
+
+> Usa #help para ver mis comandos 
+🐾━━━━━━━━━━━━🐾";
               const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
               
               await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {
