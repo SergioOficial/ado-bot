@@ -1,205 +1,215 @@
 <div align="center">
 
+<img src="https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg" width="190" alt="Levi-Bot"/>
+
 # ⚔️ Levi-Bot
 
-### El Bot de WhatsApp Multi-Device Definitivo
+**El bot de WhatsApp multi-dispositivo, modular y sin cajas negras.**
 
-<img src="https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg" width="200" alt="Levi-Bot"/>
+Se conecta con Baileys, arranca con un código de vinculación y cada comando es
+un archivo que puedes leer, cambiar o borrar.
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/levi-hub805/Levi-bot-)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/SergioOficial/Levi-bot)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Baileys](https://img.shields.io/badge/Baileys-7.0.x-blue?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
-[![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
+[![Baileys](https://img.shields.io/badge/Baileys-%40itsliaaa%2Fbaileys-blue?style=for-the-badge)](https://www.npmjs.com/package/@itsliaaa/baileys)
+[![Comandos](https://img.shields.io/badge/Comandos-374-informational?style=for-the-badge)](#-comandos)
+[![Licencia](https://img.shields.io/badge/Licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 
-**Creado por [Jeferson Fernández](https://github.com/levi-hub805) en colaboración con [Sergio Gómez Gort](https://github.com/SergioOficial)**
+**Creado por [Jeferson Fernández](https://github.com/levi-hub805) en colaboración con [Sergio Gómez Gort](https://github.com/SergioOficial) y [riokuroxi-svg](https://github.com/riokuroxi-svg)**
 
-[Características](#-características-principales) • [Instalación](#️-instalación-y-despliegue) • [Estructura](#️-arquitectura-modular) • [Comandos](#-comandos-principales) • [Licencia](#-licencia)
+[Qué es](#-qué-es-levi-bot) • [Instalación](#-instalación) • [Estructura](#️-estructura-del-proyecto) • [Comandos](#-comandos) • [Licencia](#-licencia) • [Créditos](#-créditos)
 
 </div>
 
 ---
 
-## 🚀 Características Principales
+## ✨ Qué es Levi-Bot
 
-Levi-Bot ha sido reescrito desde cero para ser **100% modular, escalable y ultrarrápido**.
-
-- 🧩 **Arquitectura de Plugins y Eventos**: Añade comandos o escucha eventos (como bienvenidas o antilink) simplemente creando un archivo en la carpeta `plugins/`. No necesitas tocar el `index.js` nunca más.
-- 🔀 **Sistema Multi-Prefijo**: El bot responde a múltiples prefijos a la vez (ej. `.`, `#`, `/`, `🇨🇺`). Tú decides cuáles usar en el `config.js`.
-- 🕵️‍♂️ **Modo Privado (Silencioso)**: Escribe cualquier comando en un grupo añadiendo un guion al final (ej. `.menu-`) y el bot borrará tu mensaje del grupo y te responderá solo a tu chat privado.
-- 💎 **Sistema Premium y Sub-Bots**: Crea clones del bot vinculando otros números con `#jadibot` (exclusivo para usuarios Premium), o crea tu propio sub-bot con `#code`.
-- 🎨 **Multimedia Blindado**: Descargas de Pinterest (álbumes), TikTok, Facebook y YouTube usando `axios` y `sharp` para comprimir imágenes y evitar el error `Media upload failed`.
-- 🧠 **IA Integrada**: Generación de texto, imágenes y notas de voz con Inteligencia Artificial directamente en el chat.
-- 🎮 **Economía y RPG**: Sistema completo de coins, banco, apuestas, niveles y trabajos.
+| Lo que trae | Para qué sirve |
+|---|---|
+| 🧩 **Todo es un plugin** | Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
+| 🔀 **Multi-prefijo** | Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
+| 🕵️ **Modo privado** | `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
+| 🔘 **Botones nativos** | Respuesta rápida, copiar, abrir enlace y llamar, con respaldo en texto si el móvil del otro no los pinta. |
+| 📅 **Versión de WhatsApp al día** | La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
+| 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
+| 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
+| 🧠 **IA, economía y RPG** | Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
+| ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 
 ---
 
-## 🏗️ Arquitectura Modular
+## 🛠️ Instalación
 
-El bot está diseñado para que trabajes de forma ordenada. Esta es la estructura de tu proyecto:
+Una línea en Termux (Android):
+
+```bash
+pkg install git nodejs-lts python make clang ffmpeg libvips -y && git clone https://github.com/SergioOficial/Levi-bot.git && cd Levi-bot && npm install && npm start
+```
+
+En un VPS o hosting con Node 20+ ya instalado:
+
+```bash
+git clone https://github.com/SergioOficial/Levi-bot.git && cd Levi-bot && npm install && npm start
+```
+
+Al arrancar pide tu número (o toma `WHATSAPP_NUMBER` del entorno) y muestra el
+**código de vinculación**: WhatsApp → *Dispositivos vinculados* → *Vincular con
+número de teléfono*.
+
+<details>
+<summary><b>Si algo falla al instalar</b></summary>
+
+- **`sharp` no compila** (Termux viejo): `npm install @img/sharp-wasm32 --force && npm install sharp --force`.
+- **`better-sqlite3` falla**: faltan las herramientas de compilación; es un módulo nativo y en ARM se compila (`python`, `make`, `clang`). Si aun así falla, el bot arranca igual: el cliente principal es `@itsliaaa/baileys` y hay respaldo automático al oficial.
+- **El bot se desconecta solo**: mira la línea `📦 Versión de WhatsApp Web` del arranque. Si dice «del paquete, sin conexión a WhatsApp», el problema es la revisión anunciada, no tu teléfono.
+- Detalle del cliente y sus trampas: **[docs/CLIENTE.md](docs/CLIENTE.md)**.
+
+</details>
+
+---
+
+## 🧪 Comprobar que está bien (sin abrir WhatsApp)
+
+| Comando | Qué hace |
+|---|---|
+| `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
+| `npm run probar` | 52 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
+| `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
+
+Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
+culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
+**[docs/RETORNO.md](docs/RETORNO.md)**.
+
+---
+
+## 🏗️ Estructura del proyecto
 
 ```text
 Levi-bot/
-├── index.js              # Núcleo (conexión, multi-prefijo, ejecutor y vigilante)
-├── pluginLoader.js       # Escáner dinámico de comandos y eventos
+├── index.js              # Núcleo: conexión, multi-prefijo, router y vigilante
+├── pluginLoader.js       # Escáner de comandos y eventos
 ├── config.js             # Prefijos, owners, nombre del bot, footer
-├── .env                  # Variables de entorno (NO SUBIR A GITHUB)
 ├── lib/                  # Lo compartido, sin duplicar en cada plugin
-│   ├── baileys.js        #   cliente único (fork u oficial, se elige aquí)
+│   ├── baileys.js        #   cliente único (fork por defecto, con respaldo)
 │   ├── wa-version.js     #   versión de WhatsApp Web preguntada a WhatsApp
 │   ├── botones.js        #   botones nativos + respaldo en texto
 │   ├── encuestas.js      #   encuesta, quiz y voto múltiple nativos
 │   ├── recordatorios.js  #   avisos que sobreviven al reinicio
-│   ├── grupo.js          #   administradores, menciones y advertencias
+│   ├── grupo.js          #   administradores, menciones y objetivos
+│   ├── actividad.js      #   contador de quién habla en cada grupo
+│   ├── economia.js       #   apuestas, plazos y formato del dinero
+│   ├── consultas.js      #   APIs externas con plazo y error claro
 │   ├── red-segura.js     #   pedir URLs sin abrir la red interna
 │   ├── rutas.js          #   una sola ruta para las carpetas de datos
-│   └── database.js       #   base JSON con autoguardado (lib/database.json)
+│   └── database.js       #   base JSON con autoguardado
 ├── plugins/              # ¡El corazón del bot!
-│   ├── admin/            # kick, promote, demote, warn, antilink, hidetag
+│   ├── admin/            # kick, promote, warn, antilink, setgp, pin, actividad
 │   ├── descargas/        # play, pinterest, tiktok, fb, gitclone
-│   ├── economia/         # daily, work, bal, dep, slots, cf
-│   ├── fun/              # meme, gato, trivia, 8ball
+│   ├── economia/         # daily, weekly, work, bal, dep, coffer, ruleta, casino
+│   ├── fun/              # meme, gato, trivia, 8ball, ship
 │   ├── ia/               # ia, iaaudio, imagen
-│   ├── info/             # menu, ping, info, creadores
-│   ├── owner/            # fix, restart, exec, error, backup
-│   ├── perfil/           # reg, perfil, nivel
+│   ├── info/             # menu, allmenu, ping, health, creadores
+│   ├── owner/            # fix, restart, backup, exec, block, getplugin
+│   ├── perfil/           # reg, perfil, level, lboard, afk, ficha
+│   ├── premium/          # canjear
 │   ├── rpg/              # cazar, pescar, minar, explorar
 │   ├── stickers/         # sticker, brat
-│   ├── subbots/          # code, jadibot, stopbot
-│   └── utils/            # qr, morse, encuesta, recordar, say, get, pfp
+│   ├── subbots/          # code, jadibot, stopbot, bots
+│   ├── test/             # botones de prueba
+│   └── utils/            # qr, morse, encuesta, recordar, say, get, pfp, crypto
 ├── pruebas/              # Pruebas que corren sin abrir WhatsApp
-├── scripts/              # verificar · probar · auditar · mapa-porte
+├── scripts/              # verificar · probar · humo · auditar · mapa-porte
 └── docs/                 # CLIENTE · COMANDOS · PORTE · RETORNO
 ```
 
 ---
 
-## 🛠️ Instalación y Despliegue
-
-### 📱 En Termux (Android)
-
-```bash
-pkg update && pkg upgrade -y
-pkg install git nodejs-lts ffmpeg libvips python make clang -y
-
-git clone https://github.com/SergioOficial/Levi-bot.git
-cd Levi-bot
-npm install
-npm run verificar
-npm start
-```
-
-> `python`, `make` y `clang` no son adorno: `better-sqlite3` (que necesita el
-> cliente `@itsliaaa/baileys`) es un módulo nativo y en ARM se compila. En Linux
-> de 64 bits baja ya compilado y no hacen falta.
-
-Si `sharp` falla en Termux:
-
-```bash
-npm install @img/sharp-wasm32 --force
-npm install sharp --force
-```
-
-### 💻 En hosting (BotKeep / VPS)
-
-1. Sube el repositorio a tu hosting.
-2. Variables de entorno en el panel:
-   - `WHATSAPP_NUMBER` — tu número con código de país (ej. `5354386852`). Sin esto, el bot lo pide por consola.
-   - `GITHUB_TOKEN` — opcional, para `.reporte` e `.invite`.
-   - `BAILEYS_PACKAGE` — opcional: `@whiskeysockets/baileys` para usar el cliente oficial en vez del fork.
-3. Comando de inicio: `npm start`.
-
-### 🔌 Elegir el cliente de WhatsApp
-
-Por defecto se usa **`@itsliaaa/baileys`** (fork de Baileys v7). Para volver al
-oficial sin tocar código:
-
-```bash
-BAILEYS_PACKAGE=@whiskeysockets/baileys npm start
-```
-
-Si el fork no está instalado o no carga, el bot arranca con el oficial y lo dice
-en el log. Detalle de por qué y qué cambia: **[docs/CLIENTE.md](docs/CLIENTE.md)**.
-
-### ✅ Comprobar que todo está bien (sin abrir WhatsApp)
-
-```bash
-npm run verificar   # cliente, botones, versión de WhatsApp, plugins y owners
-npm run probar      # 38 pruebas: recordatorios, encuestas, morse, red segura
-npm run auditar     # qué comandos dependen de una API externa (docs/COMANDOS.md)
-npm run humo        # llama a los 90 plugins con un contexto falso y caza los que revientan
-```
-
-Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
-culpar al teléfono.
-
-¿Actualizaste y algo se rompió? Hay un punto de retorno con instrucciones de
-vuelta atrás: **[docs/RETORNO.md](docs/RETORNO.md)**.
-
----
-
-## ⚙️ Configuración (config.js)
+## ⚙️ Configuración (`config.js`)
 
 ```javascript
 export const config = {
-  // 🔥 El bot responderá a cualquiera de estos prefijos
-  prefix: [".", "#", "/", "🇨🇺"], 
-  
+  // 🔥 El bot responde a cualquiera de estos prefijos
+  prefix: [".", "#", "/", "🇨🇺"],
+
   botName: "Levi-Bot ⚔️",
 
-  // Lista de Owners (pueden usar comandos de administrador)
   owners: [
-    { name: "Sergio Gómez Gort",  number: "5358090650" },
-    { name: "Jeferson Fernández", number: "573005255807" }
+    { name: "Sergio Gómez Gort",      number: "5358090650" },
+    { name: "Jeferson Fernández",     number: "573005255807" },
+    { name: "José Rodríguez",         number: "584245610338" },
+    { name: "atencion al cliente bots", number: "50494874330" }
   ],
 
-  version: "2.0.0",
-  footer: "Levi-Bot by Wyra Studios",
+  version: "1.0.5",
+  footer: "Levi-Bot by Wyra Studios"
 };
 ```
 
-> Los comandos marcados `isOwner` (`.restart`, `.exec`, `.get`, `.backup`, `.fix`…)
-> solo los pueden usar los números de `owners`. Si un comando `isAdmin` no
-> funciona, comprueba que el bot sea administrador del grupo: lo dice el propio
-> comando cuando no puede.
+> Los comandos con `isOwner` (`.restart`, `.exec`, `.fix`, `.backup`, `.getplugin`…)
+> solo los usan los números de `owners`. Si un comando de administrador no
+> funciona, comprueba que el bot sea admin del grupo: el propio comando lo dice
+> cuando no puede.
 
 ---
 
-## 🧩 Comandos Principales
+## 🧩 Comandos
 
-| Categoría | Comandos |
-|---|---|
-| 🎮 RPG | `trabajar` `cazar` `pescar` `minar` `explorar` `clase` `ranknivel` `reiniciarrpg` |
-| 💰 Economía | `daily` `work` `beg` `bal` `dep` `with` `pay` `rob` `crime` `cf` `slots` `dice` `rankcoins` `nivel` |
-| 🧾 Perfil | `reg` `perfil` `delperfil` |
-| 🎨 Descargas | `play` `pin` (Pinterest) `tt` (TikTok) `fb` `ytsearch` `toimg` `gitclone` `gitsearch` `gituser` |
-| 🖌️ Stickers | `s` `sticker` `brat` `stickers` |
-| 🧠 IA | `ia` `iaaudio` `imagen` |
-| 🎉 Juegos | `trivia` `mate` `8ball` `meme` `gato` `perro` `waifu` `ship` `r` |
-| 🔔 Utilidades | `ping` `info` `creadores` `traducir` `clima` `wiki` `tts` `qr` `morse` `demorse` `encuesta` `say` `read` `recordar` `pfp` `wastalk` |
-| 🛡️ Admin | `close` `open` `del` `tag` `hidetag` `kick` `promote` `demote` `warn` `warns` `delwarn` `setwarnlimit` `antilink` `welcome` |
-| 🤖 Sub-bots | `code` `jadibot` `stopbot` `bots` `canjear` |
-| 👑 Owner | `fix` `restart` `backup` `exec` `error` `invite` `gencode` `get` `botsesion` `setbotname` `setbotpp` `clear` |
+Prefijo de ejemplo `.`. Casi todos tienen alias en español (`#diario`, `#robar`,
+`#fijar`…): la lista completa está en [`docs/COMANDOS.md`](docs/COMANDOS.md) y en
+el propio WhatsApp con `.allmenu` y `.menucat`. Los números cuentan nombres, alias
+incluidos.
 
-💡 Tip: Recuerda que puedes usar cualquier comando en modo privado añadiendo un - al final (Ej: `.menu-`).
+| Categoría | Comandos | Ejemplos |
+|---|:--:|---|
+| 🛡️ **Admin** | 43 | `kick` `promote` `demote` `warn` `warns` `antilink` `hidetag` `bot off` `link` `revoke` `setgpname` `setgpdesc` `setgpbanner` `pin` `gp` `count` `topcount` `topinactive` |
+| 🧾 **Perfil** | 24 | `reg` `perfil` `level` `lboard` `afk` `setdesc` `setgenre` `sethobby` `setbirth` `delperfil` |
+| 💰 **Economía** | 54 | `daily` `weekly` `monthly` `work` `beg` `bal` `dep` `with` `pay` `rob` `cf` `slots` `dice` `ppt` `roulette` `casino` `coffer` `rankcoins` `einfo` |
+| ⚔️ **RPG** | 12 | `trabajar` `cazar` `pescar` `minar` `explorar` `clase` `ranknivel` `reiniciarrpg` |
+| 📥 **Descargas** | 25 | `play` `mp3` `tt` `fb` `pinterest` `toimg` `ytsearch` `gitclone` `gitsearch` `gituser` |
+| 🖌️ **Stickers** | 5 | `sticker` `brat` `searchsticker` |
+| 🧠 **IA** | 9 | `ia` `iaaudio` `imagen` |
+| 🎉 **Fun** | 22 | `trivia` `mate` `8ball` `meme` `gato` `perro` `waifu` `ship` `r` |
+| ℹ️ **Info** | 32 | `menu` `allmenu` `menucat` `ping` `info` `creadores` `health` `runtime` `cache` `lid` `reporte` |
+| 🔔 **Utilidades** | 70 | `ping` `info` `menu` `allmenu` `health` `traducir` `clima` `wiki` `tts` `qr` `morse` `demorse` `encuesta` `say` `read` `recordar` `pfp` `wastalk` `crypto` `letra` `acortar` `tourl` `tag` |
+| 🤖 **Sub-bots** | 13 | `code` `jadibot` `stopbot` `bots` `addowner` `delowner` |
+| 💎 **Premium** | 2 | `canjear` |
+| 👑 **Owner** | 61 | `fix` `restart` `reload` `backup` `exec` `getplugin` `nuevo` `delplugin` `block` `unblock` `blocklist` `botsesion` `setbotname` `setbotpp` `clear` |
+| 🧪 **Test** | 7 | `botones` `boton1`…`boton6` |
 
-> Las categorías del menú en WhatsApp las pinta el propio bot: `.menu`, `.menu admin`, `.menu utils`, `.menu owner`…
+💡 Cualquier comando funciona en **modo privado** con un guion al final: `.menu-`.
 
 ---
 
-## 🔧 Cambios de esta versión
+## 🔧 Novedades de esta versión
 
-- 🧩 **Un solo sitio para el cliente**: todo importa de `lib/baileys.js`. Por defecto `@itsliaaa/baileys` y, si no carga, cae al oficial diciéndolo. Se cambia con `BAILEYS_PACKAGE=@whiskeysockets/baileys`.
-- 📅 **Versión de WhatsApp Web preguntada a WhatsApp** (`lib/wa-version.js`). La del paquete iba un mes por detrás y eso es lo que provoca el cierre «client out of date» que la gente lee como «actualiza WhatsApp».
-- 🔘 **Botones en `lib/botones.js`** (respuesta rápida, copiar, enlace, llamar, recordatorio) con respaldo en texto si el cliente no los pinta.
-- ✅ **`npm run verificar`**: seis comprobaciones sin abrir WhatsApp (cliente, botones, versión, sintaxis, carga real de los plugins, owners).
-- 🧪 **`npm run humo`**: llama a los plugins con un contexto falso (sin abrir WhatsApp) y señala los que revientan; los que borran archivos o reinician no se ejecutan nunca.
-- 🔎 **`npm run auditar`**: dice qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md).
-- ♻️ **Reconexión con candado**: dos cierres seguidos ya no abren dos sockets a la vez.
-- 🛡️ **Administración de grupo ampliada**: `.warn` `.warns` `.delwarn` `.setwarnlimit` `.kick` `.promote` `.demote` `.hidetag` y `.antilink`, con el candado de administrador en el router (no en cada plugin).
-- 🧰 **Utilidades nuevas**: `.qr` (dibujado en el bot), `.morse`/`.demorse`, `.encuesta` (quiz y voto múltiple nativos), `.say`, `.read`, `.recordar` (sobrevive al reinicio), `.pfp`, `.wastalk` y `.get` (solo dueño, con filtro anti-SSRF).
+- 💰 **Economía completa**: `.weekly` y `.monthly` con racha y techo, `.roulette`
+  con la ruleta europea de verdad (×2 color y paridad, ×36 número, el 0 para la
+  casa), `.ppt`, `.casino` y `.coffer` — lo que guardas en la caja fuerte no lo
+  alcanza `.rob`, y no da intereses (no se fabrica dinero).
+- 🛡️ **Administración de grupo**: cambiar nombre, descripción y foto
+  **comprobando** que WhatsApp lo aplicó; enlace e `invite` con revocación;
+  fijar mensajes; `.count`, `.topcount` y `.topinactive` con contador propio; y
+  `.bot off` que apaga el bot de verdad (lo respeta el router, no cada plugin).
+- 🧾 **Perfil**: descripción, género, afición y cumpleaños con validación de
+  fecha real (rechaza 32/13 y 29 de febrero cuando no toca), `.level`, `.lboard`
+  y `.afk` que avisa cuando te mencionan y se quita solo al escribir.
+- 🔔 **Utilidades con API probada**: `.crypto` (precio en dólares y pesos),
+  `.letra`, `.acortar` y `.tourl`. Si un servicio no responde, el comando lo dice:
+  nunca enseña un dato viejo como si fuera de ahora.
+- 👑 **Owner**: `.getplugin` para leer un plugin desde el móvil, `.nuevo` y
+  `.delplugin` para crearlos y borrarlos con confirmación, `.botinfo`,
+  `.blocklist` y `.block`/`.unblock` comprobados contra la lista real.
+- 🩺 **Diagnóstico**: `.health`, `.runtime`, `.status`, `.lid` y `.cache` con
+  datos medidos (RAM, tiempo encendido, tamaño de la base).
+- 🧪 **`npm run humo`**: llama a los plugins con un contexto falso y caza los que
+  revientan — lo que `node --check` no ve.
+- 🛠️ **`.fix` ya no borra tu trabajo**: si hay cambios sin subir, guarda un
+  parche en `tmp/` y pide confirmación antes de tocar nada.
+- 🧩 **Un solo sitio para el cliente**: todo importa de `lib/baileys.js`, con
+  `@itsliaaa/baileys` por defecto y respaldo automático al oficial si no carga.
 - 📄 **Licencia AGPL-3.0** con `NOTICE` de procedencia: ver [Licencia](#-licencia).
-
-Detalle en [docs/CLIENTE.md](docs/CLIENTE.md) y [docs/PORTE.md](docs/PORTE.md).
 
 ---
 
@@ -221,7 +231,7 @@ texto completo de la Free Software Foundation).
 |---|---|---|
 | Levi-Bot (base original) | Jeferson Fernández y Sergio Gómez Gort | el repo no traía archivo de licencia; su `package.json` declaraba **ISC** |
 | Comandos portados de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) | riokuroxi-svg | **AGPL-3.0-only** (los archivos portados llevan su cabecera) |
-| Cliente de WhatsApp | `@itsliaaa/baileys` / `@whiskeysockets/baileys` | **MIT** (dependencias declaradas, no código incluido) |
+| Cliente de WhatsApp | `@itsliaaa/baileys` · respaldo `@whiskeysockets/baileys` | **MIT** (dependencias declaradas, no código incluido) |
 
 Lo portado de Shin-MD no se puede relicenciar: entra con su AGPL, y por eso el
 conjunto queda en AGPL-3.0. Cada archivo que viene de ahí lo dice en su primera
@@ -229,11 +239,13 @@ línea.
 
 ---
 
-## 🤝 Créditos y Contacto
+## 🤝 Créditos
 
-<table align="center">
+<div align="center">
+
+<table>
   <tr>
-    <td align="center">
+    <td align="center" width="33%">
       <a href="https://github.com/levi-hub805">
         <img src="https://github.com/levi-hub805.png" width="100" alt="Jeferson"/><br/>
         <b>Jeferson Fernández</b><br/>
@@ -243,22 +255,30 @@ línea.
         <img src="https://img.shields.io/badge/WhatsApp-+57 300 525 5807-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Jeferson"/>
       </a>
     </td>
-    <td align="center">
+    <td align="center" width="33%">
       <a href="https://github.com/SergioOficial">
         <img src="https://github.com/SergioOficial.png" width="100" alt="Sergio"/><br/>
         <b>Sergio Gómez Gort</b><br/>
-        <sub> Colaborador y Mantenimiento</sub>
+        <sub>🔧 Colaborador y Mantenimiento</sub>
       </a><br/><br/>
       <a href="https://wa.me/5358090650">
         <img src="https://img.shields.io/badge/WhatsApp-+53 580 906 50-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Sergio"/>
       </a>
     </td>
+    <td align="center" width="33%">
+      <a href="https://github.com/riokuroxi-svg">
+        <img src="https://github.com/riokuroxi-svg.png" width="100" alt="riokuroxi-svg"/><br/>
+        <b>riokuroxi-svg</b><br/>
+        <sub>🧩 Colaborador — comandos de Shin-MD</sub>
+      </a><br/><br/>
+      <a href="https://github.com/riokuroxi-svg/Shin-MD">
+        <img src="https://img.shields.io/badge/GitHub-Shin--MD-181717?style=flat&logo=github&logoColor=white" alt="Shin-MD"/>
+      </a>
+    </td>
   </tr>
 </table>
 
-<div align="center">
-
-📚 Librerías base: @itsliaaa/baileys (por defecto) · @whiskeysockets/baileys (respaldo)
+📚 Cliente base: `@itsliaaa/baileys` (respaldo automático a `@whiskeysockets/baileys`)
 
 ---
 
@@ -269,4 +289,3 @@ Hecho con 💫 desde Cuba para el mundo
 [![Repositorio](https://img.shields.io/badge/Repositorio-Oficial-181717?style=flat&logo=github&logoColor=white)](https://github.com/SergioOficial/Levi-bot)
 
 </div>
-
