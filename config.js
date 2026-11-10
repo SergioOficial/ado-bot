@@ -8,7 +8,7 @@ export const config = {
 
   // Lista de owners (múltiples)
   owners: [
-    { name: "Sergio Gómez Gort",  number: "5358090650" },
+    { name: "Sergio Dev",  number: "5358090650" },
     { name: "Jeferson Fernández", number: "573005255807" },
     { name: "atencion al cliente bots", number: "50494874330" },
     { name: "Roxi", number: "5215574370309" }
@@ -18,7 +18,7 @@ export const config = {
   ownerName: "Sergio Dev 💫",
   ownerNumber: "5358090650",
 
-  version: "1.0.5",
+  version: "1.0.6",
   footer: "Levi-Bot by Wyra Studios",
 
   // CLAVES DE API
