@@ -1,5 +1,5 @@
-Levi-Bot
-Copyright (C) 2026 los autores de Levi-Bot
+Ado-Bot
+Copyright (C) 2026 los autores de Ado-Bot
 Copyright (C) 2026 riokuroxi-svg (partes portadas de Shin-MD)
 
 Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los
@@ -14,8 +14,8 @@ PARTICULAR. Ver la Licencia Pública General Affero de GNU para más detalles.
 Créditos y procedencia
 ────────────────────────────────────────────────────────────────────────────
 
-Levi-Bot
-  Autoría original: Jeferson Fernández y Sergio Gómez Gort.
+Ado-Bot
+  Autoría original: Sergio Dev.
   El repositorio original no incluía archivo de licencia; su package.json
   declaraba ISC. Las partes originales siguen bajo esa licencia permisiva, que
   es compatible con la AGPL-3.0 de este conjunto.
@@ -23,7 +23,7 @@ Levi-Bot
 Shin-MD  ·  https://github.com/riokuroxi-svg/Shin-MD
   Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only.
   De aquí vienen las ideas y el comportamiento de los comandos portados a
-  plugins/*, uno por uno, adaptados al formato de plugin de Levi-Bot. Cada
+  plugins/*, uno por uno, adaptados al formato de plugin de Ado-Bot. Cada
   archivo portado lleva su cabecera con el aviso.
 
 Cliente de WhatsApp
