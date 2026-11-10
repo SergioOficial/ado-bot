@@ -191,7 +191,12 @@ export default {
 ⋆｡°✩ 🌟 𝐏𝐄𝐑𝐅𝐈𝐋 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
 ┃ 🧍 » ${PREFIX}reg <nom> <edad> <gen>
-┃ 👤 » ${PREFIX}perfil
+┃ 👤 » ${PREFIX}perfil | ${PREFIX}level
+┃ 🏅 » ${PREFIX}lboard
+┃ ✏️ » ${PREFIX}setdesc | ${PREFIX}setgenre | ${PREFIX}sethobby
+┃ 🎂 » ${PREFIX}setbirth <DD/MM/AAAA>
+┃ 🗑️ » ${PREFIX}deldesc | ${PREFIX}delbirth
+┃ 💤 » ${PREFIX}afk [motivo]
 ┃ 🗑️ » ${PREFIX}delperfil
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
@@ -268,6 +273,9 @@ export default {
 ┃ 🗳️ » ${PREFIX}encuesta | ${PREFIX}say
 ┃ 👁️ » ${PREFIX}read | ${PREFIX}pfp | ${PREFIX}wastalk
 ┃ ⏰ » ${PREFIX}recordar <min>|<texto>
+┃ 📊 » ${PREFIX}allmenu | ${PREFIX}menucat
+┃ 🩺 » ${PREFIX}health | ${PREFIX}runtime | ${PREFIX}status
+┃ 🪪 » ${PREFIX}lid | ${PREFIX}cache | ${PREFIX}infobot
 ┃ 🎤 » ${PREFIX}tts <txt>
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
@@ -315,6 +323,13 @@ export default {
 ┃ 📏 » ${PREFIX}setwarnlimit <1-10>
 ┃ 📢 » ${PREFIX}hidetag <mensaje>
 ┃ 🔗 » ${PREFIX}antilink on|off
+┃ 🤖 » ${PREFIX}bot on|off
+┃ 🔗 » ${PREFIX}link | ${PREFIX}revoke
+┃ ✏️ » ${PREFIX}setgpname | ${PREFIX}setgpdesc
+┃ 🖼️ » ${PREFIX}setgpbanner (citando foto)
+┃ 📌 » ${PREFIX}pin | ${PREFIX}unpin
+┃ 📊 » ${PREFIX}count | ${PREFIX}topcount | ${PREFIX}topinactive
+┃ 📋 » ${PREFIX}gp
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;

@@ -404,8 +404,18 @@ async function handleMessages(sock, { messages, type }) {
 
   console.log(`💬 [${from}] ${texto} ${esPrivado ? "🔒 (Privado)" : ""}`);
 
+  // Contador para `.status` y `.health`: cuántos comandos se han atendido.
+  global.__contadorMensajes = (global.__contadorMensajes || 0) + 1;
+
   const plugin = commands.get(comando);
-  if (!plugin) return; 
+  if (!plugin) return;
+
+  // Grupo apagado con `.bot off`: no se responde a nada salvo a volver a
+  // encenderlo. Se hace aquí, en el router, porque si lo comprobara cada
+  // plugin siempre habría alguno que se olvida y el «apagado» no apagaría.
+  if (isGroup && global.db?.data?.chats?.[remoteJid]?.botApagado) {
+    if (comando !== "bot" && comando !== "boton") return;
+  }
 
   if (plugin.isOwner && !isOwnerCheck(sender, sock)) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
