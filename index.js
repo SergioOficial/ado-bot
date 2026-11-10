@@ -1,4 +1,3 @@
-
 // CREADOR: Jeferson Fernández ⚔️ Colab Sergio Gómez Gort
 
 // 📦 IMPORTACIONES
@@ -12,11 +11,12 @@ import makeWASocket, {
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
+import path from "path";
 import { Boom } from "@hapi/boom";
 import { config } from "./config.js";
 import chalk from "chalk";
 import cfonts from "cfonts";
-import { loadPlugins, commands } from "./pluginLoader.js";
+import { loadPlugins, commands, events } from "./pluginLoader.js"; // 👈 Importamos events
 import './lib/database.js';
 
 global.loadDatabase();
@@ -39,6 +39,7 @@ function ensureSubDirs() {
   if (!fs.existsSync(SUB_CONFIG_DIR)) fs.mkdirSync(SUB_CONFIG_DIR, { recursive: true });
   if (!fs.existsSync(SUB_SESSION_DIR)) fs.mkdirSync(SUB_SESSION_DIR, { recursive: true });
 }
+
 function loadSubConfig(numero) {
   ensureSubDirs();
   const file = `${SUB_CONFIG_DIR}/subconfig_${numero}.json`;
@@ -46,14 +47,18 @@ function loadSubConfig(numero) {
   try { return JSON.parse(fs.readFileSync(file, "utf8")); }
   catch { return { owners: [] }; }
 }
+
 function saveSubConfig(numero, cfg) {
   ensureSubDirs();
   fs.writeFileSync(`${SUB_CONFIG_DIR}/subconfig_${numero}.json`, JSON.stringify(cfg, null, 2));
 }
+
 function getActiveSubbots() { return activeSubbots; }
+
 function jidToNumber(jid) {
   return String(jid || "").split("@")[0].split(":")[0];
 }
+
 function isOwnerCheck(jid, sockInstance) {
   const num = jidToNumber(jid);
   const botNum = jidToNumber(sockInstance?.user?.id || "");
@@ -62,6 +67,7 @@ function isOwnerCheck(jid, sockInstance) {
   if (sockInstance?.subconfig?.owners?.includes(num)) return true;
   return false;
 }
+
 function getTargetFromMsg(msg, argList) {
   const ctxInfo = msg.message?.extendedTextMessage?.contextInfo || msg.message?.imageMessage?.contextInfo || msg.message?.videoMessage?.contextInfo;
   const mentioned = ctxInfo?.mentionedJid?.[0];
@@ -176,6 +182,15 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
     }
   });
 
+  // Cargar dinámicamente los eventos en los subbots también
+  for (const [eventName, pluginList] of events) {
+    subSock.ev.on(eventName, async (...args) => {
+      for (const plugin of pluginList) {
+        try { await plugin.execute(subSock, ...args); } catch (err) {}
+      }
+    });
+  }
+
   subSock.ev.on("messages.upsert", (ev) => handleMessages(subSock, ev));
 }
 
@@ -260,6 +275,20 @@ async function startLevi() {
       }
     }
   });
+
+  // 👇 AQUÍ REGISTRAMOS LOS EVENTOS DINÁMICOS
+  for (const [eventName, pluginList] of events) {
+    sock.ev.on(eventName, async (...args) => {
+      for (const plugin of pluginList) {
+        try {
+          await plugin.execute(sock, ...args);
+        } catch (err) {
+          console.error(`❌ Error en evento ${eventName}:`, err.message);
+        }
+      }
+    });
+  }
+
   sock.ev.on("messages.upsert", (ev) => handleMessages(sock, ev));
   return sock;
 }
@@ -277,7 +306,7 @@ async function handleMessages(sock, { messages, type }) {
 
   // 🔍 Detectar cuál de los prefijos del array se usó
   const usedPrefix = config.prefix.find(p => texto.startsWith(p));
-  if (!usedPrefix) return; // Si no empieza con ningún prefijo, ignorar
+  if (!usedPrefix) return; 
 
   const { remoteJid } = m.key;
   const isGroup = remoteJid.endsWith("@g.us");
@@ -314,7 +343,7 @@ async function handleMessages(sock, { messages, type }) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
   }
 
-  // Contexto inyectado a todos los plugins (Pasamos el prefijo usado)
+  // Contexto inyectado a todos los plugins
   const ctx = {
     sock, 
     m, 
@@ -325,7 +354,7 @@ async function handleMessages(sock, { messages, type }) {
     comando, 
     texto: textoLimpio, 
     enviartexto, 
-    PREFIX: usedPrefix, // 👈 Ahora PREFIX es el símbolo que usó el usuario (ej. ".")
+    PREFIX: usedPrefix, 
     BOT_NAME, 
     config, 
     db: global.db.data,
@@ -336,7 +365,7 @@ async function handleMessages(sock, { messages, type }) {
     await plugin.execute(ctx);
   } catch (error) {
     console.error(`❌ Error en #${comando}:`, error);
-    await enviartexto(`⚠️ Error en *${comando}*.\n_${error.message}_`);
+    await enviartexto(`⚠️ Error en *${comando}*.\n_${error.message || error}_`);
   }
 }
 

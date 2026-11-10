@@ -41,7 +41,11 @@
       "botname": "Anthony Bot"
     }
   },
-  "chats": {},
+  "chats": {
+    "120363405955445397@g.us": {
+      "welcome": true
+    }
+  },
   "codes": {
     "LEVI-K6SS": true
   }
