@@ -45,6 +45,13 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `letra` | `plugins/utils/consultas.js` | lyrics.ovh (probado); si no hay letra lo dice, no inventa |
 | `acortar` | `plugins/utils/enlaces-utils.js` | is.gd (probado), sin claves ni páginas intermedias |
 | `tourl` | `plugins/utils/enlaces-utils.js` | uguu.se (probado). Se descartaron 0x0.st (cerró subidas por spam de bots), catbox (rechaza servidores) y tmpfiles (solo medios) |
+| `botinfo` | `plugins/owner/bot-info.js` | versión, cliente, prefijos y dueños de la config real |
+| `blocklist` | `plugins/owner/bot-info.js` | lee `fetchBlocklist` de WhatsApp |
+| `block` / `unblock` | `plugins/owner/bot-info.js` | tras bloquear se comprueba contra la lista real |
+| `getplugin` | `plugins/owner/bot-info.js` | solo nombres simples (sin rutas); se niega si pasa de 25 KB |
+| `nuevo` / `delplugin` | `plugins/owner/nuevo.js` | escribe un plugin que ya responde; borrar pide confirmación |
+| `newsletter` / `canales` | `plugins/owner/canales.js` | se apuntan por evento: este cliente no tiene `sock.chats` |
+| `fix` (endurecido) | `plugins/owner/fix.js` | guarda parche y pide confirmación si hay cambios sin subir |
 
 ## Pendientes por categoría
 
