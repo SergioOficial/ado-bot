@@ -7,7 +7,7 @@
  * regla que, si se rompe, convierte al bot en una tubería otra vez.
  */
 import { igual, esVerdad } from "./ayuda.mjs";
-import { curvaCircadiana, planDeEscritura, crearRitmo } from "../lib/ritmo.js";
+import { curvaCircadiana, planDeEscritura, crearRitmo, NIVELES, nivelPedido } from "../lib/ritmo.js";
 import { crearCola, envolverSocket, crearLimitador, crearSalud } from "../lib/antiban.js";
 
 const AJUSTES = {
@@ -199,3 +199,45 @@ export const pruebas = [
     igual(sock.enviados, 1, "el mensaje salió");
   }],
 ];
+
+// ── caudal, ráfagas y grupos ────────────────────────────────────────────────
+pruebas.push(
+  ["hay tres niveles de caudal y el normal es el tranquilo", () => {
+    igual(NIVELES.normal.mensajesHora, 30, "normal");
+    esVerdad(NIVELES.alto.mensajesHora > NIVELES.normal.mensajesHora, "alto sube");
+    esVerdad(NIVELES.maximo.mensajesHora > NIVELES.alto.mensajesHora, "maximo más");
+  }],
+
+  ["un grupo pesa más que un chat privado", () => {
+    const ritmo = crearRitmo({ estado: {}, ajustes: { ...AJUSTES, mensajesHora: 4, factorGrupo: 2, rafaga: 0 } });
+    const ahora = aLas(12);
+    ritmo.anotarEntrante("120363000000000000@g.us", ahora);
+    ritmo.anotarSalida("120363000000000000@g.us", { ahora });
+    // Una salida a grupo pesa 2: con límite 4, quedan 2.
+    igual(ritmo.resumen(ahora).porHora, 1, "se cuenta la salida");
+    const d = ritmo.permite("120363000000000000@g.us", { ahora });
+    esVerdad(d.ok === true, "todavía cabe");
+  }],
+
+  ["la ráfaga deja mandar seguido y luego se corta", () => {
+    const ritmo = crearRitmo({ estado: {}, ajustes: { ...AJUSTES, mensajesHora: 50, porChatHora: 50, rafaga: 3 } });
+    const ahora = aLas(12);
+    ritmo.anotarEntrante(AGUILA, ahora);
+    const respuestas = [];
+    for (let i = 0; i < 5; i++) {
+      respuestas.push(ritmo.permite(AGUILA, { ahora }).ok);
+      ritmo.anotarSalida(AGUILA, { ahora });
+    }
+    igual(respuestas.slice(0, 3), [true, true, true], "las tres primeras van seguidas");
+  }],
+
+  ["RITMO_NIVEL elige el caudal, y un nombre raro cae en normal", () => {
+    const antes = process.env.RITMO_NIVEL;
+    process.env.RITMO_NIVEL = "maximo";
+    igual(nivelPedido(), "maximo", "se reconoce");
+    process.env.RITMO_NIVEL = "modo-dios";
+    igual(nivelPedido(), "normal", "lo que no existe cae en el seguro");
+    if (antes === undefined) delete process.env.RITMO_NIVEL;
+    else process.env.RITMO_NIVEL = antes;
+  }]
+);

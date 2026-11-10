@@ -418,3 +418,29 @@ pruebas.push(
     esVerdad(/número nuevo/i.test(AVISO_VETERANO), "avisa del número nuevo");
   }]
 );
+
+// ── despertar la cola ───────────────────────────────────────────────────────
+// Un chat bloqueado al frente no puede retrasar una respuesta que sí podía
+// salir. Antes se dormía 60 s de golpe y todo esperaba detrás.
+pruebas.push(
+  ["un envío bloqueado no retrasa al que sí puede salir", async () => {
+    const l = crearLimitador({
+      estado: {},
+      ajustes: { ...RAPIDO, maxMsgsDia: 1, inicioMsgsDia: 1, diasCalentamiento: 0 },
+    });
+    const cola = crearCola({ limitador: l, esperaTopeMs: 60_000 });
+    const salieron = [];
+    await cola.encolar(async () => salieron.push("primero"), { destino: "a@s.whatsapp.net" });
+    // El tope ya está gastado: lo normal se queda esperando.
+    // Se queda esperando a propósito: no se espera su promesa (nunca resuelve).
+    cola.encolar(async () => salieron.push("bloqueado"), { destino: "b@s.whatsapp.net" }).catch(() => {});
+    const urgente = cola.encolar(async () => salieron.push("urgente"), {
+      destino: "c@s.whatsapp.net",
+      isPriority: true,
+    });
+    await urgente;
+    igual(salieron.includes("urgente"), true, "el urgente pasó sin esperar el minuto");
+    cola.limpiar();
+    igual(salieron.includes("bloqueado"), false, "el bloqueado sigue fuera");
+  }]
+);
