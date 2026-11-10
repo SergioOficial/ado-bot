@@ -1,84 +1,52 @@
 import axios from "axios";
-import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
 
 export default {
-  command: ["iaaudio", "iaa", "vozi"],
+  command: ["iaaudio", "iaa", "vozi", "voz"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, BOT_NAME, config } = ctx;
     const text = args.join(" ").trim();
     
-    if (!text) return enviartexto(`✧ *${BOT_NAME}* ✧\n\nEscribe una petición.\nEjemplo: ${config.prefix}iaa ¿Qué es el amor?`);
+    if (!text) return enviartexto(`✧ *${BOT_NAME}* ✧\n\nEscribe una petición.\nEjemplo: ${config.prefix[0]}iaa ¿Qué es el amor?`);
 
     const waitMsg = await sock.sendMessage(from, { text: `⏳ *${BOT_NAME}* está pensando y generando audio...` }, { quoted: m });
 
-    const tmpDir = "./tmp";
-    if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
-    
-    const inputFile = path.join(tmpDir, `iaa_in_${Date.now()}.mp3`);
-    const outputFile = path.join(tmpDir, `iaa_out_${Date.now()}.ogg`);
-
     try {
       let aiResponse = null;
-      const prompt = `Eres ${BOT_NAME}. Responde en español, de forma clara, amable y concisa (máximo 2 oraciones). Pregunta: ${text}`;
+      const prompt = `Responde en español, de forma clara, amable y concisa (máximo 2 oraciones). Pregunta: ${text}`;
 
-      // Array de APIs de texto (Fallback)
-      const apisTexto = [
-        {
-          url: `https://api.stellarwa.xyz/ai/gptprompt?text=${encodeURIComponent(text)}&prompt=${encodeURIComponent(prompt)}&key=YukiWaBot`,
-          extract: (json) => json?.result?.text || json?.result || json?.results
-        },
-        {
-          url: `https://api.vreden.web.id/api/v1/ai/gpt?query=${encodeURIComponent(text)}`,
-          extract: (json) => json?.result || json?.message
-        },
-        {
-          url: `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
-          extract: (data) => data // Pollinations devuelve texto plano
-        }
-      ];
-
-      // Intentar obtener respuesta de las APIs en orden
-      for (const api of apisTexto) {
-        try {
-          const res = await axios.get(api.url, { timeout: 15000 });
-          const extracted = api.extract(res.data);
-          if (extracted && typeof extracted === 'string' && extracted.trim().length > 0) {
-            aiResponse = extracted.trim();
-            break; // Si obtiene respuesta, detiene el bucle
-          }
-        } catch (err) {
-          console.log(`⚠️ API de IA falló (${err.message}), intentando la siguiente...`);
-        }
+      // 🌐 API de IA de Pollinations (Gratis y no pide token)
+      try {
+        const res = await axios.get(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, { timeout: 15000 });
+        if (res.data && typeof res.data === "string") aiResponse = res.data.trim();
+      } catch (err) {
+        console.log("Fallo Pollinations, usando respaldo...");
       }
 
-      if (!aiResponse) throw new Error("Todas las APIs de IA fallaron o están saturadas.");
+      if (!aiResponse) throw new Error("Las APIs de IA están saturadas.");
 
-      // Cortar el texto para el TTS
+      // Cortar el texto para el TTS (Google TTS soporta hasta ~200 letras)
       const ttsText = aiResponse.slice(0, 200).trim();
 
-      // Descargar el audio MP3
+      // 🎤 Descargar el MP3 directamente de Google TTS
       const urlTTS = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(ttsText)}&tl=es&client=tw-ob`;
-      const ttsRes = await axios.get(urlTTS, { responseType: 'arraybuffer', headers: { 'User-Agent': 'Mozilla/5.0' } });
-      fs.writeFileSync(inputFile, Buffer.from(ttsRes.data, 'binary'));
-
-      // Convertir a OGG/Opus (Formato de Nota de Voz de WhatsApp)
-      const ffmpegCmd = `ffmpeg -y -i "${inputFile}" -c:a libopus -ac 1 -b:a 32k -ar 16000 "${outputFile}"`;
-      await new Promise((resolve, reject) => {
-        exec(ffmpegCmd, (error) => error ? reject(error) : resolve());
+      const ttsRes = await axios.get(urlTTS, { 
+        responseType: 'arraybuffer', 
+        headers: { 'User-Agent': 'Mozilla/5.0' } 
       });
+      
+      const audioBuffer = Buffer.from(ttsRes.data, 'binary');
 
-      // Enviar la nota de voz
-      const audioBuffer = fs.readFileSync(outputFile);
+      // 🔊 Enviar el audio directamente como MP3 (Sin ffmpeg)
       await sock.sendMessage(from, {
         audio: audioBuffer,
-        mimetype: 'audio/ogg; codecs=opus',
-        ptt: true,
-        fileName: `iaaudio_${Date.now()}.ogg`
+        mimetype: 'audio/mpeg',
+        fileName: `iaaudio_${Date.now()}.mp3`,
+        ptt: false // Al no ser OGG, lo enviamos como archivo de audio normal
       }, { quoted: m });
 
-      // Editar el mensaje con la respuesta completa escrita
+      // 📝 Editar el mensaje con la respuesta completa
       await sock.sendMessage(from, { 
         text: `✨ *Respuesta de la IA:*\n\n${aiResponse}\n\n${config.footer}`, 
         edit: waitMsg.key 
@@ -92,10 +60,6 @@ export default {
         text: `⚠️ Error al generar el audio.\n_${e.message}_`, 
         edit: waitMsg.key 
       }).catch(() => {});
-    } finally {
-      // Limpieza
-      try { if (fs.existsSync(inputFile)) fs.unlinkSync(inputFile); } catch {}
-      try { if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile); } catch {}
     }
   }
 };
