@@ -382,6 +382,27 @@ incluidos.
 - 📄 **Licencia AGPL-3.0** con `NOTICE` de procedencia: ver [Licencia](#-licencia).
 
 ---
+🌐 Nuestras Redes y Comunidad
+
+¡Únete a nuestros canales oficiales y participa en la comunidad!
+
+<div align="center">
+  <a href="https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d">
+    <img src="https://img.shields.io/badge/Canal_1-WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Canal 1"/>
+  </a>
+  <a href="https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j">
+    <img src="https://img.shields.io/badge/Canal_2-WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Canal 2"/>
+  </a>
+  <br/>
+  <a href="https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE">
+    <img src="https://img.shields.io/badge/Comunidad-WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Comunidad"/>
+  </a>
+  <a href="https://chat.whatsapp.com/IY9no7NYC4PKdLQkmqc2Z5?s=cl&p=a&iam=2">
+    <img src="https://img.shields.io/badge/Grupo_Oficial-WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Grupo Oficial"/>
+  </a>
+</div>
+
+---
 
 ## 📄 Licencia
 
@@ -454,7 +475,7 @@ línea.
 
 ⭐ Si te gusta el proyecto, dale una estrella ⭐
 
-Hecho con 💫 desde Cuba para el mundo
+Hecho con 💫 desde Cuba, Colombia y México  para el mundo
 
 [![Repositorio](https://img.shields.io/badge/Repositorio-Oficial-181717?style=flat&logo=github&logoColor=white)](https://github.com/SergioOficial/Levi-bot)
 
