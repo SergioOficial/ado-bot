@@ -422,7 +422,7 @@ export default {
               ],
             },
           ]),
-          rapido("🗂️ Categorías (.menucat)", "menucat"),
+          rapido("🗂️ Categorías (.menucat)", "allmenu"),
           rapido("☰ Ver todo", "allmenu"),
         ],
       }).catch(() => {});
