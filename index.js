@@ -1,4 +1,4 @@
-// CREADOR: Jeferson Fernández ⚔️ Colab Sergio Gómez Gort
+// CREADOR: Jeferson Fernández ⚔️ Colab Sergio Gómez Gort y Asistencia en Comandos de Shin MD
 
 // 📦 IMPORTACIONES
 // El cliente sale de lib/baileys.js, que decide el paquete (fork u oficial).
@@ -38,7 +38,7 @@ const color = (text, colorName = "green") => {
 const SUB_CONFIG_DIR = "./sub/SubConfigs";
 const SUB_SESSION_DIR = "./sub/SubBots";
 const activeSubbots = new Map();
-const MAX_SUBBOTS = 4;
+const MAX_SUBBOTS = 5;
 
 function ensureSubDirs() {
   if (!fs.existsSync(SUB_CONFIG_DIR)) fs.mkdirSync(SUB_CONFIG_DIR, { recursive: true });
@@ -116,7 +116,7 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   if (!fs.existsSync("./sub")) fs.mkdirSync("./sub", { recursive: true });
 
   const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-  const { version } = await fetchLatestWaWebVersion();
+const { version } = await fetchLatestBaileysVersion();
 
   const subSock = makeWASocket({
     version,
