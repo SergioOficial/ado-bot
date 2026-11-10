@@ -9,7 +9,7 @@
  * número a mano permitía echar a un admin (WhatsApp lo permite si tú eres admin
  * y el otro también, pero es un abuso fácil de evitar).
  */
-import { objetivo, mencion, numeroDe, esAdminMeta, participantes } from "../../lib/grupo.js";
+import { objetivo, mencion, numeroDe, esAdminMeta, participantes, mismoNumero } from "../../lib/grupo.js";
 import { config } from "../../config.js";
 
 export default {
@@ -32,7 +32,9 @@ export default {
     // Protección: ni administradores ni dueños.
     const lista = await participantes(sock, from);
     const esAdminObjetivo = esAdminMeta(lista, jid);
-    const esOwnerObjetivo = (config.owners || []).some((o) => numeroDe(o.number) === numeroDe(jid));
+    // Se compara con y sin lada: si no, un dueño escrito como «55…» no se
+    // reconocía con su JID «52155…» y se le podía expulsar.
+    const esOwnerObjetivo = (config.owners || []).some((o) => mismoNumero(o.number, jid));
     if (esOwnerObjetivo) return enviartexto("《✧》 Ese número es dueño del bot: no lo voy a sacar.");
     if (esAdminObjetivo && !isOwnerCheck(sender, sock)) {
       return enviartexto("《✧》 Es administrador del grupo. Quítale el admin primero (o que lo haga un dueño).");

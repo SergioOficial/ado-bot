@@ -195,7 +195,7 @@ vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 81 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run probar` | 85 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
 
@@ -259,10 +259,11 @@ export const config = {
   botName: "Levi-Bot ⚔️",
 
   owners: [
-    { name: "Sergio Gómez Gort",      number: "5358090650" },
-    { name: "Jeferson Fernández",     number: "573005255807" },
-    { name: "José Rodríguez",         number: "584245610338" },
-    { name: "atencion al cliente bots", number: "50494874330" }
+    { name: "Sergio Gómez Gort",         number: "5358090650" },
+    { name: "Jeferson Fernández",        number: "573005255807" },
+    { name: "José Rodríguez",            number: "584245610338" },
+    { name: "atencion al cliente bots",  number: "50494874330" },
+    { name: "Sergio Gómez Gort (México)", number: "5215574370309" }
   ],
 
   version: "1.0.5",
@@ -271,7 +272,9 @@ export const config = {
 ```
 
 > Los comandos con `isOwner` (`.restart`, `.exec`, `.fix`, `.backup`, `.getplugin`…)
-> solo los usan los números de `owners`. Si un comando de administrador no
+> solo los usan los números de `owners`. La comparación vale **con y sin lada**:
+> `5215574370309`, `5574370309` y `525574370309` se reconocen como el mismo
+> número, así que da igual cómo esté escrito en la lista. Si un comando de administrador no
 > funciona, comprueba que el bot sea admin del grupo: el propio comando lo dice
 > cuando no puede.
 

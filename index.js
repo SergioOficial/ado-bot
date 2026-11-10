@@ -11,7 +11,7 @@ import makeWASocket, {
 import { versionParaLog } from "./lib/wa-version.js";
 import { botonPulsado } from "./lib/botones.js";
 import { vencidos, textoAviso } from "./lib/recordatorios.js";
-import { esAdmin } from "./lib/grupo.js";
+import { esAdmin, mismoNumero } from "./lib/grupo.js";
 import { crearLimitador, crearCola, crearSalud, crearVigilante, envolverSocket } from "./lib/antiban.js";
 import pino from "pino";
 import readline from "readline";
@@ -68,8 +68,13 @@ function isOwnerCheck(jid, sockInstance) {
   const num = jidToNumber(jid);
   const botNum = jidToNumber(sockInstance?.user?.id || "");
   if (num === botNum) return true;
-  if ((config.owners || []).some(o => String(o.number).replace(/\D/g, "") === num)) return true;
-  if (sockInstance?.subconfig?.owners?.includes(num)) return true;
+
+  // `mismoNumero` compara con y sin lada de país: si el dueño se escribe a mano
+  // como «5574370309» y su JID llega como «5215574370309», tiene que coincidir.
+  // Antes se comparaba dígito a dígito y los comandos de dueño no le hacían caso
+  // a su propio dueño.
+  if ((config.owners || []).some(o => mismoNumero(o.number, num))) return true;
+  if ((sockInstance?.subconfig?.owners || []).some(o => mismoNumero(o, num))) return true;
   return false;
 }
 

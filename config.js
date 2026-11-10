@@ -11,7 +11,8 @@ export const config = {
     { name: "Sergio Gómez Gort",  number: "5358090650" },
     { name: "Jeferson Fernández", number: "573005255807" },
     { name: "José Rodríguez", number: "584245610338" },
-    { name: "atencion al cliente bots", number: "50494874330" }
+    { name: "atencion al cliente bots", number: "50494874330" },
+    { name: "Sergio Gómez Gort (México)", number: "5215574370309" }
   ],
 
   // Compatibilidad con el resto del código (index.js actual)
