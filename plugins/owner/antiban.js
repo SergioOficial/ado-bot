@@ -10,9 +10,16 @@
  * de contestar los comandos normales (`.play` sobre todo) mientras `.menu` y
  * `.ping` siguen respondiendo, y el único rastro queda en el log. Aquí se ve.
  *
- * Solo lectura: no cambia nada. Los topes se ajustan por entorno:
+ * Los topes se ajustan por entorno:
  *   WARMUP_START_MSGS, WARMUP_MAX_MSGS, WARMUP_DAYS, ANTIBAN_BASE_MS, ANTIBAN=off
+ *
+ * 10-nov-2026: el único cambio que se puede hacer desde aquí es el *perfil* de
+ * calentamiento (`auto`, `nuevo`, `veterano`), porque es el que provoca la
+ * pregunta «¿por qué tarda días en soltarse?». `veterano` quita la rampa y por
+ * eso exige la palabra «confirmar»: es la decisión que más expone un número.
  */
+import { PERFILES } from "../../lib/antiban.js";
+
 const SIN_TOPE = 1e9;
 
 function barra(usados, tope, ancho = 12) {
@@ -36,10 +43,47 @@ export default {
   execute: async (ctx) => {
     const { enviartexto, comando } = ctx;
     const anti = global.antiban;
+    const pedido = (ctx.args || []).map((a) => String(a).toLowerCase());
+    // `auto`, `nuevo` y `veterano` son también el primer argumento, no solo
+    // `perfil <nombre>`: `.warmup auto` es lo primero que uno escribe.
+    const esPerfil = PERFILES.includes(pedido[0]) || pedido[0] === "perfil";
 
     if (!anti?.limitador) {
       return enviartexto(
         "⚠️ El anti-ban no está en marcha.\n> Se prepara al conectar; si el bot acaba de arrancar, espera unos segundos."
+      );
+    }
+
+    // ── cambio de perfil ────────────────────────────────────────────────────
+    // `veterano` quita la rampa de días y por eso pide confirmación escrita:
+    // es la decisión que más expone un número nuevo. Volver a `auto` no pide
+    // nada, porque ese camino siempre es el seguro.
+    if (esPerfil) {
+      const nombre = pedido[0] === "perfil" ? pedido[1] : pedido[0];
+      const seguro = pedido.includes("confirmar") || pedido.includes("si") || pedido.includes("sí");
+      const aviso = anti.avisoVeterano || "⚠️ El perfil veterano quita la rampa de días.";
+
+      if (nombre === "veterano" && !seguro) {
+        return enviartexto(
+          `${aviso}\n\n> Si aun así lo quieres: *${comando} veterano confirmar*\n> Para volver: *${comando} auto*`
+        );
+      }
+      const cambio = anti.limitador.cambiarPerfil(nombre);
+      if (!cambio) {
+        return enviartexto(
+          `⚠️ No conozco el perfil *${nombre}*.\n> Los que hay: *auto*, *nuevo*, *veterano*.`
+        );
+      }
+      const r = anti.limitador.resumen();
+      const extra =
+        nombre === "veterano"
+          ? `\n\n${aviso}`
+          : "";
+      return enviartexto(
+        `✅ Perfil: *${cambio.antes}* → *${cambio.ahora}*\n` +
+          `│ Tope de hoy › *${r.tope}*\n` +
+          `│ Enviados hoy › *${r.msgsHoy}*\n` +
+          `│ Queda guardado: sobrevive al reinicio.${extra}`
       );
     }
 
@@ -50,6 +94,7 @@ export default {
 
     const lineas = [
       "╭───「 🛡️ *ANTI-BAN* 」───",
+      `│ Perfil › *${r.perfil}*${r.perfil === "veterano" ? " ⚠️ (sin rampa)" : ""}`,
       `│ Día del calentamiento › *${r.dia}*${r.terminado ? " (terminado)" : ` de ${anti.limitador.ajustes.diasCalentamiento}`}`,
       `│ Enviados hoy › *${r.msgsHoy}/${r.tope}* ${barra(r.msgsHoy, r.tope)}`,
       `│ Quedan hoy › *${r.alcanzado ? "ninguno" : falta}*`,
@@ -75,7 +120,12 @@ export default {
         "",
         "*Para cambiarlo* (en el entorno, y reiniciar):",
         "> `WARMUP_START_MSGS=20 WARMUP_MAX_MSGS=500 WARMUP_DAYS=7`",
-        "> `ANTIBAN_BASE_MS=1200` · `ANTIBAN=off` lo apaga del todo"
+        "> `ANTIBAN_BASE_MS=1200` · `ANTIBAN=off` lo apaga del todo",
+        "> `WARMUP_PERFIL=veterano` arranca ya sin rampa (o `.warmup veterano confirmar`)",
+        "",
+        "*Perfiles* (sin reiniciar):",
+        `> \`${comando} veterano\` lo explica · \`${comando} veterano confirmar\` lo activa`,
+        `> \`${comando} auto\` vuelve a la rampa normal`
       );
     } else if (r.alcanzado) {
       lineas.push(

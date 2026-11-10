@@ -23,7 +23,7 @@ import {
   numeroValido,
 } from "./lib/subbots.js";
 import { SUB_SESIONES, SUB_CONFIGS } from "./lib/rutas.js";
-import { crearLimitador, crearCola, crearSalud, crearVigilante, envolverSocket } from "./lib/antiban.js";
+import { crearLimitador, crearCola, crearSalud, crearVigilante, envolverSocket, AVISO_VETERANO } from "./lib/antiban.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -312,7 +312,15 @@ function prepararAntiban(sock) {
     cola: colaAntiban,
     salud: saludAntiban,
     vigilante: vigilanteAntiban,
+    avisoVeterano: AVISO_VETERANO,
   };
+
+  // El perfil veterano se avisa en voz alta al arrancar: quita la rampa de
+  // días, y eso es justo lo que protege a un número nuevo. Que se vea cada vez
+  // que arranca, no solo la primera.
+  if (limitadorAntiban.resumen().perfil === "veterano") {
+    console.warn(`\n${AVISO_VETERANO}\n`);
+  }
 
   return colaAntiban;
 }

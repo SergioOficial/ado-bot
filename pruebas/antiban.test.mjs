@@ -9,6 +9,8 @@ import {
   gaussiana,
   esFalloDeConexion,
   CODIGO_INCIERTO,
+  PERFILES,
+  AVISO_VETERANO,
 } from "../lib/antiban.js";
 
 /** Ajustes rápidos para que las pruebas no esperen segundos de verdad. */
@@ -345,5 +347,63 @@ pruebas.push(
       { buttonParamsJson: "roto" },
     ]);
     igual(lista, [{ texto: "Uno", url: null }, { texto: "Dos", url: "https://x.y" }, { texto: "opción", url: null }], "armado");
+  }]
+);
+
+// ── perfiles de calentamiento ───────────────────────────────────────────────
+// `veterano` quita la rampa de días: el tope máximo desde el primer día. Estas
+// pruebas fijan que sea eso y nada más: no apaga la espera ni el resto.
+pruebas.push(
+  ["el perfil veterano da el tope máximo el primer día", () => {
+    const l = crearLimitador({
+      estado: {},
+      ajustes: { ...RAPIDO, perfil: "veterano" },
+    });
+    const r = l.resumen();
+    igual(r.perfil, "veterano", "perfil");
+    igual(r.tope, RAPIDO.maxMsgsDia, "tope desde el día 1");
+    esVerdad(r.terminado, "la rampa se da por terminada");
+  }],
+
+  ["el perfil auto sigue subiendo con los días", () => {
+    const hace3 = new Date(Date.now() - 3 * 86_400_000).toISOString().slice(0, 10);
+    const l = crearLimitador({
+      estado: { inicio: hace3 },
+      ajustes: { ...RAPIDO, perfil: "auto", diasCalentamiento: 7, inicioMsgsDia: 2, maxMsgsDia: 5 },
+    });
+    const r = l.resumen();
+    esVerdad(r.tope > RAPIDO.inicioMsgsDia && r.tope < RAPIDO.maxMsgsDia, `tope intermedio (${r.tope})`);
+    esVerdad(!r.terminado, "todavía en rampa");
+  }],
+
+  ["el perfil cambia en caliente y gana sobre el entorno", () => {
+    const l = crearLimitador({ estado: {}, ajustes: { ...RAPIDO, perfil: "auto" } });
+    igual(l.resumen().tope, RAPIDO.inicioMsgsDia, "empieza por el tope del día 1");
+    const cambio = l.cambiarPerfil("veterano");
+    igual(cambio, { antes: "auto", ahora: "veterano" }, "el cambio se cuenta");
+    igual(l.resumen().tope, RAPIDO.maxMsgsDia, "ya con el tope máximo");
+    // Se guarda en el estado que va a la base: otro limitador con ese estado lo ve.
+    const otro = crearLimitador({ estado: l.estado, ajustes: { ...RAPIDO, perfil: "auto" } });
+    igual(otro.resumen().perfil, "veterano", "sobrevive a reiniciar");
+  }],
+
+  ["un perfil que no existe no cambia nada", () => {
+    const l = crearLimitador({ estado: {}, ajustes: { ...RAPIDO, perfil: "auto" } });
+    igual(l.cambiarPerfil("modo-dios"), null, "se rechaza");
+    igual(l.resumen().perfil, "auto", "se queda como estaba");
+  }],
+
+  ["el perfil veterano no quita la espera entre envíos", () => {
+    const l = crearLimitador({ estado: {}, ajustes: { ...RAPIDO, perfil: "veterano" } });
+    for (let i = 0; i < 50; i++) {
+      const ms = l.demora({ largo: 20 });
+      esVerdad(ms >= RAPIDO.minimoMs && ms <= RAPIDO.maximoMs, `sigue esperando (${ms})`);
+    }
+  }],
+
+  ["el aviso del perfil veterano dice lo que arriesgas", () => {
+    esVerdad(AVISO_VETERANO.includes("veterano"), "se identifica");
+    esVerdad(/arriesgas/i.test(AVISO_VETERANO), "habla del riesgo");
+    esVerdad(/número nuevo/i.test(AVISO_VETERANO), "avisa del número nuevo");
   }]
 );
