@@ -70,3 +70,7 @@ cp lib/database.json lib/database.antes-del-porte.json
 
 Y si hubiera que restaurarlo: se copia de vuelta a `lib/database.json` con el
 bot **apagado** (con el bot encendido, el autoguardado lo pisa cada segundo).
+
+---
+
+<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>

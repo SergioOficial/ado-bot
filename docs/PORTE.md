@@ -247,3 +247,7 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | githubstalk | `cmds/utils/githubstalk.js` | githubstalk, ghstalk, gh |
 | hd | `cmds/utils/hd.js` | hd, enhance, remini |
 | ptv | `cmds/utils/ptv.js` | ptv |
+
+---
+
+<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>

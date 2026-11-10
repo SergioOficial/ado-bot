@@ -109,3 +109,7 @@ Comprueba sin abrir WhatsApp: qué cliente cargó y que traiga todo, que los
 botones viajen enteros, qué versión se va a anunciar, que los 92 plugins tengan
 sintaxis válida, y que la lista de owners esté bien formada. Sirve para saber si
 un fallo es del bot o de la sesión antes de culpar al teléfono.
+
+---
+
+<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>

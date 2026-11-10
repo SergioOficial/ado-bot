@@ -12,6 +12,17 @@ import { versionParaLog } from "./lib/wa-version.js";
 import { botonPulsado } from "./lib/botones.js";
 import { vencidos, textoAviso } from "./lib/recordatorios.js";
 import { esAdmin, mismoNumero } from "./lib/grupo.js";
+import {
+  rutaSesion,
+  rutaConfig,
+  leerConfig,
+  guardarConfig,
+  borrarSesion,
+  sesionesParaRestaurar,
+  migrarSesionVieja,
+  numeroValido,
+} from "./lib/subbots.js";
+import { SUB_SESIONES, SUB_CONFIGS } from "./lib/rutas.js";
 import { crearLimitador, crearCola, crearSalud, crearVigilante, envolverSocket } from "./lib/antiban.js";
 import pino from "pino";
 import readline from "readline";
@@ -35,8 +46,11 @@ const color = (text, colorName = "green") => {
 // ═══════════════════════════════════════════
 // SUBBOT MANAGER
 // ═══════════════════════════════════════════
-const SUB_CONFIG_DIR = "./sub/SubConfigs";
-const SUB_SESSION_DIR = "./sub/SubBots";
+// Las carpetas de los sub-bots viven en lib/rutas.js: estaban escritas dos
+// veces y no coincidían (se guardaba en `sub/<número>` y se leía en
+// `sub/SubBots/<número>`), así que `.bots` no veía ninguna sesión.
+const SUB_CONFIG_DIR = SUB_CONFIGS;
+const SUB_SESSION_DIR = SUB_SESIONES;
 const activeSubbots = new Map();
 const MAX_SUBBOTS = 5;
 
@@ -47,15 +61,12 @@ function ensureSubDirs() {
 
 function loadSubConfig(numero) {
   ensureSubDirs();
-  const file = `${SUB_CONFIG_DIR}/subconfig_${numero}.json`;
-  if (!fs.existsSync(file)) return { owners: [] };
-  try { return JSON.parse(fs.readFileSync(file, "utf8")); }
-  catch { return { owners: [] }; }
+  return leerConfig(numero);
 }
 
 function saveSubConfig(numero, cfg) {
   ensureSubDirs();
-  fs.writeFileSync(`${SUB_CONFIG_DIR}/subconfig_${numero}.json`, JSON.stringify(cfg, null, 2));
+  return guardarConfig(numero, cfg);
 }
 
 function getActiveSubbots() { return activeSubbots; }
@@ -93,14 +104,48 @@ async function stopSubbot(phoneNumber) {
   if (!sub) return false;
   try { await sub.ws.close(); } catch {}
   activeSubbots.delete(phoneNumber);
-  try { fs.rmSync(`${SUB_SESSION_DIR}/${phoneNumber}`, { recursive: true, force: true }); } catch {}
+  try { borrarSesion(phoneNumber); } catch {}
   return true;
+}
+
+/**
+ * Vuelve a arrancar los sub-bots que ya estaban vinculados.
+ *
+ * Antes, al reiniciar el bot los sub-bots no volvían: había que pedir otro
+ * código, y si la sesión ya existía ni siquiera se pedía, así que se quedaban
+ * apagados para siempre. Aquí se arrancan solos los que tienen `registered`
+ * en su `creds.json`; los que quedaron a medio vincular no, porque pedirían un
+ * código que ya nadie está mirando.
+ */
+let restauracionHecha = false;
+async function restaurarSubbots(parentSock) {
+  if (restauracionHecha) return [];
+  restauracionHecha = true;
+  const listos = sesionesParaRestaurar();
+  for (const numero of listos) {
+    if (activeSubbots.has(numero)) continue;
+    if (activeSubbots.size >= MAX_SUBBOTS) break;
+    try {
+      // Sin chat donde contestar: los avisos van al dueño, y si no hay, al
+      // propio número del sub-bot (nunca a un grupo ajeno).
+      const destino = `${numero}@s.whatsapp.net`;
+      const avisar = async (texto) => {
+        try { await parentSock.sendMessage(destino, { text: texto }); } catch {}
+      };
+      await startSubbot(parentSock, destino, destino, avisar, "sesion");
+    } catch (error) {
+      console.log(`⚠️ No pude restaurar el sub-bot ${numero}: ${error.message}`);
+    }
+  }
+  if (listos.length) console.log(`♻️ Sub-bots restaurados: ${activeSubbots.size}/${listos.length}`);
+  return listos;
 }
 
 async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   const phoneNumber = jidToNumber(senderJid);
 
-  if (!phoneNumber || phoneNumber.length < 8 || phoneNumber.length > 15 || /^1\d{14}$/.test(phoneNumber)) {
+  // Un LID (los 15 dígitos que empiezan por 1) no sirve para pedir código.
+  if (!numeroValido(phoneNumber)) {
     return reply(`❌ *Número inválido:* \`${phoneNumber}\`\n\nParece un LID.\n👉 Usa: *${config.prefix[0]}jadibot 5354386852*`);
   }
 
@@ -112,8 +157,11 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
     return reply(`⚠️ Ya tienes un subbot activo (${phoneNumber}).`);
   }
 
-  const sessionPath = `./sub/${phoneNumber}`;
-  if (!fs.existsSync("./sub")) fs.mkdirSync("./sub", { recursive: true });
+  // La sesión va donde `.bots` y `.stopbot` la buscan. Si venía guardada en la
+  // carpeta vieja (`sub/<número>`), se mueve aquí antes de usarla.
+  migrarSesionVieja(phoneNumber);
+  const sessionPath = rutaSesion(phoneNumber);
+  if (!fs.existsSync(SUB_SESSION_DIR)) fs.mkdirSync(SUB_SESSION_DIR, { recursive: true });
 
   const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
 const { version } = await fetchLatestBaileysVersion();
@@ -359,6 +407,7 @@ async function startLevi() {
     if (connection === "open") {
       console.log(`✅ ${BOT_NAME} conectado correctamente.`);
       iniciarVigilante(sock);
+      restaurarSubbots(sock).catch((e) => console.log("⚠️ Sub-bots:", e.message));
       // La conexión volvió: los mensajes que esperaban en la cola salen ahora.
       colaAntiban?.reanudar("conexion");
       vigilanteAntiban?.latido();
@@ -507,7 +556,7 @@ async function handleMessages(sock, { messages, type }) {
     BOT_NAME, 
     config, 
     db: global.db.data,
-    isOwnerCheck, startSubbot, stopSubbot, getActiveSubbots, loadSubConfig, saveSubConfig, jidToNumber, getTargetFromMsg
+    isOwnerCheck, startSubbot, stopSubbot, getActiveSubbots, restaurarSubbots, loadSubConfig, saveSubConfig, jidToNumber, getTargetFromMsg
   };
 
   try {
