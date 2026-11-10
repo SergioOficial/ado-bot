@@ -9,7 +9,7 @@ import makeWASocket, {
   paquete as PAQUETE_BAILEYS
 } from "./lib/baileys.js";
 import { versionParaLog } from "./lib/wa-version.js";
-import { botonPulsado } from "./lib/botones.js";
+import { botonPulsado, usarPrefijoBotones } from "./lib/botones.js";
 import { vencidos, textoAviso } from "./lib/recordatorios.js";
 import { esAdmin, mismoNumero } from "./lib/grupo.js";
 import {
@@ -265,6 +265,10 @@ console.log(color("💫 Levi-Bot se está iniciando...", "magenta"));
 
 // 🧠 VARIABLES GLOBALES
 const BOT_NAME = config.botName;
+
+// El respaldo en texto de los botones tiene que escribir el prefijo real del
+// bot (`→ .allmenu`). Sin esto escribía el id pelado, y copiarlo no hacía nada.
+usarPrefijoBotones(config.prefix[0]);
 let reconectando = false;
 
 // 🛡️ ANTI-BAN — una sola cola para todo el proceso.
@@ -483,7 +487,20 @@ async function handleMessages(sock, { messages, type }) {
 
   // 🔍 Detectar cuál de los prefijos del array se usó
   const usedPrefix = config.prefix.find(p => texto.startsWith(p));
-  if (!usedPrefix) return;
+
+  // 🔍 Y si no trae prefijo: ¿es el id de un botón escrito a mano?
+  // Algunos clientes degradan la respuesta de un botón a texto plano con el id
+  // pelado (`allmenu`). Se atiende solo si es un comando que existe: así un
+  // «hola» sigue siendo un «hola» y nadie ejecuta nada sin querer.
+  let prefijoEfectivo = usedPrefix;
+  if (!prefijoEfectivo) {
+    const posible = String(texto).trim().toLowerCase();
+    if (/^[a-z0-9][a-z0-9 _-]{1,40}$/.test(posible) && commands.has(posible)) {
+      prefijoEfectivo = "";
+    } else {
+      return;
+    }
+  }
 
   const { remoteJid } = m.key;
   const isGroup = remoteJid.endsWith("@g.us");
@@ -491,7 +508,7 @@ async function handleMessages(sock, { messages, type }) {
   const sender = getRealSender(m);
 
   // 🕵️‍♂️ LÓGICA DE PRIVACIDAD (Si el comando termina en '-')
-  let textoLimpio = texto.slice(usedPrefix.length).trim();
+  let textoLimpio = texto.slice(prefijoEfectivo.length).trim();
   let esPrivado = false;
 
   if (textoLimpio.length > 0) {

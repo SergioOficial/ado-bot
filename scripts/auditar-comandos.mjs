@@ -92,7 +92,13 @@ for (const ruta of archivos(dirPlugins)) {
       `lee ${faltantesUnicos.join(", ")}, que no existe${faltantesUnicos.length > 1 ? "n" : ""} en el repo`
     );
   problemas.push(...servicios);
-  if (botonesArtesanales && rel !== "plugins/test/buttons.js") problemas.push("arma los botones a mano (usar lib/botones.js)");
+  // Dos excepciones con motivo: `plugins/test/buttons.js` existe para enseñar
+  // los botones uno por uno, y `plugins/owner/sonda.js` tiene que armarlos a
+  // mano justamente para probar formatos que `lib/botones.js` normaliza. Ahí
+  // usar la librería sería no medir nada.
+  const ARMAN_A_PROPOSITO = ["plugins/test/buttons.js", "plugins/owner/sonda.js"];
+  if (botonesArtesanales && !ARMAN_A_PROPOSITO.includes(rel))
+    problemas.push("arma los botones a mano (usar lib/botones.js)");
 
   filas.push({ rel, comandos, owner: !!p.isOwner, problemas, ownerManual, eventos: p.event || null });
 }

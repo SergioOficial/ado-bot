@@ -4,6 +4,7 @@ import {
   enviarConBotones,
   formatoBotones,
   comoClasico,
+  usarPrefijoBotones,
   rapido,
   copiar,
   enlace,
@@ -61,7 +62,20 @@ export const pruebas = [
     ]);
     esVerdad(texto.includes("▸ ⚔️ RPG"), "botón simple");
     esVerdad(texto.includes("▸ Abrir: https://x.y"), "enlace");
-    esVerdad(texto.includes("• IA → menu ia"), "fila de la lista con su comando");
+    esVerdad(texto.includes("• IA → .menu ia"), "fila de la lista con su comando y prefijo");
+    esVerdad(texto.includes("▸ ⚔️ RPG → .menu rpg"), "el botón simple también dice cómo escribirlo");
+  }],
+
+  ["el respaldo escribe el prefijo real del bot, no un id pelado", () => {
+    // Antes salía `→ menu ia`, y eso copiado en el chat no ejecuta nada.
+    usarPrefijoBotones("#");
+    const texto = respaldo("cuerpo", [
+      rapido("Juegos", "menu juegos"),
+      lista("Explorar", [{ title: "S", rows: [{ id: "menu ia", title: "IA" }] }]),
+    ]);
+    esVerdad(texto.includes("→ #menu juegos"), "botón con el prefijo del bot");
+    esVerdad(texto.includes("→ #menu ia"), "fila con el prefijo del bot");
+    usarPrefijoBotones(".");
   }],
 
   ["desarmar no revienta con parámetros rotos", () => {
@@ -120,6 +134,37 @@ export const pruebas = [
     igual(i.nativeFlowMessage.buttons.length, 2, "botones");
     igual(params(JSON.parse(JSON.stringify(i.nativeFlowMessage.buttons[0]))).id, "menu rpg", "el id del botón");
     esVerdad(i.nativeFlowMessage.messageParamsJson.includes("bottom_sheet"), "hoja inferior intacta");
+  }],
+
+  ["un toque se lee en las cuatro formas en que puede volver", () => {
+    // 1. tarjeta nativa
+    const nativa = botonPulsado({
+      message: { interactiveResponseMessage: { nativeFlowResponseMessage: { name: "quick_reply", paramsJson: '{"id":"menu ia"}' } } },
+    });
+    igual(nativa.id, "menu ia", "nativa: id");
+    igual(nativa.via, "nativa", "nativa: cómo llegó");
+
+    // 2. botón clásico (BOTONES_FORMATO=clasico)
+    const clasico = botonPulsado({
+      message: { buttonsResponseMessage: { selectedButtonId: "menu ia", selectedDisplayText: "IA" } },
+    });
+    igual(clasico.id, "menu ia", "clásico: id");
+    igual(clasico.texto, "IA", "clásico: texto visible");
+    igual(clasico.via, "clasico", "clásico: cómo llegó");
+
+    // 3. lista legada
+    const listaPulsada = botonPulsado({
+      message: { listResponseMessage: { title: "IA", singleSelectReply: { selectedRowId: "menu ia" } } },
+    });
+    igual(listaPulsada.id, "menu ia", "lista: id");
+    igual(listaPulsada.via, "lista", "lista: cómo llegó");
+
+    // 4. plantilla (BOTONES_FORMATO=plantilla)
+    const plantilla = botonPulsado({
+      message: { templateButtonReplyMessage: { selectedId: "menu ia", selectedDisplayText: "IA" } },
+    });
+    igual(plantilla.id, "menu ia", "plantilla: id");
+    igual(plantilla.via, "plantilla", "plantilla: cómo llegó");
   }],
 
   ["un botón pulsado se convierte en comando", () => {
