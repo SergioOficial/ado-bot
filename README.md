@@ -70,16 +70,22 @@ Levi-bot/
 ```bash
 pkg update && pkg upgrade -y
 pkg install git nodejs-lts ffmpeg libvips -y
-
-git clone https://github.com/TU_USUARIO/NUEVO_REPO.git
-cd NUEVO_REPO
-
+```
+```
+git clone https://github.com/SergioOficial/Levi-bot.git
+cd Levi-bot
+```
+```
 npm install
+npm install  @whiskeysockets/baileys
+```
 
 # Si sharp falla en Termux (Android ARM64):
+```bash
 npm install @img/sharp-wasm32 --force
 npm install sharp --force
-
+```
+```
 npm start
 ```
 
@@ -165,7 +171,7 @@ Detalle en [docs/CLIENTE.md](docs/CLIENTE.md).
       <a href="https://github.com/SergioOficial">
         <img src="https://github.com/SergioOficial.png" width="100" alt="Sergio"/><br/>
         <b>Sergio Gómez Gort</b><br/>
-        <sub>🎃 Colaborador y Mantenimiento</sub>
+        <sub> Colaborador y Mantenimiento</sub>
       </a><br/><br/>
       <a href="https://wa.me/5358090650">
         <img src="https://img.shields.io/badge/WhatsApp-+53 580 906 50-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Sergio"/>
