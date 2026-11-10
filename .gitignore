@@ -1,11 +1,8 @@
 node_modules/
 session/
 sub/
+database.json
+database.backup.json
 .env
 *.log
-Archivos/
-supbots-loader.js
-config.js
-package-lock.json
-package.json
-README.md
+tmp/
