@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg" width="190" alt="Levi-Bot"/>
+<img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="190" alt="ado-Bot"/>
 
-# ⚔️ Levi-Bot
+#  𝙰𝚍𝚘-𝑩𝒐𝒕
 
 **El bot de WhatsApp multi-dispositivo, modular y sin cajas negras.**
 
 Se conecta con Baileys, arranca con un código de vinculación y cada comando es
 un archivo que puedes leer, cambiar o borrar.
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/SergioOficial/Levi-bot)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/SergioOficial/ado-bot)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Baileys](https://img.shields.io/badge/Baileys-%40itsliaaa%2Fbaileys-blue?style=for-the-badge)](https://www.npmjs.com/package/@itsliaaa/baileys)
 [![Comandos](https://img.shields.io/badge/Comandos-374-informational?style=for-the-badge)](#-comandos)
@@ -23,7 +23,7 @@ un archivo que puedes leer, cambiar o borrar.
 
 ---
 
-## ✨ Qué es Levi-Bot
+## ✨ Qué es Ado-Bot
 
 | Lo que trae | Para qué sirve |
 |---|---|
@@ -76,8 +76,8 @@ internet. Nada más.
 5. Descarga el bot y entra en la carpeta:
 
    ```bash
-   git clone https://github.com/SergioOficial/Levi-bot.git
-   cd Levi-bot
+   git clone https://github.com/SergioOficial/ado-bot.git
+   cd ado-bot
    ```
 
 6. Instala las dependencias. En un móvil esto tarda **entre 10 y 25 minutos** y
@@ -133,8 +133,8 @@ internet. Nada más.
 3. Descarga el bot:
 
    ```bash
-   git clone https://github.com/SergioOficial/Levi-bot.git
-   cd Levi-bot
+   git clone https://github.com/SergioOficial/ado-bot.git
+   cd ado-bot
    ```
 
 4. Crea el archivo `.env` con tu número, para que no lo pregunte por consola:
@@ -154,8 +154,8 @@ internet. Nada más.
 
    ```bash
    sudo npm install -g pm2
-   pm2 start index.js --name levi-bot
-   pm2 logs levi-bot        # aquí sale el código de vinculación
+   pm2 start index.js --name ado-bot
+   pm2 logs ado-bot        # aquí sale el código de vinculación
    pm2 save && pm2 startup  # que arranque solo si reinicias el servidor
    ```
 
@@ -218,7 +218,7 @@ culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
 ## 🏗️ Estructura del proyecto
 
 ```text
-Levi-bot/
+ado-bot/
 ├── index.js              # Núcleo: conexión, multi-prefijo, router y vigilante
 ├── pluginLoader.js       # Escáner de comandos y eventos
 ├── config.js             # Prefijos, owners, nombre del bot, footer
@@ -267,7 +267,7 @@ export const config = {
   // 🔥 El bot responde a cualquiera de estos prefijos
   prefix: [".", "#", "/", "🇨🇺"],
 
-  botName: "Levi-Bot ⚔️",
+  botName: "𝐀𝐝𝐨-𝐁𝐨𝐭 🩸",
 
   owners: [
     { name: "Sergio Gómez Gort",         number: "5358090650" },
@@ -277,7 +277,7 @@ export const config = {
   ],
 
   version: "1.0.5",
-  footer: "Levi-Bot by Wyra Studios"
+  footer: "𝙰𝚍𝚘-𝑩𝒐𝒕 by Wyra Studios"
 };
 ```
 
@@ -420,7 +420,7 @@ texto completo de la Free Software Foundation).
 
 | Parte | Autoría | Licencia |
 |---|---|---|
-| Levi-Bot (base original) | Jeferson Fernández y Sergio Gómez Gort | el repo no traía archivo de licencia; su `package.json` declaraba **ISC** |
+| Ado-Bot (base original) | Sergio Dev | el repo no traía archivo de licencia; su `package.json` declaraba **ISC** |
 | Comandos portados de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) | riokuroxi-svg | **AGPL-3.0-only** (los archivos portados llevan su cabecera) |
 | Cliente de WhatsApp | `@itsliaaa/baileys` · respaldo `@whiskeysockets/baileys` | **MIT** (dependencias declaradas, no código incluido) |
 
@@ -483,4 +483,4 @@ Hecho con 💫 desde Cuba, Colombia y México  para el mundo
 
 ---
 
-<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>
+<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Ado-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/ado-bot).</sub>
