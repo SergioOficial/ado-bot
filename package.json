@@ -42,13 +42,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/levi-hub805/Levi-bot-.git"
+    "url": "git+https://github.com/SergioOficial/Levi-bot.git"
   },
   "keywords": [],
   "author": "",
   "license": "AGPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/levi-hub805/Levi-bot-/issues"
+    "url": "https://github.com/SergioOficial/Levi-bot/issues"
   },
-  "homepage": "https://github.com/levi-hub805/Levi-bot-#readme"
+  "homepage": "https://github.com/SergioOficial/Levi-bot#readme"
 }
