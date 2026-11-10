@@ -1,176 +1,108 @@
-import { proto, generateWAMessageFromContent, WA_DEFAULT_EPHEMERAL } from "../../lib/baileys.js";
-
-async function sendInteractive(sock, msg, remoteJid, interactiveMessage) {
-  const messageContent = proto.Message.fromObject({
-    viewOnceMessage: {
-      message: {
-        messageContextInfo: {
-          deviceListMetadata: {},
-          deviceListMetadataVersion: 2
-        },
-        interactiveMessage
-      }
-    }
-  });
-
-  const built = await generateWAMessageFromContent(remoteJid, messageContent, {
-    userJid: sock.user?.id || sock.user?.jid,
-    quoted: msg,
-    ephemeralExpiration: WA_DEFAULT_EPHEMERAL
-  });
-
-  await sock.relayMessage(remoteJid, built.message, { messageId: built.key.id });
-}
+/**
+ * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * Ver LICENSE y NOTICE.
+ *
+ * .boton1 … .boton6 — probar los botones uno por uno, y `.botones` para el índice.
+ *
+ * Reescrito para que TODO pase por `lib/botones.js`. Antes este plugin armaba
+ * sus propios mensajes con el envoltorio `viewOnceMessage`, que es justo lo que
+ * deja los botones grises o invisibles en WhatsApp Web, y no mandaba los nodos
+ * binarios: el servidor aceptaba el mensaje y el móvil no pintaba nada.
+ *
+ * Aquí sirve para lo que sirve un banco de pruebas: si un botón no sale, se
+ * prueba con `.boton1` y se sabe si es del botón, del mensaje o del teléfono.
+ */
+import { enviarConBotones, rapido, copiar, enlace, llamar, lista, ubicacion, webview } from "../../lib/botones.js";
 
 export default {
-  command: ["boton1", "boton2", "boton3", "boton4", "boton5", "boton6", "botones"],
+  command: ["boton1", "boton2", "boton3", "boton4", "boton5", "boton6", "boton7", "botones"],
   execute: async (ctx) => {
     const { sock, from, m, comando, enviartexto, config } = ctx;
+    const pie = config.botName || "Levi-Bot";
 
-    if (comando === "boton1") {
-      await sendInteractive(sock, m, from, {
-        body: { text: '📋 *CÓDIGO DE INSTALACIÓN*\n\nEjecuta este comando en tu terminal:' },
-        footer: { text: config.botName },
-        header: { title: 'npm install levi-bot', hasMediaAttachment: false },
-        nativeFlowMessage: {
-          buttons: [{
-            name: 'cta_copy',
-            buttonParamsJson: JSON.stringify({
-              display_text: '📋 Copiar Comando',
-              copy_code: 'npm install levi-bot',
-              id: `copy_${Date.now()}`
-            })
-          }],
-          messageParamsJson: ''
-        }
-      });
-    }
-
-    else if (comando === "boton2") {
-      await sendInteractive(sock, m, from, {
-        body: { text: '🔗 *ENLACES IMPORTANTES*\n\nVisita nuestro repositorio oficial:' },
-        footer: { text: config.botName },
-        header: { title: 'GitHub - Levi Bot', hasMediaAttachment: false },
-        nativeFlowMessage: {
-          buttons: [{
-            name: 'cta_url',
-            buttonParamsJson: JSON.stringify({
-              display_text: '🌐 Ver GitHub',
-              url: 'https://github.com/levi-hub805/Levi-bot-',
-              merchant_url: 'https://github.com/levi-hub805/Levi-bot-'
-            })
-          }],
-          messageParamsJson: ''
-        }
-      });
-    }
-
-    else if (comando === "boton3") {
-      await sendInteractive(sock, m, from, {
-        body: { text: '🎮 *MENÚ DE OPCIONES*\n\n¿Qué deseas hacer?' },
-        footer: { text: config.botName },
-        header: { title: 'Selecciona una opción', hasMediaAttachment: false },
-        nativeFlowMessage: {
-          buttons: [
-            { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: '📋 Ver Menú', id: `${config.prefix}menu` }) },
-            { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'ℹ️ Información', id: `${config.prefix}info` }) },
-            { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: '👑 Owner', id: `${config.prefix}creadores` }) }
-          ],
-          messageParamsJson: ''
-        }
-      });
-    }
-
-    else if (comando === "boton4") {
-      await sendInteractive(sock, m, from, {
-        body: { text: '📞 *SOPORTE TÉCNICO*\n\n¿Necesitas ayuda? Llámanos:' },
-        footer: { text: config.botName },
-        header: { title: `+${config.ownerNumber}`, hasMediaAttachment: false },
-        nativeFlowMessage: {
-          buttons: [{
-            name: 'cta_call',
-            buttonParamsJson: JSON.stringify({
-              display_text: '📞 Llamar Ahora',
-              phone_number: `+${config.ownerNumber}`
-            })
-          }],
-          messageParamsJson: ''
-        }
-      });
-    }
-
-    else if (comando === "boton5") {
-      await sendInteractive(sock, m, from, {
-        body: { text: '📋 *SELECCIONA UNA OPCIÓN*' },
-        footer: { text: 'Menú Principal' },
-        header: { title: config.botName, hasMediaAttachment: false },
-        nativeFlowMessage: {
-          buttons: [{
-            name: 'single_select',
-            buttonParamsJson: JSON.stringify({
-              title: 'Abrir Menú',
-              sections: [
-                {
-                  title: '📱 COMANDOS BÁSICOS',
-                  rows: [
-                    { id: `${config.prefix}menu`, title: '📋 Menú', description: 'Ver todos los comandos' },
-                    { id: `${config.prefix}ping`, title: '🏓 Ping', description: 'Ver latencia del bot' },
-                    { id: `${config.prefix}creadores`, title: '👑 Owner', description: 'Información del creador' }
-                  ]
-                },
-                {
-                  title: '🎮 COMANDOS DE GRUPO',
-                  rows: [
-                    { id: `${config.prefix}close`, title: '🔒 Cerrar Grupo', description: 'Cerrar el grupo' },
-                    { id: `${config.prefix}open`, title: '🔓 Abrir Grupo', description: 'Abrir el grupo' }
-                  ]
-                }
-              ]
-            })
-          }],
-          messageParamsJson: ''
-        }
-      });
-    }
-
-    else if (comando === "boton6") {
-      await sendInteractive(sock, m, from, {
-        body: { text: '🎯 *PANEL DE CONTROL*\n\nSelecciona una acción rápida:' },
-        footer: { text: config.botName },
-        header: { title: 'Panel Principal', hasMediaAttachment: false },
-        nativeFlowMessage: {
-          buttons: [
-            { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: '🌐 GitHub', url: 'https://github.com/levi-hub805/Levi-bot-', merchant_url: 'https://github.com/levi-hub805/Levi-bot-' }) },
-            { name: 'cta_copy', buttonParamsJson: JSON.stringify({ display_text: '📋 Comando Inicio', copy_code: 'npm start' }) },
-            { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: '📋 Ver Menú', id: `${config.prefix}menu` }) }
-          ],
-          messageParamsJson: ''
-        }
-      });
-    }
-
-    else if (comando === "botones") {
-      await enviartexto(
-        `🧪 *COMANDOS DE PRUEBA - BOTONES INTERACTIVOS*\n\n` +
-        `┌✦ *BOTÓN COPIAR*\n` +
-        `│ ${config.prefix}boton1\n` +
-        `│\n` +
-        `├✦ *BOTÓN URL*\n` +
-        `│ ${config.prefix}boton2\n` +
-        `│\n` +
-        `├✦ *BOTONES RÁPIDOS*\n` +
-        `│ ${config.prefix}boton3\n` +
-        `│\n` +
-        `├✦ *BOTÓN LLAMADA*\n` +
-        `│ ${config.prefix}boton4\n` +
-        `│\n` +
-        `├✦ *LISTA DESPLEGABLE*\n` +
-        `│ ${config.prefix}boton5\n` +
-        `│\n` +
-        `└✦ *MÚLTIPLES BOTONES*\n` +
-        `  ${config.prefix}boton6\n\n` +
-        `✨ *Prueba cada uno y mira cómo funcionan!*`
+    if (comando === "botones") {
+      return enviartexto(
+        `🧪 *Prueba de botones*\n\n` +
+          `┌✦ *Copiar* → ${config.prefix[0]}boton1\n` +
+          `├✦ *Enlace* → ${config.prefix[0]}boton2\n` +
+          `├✦ *Respuesta rápida* → ${config.prefix[0]}boton3\n` +
+          `├✦ *Llamar* → ${config.prefix[0]}boton4\n` +
+          `├✦ *Lista desplegable* → ${config.prefix[0]}boton5\n` +
+          `├✦ *Cuatro botones (hoja inferior)* → ${config.prefix[0]}boton6\n` +
+          `└✦ *Ubicación y mini web* → ${config.prefix[0]}boton7\n\n` +
+          `> Si alguno no aparece, prueba a escribirlo a mano: el respaldo en texto\n` +
+          `> siempre llega. Y para apagarlos todos: *BOTONES=off* en el entorno.\n` +
+          `> Prefijo: ${config.prefix[0]}`
       );
     }
-  }
+
+    const casos = {
+      boton1: {
+        texto: "📋 *Código de instalación*\n\nPulsa para copiarlo.",
+        botones: [copiar("📋 Copiar comando", "npm install")],
+      },
+      boton2: {
+        texto: "🔗 *Enlaces del proyecto*",
+        botones: [enlace("🌐 Ver repositorio", "https://github.com/SergioOficial/Levi-bot")],
+      },
+      boton3: {
+        texto: "🎮 *¿Qué quieres hacer?*",
+        botones: [
+          rapido("📋 Ver menú", "menu"),
+          rapido("🏓 Ping", "ping"),
+          rapido("👑 Creadores", "creadores"),
+        ],
+      },
+      boton4: {
+        texto: "📞 *Soporte*\n\nSi necesitas ayuda, llama al dueño.",
+        botones: [llamar("📞 Llamar", config.ownerNumber || (config.owners?.[0]?.number ?? ""))],
+      },
+      boton5: {
+        texto: "📋 *Selecciona una opción*",
+        botones: [
+          lista("Abrir menú", [
+            {
+              title: "📱 Básicos",
+              rows: [
+                { id: "menu", title: "📋 Menú", description: "Todos los comandos" },
+                { id: "ping", title: "🏓 Ping", description: "Ver si responde" },
+                { id: "creadores", title: "👑 Creadores", description: "Quién hizo el bot" },
+              ],
+            },
+            {
+              title: "🛡️ Grupo",
+              rows: [
+                { id: "close", title: "🔒 Cerrar grupo", description: "Solo administradores" },
+                { id: "open", title: "🔓 Abrir grupo", description: "Solo administradores" },
+              ],
+            },
+          ]),
+        ],
+      },
+      boton6: {
+        // Cuatro botones: WhatsApp solo dibuja tres, así que este es el que
+        // comprueba que la hoja inferior (`messageParamsJson`) hace su trabajo.
+        texto: "🎯 *Panel de control*\n\nCuatro opciones (el cuarto va en la hoja).",
+        botones: [
+          enlace("🌐 Repositorio", "https://github.com/SergioOficial/Levi-bot"),
+          copiar("📋 Comando de inicio", "npm start"),
+          rapido("📋 Ver menú", "menu"),
+          rapido("🩺 Salud", "health"),
+        ],
+        hoja: { titulo: "Más opciones", boton: "Ver todo", divisiones: [1] },
+      },
+      boton7: {
+        texto: "📍 *Ubicación y mini web*\n\nDos tipos poco usados, para probarlos.",
+        botones: [
+          ubicacion("📍 Mandar mi ubicación"),
+          webview("🌐 GitHub en WhatsApp", "https://github.com/SergioOficial/Levi-bot"),
+        ],
+      },
+    };
+
+    const caso = casos[comando];
+    if (!caso) return enviartexto("❌ Ese botón no existe.");
+
+    await enviarConBotones(sock, from, { ...caso, pie, cita: m }).catch(() => {});
+  },
 };

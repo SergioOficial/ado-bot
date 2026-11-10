@@ -30,7 +30,7 @@ un archivo que puedes leer, cambiar o borrar.
 | 🧩 **Todo es un plugin** | Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
 | 🔀 **Multi-prefijo** | Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
 | 🕵️ **Modo privado** | `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
-| 🔘 **Botones nativos** | Respuesta rápida, copiar, abrir enlace y llamar, con respaldo en texto si el móvil del otro no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
+| 🔘 **Botones nativos** | Respuesta rápida, copiar, enlace, llamar, ubicación, mini web y **listas desplegables**, con los nodos binarios que WhatsApp exige y respaldo en texto si el móvil no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
 | 📅 **Versión de WhatsApp al día** | La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
 | 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
 | 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
@@ -166,6 +166,7 @@ internet. Nada más.
    - `WHATSAPP_NUMBER` — tu número con código de país.
    - `GITHUB_TOKEN` — opcional, solo para `.reporte` e `.invite`.
    - `BOTONES=off` — opcional, manda los menús como texto sin botones.
+   - `BOTONES_VIEWONCE=1` — opcional, vuelve al envoltorio viejo de los interactivos.
 4. Comando de inicio: `npm start` (o `node index.js`).
 5. Mira los **logs** del panel para copiar el código de vinculación.
 
@@ -194,7 +195,7 @@ vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 70 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run probar` | 81 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
 
@@ -215,6 +216,7 @@ Levi-bot/
 │   ├── baileys.js        #   cliente único (fork por defecto, con respaldo)
 │   ├── wa-version.js     #   versión de WhatsApp Web preguntada a WhatsApp
 │   ├── botones.js        #   botones nativos + respaldo en texto
+│   ├── wa-nodes.js       #   nodos binarios que exigen los mensajes con botones
 │   ├── encuestas.js      #   encuesta, quiz y voto múltiple nativos
 │   ├── recordatorios.js  #   avisos que sobreviven al reinicio
 │   ├── grupo.js          #   administradores, menciones y objetivos
@@ -310,9 +312,14 @@ incluidos.
   texto tal cual lo escribió su autor. Las marcas **no van a mano**: se leen de
   los plugins cargados, así que un comando solo lleva Ⓓ si de verdad es de dueño
   y Ⓐ si de verdad pide administrador; sin bandera, sin marca.
-- 🔘 **Botones con interruptor**: `BOTONES=off` (o `0`) manda el texto con las
-  opciones escritas y deja el código intacto, para poder quitarlos y volver a
-  ponerlos sin tocar plugins.
+- 🔘 **Botones de Shin-MD portados**: el menú ya lleva la lista desplegable
+  («Explorar categorías», «Categorías (.menucat)», «Ver todo»). Tres cosas que se
+  arreglaron al portarlos: **ya no se envuelve en `viewOnceMessage`** (era lo que
+  dejaba los botones grises o invisibles en WhatsApp Web), se mandan los **nodos
+  binarios** que WhatsApp exige (`lib/wa-nodes.js`; sin ellos el servidor acepta
+  el mensaje y el teléfono no pinta nada) y **más de tres botones piden la hoja
+  inferior** en vez de perderse en silencio. Interruptores: `BOTONES=off` los
+  apaga todos y `BOTONES_VIEWONCE=1` recupera el envoltorio viejo.
 - 🛡️ **Anti-ban portado de Shin-MD** (`lib/antiban.js`): una sola cola para todos
   los envíos, con espera al azar (no fija) entre mensajes, más espera en los
   textos largos, y **calentamiento diario** (una cuenta nueva no manda 500

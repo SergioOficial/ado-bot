@@ -1,4 +1,4 @@
-import { enviarConBotones, rapido } from "../../lib/botones.js";
+import { enviarConBotones, rapido, lista } from "../../lib/botones.js";
 import { LEYENDA, CREDITO, marcar } from "../../lib/menu-ayuda.js";
 import { commands } from "../../pluginLoader.js";
 
@@ -387,14 +387,37 @@ export default {
     // Botones de categorías: solo en el menú principal y solo si el plugin se
     // pidió con `menu` a secas. El id de cada botón es el comando completo
     // (`menu economia`), que el router ya sabe ejecutar.
+    // Los tres botones del menú de Shin-MD: la lista de categorías, el atajo a
+    // `.menucat` y `.allmenu`. Son tres a propósito: WhatsApp solo dibuja tres;
+    // el cuarto se pierde sin avisar (para más, `paramsHoja`).
     if (!tipo) {
       await enviarConBotones(sock, from, {
-        texto: "📂 ¿Qué quieres ver?",
+        texto: "📂 *Selecciona una categoría*\n> O escribe el comando completo.",
         pie: config.footer,
         botones: [
-          rapido("💰 Economía", `${comando} economia`),
-          rapido("⚔️ RPG", `${comando} rpg`),
-          rapido("🎄 Descargas", `${comando} descargas`),
+          lista("🗂️ Explorar categorías", [
+            {
+              title: "Comandos",
+              rows: [
+                { id: `${comando} economia`, title: "💰 Economía", description: "daily, work, bal, banco, apuestas" },
+                { id: `${comando} rpg`, title: "⚔️ RPG", description: "cazar, pescar, minar, explorar" },
+                { id: `${comando} perfil`, title: "🧾 Perfil", description: "reg, level, afk, ficha" },
+                { id: `${comando} descargas`, title: "📥 Descargas", description: "play, tt, fb, pinterest" },
+                { id: `${comando} admin`, title: "🛡️ Admin", description: "kick, promote, warn, antilink" },
+              ],
+            },
+            {
+              title: "Más",
+              rows: [
+                { id: `${comando} utilidades`, title: "🔔 Utilidades", description: "qr, morse, encuesta, recordar" },
+                { id: `${comando} ia`, title: "🧠 IA", description: "ia, iaaudio, imagen" },
+                { id: `${comando} stickers`, title: "🖌️ Stickers", description: "sticker, brat" },
+                { id: `${comando} owner`, title: "👑 Owner", description: "solo dueños" },
+              ],
+            },
+          ]),
+          rapido("🗂️ Categorías (.menucat)", "menucat"),
+          rapido("☰ Ver todo", "allmenu"),
         ],
       }).catch(() => {});
     }
