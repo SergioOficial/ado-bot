@@ -1,7 +1,9 @@
+import { enviarConBotones, rapido } from "../../lib/botones.js";
+
 export default {
   command: ["menu", "help", "menú", "ayuda"],
   execute: async (ctx) => {
-    const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args } = ctx;
+    const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args, comando } = ctx;
     const numero = sender.split("@")[0];
     const tipo = args[0]?.toLowerCase();
 
@@ -338,5 +340,20 @@ export default {
         }
       }
     }, { quoted: m });
+
+    // Botones de categorías: solo en el menú principal y solo si el plugin se
+    // pidió con `menu` a secas. El id de cada botón es el comando completo
+    // (`menu economia`), que el router ya sabe ejecutar.
+    if (!tipo) {
+      await enviarConBotones(sock, from, {
+        texto: "📂 ¿Qué quieres ver?",
+        pie: config.footer,
+        botones: [
+          rapido("💰 Economía", `${comando} economia`),
+          rapido("⚔️ RPG", `${comando} rpg`),
+          rapido("🎄 Descargas", `${comando} descargas`),
+        ],
+      }).catch(() => {});
+    }
   }
 };

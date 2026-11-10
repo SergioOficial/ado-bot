@@ -34,7 +34,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "verificar": "node scripts/verificar.mjs"
+    "verificar": "node scripts/verificar.mjs",
+    "auditar": "node scripts/auditar-comandos.mjs"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/levi-hub805/Levi-bot-/issues"
   },

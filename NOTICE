@@ -1,0 +1,40 @@
+Levi-Bot
+Copyright (C) 2026 los autores de Levi-Bot
+Copyright (C) 2026 riokuroxi-svg (partes portadas de Shin-MD)
+
+Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los
+términos de la Licencia Pública General Affero de GNU, versión 3, tal como la
+publica la Free Software Foundation. Ver el archivo LICENSE.
+
+Se distribuye con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA, ni
+siquiera la garantía implícita de COMERCIABILIDAD o IDONEIDAD PARA UN FIN
+PARTICULAR. Ver la Licencia Pública General Affero de GNU para más detalles.
+
+────────────────────────────────────────────────────────────────────────────
+Créditos y procedencia
+────────────────────────────────────────────────────────────────────────────
+
+Levi-Bot
+  Autoría original: Jeferson Fernández y Sergio Gómez Gort.
+  El repositorio original no incluía archivo de licencia; su package.json
+  declaraba ISC. Las partes originales siguen bajo esa licencia permisiva, que
+  es compatible con la AGPL-3.0 de este conjunto.
+
+Shin-MD  ·  https://github.com/riokuroxi-svg/Shin-MD
+  Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only.
+  De aquí vienen las ideas y el comportamiento de los comandos portados a
+  plugins/*, uno por uno, adaptados al formato de plugin de Levi-Bot. Cada
+  archivo portado lleva su cabecera con el aviso.
+
+Cliente de WhatsApp
+  @itsliaaa/baileys (MIT) y, como respaldo, @whiskeysockets/baileys (MIT).
+  No se incluye ni se modifica su código: son dependencias declaradas.
+
+────────────────────────────────────────────────────────────────────────────
+Qué obliga la AGPL-3.0, en corto (no sustituye al texto de LICENSE)
+────────────────────────────────────────────────────────────────────────────
+1. Si distribuyes el bot, tienes que entregar también el código fuente.
+2. Si lo ofreces como servicio por red, quien lo use tiene derecho a pedir el
+   código fuente de la versión que está corriendo.
+3. Las modificaciones se mantienen bajo AGPL-3.0 y hay que decir qué se cambió.
+4. Hay que conservar los avisos de copyright y este NOTICE.

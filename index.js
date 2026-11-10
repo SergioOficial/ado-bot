@@ -9,6 +9,7 @@ import makeWASocket, {
   paquete as PAQUETE_BAILEYS
 } from "./lib/baileys.js";
 import { versionParaLog } from "./lib/wa-version.js";
+import { botonPulsado } from "./lib/botones.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -321,12 +322,19 @@ async function handleMessages(sock, { messages, type }) {
   const m = messages[0];
   if (!m.message || m.key.fromMe) return;
 
-  const texto = m.message.conversation || m.message.extendedTextMessage?.text || m.message.imageMessage?.caption || m.message.videoMessage?.caption;
+  // Si viene de un botón (quick_reply), el id del botón ES el comando.
+  // Sin esto, pulsar un botón manda un mensaje que el router no entiende y no
+  // pasa nada: el botón «funciona» pero no hace nada.
+  const pulsado = botonPulsado(m);
+  const deBoton = Boolean(pulsado?.id);
+
+  let texto = m.message.conversation || m.message.extendedTextMessage?.text || m.message.imageMessage?.caption || m.message.videoMessage?.caption;
+  if (!texto && deBoton) texto = `${config.prefix[0]}${String(pulsado.id).trim()}`;
   if (!texto) return;
 
   // 🔍 Detectar cuál de los prefijos del array se usó
   const usedPrefix = config.prefix.find(p => texto.startsWith(p));
-  if (!usedPrefix) return; 
+  if (!usedPrefix) return;
 
   const { remoteJid } = m.key;
   const isGroup = remoteJid.endsWith("@g.us");
@@ -351,6 +359,9 @@ async function handleMessages(sock, { messages, type }) {
   const args = textoLimpio.trim().split(/\s+/);
   const comando = args.shift().toLowerCase();
   
+  // Un ✅ sobre el botón pulsado: la persona ve que su toque llegó.
+  if (deBoton) sock.sendMessage(from, { react: { text: "⚡", key: m.key } }).catch(() => {});
+
   const targetChat = esPrivado ? sender : from;
   const enviartexto = (txt) => sock.sendMessage(targetChat, { text: txt }, { quoted: esPrivado ? null : m });
 

@@ -137,5 +137,30 @@ else {
   for (const r of noCargan) console.log(`     · ${r}`);
 }
 
+console.log("\n─── 7. Botón pulsado → comando ────────────────────────────────");
+const { botonPulsado } = await import("../lib/botones.js");
+const respuestaBoton = {
+  message: {
+    interactiveResponseMessage: {
+      nativeFlowResponseMessage: { name: "quick_reply", paramsJson: '{"id":"menu economia"}', version: 3 },
+    },
+  },
+};
+const pulsado = botonPulsado(respuestaBoton);
+const comoComando = `.${{ ...pulsado }.id}`;
+if (pulsado?.id === "menu economia" && comoComando === ".menu economia")
+  ok(`un botón se convierte en comando: "${comoComando}"`);
+else mal(`no se pudo leer el botón: ${JSON.stringify(pulsado)}`);
+
+// Los botones que manda el menú tienen que apuntar a categorías que existan.
+const { readFileSync } = await import("fs");
+const fuenteMenu = readFileSync(join(process.cwd(), "plugins", "info", "menu.js"), "utf8");
+const categorias = new Set([...fuenteMenu.matchAll(/tipo\s*===\s*'([a-z]+)'/g)].map((m) => m[1]));
+const botonesMenu = [...fuenteMenu.matchAll(/rapido\("([^"]+)",\s*`\$\{comando\}\s+([a-z]+)`\)/g)].map((m) => m[2]);
+const botonesRotos = botonesMenu.filter((c) => !categorias.has(c));
+if (botonesMenu.length && botonesRotos.length === 0) ok(`los ${botonesMenu.length} botones del menú apuntan a categorías existentes`);
+else if (!botonesMenu.length) console.log("  · el menú no manda botones (no es un error)");
+else mal(`botones del menú a categorías que no existen: ${botonesRotos.join(", ")}`);
+
 console.log(fallos === 0 ? "\n✅ Todo en orden.\n" : `\n❌ ${fallos} comprobación(es) fallaron.\n`);
 process.exit(fallos === 0 ? 0 : 1);

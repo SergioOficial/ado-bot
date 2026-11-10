@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import fs from "fs";
+import { BASE_DATOS } from "../../lib/rutas.js";
 
 export default {
   command: ["fix", "update"],
@@ -11,9 +12,9 @@ export default {
 
     try {
       // 1. Respaldar la base de datos para no perder a los usuarios ni las configuraciones de los grupos
-      const dbBackup = fs.existsSync("./database.json") 
-        ? fs.readFileSync("./database.json", "utf8") 
-        : null;
+      // La base real está en lib/database.json (ver lib/rutas.js). Antes se
+      // respaldaba ./database.json, que no existe: el «respaldo» era null.
+      const dbBackup = fs.existsSync(BASE_DATOS) ? fs.readFileSync(BASE_DATOS, "utf8") : null;
 
       // 2. Descargar la información más reciente del repositorio
       exec("git fetch origin main", (errFetch) => {
@@ -29,7 +30,7 @@ export default {
 
           // 4. Restaurar la base de datos
           try {
-            if (dbBackup) fs.writeFileSync("./database.json", dbBackup);
+            if (dbBackup) fs.writeFileSync(BASE_DATOS, dbBackup);
           } catch (e) {
             console.error("Error al restaurar la base de datos:", e);
           }

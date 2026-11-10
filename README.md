@@ -9,7 +9,7 @@
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/levi-hub805/Levi-bot-)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Baileys](https://img.shields.io/badge/Baileys-7.0.x-blue?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 
 **Creado por [Jeferson Fernández](https://github.com/levi-hub805) en colaboración con [Sergio Gómez Gort](https://github.com/SergioOficial)**
 
@@ -129,6 +129,21 @@ Categoría Comandos Destacados
 👑 Owner fix, restart, exec, error, invite, gencode
 
 💡 Tip: Recuerda que puedes usar cualquier comando en modo privado añadiendo un - al final (Ej: .menu-).
+
+> 📄 Este proyecto se distribuye bajo **AGPL-3.0** (ver `LICENSE` y `NOTICE`): si lo publicas o lo ofreces como servicio, hay que entregar el código fuente. Incluye partes portadas de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD).
+
+---
+
+🔧 Cambios de esta versión
+
+- 🧩 **Un solo sitio para el cliente**: todo importa de `lib/baileys.js`. Por defecto `@itsliaaa/baileys` y, si no carga, cae al oficial diciéndolo. Se cambia con `BAILEYS_PACKAGE=@whiskeysockets/baileys`.
+- 📅 **Versión de WhatsApp Web preguntada a WhatsApp** (`lib/wa-version.js`). La del paquete iba un mes por detrás y eso es lo que provoca el cierre «client out of date» que la gente lee como «actualiza WhatsApp».
+- 🔘 **Botones en `lib/botones.js`** (respuesta rápida, copiar, enlace, llamar, recordatorio) con respaldo en texto si el cliente no los pinta.
+- ✅ **`npm run verificar`**: seis comprobaciones sin abrir WhatsApp (cliente, botones, versión, sintaxis, carga real de los plugins, owners).
+- 🔎 **`npm run auditar`**: dice qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md).
+- ♻️ **Reconexión con candado**: dos cierres seguidos ya no abren dos sockets a la vez.
+
+Detalle en [docs/CLIENTE.md](docs/CLIENTE.md).
 
 ---
 
