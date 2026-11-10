@@ -3,8 +3,8 @@
 _Generado el 2026-11-10 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **63**
-- Pendientes de portar o de descartar: **156**
+- Ya existen en Levi (al menos con un nombre): **74**
+- Pendientes de portar o de descartar: **145**
 
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
@@ -19,6 +19,14 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `say` | `plugins/utils/say.js` | reenvía la foto/vídeo citado con pie de foto y menciona de verdad |
 | `read` / `readvo` | `plugins/utils/read.js` | desenvuelve también ViewOnceV2 y dice cuándo el archivo ya caducó |
 | `recordar` / `olvidar` | `plugins/utils/recordar.js` + `lib/recordatorios.js` | avisos en la base: sobreviven al reinicio (antes era un setTimeout) |
+| `warn` / `warns` / `delwarn` / `setwarnlimit` | `plugins/admin/warn.js` + `lib/grupo.js` | el objetivo se busca también por número escrito; la expulsión dice si ocurrió de verdad |
+| `kick` | `plugins/admin/kick.js` | no echa a administradores ni a dueños aunque se escriba el número a mano |
+| `promote` / `demote` | `plugins/admin/promote.js` | comprueba que WhatsApp aplicó el cambio antes de decir «hecho» |
+| `hidetag` | `plugins/admin/hidetag.js` | aviso a todos con las menciones ocultas |
+| `antilink` | `plugins/admin/antilink.js` | Levi no lo tenía; borra enlaces de grupo y avisa si le falta ser admin |
+| `get` | `plugins/utils/get.js` + `lib/red-segura.js` | solo el dueño, con filtro de IPs privadas, DNS y sin seguir redirecciones |
+| `pfp` | `plugins/utils/pfp.js` | si la foto es privada lo dice; no manda una imagen de relleno |
+| `wastalk` | `plugins/utils/wastalk.js` | solo lo público (existe, estado, foto); respeta la privacidad |
 
 ## Pendientes por categoría
 
@@ -108,33 +116,26 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | kuro | `cmds/games/kuro.js` | kuro |
 | ttt | `cmds/games/ttt.js` | ttt |
 
-### group (23)
+### group (16)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | autotraducir | `cmds/group/autotraducir.js` | autotraducir, autotrad, autotr |
 | bot | `cmds/group/bot.js` | bot |
 | count | `cmds/group/count.js` | count, mensajes, messages, msgcount |
-| delwarn | `cmds/group/delwarn.js` | delwarn |
-| demote | `cmds/group/demote.js` | demote, degradar |
 | evento | `cmds/group/evento.js` | evento |
 | groupinfo | `cmds/group/groupinfo.js` | groupinfo, gp |
 | guardar | `cmds/group/guardar.js` | guardar |
-| kick | `cmds/group/kick.js` | kick, ban, bang |
 | link | `cmds/group/link.js` | link |
-| promote | `cmds/group/promote.js` | promote, promover |
 | revoke | `cmds/group/revoke.js` | revoke, restablecer |
 | setgoodbye | `cmds/group/setgoodbye.js` | setgoodbye |
 | setgpbanner | `cmds/group/setgpbanner.js` | setgpbanner |
 | setgpdesc | `cmds/group/setgpdesc.js` | setgpdesc |
 | setgpname | `cmds/group/setgpname.js` | setgpname |
 | setprimary | `cmds/group/setprimary.js` | setprimary |
-| setwarnlimit | `cmds/group/setwarnlimit.js` | setwarnlimit |
 | setwelcome | `cmds/group/setwelcome.js` | setwelcome |
 | topcount | `cmds/group/topcount.js` | topcount, topmensajes, topmsgcount, topmessages |
 | topinactive | `cmds/group/topinactive.js` | topinactive, topinactivos, topinactiveusers |
-| warn | `cmds/group/warn.js` | warn |
-| warns | `cmds/group/warns.js` | warns |
 
 ### main (10)
 
@@ -195,11 +196,10 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | setgenre | `cmds/profile/setgenre.js` | setgenre |
 | sethobby | `cmds/profile/sethobby.js` | sethobby, setpasatiempo |
 
-### raíz (4)
+### raíz (3)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| antilink | `cmds/antilink.js` | antilink |
 | antistatus | `cmds/antistatus.js` | antistatus |
 | events | `cmds/events.js` | events |
 | gachareserved | `cmds/gachareserved.js` | gachareserved |
@@ -240,7 +240,7 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | setpackprivate | `cmds/stickers/setpackprivate.js` | setpackprivate, setpackpriv, packprivate |
 | setpackpublic | `cmds/stickers/setpackpublic.js` | setpackpublic, setpackpub, packpublic |
 
-### utils (13)
+### utils (10)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
@@ -249,11 +249,8 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | carbon | `cmds/utils/carbon.js` | carbon, codigoimg, codeimg |
 | crypto | `cmds/utils/crypto.js` | crypto, btc, precio |
 | deepseek | `cmds/utils/deepseek.js` | deepseek, ds, deepthink, reasoning, r1 |
-| get | `cmds/utils/get.js` | get, fetch |
-| getpic | `cmds/utils/getpic.js` | getpic, pfp |
 | githubstalk | `cmds/utils/githubstalk.js` | githubstalk, ghstalk, gh |
 | hd | `cmds/utils/hd.js` | hd, enhance, remini |
 | letra | `cmds/utils/letra.js` | letra, lyrics, lyric |
 | ptv | `cmds/utils/ptv.js` | ptv |
 | tourl | `cmds/utils/tourl.js` | tourl |
-| wastalk | `cmds/utils/wastalk.js` | wastalk, stalknum, numbstalk, perfilwa, infowa |

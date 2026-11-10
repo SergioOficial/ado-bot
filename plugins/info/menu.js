@@ -264,7 +264,10 @@ export default {
 ┃ 🌍 » ${PREFIX}traducir <txt>
 ┃ ⛅ » ${PREFIX}clima <ciudad>
 ┃ 📚 » ${PREFIX}wiki <busq>
-┃ 📱 » ${PREFIX}qr
+┃ 📱 » ${PREFIX}qr | ${PREFIX}morse
+┃ 🗳️ » ${PREFIX}encuesta | ${PREFIX}say
+┃ 👁️ » ${PREFIX}read | ${PREFIX}pfp | ${PREFIX}wastalk
+┃ ⏰ » ${PREFIX}recordar <min>|<texto>
 ┃ 🎤 » ${PREFIX}tts <txt>
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
@@ -304,9 +307,14 @@ export default {
       texto = `
 ⋆｡°✩ 🛡️ 𝐀𝐃𝐌𝐈𝐍 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
-┃ 🔒 » ${PREFIX}close
-┃ 🔓 » ${PREFIX}open
+┃ 🔒 » ${PREFIX}close | ${PREFIX}open
 ┃ 🗑️ » ${PREFIX}del
+┃ 👢 » ${PREFIX}kick <@user> [motivo]
+┃ 👑 » ${PREFIX}promote | ${PREFIX}demote
+┃ ⚖️ » ${PREFIX}warn | ${PREFIX}warns | ${PREFIX}delwarn
+┃ 📏 » ${PREFIX}setwarnlimit <1-10>
+┃ 📢 » ${PREFIX}hidetag <mensaje>
+┃ 🔗 » ${PREFIX}antilink on|off
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;

@@ -125,7 +125,7 @@ Categoría Comandos Destacados
 🖌️ Stickers s / sticker, brat, stickers
 🧠 IA ia, iaaudio, imagen, chatgpt
 🎉 Juegos trivia, mate, 8ball, meme, ship
-🛡️ Admin close, open, del, tag, welcome, goodbye
+🛡️ Admin close, open, del, tag, hidetag, kick, promote, demote, warn/warns/delwarn, setwarnlimit, antilink, welcome
 👑 Owner fix, restart, exec, error, invite, gencode
 
 💡 Tip: Recuerda que puedes usar cualquier comando en modo privado añadiendo un - al final (Ej: .menu-).

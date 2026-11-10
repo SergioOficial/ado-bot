@@ -11,6 +11,7 @@ import makeWASocket, {
 import { versionParaLog } from "./lib/wa-version.js";
 import { botonPulsado } from "./lib/botones.js";
 import { vencidos, textoAviso } from "./lib/recordatorios.js";
+import { esAdmin } from "./lib/grupo.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -333,8 +334,12 @@ async function startLevi() {
   for (const [eventName, pluginList] of events) {
     sock.ev.on(eventName, async (...args) => {
       for (const plugin of pluginList) {
+        // Un plugin de evento declara `onEvent`. Se acepta también `execute`
+        // para los que ya existían (antes se llamaba siempre a execute, que en
+        // un plugin de comando recibe el contexto y se rompe).
+        const manejador = typeof plugin.onEvent === "function" ? plugin.onEvent : plugin.execute;
         try {
-          await plugin.execute(sock, ...args);
+          await manejador(sock, ...args);
         } catch (err) {
           console.error(`❌ Error en evento ${eventName}:`, err.message);
         }
@@ -404,6 +409,15 @@ async function handleMessages(sock, { messages, type }) {
 
   if (plugin.isOwner && !isOwnerCheck(sender, sock)) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
+  }
+
+  // Candado de administrador en el router: si un plugin se declara isAdmin, la
+  // comprobación la hace el bot y no cada plugin por su cuenta (que es donde se
+  // olvidaba y quedaban comandos de admin abiertos a cualquiera).
+  if (plugin.isAdmin) {
+    if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
+    const autorizado = await esAdmin(sock, from, sender, isOwnerCheck(sender, sock));
+    if (!autorizado) return enviartexto("⚠️ Solo los administradores pueden usar este comando.");
   }
 
   // Contexto inyectado a todos los plugins
