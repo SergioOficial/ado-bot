@@ -35,7 +35,8 @@
   "scripts": {
     "start": "node index.js",
     "verificar": "node scripts/verificar.mjs",
-    "auditar": "node scripts/auditar-comandos.mjs"
+    "auditar": "node scripts/auditar-comandos.mjs",
+    "probar": "node scripts/probar.mjs"
   },
   "repository": {
     "type": "git",

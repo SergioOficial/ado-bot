@@ -10,6 +10,7 @@ import makeWASocket, {
 } from "./lib/baileys.js";
 import { versionParaLog } from "./lib/wa-version.js";
 import { botonPulsado } from "./lib/botones.js";
+import { vencidos, textoAviso } from "./lib/recordatorios.js";
 import pino from "pino";
 import readline from "readline";
 import fs from "fs";
@@ -208,6 +209,34 @@ console.log(color("💫 Levi-Bot se está iniciando...", "magenta"));
 const BOT_NAME = config.botName;
 let reconectando = false;
 
+// ⏰ VIGILANTE DE RECORDATORIOS
+// Los avisos viven en la base (lib/recordatorios.js) y este bucle los saca.
+// Uno solo para todo el proceso: si se reconecta, se reinicia en vez de
+// acumular intervalos mandando el mismo aviso varias veces.
+let vigilanteRecordatorios = null;
+function iniciarVigilante(sock) {
+  if (vigilanteRecordatorios) clearInterval(vigilanteRecordatorios);
+  const revisar = async () => {
+    let toca = [];
+    try {
+      toca = vencidos(global.db.data);
+    } catch (err) {
+      console.error("⚠️ No se pudieron leer los recordatorios:", err.message);
+      return;
+    }
+    for (const aviso of toca) {
+      try {
+        await sock.sendMessage(aviso.chat, { text: textoAviso(aviso) });
+      } catch (err) {
+        console.error(`⚠️ No se pudo mandar el recordatorio #${aviso.id}:`, err.message);
+      }
+    }
+  };
+  // 20 s es suficiente para minutos y no castiga el servidor.
+  vigilanteRecordatorios = setInterval(revisar, 20_000);
+  setTimeout(revisar, 30_000); // primer repaso con margen, tras conectar
+}
+
 // 🧾 ASK (para Termux local)
 function ask(promptText) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -268,7 +297,10 @@ async function startLevi() {
       }
     }
 
-    if (connection === "open") console.log(`✅ ${BOT_NAME} conectado correctamente.`);
+    if (connection === "open") {
+      console.log(`✅ ${BOT_NAME} conectado correctamente.`);
+      iniciarVigilante(sock);
+    }
 
     if (connection === "close") {
       const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;

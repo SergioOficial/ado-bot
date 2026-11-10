@@ -3,8 +3,8 @@
 _Generado el 2026-11-10 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **61**
-- Pendientes de portar o de descartar: **158**
+- Ya existen en Levi (al menos con un nombre): **63**
+- Pendientes de portar o de descartar: **156**
 
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
@@ -238,7 +238,7 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | setpackprivate | `cmds/stickers/setpackprivate.js` | setpackprivate, setpackpriv, packprivate |
 | setpackpublic | `cmds/stickers/setpackpublic.js` | setpackpublic, setpackpub, packpublic |
 
-### utils (15)
+### utils (13)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
@@ -253,7 +253,5 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | hd | `cmds/utils/hd.js` | hd, enhance, remini |
 | letra | `cmds/utils/letra.js` | letra, lyrics, lyric |
 | ptv | `cmds/utils/ptv.js` | ptv |
-| read | `cmds/utils/read.js` | read, readviewonce, readvo |
-| recordar | `cmds/utils/recordar.js` | recordar, recordatorio, reminder, alarma |
 | tourl | `cmds/utils/tourl.js` | tourl |
 | wastalk | `cmds/utils/wastalk.js` | wastalk, stalknum, numbstalk, perfilwa, infowa |
