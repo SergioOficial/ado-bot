@@ -81,9 +81,10 @@ npm install  @whiskeysockets/baileys
 ```
 
 # Si sharp falla en Termux (Android ARM64):
+```bash
 npm install @img/sharp-wasm32 --force
 npm install sharp --force
-
+```
 npm start
 ```
 
