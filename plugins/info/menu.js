@@ -1,4 +1,6 @@
 import { enviarConBotones, rapido } from "../../lib/botones.js";
+import { LEYENDA, CREDITO, marcar } from "../../lib/menu-ayuda.js";
+import { commands } from "../../pluginLoader.js";
 
 export default {
   command: ["menu", "help", "menú", "ayuda"],
@@ -356,6 +358,15 @@ export default {
     else {
       return enviartexto(`❌ La categoría *${tipo}* no existe.\nUsa *${PREFIX}menu* para ver las opciones.`);
     }
+
+    // Guía rápida (la de Shin-MD, tal cual) y crédito de su autor. Solo en el
+    // menú principal: en una categoría ya estorbaba.
+    if (!tipo) {
+      texto += `\n\n${LEYENDA}\n\n${CREDITO}`;
+    }
+
+    // Marcas Ⓓ/Ⓐ/Ⓟ leídas de los plugins cargados: sin bandera, sin marca.
+    texto = marcar(texto, PREFIX, commands);
 
     // ✅ AQUÍ ESTÁ LA MAGIA DEL "VER CANAL" (Bien estructurado)
     await sock.sendMessage(from, {

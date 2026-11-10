@@ -54,6 +54,7 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | `fix` (endurecido) | `plugins/owner/fix.js` | guarda parche y pide confirmación si hay cambios sin subir |
 | **anti-ban** (cola, ritmo, calentamiento, vigilante) | `lib/antiban.js` | puerto de `src/network/queue.js`, `src/core/engine/throttler.js`, `src/network/health.js` y `src/services/watchdog.js`: una cola para todo, jitter gaussiano, tope diario que sube por días, pausa por riesgo y reconexión con tope de intentos |
 | `warmup` / `antiban` | `plugins/owner/antiban.js` | el tope y el riesgo a la vista; solo lectura |
+| **guía rápida del menú** y crédito | `lib/menu-ayuda.js` + `plugins/info/menu.js` | leyenda de símbolos y crédito de Shin-MD tal cual; las marcas Ⓓ/Ⓐ/Ⓟ salen de los plugins cargados |
 
 ## Pendientes por categoría
 

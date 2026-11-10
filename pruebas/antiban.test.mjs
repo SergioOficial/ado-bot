@@ -287,3 +287,63 @@ export const pruebas = [
     igual(cerrados, 1, "el enfriamiento impide reconectar en cadena");
   }],
 ];
+
+// ── Menú: guía, crédito y marcas ─────────────────────────────────────────────
+import { LEYENDA, CREDITO, marcar, marcaDe } from "../lib/menu-ayuda.js";
+import { botonesActivos, desarmar } from "../lib/botones.js";
+
+pruebas.push(
+  ["la guía y el crédito son los de Shin-MD, tal cual", () => {
+    esVerdad(LEYENDA.includes("Ⓓ Dueño • Ⓟ Premium • Ⓐ Admin"), "renglón de símbolos");
+    esVerdad(LEYENDA.includes("Ⓖ Grupos • Ⓛ Límite"), "grupos y límite");
+    esVerdad(LEYENDA.includes("〔 🔖 GUÍA RÁPIDA 〕"), "título");
+    esVerdad(CREDITO.includes("Shin-MD · Bot de WhatsApp Profesional"), "nombre");
+    esVerdad(CREDITO.includes("github.com/riokuroxi-svg/Shin-MD"), "repo");
+    esVerdad(CREDITO.includes("https://whatsapp.com/channel/0029Vb0VFpSGJP89hfZUe522"), "canal");
+  }],
+
+  ["las marcas salen de los plugins, no de una lista a mano", () => {
+    const mapa = new Map([
+      ["exec", { isOwner: true }],
+      ["kick", { isAdmin: true }],
+      ["canjear", { isPremium: true }],
+      ["ping", {}],
+    ]);
+    igual(marcaDe(mapa.get("exec")), "Ⓓ", "dueño");
+    igual(marcaDe(mapa.get("kick")), "Ⓐ", "admin");
+    igual(marcaDe(mapa.get("canjear")), "Ⓟ", "premium");
+    igual(marcaDe(mapa.get("ping")), "", "sin bandera, sin marca");
+
+    const texto = marcar(".exec | .kick | .canjear | .ping", ".", mapa);
+    igual(texto, "Ⓓ .exec | Ⓐ .kick | Ⓟ .canjear | .ping", "marcado");
+  }],
+
+  ["«menu» no se marca dentro de «menucat»", () => {
+    const mapa = new Map([
+      ["menu", { isOwner: false }],
+      ["menucat", { isOwner: true }],
+    ]);
+    igual(marcar(".menucat y .menu", ".", mapa), "Ⓓ .menucat y .menu", "el largo primero");
+  }],
+
+  ["los botones se pueden apagar con BOTONES=off", () => {
+    const antes = process.env.BOTONES;
+    delete process.env.BOTONES;
+    igual(botonesActivos(), true, "por defecto sí");
+    process.env.BOTONES = "off";
+    igual(botonesActivos(), false, "apagados");
+    process.env.BOTONES = "0";
+    igual(botonesActivos(), false, "cero");
+    if (antes === undefined) delete process.env.BOTONES;
+    else process.env.BOTONES = antes;
+  }],
+
+  ["desarmar deja texto y enlace para el respaldo", () => {
+    const lista = desarmar([
+      { buttonParamsJson: JSON.stringify({ display_text: "Uno", id: "1" }) },
+      { buttonParamsJson: JSON.stringify({ display_text: "Dos", url: "https://x.y" }) },
+      { buttonParamsJson: "roto" },
+    ]);
+    igual(lista, [{ texto: "Uno", url: null }, { texto: "Dos", url: "https://x.y" }, { texto: "opción", url: null }], "armado");
+  }]
+);

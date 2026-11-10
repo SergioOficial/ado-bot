@@ -30,7 +30,7 @@ un archivo que puedes leer, cambiar o borrar.
 | 🧩 **Todo es un plugin** | Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
 | 🔀 **Multi-prefijo** | Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
 | 🕵️ **Modo privado** | `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
-| 🔘 **Botones nativos** | Respuesta rápida, copiar, abrir enlace y llamar, con respaldo en texto si el móvil del otro no los pinta. |
+| 🔘 **Botones nativos** | Respuesta rápida, copiar, abrir enlace y llamar, con respaldo en texto si el móvil del otro no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
 | 📅 **Versión de WhatsApp al día** | La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
 | 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
 | 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
@@ -165,6 +165,7 @@ internet. Nada más.
 3. En *Variables de entorno* añade:
    - `WHATSAPP_NUMBER` — tu número con código de país.
    - `GITHUB_TOKEN` — opcional, solo para `.reporte` e `.invite`.
+   - `BOTONES=off` — opcional, manda los menús como texto sin botones.
 4. Comando de inicio: `npm start` (o `node index.js`).
 5. Mira los **logs** del panel para copiar el código de vinculación.
 
@@ -304,6 +305,14 @@ incluidos.
 
 ## 🔧 Novedades de esta versión
 
+- 🔖 **Menú con guía rápida**: la leyenda de símbolos del menú de Shin-MD
+  (Ⓓ Dueño · Ⓟ Premium · Ⓐ Admin · Ⓖ Grupos · Ⓛ Límite) y su crédito, con el
+  texto tal cual lo escribió su autor. Las marcas **no van a mano**: se leen de
+  los plugins cargados, así que un comando solo lleva Ⓓ si de verdad es de dueño
+  y Ⓐ si de verdad pide administrador; sin bandera, sin marca.
+- 🔘 **Botones con interruptor**: `BOTONES=off` (o `0`) manda el texto con las
+  opciones escritas y deja el código intacto, para poder quitarlos y volver a
+  ponerlos sin tocar plugins.
 - 🛡️ **Anti-ban portado de Shin-MD** (`lib/antiban.js`): una sola cola para todos
   los envíos, con espera al azar (no fija) entre mensajes, más espera en los
   textos largos, y **calentamiento diario** (una cuenta nueva no manda 500
