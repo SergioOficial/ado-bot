@@ -1,32 +1,35 @@
-import axios from "axios";
+import translate from '@vitalets/google-translate-api';
 
 export default {
-  command: ["traducir", "translate", "tl"],
+  command: ['translate', 'trad', 'traducir'],
   execute: async (ctx) => {
-    const { m, args, enviartexto, config } = ctx;
-    let text = args.join(" ").trim();
-    let lang = "es";
+    const { sock, from, m, args, enviartexto } = ctx;
+    const defaultLang = 'es';
+    
+    if (!args[0]) return enviartexto('《✧》 Ingresa el idioma seguido del texto que quieras traducir.');
 
-    // Si el usuario responde a un mensaje, traduce ese mensaje
+    let lang = args[0];
+    let text = args.slice(1).join(' ');
+    
+    // Si el texto viene citado
     const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
-    if (quoted) {
-      text = quoted.conversation || quoted.extendedTextMessage?.text;
-      if (args[0]) lang = args[0]; // Si escribe .tl en, traduce a inglés
-    } else if (!text) {
-      return enviartexto(`🌍 Uso: ${config.prefix}traducir <texto> [idioma_destino]\nEjemplo: ${config.prefix}traducir Hello world`);
+    if (!text && quoted) text = quoted.conversation || quoted.extendedTextMessage?.text;
+
+    if ((lang || '').length !== 2) {
+      lang = defaultLang;
+      text = args.join(' ') || (quoted ? (quoted.conversation || quoted.extendedTextMessage?.text) : null);
     }
 
-    await ctx.sock.sendMessage(ctx.from, { react: { text: "🌍", key: m.key } });
+    if (!text) return enviartexto('《✧》 No hay texto para traducir.');
 
     try {
-      // API gratuita de Google Translate
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(text)}`;
-      const res = await axios.get(url);
-      const translatedText = res.data[0].map(item => item[0]).join('');
-
-      await enviartexto(`🌍 *Traducción (${lang}):*\n\n${translatedText}`);
+      await sock.sendMessage(from, { react: { text: '🕒', key: m.key } });
+      const result = await translate(text, { to: lang, autoCorrect: true });
+      await sock.sendMessage(from, { text: result.text }, { quoted: m });
+      await sock.sendMessage(from, { react: { text: '✔️', key: m.key } });
     } catch (e) {
-      await enviartexto("❌ Error al traducir el texto.");
+      await sock.sendMessage(from, { react: { text: '✖️', key: m.key } });
+      await enviartexto(`> Error: *${e.message}*`);
     }
   }
 };
