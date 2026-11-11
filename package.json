@@ -1,7 +1,7 @@
 {
   "name": "ado-bot",
-  "version": "1.0.5",
-  "description": "ado-Bot con conexión por parincode (Baileys 2025)",
+  "version": "1.1.0",
+  "description": "ado-Bot con conexión por pairing code (Baileys 2025)",
   "main": "index.js",
   "type": "module",
   "dependencies": {
@@ -29,7 +29,10 @@
     "yt-search": "^2.13.1"
   },
   "overrides": {
-    "sharp": "$sharp"
+    "sharp": "$sharp",
+    "axios": "^1.21.0",
+    "minimatch": "^3.1.5",
+    "image-size": "^2.1.0"
   },
   "scripts": {
     "start": "node index.js",
@@ -38,7 +41,9 @@
     "auditar": "node scripts/auditar-comandos.mjs",
     "probar": "node scripts/probar.mjs",
     "humo": "node scripts/humo.mjs",
-    "mapa": "node scripts/mapa-porte.mjs"
+    "mapa": "node scripts/mapa-porte.mjs",
+    "test": "node scripts/probar.mjs",
+    "sintaxis": "node scripts/revisar-sintaxis.mjs"
   },
   "repository": {
     "type": "git",

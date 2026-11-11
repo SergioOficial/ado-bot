@@ -1,10 +1,10 @@
 # Mapa del porteo desde Shin-MD
 
-_Generado el 2026-11-10 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
+_Generado el 2026-11-11 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **115**
-- Pendientes de portar o de descartar: **104**
+- Ya existen en Levi (al menos con un nombre): **121**
+- Pendientes de portar o de descartar: **98**
 
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
@@ -70,16 +70,12 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 |---|---|---|
 | ppcouple | `cmds/anime/ppcouple.js` | ppcouple, ppcp |
 
-### downloads (10)
+### downloads (6)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| apk | `cmds/downloads/apk.js` | apk, aptoide, apkdl |
 | deezer | `cmds/downloads/deezer.js` | deezer, dzr, deezermusic |
 | gdrive | `cmds/downloads/gdrive.js` | gdrive, drive |
-| instagram | `cmds/downloads/instagram.js` | instagram, ig, reel |
-| mediafire | `cmds/downloads/mediafire.js` | mediafire, mf |
-| play2 | `cmds/downloads/play2.js` | play2 |
 | soundcloud | `cmds/downloads/soundcloud.js` | soundcloud |
 | spotify | `cmds/downloads/spotify.js` | spotify |
 | twitter | `cmds/downloads/twitter.js` | twitter, x |
@@ -177,11 +173,10 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | xnxx | `cmds/nsfw/xnxx.js` | xnxx |
 | xvideos | `cmds/nsfw/xvideos.js` | xvideos |
 
-### owner (3)
+### owner (2)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| compat | `cmds/owner/compat.js` | compat, diagnostico |
 | setmenu | `cmds/owner/setmenu.js` | setmenu |
 | subircookies | `cmds/owner/subircookies.js` | subircookies |
 
@@ -217,7 +212,7 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | setstatus | `cmds/socket/setstatus.js` | setstatus |
 | setusername | `cmds/socket/setusername.js` | setusername |
 
-### stickers (15)
+### stickers (14)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
@@ -231,7 +226,6 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | newpack | `cmds/stickers/newpack.js` | newpack, newstickerpack |
 | packlist | `cmds/stickers/packlist.js` | packlist, stickerpacks |
 | qc | `cmds/stickers/qc.js` | qc |
-| setmeta | `cmds/stickers/setmeta.js` | setmeta, setstickermeta |
 | setpackdesc | `cmds/stickers/setpackdesc.js` | setpackdesc, setstickerpackdesc, packdesc |
 | setpackname | `cmds/stickers/setpackname.js` | setpackname, setstickerpackname, packname |
 | setpackprivate | `cmds/stickers/setpackprivate.js` | setpackprivate, setpackpriv, packprivate |
@@ -247,7 +241,3 @@ Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta 
 | githubstalk | `cmds/utils/githubstalk.js` | githubstalk, ghstalk, gh |
 | hd | `cmds/utils/hd.js` | hd, enhance, remini |
 | ptv | `cmds/utils/ptv.js` | ptv |
-
----
-
-<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>

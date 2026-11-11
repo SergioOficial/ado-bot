@@ -1,0 +1,74 @@
+# ═══════════════════════════════════════════════════════════════════
+#  CI de ado-Bot — tres puertas, ninguna opcional.
+#
+#    1. suite        → las pruebas propias (`npm test`), el humo de los
+#                      plugins, la auditoría de comandos y el verificador
+#                      de botones. Node 22.
+#    2. sintaxis     → `node --check` sobre TODO el árbol, incluidos los
+#                      plugins que solo se cargan cuando se usan.
+#    3. dependencias → el árbol de producción no puede traer avisos altos.
+#
+#  Lo que NO se hace aquí: nada que hable con WhatsApp ni que salga a la
+#  red abierta. Vinculación y envíos se prueban a mano.
+# ═══════════════════════════════════════════════════════════════════
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    name: suite · node 22
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+      - name: Pruebas
+        run: npm test
+      - name: Humo de los plugins
+        run: npm run humo
+      - name: Auditoría de comandos
+        run: npm run auditar
+      - name: Verificador de botones y menú
+        run: npm run verificar
+
+  sintaxis:
+    name: sintaxis · todo el árbol
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: node --check en todos los archivos
+        run: npm run sintaxis
+
+  dependencias:
+    name: dependencias · sin avisos altos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Instalar sin silenciar la auditoría
+        run: npm install --no-fund
+      - name: npm audit (producción)
+        run: npm audit --omit=dev --audit-level=high

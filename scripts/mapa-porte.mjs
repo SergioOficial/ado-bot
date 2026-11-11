@@ -2,8 +2,20 @@ import { readdirSync, statSync, readFileSync, writeFileSync } from "fs";
 import { join, relative } from "path";
 import { pathToFileURL } from "url";
 
-// Ruta del clon de Shin-MD: primer argumento o ../Shin-MD
-const SHIN = process.argv[2] || join(process.cwd(), "..", "Shin-MD");
+// Ruta del clon de Shin-MD: primer argumento, SHIN_MD o ../Shin-MD.
+// Este script es de desarrollo (compara el porteo con el árbol de origen), así
+// que si no hay clon se dice y se sale: antes reventaba con un ENOENT de stack.
+import { existsSync } from "fs";
+const SHIN = process.argv[2] || process.env.SHIN_MD || join(process.cwd(), "..", "Shin-MD");
+if (!existsSync(join(SHIN, "cmds"))) {
+  console.error(
+    `✕ No encuentro el clon de Shin-MD en ${SHIN}.\n` +
+      "  Uso: node scripts/mapa-porte.mjs /ruta/a/Shin-MD   (o SHIN_MD=/ruta/a/Shin-MD)\n" +
+      "  Este script solo hace falta para revisar el porteo; el bot no lo usa."
+  );
+  process.exit(1);
+}
+
 const LEVI = process.cwd();
 
 // 1. Comandos de Shin (nombre de archivo → alias declarados)

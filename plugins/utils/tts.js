@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import fs from "fs";
 import path from "path";
 
@@ -31,10 +31,12 @@ export default {
       // -ac 1: 1 canal (mono)
       // -b:a 32k: bitrate bajo (ideal para voz)
       // -ar 16000: sample rate de 16kHz (nativo de WhatsApp)
-      const ffmpegCmd = `ffmpeg -y -i "${inputFile}" -c:a libopus -ac 1 -b:a 32k -ar 16000 "${outputFile}"`;
-      
+      // execFile y no exec: los argumentos van en una lista, así que ninguna
+      // comilla o `;` de un nombre de archivo puede acabar siendo una orden.
+      const argsFfmpeg = ["-y", "-i", inputFile, "-c:a", "libopus", "-ac", "1", "-b:a", "32k", "-ar", "16000", outputFile];
+
       await new Promise((resolve, reject) => {
-        exec(ffmpegCmd, (error, stdout, stderr) => {
+        execFile("ffmpeg", argsFfmpeg, (error) => {
           if (error) reject(new Error(`ffmpeg: ${error.message}`));
           else resolve();
         });
