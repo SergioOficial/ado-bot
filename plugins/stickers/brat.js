@@ -1,4 +1,5 @@
 import { Sticker } from "wa-sticker-formatter";
+import { asegurarEntrada } from "../../lib/sticker-seguro.js";
 export default {
   command: ["brat"],
   execute: async (ctx) => {
@@ -13,7 +14,7 @@ export default {
     try {
       const res = await fetch(`https://skyzxu-brat.hf.space/brat?text=${encodeURIComponent(textoBrat)}`);
       const buffer = Buffer.from(await res.arrayBuffer());
-      const sticker = new Sticker(buffer, { pack: config.botName, author: config.ownerName, type: 'full', quality: 70 });
+      const sticker = new Sticker(asegurarEntrada(buffer), { pack: config.botName, author: config.ownerName, type: 'full', quality: 70 });
       await sock.sendMessage(from, { sticker: await sticker.toBuffer() }, { quoted: m });
       await sock.sendMessage(from, { react: { text: "✔️", key: m.key } });
     } catch (e) { await enviartexto(`Error: ${e.message}`); }

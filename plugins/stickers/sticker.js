@@ -4,6 +4,7 @@ import { spawn } from "child_process";
 import { downloadMediaMessage } from "../../lib/baileys.js";
 import { Sticker } from "wa-sticker-formatter";
 import pino from "pino";
+import { asegurarEntrada } from "../../lib/sticker-seguro.js";
 export default {
   command: ["sticker", "s"],
   execute: async (ctx) => {
@@ -13,7 +14,7 @@ export default {
     await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
     try {
       const buffer = await downloadMediaMessage({ key: m.key, message: quoted }, "buffer", {}, { logger: pino({ level: "silent" }), reuploadRequest: sock.updateMediaMessage });
-      const sticker = new Sticker(buffer, { pack: config.botName, author: config.ownerName, type: 'full', quality: 70 });
+      const sticker = new Sticker(asegurarEntrada(buffer), { pack: config.botName, author: config.ownerName, type: 'full', quality: 70 });
       await sock.sendMessage(from, { sticker: await sticker.toBuffer() }, { quoted: m });
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
     } catch (e) { await enviartexto(`⚠️ Error: ${e.message}`); }
