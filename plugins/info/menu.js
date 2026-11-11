@@ -19,14 +19,14 @@ export default {
     const CANAL_JID = "120363415858789528@newsletter";
     const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const CANAL_URL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
-    const pfp = "https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg";
+    const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
     
     let texto = "";
 
     // 🌟 MENÚ PRINCIPAL
     if (!tipo) {
       texto = `
-⋆｡°✩ 🐾 𝐋𝐄𝐕𝐈 - 𝐁𝐎𝐓 🐾 ✩°｡⋆
+⋆｡°✩ 🐾 𝙰𝚍𝚘 - 𝐁𝐎𝐓 🐾 ✩°｡⋆
 ✦ *¡Hola,* @${numero} *!*
 > *Tu rango:* ${rangoTexto}
 
