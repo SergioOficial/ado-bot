@@ -12,7 +12,7 @@ export default {
     try {
       const prompt = `Eres ${BOT_NAME}, un asistente creado por ${config.ownerName}. Responde de forma clara, creativa y útil. Pregunta: ${text}`;
       
-      const res = await axios.get(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, { timeout: 20000 });
+      const res = await axios.get(`https://novita-api.darkcore.xyz/api/ia/gemini?texto=`, { timeout: 20000 });
       const responseText = res.data;
 
       if (!responseText || typeof responseText !== 'string') {
