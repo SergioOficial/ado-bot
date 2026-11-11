@@ -41,16 +41,35 @@ export default {
 
               try {
                 const apiUrl = `https://novita-api.darkcore.xyz/api/maker/welcome2?foto=${encodeURIComponent(userPfp)}&tema=azul`;
-                const res = await axios.get(apiUrl, { responseType: "arraybuffer", timeout: 15000 });
-                const imageBuffer = Buffer.from(res.data, "binary");
+                
+                const res = await axios.get(apiUrl, { 
+                  responseType: "arraybuffer", 
+                  timeout: 20000,
+                  headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+                });
+                
+                const imageBuffer = Buffer.from(res.data);
 
                 await sock.sendMessage(id, { 
                   image: imageBuffer, 
                   caption: text, 
                   mentions: [jid] 
-                }).catch(() => {});
+                });
+
               } catch (apiError) {
-                await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {});
+                console.log(`❌ Error con la API de Novita: ${apiError.message}`);
+                
+                const fallbackImage = "https://tse2.mm.bing.net/th/id/OIP.qoxIHiufIGEW45rXleS98gHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3&tema=rosa";
+                
+                try {
+                  await sock.sendMessage(id, { 
+                    image: { url: fallbackImage }, 
+                    caption: text, 
+                    mentions: [jid] 
+                  });
+                } catch (e) {
+                  await sock.sendMessage(id, { text, mentions: [jid] });
+                }
               }
             }
 
