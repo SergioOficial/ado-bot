@@ -1,5 +1,5 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * ado-Bot — Copyright (C) 2026 los autores de Ado-Bot · AGPL-3.0-only
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
  * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
