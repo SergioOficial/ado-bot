@@ -354,7 +354,8 @@ async function startLevi() {
   });
 
   sockActual = sock;
-  prepararAntiban(sock);
+//Comentado para apagarlo 
+  //prepararAntiban(sock);
 
   let pairingCodeRequested = false;
   let phoneNumber = null;
