@@ -1,117 +1,65 @@
-import axios from "axios";
-
-const safeFileName = (name) => String(name || 'audio').replace(/[/\\?%*:|"<>]/g, '-').slice(0, 50);
-const YT_REGEX = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i;
+import yts from 'yt-search';
+import axios from 'axios';
 
 export default {
-  command: ["play", "mp3", "ytmp3", "audio", "playaudio"],
+  command: ['play', 'mp3', 'ytmp3', 'ytaudio', 'playaudio'],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
-    
-    const query = args.join(' ').trim();
-    if (!query) {
-      return enviartexto(
-        '🎵 *REPRODUCIR AUDIO*\n\n' +
-        `🔗 Uso: ${config.prefix[0]}play <canción o enlace de YouTube>\n` +
-        `✨ Ejemplo: ${config.prefix[0]}play Ven Mi Amor`
-      );
-    }
 
-    // 📩 1. Enviamos el mensaje inicial de "Buscando"
-    const waitMsg = await sock.sendMessage(from, { 
-      text: `🔍 *Buscando:* "${query}"...` 
-    }, { quoted: m });
+    if (!args[0]) return enviartexto('《✧》Por favor, menciona el nombre o URL del video que deseas descargar');
+
+    const text = args.join(' ');
+    const waitMsg = await sock.sendMessage(from, { text: `🔍 *Buscando:* "${text}"...` }, { quoted: m });
 
     try {
-      let youtubeUrl = query;
-      let videoInfo = null;
-
-      // Si no es una URL, buscamos en YouTube con yt-search
-      if (!YT_REGEX.test(query)) {
-        const { default: yts } = await import("yt-search");
-        const search = await yts(query);
-        
-        if (!search.all || search.all.length === 0) {
-          throw new Error("No se encontraron resultados en YouTube.");
-        }
-        
-        videoInfo = search.all[0];
-        youtubeUrl = videoInfo.url;
-      }
-
-      // 🔑 Obtener la API KEY de forma segura
-      const NATSU_API_KEY = process.env.NATSU_API_KEY;
-      if (!NATSU_API_KEY) {
-        throw new Error("Falta configurar la variable de entorno NATSU_API_KEY.");
-      }
-
-      // 🌐 2. Petición a la API de Natsu
-      const apiUrl = `https://natsu-api.darkcore.xyz/api/ytmp3?url=${encodeURIComponent(youtubeUrl)}&apikey=${NATSU_API_KEY}`;
+      const videoMatch = text.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/))([a-zA-Z0-9_-]{11})/);
+      const query = videoMatch ? 'https://youtu.be/' + videoMatch[1] : text;
       
-      const res = await axios.get(apiUrl, { timeout: 30000 });
-      const data = res.data;
+      const search = await yts(query);
+      if (!search.all.length) throw new Error('No se encontraron resultados.');
+      
+      const videoInfo = videoMatch ? search.videos.find(v => v.videoId === videoMatch[1]) || search.all[0] : search.all[0];
+      const url = videoInfo.url;
+      const title = videoInfo.title;
 
-      // 🕵️‍♂️ Intentar extraer la URL del audio y metadatos según la estructura de Natsu
-      // (Como no sé exactamente cómo devuelve los datos, probamos varias opciones comunes)
-      const audioUrl = 
-        data.download?.url || 
-        data.data?.download?.url || 
-        data.data?.url || 
-        data.result?.download || 
-        data.result?.url;
+      
+      const apis = [
+        `https://api.siputzx.my.id/api/d/ytmp3?url=${encodeURIComponent(url)}`,
+        `https://natsu-api.darkcore.xyz/api/ytmp3?url=${encodeURIComponent(url)}&apikey=${process.env.NATSU_API_KEY || ''}`
+      ];
 
-      if (!audioUrl) {
-        throw new Error("La API no devolvió un enlace de descarga válido.");
+      let audioBuffer = null;
+      let usedApi = null;
+
+      for (const api of apis) {
+        try {
+          const res = await axios.get(api, { timeout: 15000 });
+          const dlUrl = res.data?.data?.url || res.data?.download?.url || res.data?.data?.dl || res.data?.result?.download;
+          if (dlUrl) {
+            const audioRes = await axios.get(dlUrl, { responseType: 'arraybuffer', timeout: 30000 });
+            audioBuffer = Buffer.from(audioRes.data, 'binary');
+            usedApi = api;
+            break;
+          }
+        } catch (e) { console.log('API fallida:', e.message); }
       }
 
-      // Metadatos (priorizando lo que devuelva la API o lo que encontramos en yt-search)
-      const title = data.title || data.data?.title || videoInfo?.title || "Audio de YouTube";
-      const author = data.author || data.data?.author || videoInfo?.author?.name || "YouTube";
+      if (!audioBuffer) throw new Error('Todas las APIs de descarga fallaron.');
 
-      // 📥 3. Descargar el audio a la memoria (Buffer) para evitar fallos de WhatsApp
-      const audioRes = await axios.get(audioUrl, { 
-        responseType: 'arraybuffer',
-        timeout: 60000 // 1 minuto de margen por si pesa mucho
-      });
-      
-      const audioBuffer = Buffer.from(audioRes.data, 'binary');
+      const captionEdit = `✅ *Encontrada:*\n\n> ❖ Canal › *${videoInfo.author?.name || 'Desconocido'}*\n> ⴵ Duración › *${videoInfo.timestamp}*\n> ❒ Enlace › *${url}*\n\n_Enviando audio..._`;
 
-      // 📝 4. Editamos el mensaje inicial para decir "Encontrada"
-      const captionEdit = 
-        `✅ *Encontrada:*\n\n` +
-        `⊱ ──── {.⋅ ♫ ⋅.} ──── ⊰\n` +
-        `✦ *ɴᴏᴍʙʀᴇ:* ${title}\n` +
-        `❐ *ғᴏʀᴍᴀᴛᴏ:* MP3\n` +
-        `✎ *ᴄᴀɴᴀʟ:* ${author}\n` +
-        `✧ *ᴜʀʟ:* ${youtubeUrl}\n` +
-        `\n> _Enviando audio..._`;
+      await sock.sendMessage(from, { text: captionEdit, edit: waitMsg.key }).catch(() => {});
 
-      await sock.sendMessage(from, { 
-        text: captionEdit, 
-        edit: waitMsg.key 
-      }).catch(() => {});
-
-      // 🔊 5. Enviamos el audio
       await sock.sendMessage(from, {
         audio: audioBuffer,
-        mimetype: "audio/mpeg",
-        fileName: `${safeFileName(title)}.mp3`,
-        ptt: false
+        fileName: `${title}.mp3`,
+        mimetype: 'audio/mpeg'
       }, { quoted: m });
 
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
-    } catch (err) {
-      console.error("Error en #play (Natsu):", err.message);
-      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      
-      // Si falla, editamos el mensaje de "Buscando..."
-      await sock.sendMessage(from, { 
-        text: `❌ *ERROR DE DESCARGA*\n\n📛 No se pudo reproducir el audio.\n🔎 Detalle: ${err.message}`, 
-        edit: waitMsg.key 
-      }).catch(() => {
-        enviartexto(`❌ Error: ${err.message}`);
-      });
+    } catch (e) {
+      await sock.sendMessage(from, { text: `❌ Error: ${e.message}`, edit: waitMsg.key }).catch(() => {});
     }
   }
 };
