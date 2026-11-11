@@ -71,8 +71,9 @@ export default {
 ┏━━━━━━━━━━━━━━━━━━┓
 ┃ 🎄 *𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒* 🎄
 ┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}play | ${PREFIX}pin
-┃ ➤ ${PREFIX}tt | ${PREFIX}fb
+┃ ➤ ${PREFIX}play | ${PREFIX}play2
+┃ ➤ ${PREFIX}fb | ${PREFIX}ig | ${PREFIX}tt
+┃ ➤ ${PREFIX}mf | ${PREFIX}apk
 ┃ ➤ ${PREFIX}ytsearch | ${PREFIX}toimg
 ┗━━━━━━━━━━━━━━━━━━┛
 
@@ -226,12 +227,10 @@ export default {
       texto = `
 ⋆｡°✩ 🎄 𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎵 » ${PREFIX}play <audio>
-┃ 📌 » ${PREFIX}pin <búsqueda>
-┃ 🎬 » ${PREFIX}tt <enlace>
-┃ 📘 » ${PREFIX}fb <enlace>
-┃ 🔍 » ${PREFIX}ytsearch <texto>
-┃ 🖼️ » ${PREFIX}toimg
+┃ ➤ ${PREFIX}play | ${PREFIX}play2
+┃ ➤ ${PREFIX}fb | ${PREFIX}ig | ${PREFIX}tt
+┃ ➤ ${PREFIX}mf | ${PREFIX}apk
+┃ ➤ ${PREFIX}ytsearch | ${PREFIX}toimg
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
