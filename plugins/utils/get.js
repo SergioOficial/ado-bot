@@ -1,5 +1,5 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * ado-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
  * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
@@ -40,7 +40,7 @@ export default {
     const enlace = (args || []).join(" ").trim();
     if (!enlace) {
       return enviartexto(
-        `《✧》 Escríbeme el enlace.\n> Ejemplo: *${PREFIX}get https://api.github.com/repos/SergioOficial/Levi-bot*`
+        `《✧》 Escríbeme el enlace.\n> Ejemplo: *${PREFIX}get https://api.github.com/repos/SergioOficial/ado-bot*`
       );
     }
 
