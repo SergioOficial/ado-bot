@@ -1,9 +1,10 @@
+import axios from "axios";
+
 export default {
   command: ["welcome", "bienvenida"],
   execute: async (ctx) => {
     const { sock, from, args, isGroup, enviartexto, isOwnerCheck, sender, db, config } = ctx;
 
-    // 🛡️ 1. ENGÄNCHAR EL EVENTO A LA MEMORIA
     if (!global._welcomeEventHooked) {
       global._welcomeEventHooked = true;
 
@@ -28,26 +29,34 @@ export default {
 
             const num = String(jid).split("@")[0].split(":")[0];
 
-            // 🟢 ENTRADA (BIENVENIDA CON IMAGEN)
             if (action === "add" && chat.welcome) {
-              const customMsg = chat.welcomeMsg || "꧁༺ 💤 𝐋𝐄𝐕𝐈 𝐁𝐎𝐓 🌌 ༻꧂\n\n🎄 *¡Bienvenido/a @user!* 🎄\n\n*❒ Te damos la bienvenida a @group.*\n• Esperamos que disfrutes tu estadía.\n\n       ♪ ¡PÁSALA GENIAL!  \n\n> Usa #help para ver mis comandos \n🐾━━━━━━━━━━━━🐾";
+              const customMsg = chat.welcomeMsg || "꧁༺ 💤 𝐀𝐃𝐎 𝐁𝐎𝐓 🌌 ༻꧂\n\n🎄 *¡Bienvenido/a @user!* 🎄\n\n*❒ Te damos la bienvenida a @group.*\n• Esperamos que disfrutes tu estadía.\n\n       ♪ ¡PÁSALA GENIAL!  \n\n> Usa #help para ver mis comandos \n🐾━━━━━━━━━━━━🐾";
               const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
 
-              // 🖼️ Imagen que pediste
-              const welcomeImage = "https://tse2.mm.bing.net/th/id/OIP.qoxIHiufIGEW45rXleS98gHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3&tema=rosa";
+              let userPfp = "https://i.pravatar.cc/300"; 
+              try {
+                const url = await sock.profilePictureUrl(jid, "image");
+                if (url) userPfp = url;
+              } catch (e) {}
 
-              await sock.sendMessage(id, { 
-                image: { url: welcomeImage }, 
-                caption: text, 
-                mentions: [jid] 
-              }).catch(() => {});
+              try {
+                const apiUrl = `https://novita-api.darkcore.xyz/api/maker/welcome2?foto=${encodeURIComponent(userPfp)}&tema=azul`;
+                const res = await axios.get(apiUrl, { responseType: "arraybuffer", timeout: 15000 });
+                const imageBuffer = Buffer.from(res.data, "binary");
+
+                await sock.sendMessage(id, { 
+                  image: imageBuffer, 
+                  caption: text, 
+                  mentions: [jid] 
+                }).catch(() => {});
+              } catch (apiError) {
+                await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {});
+              }
             }
 
-            // 🔴 SALIDA (DESPEDIDA NORMAL)
             if (action === "remove" && chat.goodbye) {
               const customMsg = chat.goodbyeMsg || "Adiós @user, espero que vuelvas pronto 👋";
               const text = String(customMsg).replace("@user", `@${num}`).replace("@group", groupName);
-
               await sock.sendMessage(id, { text, mentions: [jid] }).catch(() => {});
             }
           }
@@ -55,21 +64,17 @@ export default {
           console.error("Error en evento welcome:", e.message || e);
         }
       });
-      console.log("✅ Evento de Bienvenida (Imagen) / Despedida enganchado.");
     }
 
-    // 🛡️ 2. CONFIGURACIÓN DEL COMANDO
     if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
 
     let isAdmin = false;
     try {
       const meta = await sock.groupMetadata(from);
-      const adminIds = meta.participants
-        .filter(pa => pa.admin !== null)
-        .flatMap(pa => {
-          const pid = typeof pa === "string" ? pa : (pa.id || pa.lid || pa.phoneNumber);
-          return pid ? [String(pid)] : [];
-        });
+      const adminIds = meta.participants.filter(pa => pa.admin !== null).flatMap(pa => {
+        const pid = typeof pa === "string" ? pa : (pa.id || pa.lid || pa.phoneNumber);
+        return pid ? [String(pid)] : [];
+      });
 
       isAdmin = adminIds.includes(sender) || isOwnerCheck(sender, sock);
     } catch (e) {
@@ -117,8 +122,7 @@ export default {
       `➤ ${config.prefix[0]}welcome on/off\n` +
       `➤ ${config.prefix[0]}welcome goodbye on/off\n` +
       `➤ ${config.prefix[0]}welcome set <texto>\n` +
-      `➤ ${config.prefix[0]}welcome setgoodbye <texto>\n\n` +
-      `_Puedes usar @user y @group._`
+      `➤ ${config.prefix[0]}welcome setgoodbye <texto>`
     );
   }
 };
