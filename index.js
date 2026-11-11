@@ -1,11 +1,12 @@
 // CREADOR: Sergio Gómez Gort con Asistencia en Comandos de Shin MD
+// BOT: Ado-Bot
 
 // 📦 IMPORTACIONES
-// El cliente sale de lib/baileys.js, que decide el paquete (fork u oficial).
 import makeWASocket, {
   DisconnectReason,
   useMultiFileAuthState,
   makeCacheableSignalKeyStore,
+  fetchLatestBaileysVersion, // 👈 Importado correctamente desde lib
   paquete as PAQUETE_BAILEYS
 } from "./lib/baileys.js";
 import { versionParaLog } from "./lib/wa-version.js";
@@ -33,7 +34,7 @@ import { Boom } from "@hapi/boom";
 import { config } from "./config.js";
 import chalk from "chalk";
 import cfonts from "cfonts";
-import { loadPlugins, commands, events } from "./pluginLoader.js"; // 👈 Importamos events
+import { loadPlugins, commands, events } from "./pluginLoader.js";
 import './lib/database.js';
 
 global.loadDatabase();
@@ -47,9 +48,6 @@ const color = (text, colorName = "green") => {
 // ═══════════════════════════════════════════
 // SUBBOT MANAGER
 // ═══════════════════════════════════════════
-// Las carpetas de los sub-bots viven en lib/rutas.js: estaban escritas dos
-// veces y no coincidían (se guardaba en `sub/<número>` y se leía en
-// `sub/SubBots/<número>`), así que `.bots` no veía ninguna sesión.
 const SUB_CONFIG_DIR = SUB_CONFIGS;
 const SUB_SESSION_DIR = SUB_SESIONES;
 const activeSubbots = new Map();
@@ -81,10 +79,6 @@ function isOwnerCheck(jid, sockInstance) {
   const botNum = jidToNumber(sockInstance?.user?.id || "");
   if (num === botNum) return true;
 
-  // `mismoNumero` compara con y sin lada de país: si el dueño se escribe a mano
-  // como «5574370309» y su JID llega como «5215574370309», tiene que coincidir.
-  // Antes se comparaba dígito a dígito y los comandos de dueño no le hacían caso
-  // a su propio dueño.
   if ((config.owners || []).some(o => mismoNumero(o.number, num))) return true;
   if ((sockInstance?.subconfig?.owners || []).some(o => mismoNumero(o, num))) return true;
   return false;
@@ -109,15 +103,6 @@ async function stopSubbot(phoneNumber) {
   return true;
 }
 
-/**
- * Vuelve a arrancar los sub-bots que ya estaban vinculados.
- *
- * Antes, al reiniciar el bot los sub-bots no volvían: había que pedir otro
- * código, y si la sesión ya existía ni siquiera se pedía, así que se quedaban
- * apagados para siempre. Aquí se arrancan solos los que tienen `registered`
- * en su `creds.json`; los que quedaron a medio vincular no, porque pedirían un
- * código que ya nadie está mirando.
- */
 let restauracionHecha = false;
 async function restaurarSubbots(parentSock) {
   if (restauracionHecha) return [];
@@ -127,8 +112,6 @@ async function restaurarSubbots(parentSock) {
     if (activeSubbots.has(numero)) continue;
     if (activeSubbots.size >= MAX_SUBBOTS) break;
     try {
-      // Sin chat donde contestar: los avisos van al dueño, y si no hay, al
-      // propio número del sub-bot (nunca a un grupo ajeno).
       const destino = `${numero}@s.whatsapp.net`;
       const avisar = async (texto) => {
         try { await parentSock.sendMessage(destino, { text: texto }); } catch {}
@@ -145,7 +128,6 @@ async function restaurarSubbots(parentSock) {
 async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
   const phoneNumber = jidToNumber(senderJid);
 
-  // Un LID (los 15 dígitos que empiezan por 1) no sirve para pedir código.
   if (!numeroValido(phoneNumber)) {
     return reply(`❌ *Número inválido:* \`${phoneNumber}\`\n\nParece un LID.\n👉 Usa: *${config.prefix[0]}jadibot 5354386852*`);
   }
@@ -158,14 +140,12 @@ async function startSubbot(parentSock, senderJid, remoteJid, reply, method) {
     return reply(`⚠️ Ya tienes un subbot activo (${phoneNumber}).`);
   }
 
-  // La sesión va donde `.bots` y `.stopbot` la buscan. Si venía guardada en la
-  // carpeta vieja (`sub/<número>`), se mueve aquí antes de usarla.
   migrarSesionVieja(phoneNumber);
   const sessionPath = rutaSesion(phoneNumber);
   if (!fs.existsSync(SUB_SESSION_DIR)) fs.mkdirSync(SUB_SESSION_DIR, { recursive: true });
 
   const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-const { version } = await fetchLatestBaileysVersion();
+  const { version } = await fetchLatestBaileysVersion(); // 👈 Ahora sí funciona
 
   const subSock = makeWASocket({
     version,
@@ -193,7 +173,7 @@ const { version } = await fetchLatestBaileysVersion();
         const code = await subSock.requestPairingCode(phoneNumber);
 
         const msg1 = await parentSock.sendMessage(remoteJid, {
-          text: `> 𝙰𝚍𝚘-𝑩𝒐𝒕✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
+          text: `> 𝘼𝙙𝙤-𝑩𝒐𝒕✰\n\n✐ Cσɳҽxισɳ SυႦ-Bσƚ Mσԃҽ Cσԃҽ\n\n✰ Usa este Código para convertirte en un *Sub-Bot* Temporal.\n\n✧ No es recomendable usar tu cuenta principal.`
         });
 
         await new Promise(r => setTimeout(r, 800));
@@ -220,7 +200,6 @@ const { version } = await fetchLatestBaileysVersion();
 
     if (connection === "close") {
       const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-      // La cola se para con su motivo: los envíos esperan en vez de perderse.
       saludAntiban?.anotarDesconexion();
       colaAntiban?.pausar("conexion");
       activeSubbots.delete(phoneNumber);
@@ -244,16 +223,17 @@ const { version } = await fetchLatestBaileysVersion();
     }
   });
 
-  // Cargar dinámicamente los eventos en los subbots también
   for (const [eventName, pluginList] of events) {
     subSock.ev.on(eventName, async (...args) => {
       for (const plugin of pluginList) {
-        try { await plugin.execute(subSock, ...args); } catch (err) {}
+        const manejador = typeof plugin.onEvent === "function" ? plugin.onEvent : plugin.execute;
+        try { await manejador(subSock, ...args); } catch (err) {}
       }
     });
   }
 
   subSock.ev.on("messages.upsert", (ev) => handleMessages(subSock, ev));
+  return subSock;
 }
 
 // 🧙 BANNER
@@ -267,15 +247,10 @@ console.log(color("💫 Ado-Bot se está iniciando...", "magenta"));
 // 🧠 VARIABLES GLOBALES
 const BOT_NAME = config.botName;
 
-// El respaldo en texto de los botones tiene que escribir el prefijo real del
-// bot (`→ .allmenu`). Sin esto escribía el id pelado, y copiarlo no hacía nada.
 usarPrefijoBotones(config.prefix[0]);
 let reconectando = false;
 
-// 🛡️ ANTI-BAN — una sola cola para todo el proceso.
-// El ritmo, el calentamiento y el vigilante viven aquí y NO se recrean al
-// reconectar: si se recrearan, cada reconexión reiniciaría el tope diario y el
-// contador de reconexiones, que es justo lo que hay que vigilar.
+// 🛡️ ANTI-BAN
 let sockActual = null;
 let limitadorAntiban = null;
 let colaAntiban = null;
@@ -283,9 +258,6 @@ let saludAntiban = null;
 let vigilanteAntiban = null;
 let ritmoAntiban = null;
 
-// Los que deben responder aunque el tope diario esté alcanzado: son respuestas
-// directas a quien escribe (lo menos parecido a un bot que hay) y sin ellos
-// parece que el bot está muerto.
 const COMANDOS_URGENTES = new Set([
   "menu", "allmenu", "menucat", "comandos", "help", "ayuda", "info",
   "ping", "p", "prueba", "pba", "health", "salud", "status", "estado",
@@ -296,9 +268,6 @@ function prepararAntiban(sock) {
   global.db.data.antiban ||= {};
   limitadorAntiban ||= crearLimitador({ estado: global.db.data.antiban });
   saludAntiban ||= crearSalud();
-  // El ritmo vive aparte del tope diario: cuenta conversaciones nuevas (no
-  // mensajes), mira la hora y se encarga del «escribiendo…». Su memoria también
-  // va a la base, así que reconectar no lo reinicia.
   global.db.data.ritmo ||= {};
   ritmoAntiban ||= crearRitmo({ estado: global.db.data.ritmo });
   colaAntiban ||= crearCola({ limitador: limitadorAntiban, salud: saludAntiban, ritmo: ritmoAntiban });
@@ -312,8 +281,6 @@ function prepararAntiban(sock) {
   });
   vigilanteAntiban.iniciar();
 
-  // A la vista para los plugins (`.warmup`, `.health`): el estado real, no una
-  // copia. Así lo que se cuenta en WhatsApp es lo que está pasando.
   global.antiban = {
     limitador: limitadorAntiban,
     cola: colaAntiban,
@@ -323,9 +290,6 @@ function prepararAntiban(sock) {
     avisoVeterano: AVISO_VETERANO,
   };
 
-  // El perfil veterano se avisa en voz alta al arrancar: quita la rampa de
-  // días, y eso es justo lo que protege a un número nuevo. Que se vea cada vez
-  // que arranca, no solo la primera.
   if (limitadorAntiban.resumen().perfil === "veterano") {
     console.warn(`\n${AVISO_VETERANO}\n`);
   }
@@ -334,9 +298,6 @@ function prepararAntiban(sock) {
 }
 
 // ⏰ VIGILANTE DE RECORDATORIOS
-// Los avisos viven en la base (lib/recordatorios.js) y este bucle los saca.
-// Uno solo para todo el proceso: si se reconecta, se reinicia en vez de
-// acumular intervalos mandando el mismo aviso varias veces.
 let vigilanteRecordatorios = null;
 function iniciarVigilante(sock) {
   if (vigilanteRecordatorios) clearInterval(vigilanteRecordatorios);
@@ -356,12 +317,11 @@ function iniciarVigilante(sock) {
       }
     }
   };
-  // 20 s es suficiente para minutos y no castiga el servidor.
   vigilanteRecordatorios = setInterval(revisar, 20_000);
-  setTimeout(revisar, 30_000); // primer repaso con margen, tras conectar
+  setTimeout(revisar, 30_000);
 }
 
-// 🧾 ASK (para Termux local)
+// 🧾 ASK
 function ask(promptText) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise((resolve) => rl.question(promptText, (ans) => { rl.close(); resolve(ans.trim()); }));
@@ -378,12 +338,10 @@ function getRealSender(m) {
   return k.participant || k.remoteJid;
 }
 
-// 🚀 START — SOLO CONEXIÓN
+// 🚀 START
 async function startLevi() {
   await loadPlugins(); 
   const { state, saveCreds } = await useMultiFileAuthState("./session");
-  // La versión se pregunta a WhatsApp (no al repositorio de Baileys): con la
-  // del repositorio, WhatsApp cierra la conexión por «client out of date».
   const { version, texto: textoVersion } = await versionParaLog();
   console.log(`🔌 Cliente: ${PAQUETE_BAILEYS}`);
   console.log(textoVersion);
@@ -428,7 +386,6 @@ async function startLevi() {
       console.log(`✅ ${BOT_NAME} conectado correctamente.`);
       iniciarVigilante(sock);
       restaurarSubbots(sock).catch((e) => console.log("⚠️ Sub-bots:", e.message));
-      // La conexión volvió: los mensajes que esperaban en la cola salen ahora.
       colaAntiban?.reanudar("conexion");
       vigilanteAntiban?.latido();
     }
@@ -440,16 +397,10 @@ async function startLevi() {
         process.exit(1);
       }
 
-      // Si WhatsApp cierra por «client out of date» (405) el aviso tiene que
-      // decir qué pasa de verdad: no es el WhatsApp del móvil.
       if (reason === 405) {
-        console.log("⚠️  WhatsApp rechazó la versión de Web que anuncia el bot (client out of date).");
-        console.log("    No es tu WhatsApp: es el número de revisión. Revisa la conexión a internet");
-        console.log("    del servidor, porque sin ella no se puede preguntar la versión a WhatsApp.");
+        console.log("⚠️ WhatsApp rechazó la versión de Web que anuncia el bot.");
       }
 
-      // Un solo reconectador: antes, dos cierres seguidos arrancaban dos
-      // sockets vivos a la vez, cada uno con sus oyentes.
       if (reconectando) return;
       reconectando = true;
       console.log("♻️ Reconectando...");
@@ -460,13 +411,9 @@ async function startLevi() {
     }
   });
 
-  // 👇 AQUÍ REGISTRAMOS LOS EVENTOS DINÁMICOS
   for (const [eventName, pluginList] of events) {
     sock.ev.on(eventName, async (...args) => {
       for (const plugin of pluginList) {
-        // Un plugin de evento declara `onEvent`. Se acepta también `execute`
-        // para los que ya existían (antes se llamaba siempre a execute, que en
-        // un plugin de comando recibe el contexto y se rompe).
         const manejador = typeof plugin.onEvent === "function" ? plugin.onEvent : plugin.execute;
         try {
           await manejador(sock, ...args);
@@ -482,22 +429,17 @@ async function startLevi() {
 }
 
 // ═══════════════════════════════════════════
-// HANDLE MESSAGES — MULTI-PREFIJO Y EJECUTOR
+// HANDLE MESSAGES
 // ═══════════════════════════════════════════
 async function handleMessages(sock, { messages, type }) {
   if (type !== "notify") return;
-  vigilanteAntiban?.latido(); // señal de vida para el vigilante
+  vigilanteAntiban?.latido(); 
   global.__contadorMensajes = (global.__contadorMensajes || 0) + 1;
   const m = messages[0];
   if (!m.message || m.key.fromMe) return;
 
-  // Quien nos escribe enciende su chat: contestarle no cuenta como abrir una
-  // conversación nueva (que es lo único que de verdad gasta reputación).
   ritmoAntiban?.anotarEntrante(m.key.remoteJid);
 
-  // Si viene de un botón (quick_reply), el id del botón ES el comando.
-  // Sin esto, pulsar un botón manda un mensaje que el router no entiende y no
-  // pasa nada: el botón «funciona» pero no hace nada.
   const pulsado = botonPulsado(m);
   const deBoton = Boolean(pulsado?.id);
 
@@ -505,13 +447,8 @@ async function handleMessages(sock, { messages, type }) {
   if (!texto && deBoton) texto = `${config.prefix[0]}${String(pulsado.id).trim()}`;
   if (!texto) return;
 
-  // 🔍 Detectar cuál de los prefijos del array se usó
   const usedPrefix = config.prefix.find(p => texto.startsWith(p));
 
-  // 🔍 Y si no trae prefijo: ¿es el id de un botón escrito a mano?
-  // Algunos clientes degradan la respuesta de un botón a texto plano con el id
-  // pelado (`allmenu`). Se atiende solo si es un comando que existe: así un
-  // «hola» sigue siendo un «hola» y nadie ejecuta nada sin querer.
   let prefijoEfectivo = usedPrefix;
   if (!prefijoEfectivo) {
     const posible = String(texto).trim().toLowerCase();
@@ -527,7 +464,6 @@ async function handleMessages(sock, { messages, type }) {
   const from = remoteJid;
   const sender = getRealSender(m);
 
-  // 🕵️‍♂️ LÓGICA DE PRIVACIDAD (Si el comando termina en '-')
   let textoLimpio = texto.slice(prefijoEfectivo.length).trim();
   let esPrivado = false;
 
@@ -545,7 +481,6 @@ async function handleMessages(sock, { messages, type }) {
   const args = textoLimpio.trim().split(/\s+/);
   const comando = args.shift().toLowerCase();
   
-  // Un ✅ sobre el botón pulsado: la persona ve que su toque llegó.
   if (deBoton) sock.sendMessage(from, { react: { text: "⚡", key: m.key } }).catch(() => {});
 
   const targetChat = esPrivado ? sender : from;
@@ -553,14 +488,9 @@ async function handleMessages(sock, { messages, type }) {
 
   console.log(`💬 [${from}] ${texto} ${esPrivado ? "🔒 (Privado)" : ""}`);
 
-
-
   const plugin = commands.get(comando);
   if (!plugin) return;
 
-  // Grupo apagado con `.bot off`: no se responde a nada salvo a volver a
-  // encenderlo. Se hace aquí, en el router, porque si lo comprobara cada
-  // plugin siempre habría alguno que se olvida y el «apagado» no apagaría.
   if (isGroup && global.db?.data?.chats?.[remoteJid]?.botApagado) {
     if (comando !== "bot" && comando !== "boton") return;
   }
@@ -569,16 +499,12 @@ async function handleMessages(sock, { messages, type }) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
   }
 
-  // Candado de administrador en el router: si un plugin se declara isAdmin, la
-  // comprobación la hace el bot y no cada plugin por su cuenta (que es donde se
-  // olvidaba y quedaban comandos de admin abiertos a cualquiera).
   if (plugin.isAdmin) {
     if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
     const autorizado = await esAdmin(sock, from, sender, isOwnerCheck(sender, sock));
     if (!autorizado) return enviartexto("⚠️ Solo los administradores pueden usar este comando.");
   }
 
-  // Contexto inyectado a todos los plugins
   const ctx = {
     sock, 
     m, 
@@ -589,7 +515,7 @@ async function handleMessages(sock, { messages, type }) {
     comando, 
     texto: textoLimpio, 
     enviartexto, 
-    PREFIX: usedPrefix, 
+    PREFIX: usedPrefix || config.prefix[0], 
     BOT_NAME, 
     config, 
     db: global.db.data,
@@ -597,8 +523,6 @@ async function handleMessages(sock, { messages, type }) {
   };
 
   try {
-    // Ventana de prioridad: lo que envíe un comando urgente (.menu, .ping…)
-    // sale con la espera mínima y no lo frena el tope diario del calentamiento.
     if (COMANDOS_URGENTES.has(comando) && colaAntiban) {
       await colaAntiban.conPrioridad(() => plugin.execute(ctx));
     } else {
