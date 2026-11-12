@@ -451,7 +451,7 @@ export default {
               ],
             },
           ]),
-          rapido("🗂️ Categorías (.menucat)", "allmenu"),
+          rapido("🗂️ Categorías", "menucatstyle"),
           rapido("☰ Ver todo", "allmenu"),
         ],
       }).catch(() => {});
