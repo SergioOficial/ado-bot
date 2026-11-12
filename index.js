@@ -496,6 +496,16 @@ async function handleMessages(sock, { messages, type }) {
     if (comando !== "bot" && comando !== "boton") return;
   }
 
+  // Bot primario: si el grupo tiene uno asignado, solo él responde.
+  // Se exceptúa setprimary/primary para poder cambiarlo.
+  if (isGroup && comando !== "setprimary" && comando !== "primary") {
+    const primario = global.db?.data?.chats?.[remoteJid]?.primaryBot;
+    if (primario) {
+      const yo = jidToNumber(sock.user?.id || "") + "@s.whatsapp.net";
+      if (yo !== primario) return;
+    }
+  }
+
   if (plugin.isOwner && !isOwnerCheck(sender, sock)) {
     return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
   }

@@ -16,9 +16,9 @@ export default {
     const nivelUser = user.nivel || 1;
     const rangoTexto = user.nombre ? `Nv. ${nivelUser} | ${esPremium}` : "No registrado";
 
-    const CANAL_JID = "120363415858789528@newsletter";
+    const CANAL_JID = "120363425322183138@newsletter";
     const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
-    const CANAL_URL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
+    const CANAL_URL = "https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j";
     const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
     
     let texto = "";

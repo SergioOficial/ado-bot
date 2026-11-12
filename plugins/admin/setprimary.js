@@ -3,6 +3,7 @@ import path from "path";
 
 export default {
   command: ["setprimary", "primary"],
+  isAdmin: true,
   execute: async (ctx) => {
     const { sock, from, m, sender, isGroup, enviartexto, db, jidToNumber } = ctx;
 
@@ -38,7 +39,8 @@ export default {
       return enviartexto(`《✧》 El bot mencionado no está presente en este grupo.`);
     }
 
-    const chat = db.chats[from];
+    if (!db.chats) db.chats = {};
+    const chat = (db.chats[from] ??= {});
     if (chat.primaryBot === who) {
       return sock.sendMessage(from, { text: `「✿」 @${jidToNumber(who)} ya es el Bot principal del Grupo.`, mentions: [who] }, { quoted: m });
     }

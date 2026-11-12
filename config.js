@@ -4,7 +4,7 @@ export const config = {
   // 🔥 MULTI-PREFIJO: El bot responderá a cualquiera de estos
   prefix: [".", "#", "/", "🇨🇺"],
   
-  botName: "𝐀𝐝𝐨 𝐁𝐨𝐭 🩸", 
+  botName: "Ado Bot",
   
 
   // Lista de owners (múltiples)

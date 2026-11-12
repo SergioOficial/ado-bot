@@ -4,8 +4,8 @@ export default {
   execute: async (ctx) => {
     const { sock, from, m, enviartexto } = ctx;
     const { performance } = await import("perf_hooks");
-    const CANAL_URL = "https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d";
-    const CANAL_JID = "120363415858789528@newsletter";
+    const CANAL_URL = "https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j";
+    const CANAL_JID = "120363425322183138@newsletter";
     const CANAL_NOMBRE = "⍪❖Ƭʜᴇ Kakashi—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const localImagePath = "/storage/emulated/0/Pictures/WhatsApp/IMG-20261103-WA0027.jpg";
 
