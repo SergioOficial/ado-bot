@@ -1,56 +1,86 @@
-import yts from 'yt-search';
-import axios from 'axios';
+import axios from "axios";
+import yts from "yt-search";
+
+const safeFileName = (name) => String(name || 'video').replace(/[/\\?%*:|"<>]/g, '-').slice(0, 50);
+const YT_REGEX = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i;
 
 export default {
-  command: ['play2', 'mp4', 'ytmp4', 'ytvideo', 'playvideo'],
+  command: ["play2", "ytmp4", "mp4", "ytvideo", "playvideo"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
+    const query = args.join(" ").trim();
 
-    if (!args[0]) return enviartexto('《✧》Por favor, menciona el nombre o URL del video que deseas descargar');
+    if (!query) {
+      return enviartexto(`🎬 *REPRODUCTOR DE VIDEO*\n\nUso: ${config.prefix[0]}play2 <canción o enlace>\nEjemplo: ${config.prefix[0]}play2 faded alan walker`);
+    }
 
-    const text = args.join(' ');
-    const waitMsg = await sock.sendMessage(from, { text: `🔍 *Buscando:* "${text}"...` }, { quoted: m });
+    const waitMsg = await sock.sendMessage(from, { text: `🔍 *Buscando:* "${query}"...` }, { quoted: m });
 
     try {
-      const videoMatch = text.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/))([a-zA-Z0-9_-]{11})/);
-      const query = videoMatch ? 'https://youtu.be/' + videoMatch[1] : text;
-      
-      const search = await yts(query);
-      if (!search.all.length) throw new Error('No se encontraron resultados.');
-      
-      const videoInfo = videoMatch ? search.videos.find(v => v.videoId === videoMatch[1]) || search.all[0] : search.all[0];
-      const url = videoInfo.url;
+      let youtubeUrl = query;
+      let videoInfo = null;
 
-      const apis = [
-        `https://api.siputzx.my.id/api/d/ytmp4?url=${encodeURIComponent(url)}`
-      ];
-
-      let videoBuffer = null;
-
-      for (const api of apis) {
-        try {
-          const res = await axios.get(api, { timeout: 15000 });
-          const dlUrl = res.data?.data?.url || res.data?.data?.dl || res.data?.result?.url;
-          if (dlUrl) {
-            const videoRes = await axios.get(dlUrl, { responseType: 'arraybuffer', timeout: 45000 });
-            videoBuffer = Buffer.from(videoRes.data, 'binary');
-            break;
-          }
-        } catch (e) { console.log('API fallida:', e.message); }
+      if (!YT_REGEX.test(query)) {
+        const search = await yts(query);
+        if (!search.all || search.all.length === 0) throw new Error("No se encontraron resultados en YouTube.");
+        
+        videoInfo = search.all[0];
+        youtubeUrl = videoInfo.url;
       }
 
-      if (!videoBuffer) throw new Error('Todas las APIs de descarga fallaron.');
+      const apiKey = process.env.NATSU_API_KEY || "";
+      const apiUrl = `https://natsu-api.darkcore.xyz/api/ytmp4?url=${encodeURIComponent(youtubeUrl)}&apikey=${apiKey}`;
+      
+      const res = await axios.get(apiUrl, { timeout: 30000 });
+      const data = res.data;
 
-      await sock.sendMessage(from, { text: `✅ *Video encontrado.*\n_Enviando video..._`, edit: waitMsg.key }).catch(() => {});
+      const videoUrl = 
+        data.data?.url || 
+        data.data?.download || 
+        data.result?.url || 
+        data.url || 
+        data.download;
+
+      if (!videoUrl) {
+        throw new Error("La API no devolvió un enlace de descarga válido.");
+      }
+
+      const title = data.data?.title || data.result?.title || videoInfo?.title || "Video de YouTube";
+      const author = data.data?.author || data.result?.author || videoInfo?.author?.name || "YouTube";
+
+      const videoRes = await axios.get(videoUrl, { 
+        responseType: 'arraybuffer',
+        timeout: 60000 
+      });
+      const videoBuffer = Buffer.from(videoRes.data);
+
+      const captionEdit = 
+        `✅ *Encontrado:*\n\n` +
+        `🎬 *Título:* ${title}\n` +
+        `👤 *Canal:* ${author}\n` +
+        `🔗 *URL:* ${youtubeUrl}\n\n` +
+        `> _Enviando video..._`;
+
+      await sock.sendMessage(from, { text: captionEdit, edit: waitMsg.key }).catch(() => {});
 
       await sock.sendMessage(from, {
         video: videoBuffer,
-        fileName: `${videoInfo.title}.mp4`,
-        mimetype: 'video/mp4'
+        fileName: `${safeFileName(title)}.mp4`,
+        mimetype: "video/mp4"
       }, { quoted: m });
 
+      await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
     } catch (e) {
-      await sock.sendMessage(from, { text: `❌ Error: ${e.message}`, edit: waitMsg.key }).catch(() => {});
+      console.error("Error en play2 (Natsu):", e.message);
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      
+      await sock.sendMessage(from, { 
+        text: `❌ *Error al descargar el video.*\n🔎 Detalle: _${e.message}_`, 
+        edit: waitMsg.key 
+      }).catch(() => {
+        enviartexto(`❌ Error: ${e.message}`);
+      });
     }
   }
 };
