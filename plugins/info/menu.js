@@ -59,6 +59,11 @@ export default {
 ┃ ➤ ${PREFIX}trabajar | ${PREFIX}cazar | ${PREFIX}pescar
 ┃ ➤ ${PREFIX}minar | ${PREFIX}explorar
 ┃ ➤ ${PREFIX}clase | ${PREFIX}ranknivel
+┃ ➤ ${PREFIX}talar | ${PREFIX}cultivar
+┃ ➤ ${PREFIX}repartir | ${PREFIX}pintar
+┃ ➤ ${PREFIX}hackear | ${PREFIX}streamer
+┃ ➤ ${PREFIX}policia | ${PREFIX}bombero
+┃ ➤ ${PREFIX}espiar | ${PREFIX}mago
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -201,6 +206,16 @@ export default {
 ┃ 🗺️ » ${PREFIX}explorar
 ┃ 🎭 » ${PREFIX}clase
 ┃ 🏅 » ${PREFIX}ranknivel
+┃ 🪓 » ${PREFIX}talar 
+┃ 🍠 » ${PREFIX}cultivar
+┃ 🚚 » ${PREFIX}repartir 
+┃ 🖌️ » ${PREFIX}pintar
+┃ 💻 » ${PREFIX}hackear 
+┃ 📷 » ${PREFIX}streamer
+┃ 🚔 » ${PREFIX}policia 
+┃ 💧 » ${PREFIX}bombero
+┃ 🫩 » ${PREFIX}espiar 
+┃ 🪄 » ${PREFIX}mago
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
