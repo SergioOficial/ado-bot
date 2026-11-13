@@ -54,6 +54,16 @@ export default {
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
+┃ 🐾 *𝐌𝐀𝐒𝐂𝐎𝐓𝐀𝐒* 🐾
+┣━━━━━━━━━━━━━━━━━━┛
+┃ ➤ ${PREFIX}adoptar <animal>
+┃ ➤ ${PREFIX}animal (Ver tus pets)
+┃ ➤ ${PREFIX}nombrar <pet> <nombre>
+┃ ➤ ${PREFIX}acariciar / alimentar / pasear
+┃ ➤ ${PREFIX}animaltop
+┗━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━┓
 ┃ ⚔️ *𝐑𝐏𝐆* ⚔️
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}trabajar | ${PREFIX}cazar | ${PREFIX}pescar
@@ -216,6 +226,11 @@ export default {
 ┃ 💧 » ${PREFIX}bombero
 ┃ 🫩 » ${PREFIX}espiar 
 ┃ 🪄 » ${PREFIX}mago
+┃ 🐶 » ${PREFIX}adoptar <animal>
+┃ 🦍 » ${PREFIX}animal (Ver tus pets)
+┃ 🏷️ » ${PREFIX}nombrar <pet> <nombre>
+┃ 🫱» ${PREFIX}acariciar / alimentar / pasear
+┃ 🔝 » ${PREFIX}animaltop
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
