@@ -1,81 +1,104 @@
 import fs from "fs";
 import path from "path";
-import { SUB_SESIONES, subSesiones } from "../../lib/rutas.js";
 
 export default {
   command: ["setprimary", "primary"],
-  isAdmin: true,
   execute: async (ctx) => {
-    const { sock, from, m, sender, isGroup, enviartexto, db, jidToNumber, getActiveSubbots, args } = ctx;
+    const { sock, from, m, sender, isGroup, enviartexto, db, jidToNumber } = ctx;
 
     if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
 
+    // 🔍 Obtener el JID del mencionado o citado
     const ctxInfo = m.message?.extendedTextMessage?.contextInfo;
     const mentioned = ctxInfo?.mentionedJid?.[0];
     const quotedSender = ctxInfo?.participant;
-    let who2 = mentioned || quotedSender;
+    const whoRaw = mentioned || quotedSender;
 
-    // Sin mención: aceptar el número como argumento (.setprimary 5354386852).
-    if (!who2 && args?.[0]) {
-      const num = String(args[0]).replace(/\D/g, "");
-      if (num) who2 = `${num}@s.whatsapp.net`;
-    }
+    if (!whoRaw) return enviartexto("《✧》 Por favor menciona un bot para convertirlo en primario.");
 
-    if (!who2) return enviartexto("《✧》 Por favor menciona un bot para convertirlo en primario.");
+    // 🕵️‍♂️ RESOLVER LID A NÚMERO REAL
+    const meta = await sock.groupMetadata(from);
+    let who = null;
 
-    // Si la mención viene como LID, resolverla a número de teléfono.
-    if (String(who2).endsWith("@lid")) {
-      try {
-        const pn = await sock.signalRepository?.lidMapping?.getPNForLID?.(who2);
-        if (pn) who2 = pn;
-      } catch {}
-    }
-
-    const who = jidToNumber(who2) + "@s.whatsapp.net";
-
-    // Sub-bots activos en memoria (los conectados ahora mismo).
-    let activos = [];
-    try {
-      const mapa = getActiveSubbots?.();
-      if (mapa) activos = [...mapa.keys()];
-    } catch {}
-
-    // Más los que tienen sesión guardada (aunque estén desconectados).
-    let guardados = [];
-    try {
-      guardados = subSesiones();
-    } catch {
-      try {
-        if (fs.existsSync(SUB_SESIONES)) {
-          guardados = fs.readdirSync(SUB_SESIONES).filter((d) => fs.existsSync(path.join(SUB_SESIONES, d, "creds.json")));
+    // 1. Buscar el JID en los participantes usando múltiples comparaciones
+    const targetNum = jidToNumber(whoRaw);
+    for (const p of meta.participants) {
+      const candidates = [p.id, p.lid, p.phoneNumber, p.jid].filter(Boolean);
+      for (const c of candidates) {
+        if (c === whoRaw || jidToNumber(c) === targetNum) {
+          // Encontramos la coincidencia, usamos el phoneNumber o id real
+          const realJid = p.phoneNumber || p.id || p.jid;
+          if (realJid && !realJid.includes('@lid')) {
+            who = jidToNumber(realJid) + "@s.whatsapp.net";
+            break;
+          }
         }
-      } catch {}
+      }
+      if (who) break;
+    }
+
+    // 2. Si no encontramos coincidencia y parece LID, intentar resolver con onWhatsApp
+    if (!who && whoRaw.includes("@lid")) {
+      try {
+        const result = await sock.onWhatsApp(whoRaw);
+        if (result && result[0] && result[0].jid) {
+          who = result[0].jid;
+        }
+      } catch (e) {
+        console.log("No se pudo resolver el LID con onWhatsApp");
+      }
+    }
+
+    // 3. Fallback: usar el JID raw (por si es un número normal)
+    if (!who) {
+      who = jidToNumber(whoRaw) + "@s.whatsapp.net";
+    }
+
+    // 📁 Leer las sesiones de subbots
+    const subDir = "./sub/SubBots";
+    let subBots = [];
+    if (fs.existsSync(subDir)) {
+      const dirs = fs.readdirSync(subDir);
+      subBots = dirs
+        .filter(dir => fs.existsSync(path.join(subDir, dir, "creds.json")))
+        .map(dir => dir.replace(/\D/g, "") + "@s.whatsapp.net");
     }
 
     const mainBotJid = jidToNumber(sock.user.id) + "@s.whatsapp.net";
-    const allowedBots = [...new Set([...activos, ...guardados].map((n) => jidToNumber(n) + "@s.whatsapp.net").concat(mainBotJid))];
+    const allowedBots = [...new Set([...subBots, mainBotJid])];
 
-    if (!allowedBots.includes(who)) {
-      return enviartexto(`《✧》 El usuario mencionado no es una instancia de Sub-Bot.`);
+    // ✅ Verificar si el mencionado es un subbot o el bot principal
+    const whoNum = jidToNumber(who);
+    const esBotValido = allowedBots.some(b => jidToNumber(b) === whoNum);
+
+    if (!esBotValido) {
+      return enviartexto(`《✧》 El usuario mencionado no es una instancia de Sub-Bot válida.\n\n> Detectado: @${whoNum}`, { mentions: [who] });
     }
 
-    const meta = await sock.groupMetadata(from);
-    const participants = meta.participants.map(p => jidToNumber(p.id || p.lid || p.phoneNumber) + "@s.whatsapp.net");
-
-    if (!participants.includes(who)) {
+    // 📊 Verificar que el bot esté en el grupo
+    const participants = meta.participants.map(p => 
+      jidToNumber(p.id || p.lid || p.phoneNumber)
+    );
+    
+    if (!participants.includes(whoNum)) {
       return enviartexto(`《✧》 El bot mencionado no está presente en este grupo.`);
     }
 
-    if (!db.chats) db.chats = {};
-    const chat = (db.chats[from] ??= {});
+    // 🎯 Guardar como bot primario
+    if (!db.chats[from]) db.chats[from] = {};
+    const chat = db.chats[from];
+    
     if (chat.primaryBot === who) {
-      return sock.sendMessage(from, { text: `「✿」 @${jidToNumber(who)} ya es el Bot principal del Grupo.`, mentions: [who] }, { quoted: m });
+      return sock.sendMessage(from, { 
+        text: `「✿」 @${whoNum} ya es el Bot principal del Grupo.`, 
+        mentions: [who] 
+      }, { quoted: m });
     }
 
     chat.primaryBot = who;
-    await sock.sendMessage(from, {
-      text: `ꕥ Se ha establecido a @${jidToNumber(who)} como bot primario de este grupo.\n> Ahora todos los comandos de este grupo serán ejecutados por @${jidToNumber(who)}.`,
-      mentions: [who]
+    await sock.sendMessage(from, { 
+      text: `ꕥ Se ha establecido a @${whoNum} como bot primario de este grupo.\n> Ahora todos los comandos de este grupo serán ejecutados por @${whoNum}.`, 
+      mentions: [who] 
     }, { quoted: m });
   }
 };
