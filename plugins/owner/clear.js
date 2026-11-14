@@ -1,12 +1,13 @@
 import fs from "fs";
 import path from "path";
+import { TEMPORAL } from "../../lib/rutas.js";
 
 export default {
   command: ["clear", "limpiar"],
   isOwner: true,
   execute: async (ctx) => {
     const { enviartexto } = ctx;
-    const tmpDir = "./tmp";
+    const tmpDir = TEMPORAL;
 
     if (!fs.existsSync(tmpDir)) return enviartexto("✅ La carpeta temporal ya está vacía.");
 

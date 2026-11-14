@@ -312,7 +312,7 @@ pruebas.push(
     esVerdad(LEYENDA.includes("〔 🔖 GUÍA RÁPIDA 〕"), "título");
     esVerdad(CREDITO.includes("Shin-MD · Bot de WhatsApp Profesional"), "nombre");
     esVerdad(CREDITO.includes("github.com/riokuroxi-svg/Shin-MD"), "repo");
-    esVerdad(CREDITO.includes("https://whatsapp.com/channel/0029Vb0VFpSGJP89hfZUe522"), "canal");
+    esVerdad(CREDITO.includes("https://whatsapp.com/channel/0029VbDVFpSGJP89hfZUe522"), "canal");
   }],
 
   ["las marcas salen de los plugins, no de una lista a mano", () => {

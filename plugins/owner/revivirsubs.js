@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { numerosDeSubSesiones } from "../../lib/rutas.js";
 
 export default {
   command: ["revivirsubs", "restarsubs", "activarsubs"],
@@ -7,14 +6,14 @@ export default {
   execute: async (ctx) => {
     const { sock, enviartexto, getActiveSubbots, startSubbot } = ctx;
     
-    // Ruta donde tu index.js guarda las sesiones
-    const subDir = "./sub/SubBots"; 
-    
-    if (!fs.existsSync(subDir)) {
-      return enviartexto("❌ No existe la carpeta de sesiones de subbots.");
+    // Las sesiones salen de lib/rutas.js (antes la carpeta estaba escrita aquí a
+    // mano, duplicada con .setprimary). `numerosDeSubSesiones` ya devuelve solo
+    // las que tienen creds.json, o sea las vinculadas de verdad.
+    const numeros = numerosDeSubSesiones();
+    if (!numeros.length) {
+      return enviartexto("❌ No hay sesiones de sub-bots vinculadas.");
     }
 
-    const folders = fs.readdirSync(subDir);
     const activos = Array.from(getActiveSubbots().keys());
     
     let revividos = 0;
@@ -23,15 +22,7 @@ export default {
 
     await enviartexto("⏳ *Escaneando y reactivando sub-bots...*");
 
-    for (const folder of folders) {
-      const credsPath = path.join(subDir, folder, "creds.json");
-      
-      // Si la carpeta no tiene credenciales, significa que no se vinculó bien
-      if (!fs.existsSync(credsPath)) continue;
-      
-      const numero = folder.replace(/\D/g, ""); 
-      if (!numero) continue;
-      
+    for (const numero of numeros) {
       // Verificar si ya está encendido
       if (activos.includes(numero)) {
         yaActivos++;

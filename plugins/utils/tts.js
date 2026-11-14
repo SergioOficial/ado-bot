@@ -2,6 +2,7 @@ import axios from "axios";
 import { spawn } from "child_process";
 import fs from "fs";
 import path from "path";
+import { TEMPORAL } from "../../lib/rutas.js";
 
 export default {
   command: ["tts", "voz"],
@@ -12,7 +13,7 @@ export default {
 
     await sock.sendMessage(from, { react: { text: "🎤", key: m.key } });
 
-    const tmpDir = "./tmp";
+    const tmpDir = TEMPORAL;
     if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
     
     const inputFile = path.join(tmpDir, `tts_in_${Date.now()}.mp3`);

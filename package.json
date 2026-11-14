@@ -17,7 +17,9 @@
     "chalk": "^5.6.2",
     "cheerio": "^1.2.0",
     "figlet": "^1.9.3",
+    "form-data": "^4.0.6",
     "gradient-string": "^3.0.0",
+    "mime-types": "^2.1.35",
     "node-fetch": "^3.3.2",
     "pino": "^9.14.0",
     "play-dl": "^1.9.7",
@@ -43,7 +45,8 @@
     "humo": "node scripts/humo.mjs",
     "mapa": "node scripts/mapa-porte.mjs",
     "test": "node scripts/probar.mjs",
-    "sintaxis": "node scripts/revisar-sintaxis.mjs"
+    "sintaxis": "node scripts/revisar-sintaxis.mjs",
+    "imports": "node scripts/revisar-imports.mjs"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,8 @@
+import { TEMPORAL } from "../../lib/rutas.js";
 import fs from "fs";
 
 // 📁 Crear carpeta temporal si no existe
-if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp", { recursive: true });
+if (!fs.existsSync(TEMPORAL)) fs.mkdirSync(TEMPORAL, { recursive: true });
 const logFile = "./tmp/console.log";
 
 // 🕵️‍♂️ Interceptar la consola (Solo se ejecuta una vez)

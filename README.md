@@ -206,9 +206,11 @@ vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 105 pruebas: recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
-| `npm run humo` | Llama a los 90 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
+| `npm run probar` | 229 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run humo` | Llama a los 116 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
+| `npm run sintaxis` | `node --check` en los 219 archivos del árbol, incluidos los plugins que solo se cargan al usarse. |
+| `npm run imports` | Que todo import apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en `package.json`. |
 | `npm run vigia` | Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o `nohup`). |
 
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
@@ -221,12 +223,20 @@ culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
 
 ```text
 ado-bot/
-├── index.js              # Núcleo: conexión, multi-prefijo, router y vigilante
+├── index.js              # Punto de entrada: una línea que arranca boot/
+├── boot/                 # El núcleo, una pieza por archivo
+│   ├── arranque.js       #   orden de encendido: conexión, router, sub-bots, vigilantes
+│   ├── router.js         #   de messages.upsert a un plugin, con aislamiento de fallos
+│   ├── subbots.js        #   ciclo de vida de los sub-bots, con techo de reintentos
+│   ├── vigilantes.js     #   recordatorios, memoria y anti-ban, con su apagado
+│   └── anti-cuelgue.js   #   que un error suelto o un corte de red no apague Node
 ├── pluginLoader.js       # Escáner de comandos y eventos
 ├── config.js             # Prefijos, owners, nombre del bot, footer
 ├── lib/                  # Lo compartido, sin duplicar en cada plugin
 │   ├── baileys.js        #   cliente único (fork por defecto, con respaldo)
 │   ├── wa-version.js     #   versión de WhatsApp Web preguntada a WhatsApp
+│   ├── compuerta.js      #   qué mensaje entrante es un comando (puro, probado)
+│   ├── bucles.js         #   corte del eco entre cuentas de bot
 │   ├── botones.js        #   botones nativos + respaldo en texto
 │   ├── wa-nodes.js       #   nodos binarios que exigen los mensajes con botones
 │   ├── encuestas.js      #   encuesta, quiz y voto múltiple nativos
@@ -257,7 +267,7 @@ ado-bot/
 │   ├── test/             # botones de prueba
 │   └── utils/            # qr, morse, encuesta, recordar, say, get, pfp, crypto
 ├── pruebas/              # Pruebas que corren sin abrir WhatsApp
-├── scripts/              # verificar · probar · humo · auditar · mapa-porte · vigia
+├── scripts/              # verificar · probar · humo · auditar · sintaxis · imports · vigia
 └── docs/                 # CLIENTE · COMANDOS · PORTE · RETORNO
 ```
 
@@ -326,6 +336,72 @@ incluidos.
 
 ## 🔧 Novedades de esta versión
 
+- 🧱 **El núcleo se partió en piezas** (`boot/`): `index.js` era un archivo de 620
+  líneas donde la conexión, los sub-bots, los vigilantes y el enrutado de
+  mensajes compartían variables. Ahora `index.js` es una línea que arranca
+  `boot/arranque.js`, y cada pieza tiene su archivo — `router.js`, `subbots.js`,
+  `vigilantes.js`, `anti-cuelgue.js` — más `lib/compuerta.js` (qué mensaje es un
+  comando) y `lib/bucles.js` (el eco entre cuentas). Consecuencia práctica:
+  cuando algo falla se abre el archivo de esa pieza. Y cada una se puede probar
+  sin abrir WhatsApp, que es lo que permitió medir todo lo de abajo.
+- 🚪 **El bot ya no se cae con un mensaje raro**. Había dos fallos que mataban el
+  proceso entero, no un comando:
+  · El bloque anti-bucle de `index.js` estaba a medio escribir — le faltaba la
+    llave que lo cerraba, así que el archivo **no compilaba** y el bot no
+    arrancaba (`node --check` lo decía; el CI estaba en rojo).
+  · Comparaba el texto con `PREFIX`, una variable que en ese ámbito no existe.
+    Como el manejador es asíncrono y va enganchado a un evento, ese
+    `ReferenceError` salía como rechazo no manejado y **Node apaga el proceso**:
+    un solo mensaje marcado como propio tiraba el servidor. Ese era el «un bot
+    pone un comando y se cae».
+  Ahora la decisión vive en `lib/compuerta.js`, que nunca lanza (20 pruebas con
+  basura por entrada), el router aísla cada mensaje en su propio `try`, y
+  `boot/anti-cuelgue.js` filtra los cortes de red y aguanta los errores sueltos.
+  **229 pruebas pasan** (eran 157).
+- 🔁 **Eco entre bots cortado** (`lib/bucles.js`): la compuerta descarta lo que
+  la cuenta se manda a sí misma (`fromMe`), que es lo que evita el bucle infinito
+  cuando el bot se responde con algo que empieza con prefijo. Lo que quedaba sin
+  cubrir era el eco entre **dos cuentas distintas** — el caso real con `.jadibot`,
+  donde el sub-bot ve el mensaje del principal como ajeno. Se cortan dos
+  patrones: el mismo pedido calcado dos veces en menos de 1,2 s, y el mensaje que
+  cita una salida propia. Con huella completa (chat + autor + comando + args),
+  así que dos personas pidiendo `.menu` a la vez no se estorban.
+- 🔌 **Los sub-bots ya no se reconectan solos para siempre**: con el código 515
+  (`restartRequired`) el manejador se llamaba a sí mismo sin espera y sin límite,
+  o sea que un 515 persistente ponía al bot a crear sockets sin parar — memoria
+  arriba y una cuenta haciendo cosas raras a toda velocidad, que es justo lo que
+  mira el anti-ban. Ahora hay espera creciente (2 s, 4 s, 8 s… tope 60 s) y techo
+  de 5 intentos, con aviso al dueño cuando se rinde. También se cerró la
+  reentrada (un cierre podía levantar dos sockets para el mismo número, con los
+  dos atendiendo el mismo grupo) y el aviso al sub-bot ya no se pierde cuando el
+  principal reconecta y estrena socket.
+- 💾 **La base se escribe de forma atómica** (`lib/database.js`): se guardaba
+  directo sobre `database.json`. Si el proceso moría a mitad — OOM, `kill -9`, el
+  hosting reciclando el contenedor — el archivo quedaba partido y el bot
+  arrancaba con la base vacía: perfiles, economía y mascotas de todos, perdidos.
+  Ahora se escribe en un temporal y se renombra (`rename` es atómico), y si el
+  JSON llega roto se aparta una copia `.roto-<fecha>` en vez de pisarla.
+- 🧩 **`.tourl` y `.mf` funcionaban de rebote**: importaban `form-data` y
+  `mime-types` sin estar declarados en `package.json` — se resolvían porque otra
+  dependencia los trae instalados. Es el mismo fallo que ya tenía `.apk` con
+  `aptoide-scraper`: en una instalación limpia o al cambiar el árbol, el comando
+  muere. Declarados, y `.tourl` vuelve a importar el cliente desde
+  `lib/baileys.js` en vez de atarse al paquete oficial (el bot corre con el fork).
+- 📁 **Las rutas de datos salen de un solo sitio**: `.setprimary`, `.revivirsubs`,
+  `.clear`, `.error` y `.tts` escribían `./sub/SubBots` y `./tmp` a mano mientras
+  `lib/rutas.js` ya las exportaba. Ya se había visto este fallo una vez (`.bots`
+  buscaba en otra carpeta y la lista salía con un solo bot).
+- 📢 **El crédito del menú apuntaba a un canal que no es el de Shin-MD**: se
+  corregió al de origen, y la prueba que lo vigilaba tenía la URL mal transcrita,
+  así que estaba fallando en cada corrida del CI.
+- 🚦 **Puerta nueva en el CI** (`npm run imports`): `node --check` mira cada
+  archivo por separado, así que un import a un archivo inexistente, a un nombre
+  que el módulo no exporta, o a un paquete sin declarar, pasaba la revisión y
+  reventaba al arrancar. Ahora se revisa el árbol entero — comprobado que detecta
+  los tres casos.
+- 🔔 **Aviso de memoria** (`boot/vigilantes.js`): con sub-bots hay un socket por
+  cuenta y nada miraba la RAM. Se revisa cada 5 minutos y avisa al pasar 700 MB,
+  que es el mismo umbral que `.estado` ya usa para sugerir `.restart`.
 - ⚔️ **Peleas de mascotas con botones** (`plugins/rpg/pelea.js`): `.pelear` saca
   una salvaje del tamaño de tu mascota y `.pelear @alguien` reta a otro
   entrenador. En la tarjeta de la pelea van tres botones — la lista de ataques

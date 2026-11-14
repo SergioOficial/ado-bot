@@ -118,8 +118,14 @@ export const pruebas = [
     igual(borrarSesion("5215574370309", sesiones), false, "ya no hay nada");
   }],
 
-  ["index.js usa las rutas nuevas y restaura los sub-bots al arrancar", () => {
-    const fuente = LEER("index.js");
+  ["el núcleo usa las rutas nuevas y restaura los sub-bots al arrancar", () => {
+    // El arranque se reparte entre index.js y boot/; se mira el conjunto para
+    // que la prueba siga valiendo aunque una pieza cambie de archivo.
+    const fuente = [
+      LEER("index.js"),
+      LEER("boot/arranque.js"),
+      LEER("boot/subbots.js"),
+    ].join("\n");
     // El fallo original, escrito tal cual, no puede volver.
     esVerdad(!fuente.includes("`./sub/${phoneNumber}`"), "nada de sub/<número> a mano");
     esVerdad(fuente.includes("rutaSesion(phoneNumber)"), "la sesión sale de lib/subbots.js");

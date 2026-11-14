@@ -1,6 +1,9 @@
 import axios from 'axios';
 import FormData from 'form-data';
-import { downloadMediaMessage } from '@whiskeysockets/baileys';
+// El cliente se importa de lib/baileys.js, que es quien decide qué paquete
+// usar. Importarlo del paquete directamente dejaba este comando atado al
+// oficial aunque el bot estuviera corriendo con el fork.
+import { downloadMediaMessage } from '../../lib/baileys.js';
 import pino from 'pino';
 
 export default {

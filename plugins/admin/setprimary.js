@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { numerosDeSubSesiones } from "../../lib/rutas.js";
 
 export default {
   command: ["setprimary", "primary"],
@@ -54,15 +53,9 @@ export default {
       who = jidToNumber(whoRaw) + "@s.whatsapp.net";
     }
 
-    // 📁 Leer las sesiones de subbots
-    const subDir = "./sub/SubBots";
-    let subBots = [];
-    if (fs.existsSync(subDir)) {
-      const dirs = fs.readdirSync(subDir);
-      subBots = dirs
-        .filter(dir => fs.existsSync(path.join(subDir, dir, "creds.json")))
-        .map(dir => dir.replace(/\D/g, "") + "@s.whatsapp.net");
-    }
+    // 📁 Las sesiones de sub-bots se leen de lib/rutas.js. Estaba escrito a mano
+    // aquí y en .revivirsubs: si la carpeta cambia de sitio, los dos se enteran.
+    const subBots = numerosDeSubSesiones().map((n) => `${n}@s.whatsapp.net`);
 
     const mainBotJid = jidToNumber(sock.user.id) + "@s.whatsapp.net";
     const allowedBots = [...new Set([...subBots, mainBotJid])];
