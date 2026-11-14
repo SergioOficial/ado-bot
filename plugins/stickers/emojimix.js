@@ -1,4 +1,5 @@
 import { Sticker } from "wa-sticker-formatter";
+import axios from "axios";
 
 export default {
   command: ["emojimix", "mix"],
@@ -18,54 +19,69 @@ export default {
 
     await sock.sendMessage(from, { react: { text: "🕒", key: m.key } });
 
-    try {
-      // 1. Buscar la combinación en Tenor (Emoji Kitchen)
-      const url = `https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ&contentfilter=high&media_filter=png_transparent&component=proactive&collection=emoji_kitchen_v5&q=${encodeURIComponent(emoji1)}_${encodeURIComponent(emoji2)}`;
-      
-      const res = await fetch(url);
-      const json = await res.json();
+    const apiKey = "api-eR9cS";
+    const baseUrl = "https://api.stellarwa.xyz/tools/emojimix";
 
-      if (!json.results || json.results.length === 0) {
-        throw new Error("No se encontraron stickers para esa combinación de emojis.");
-      }
+    // Estrategias de petición (la API puede esperar los emojis de diferentes formas)
+    const estrategias = [
+      // 1. Parámetros separados: ?emoji1=...&emoji2=...
+      `${baseUrl}?key=${apiKey}&emoji1=${encodeURIComponent(emoji1)}&emoji2=${encodeURIComponent(emoji2)}`,
+      // 2. Parámetro único: ?text=emoji1+emoji2
+      `${baseUrl}?key=${apiKey}&text=${encodeURIComponent(emoji1 + "+" + emoji2)}`,
+      // 3. Parámetro único: ?q=emoji1+emoji2
+      `${baseUrl}?key=${apiKey}&q=${encodeURIComponent(emoji1 + "+" + emoji2)}`
+    ];
 
-      const pack = config.botName || "Ado-Bot";
-      const author = config.ownerName || "Sergio Dev";
+    let stickerBuffer = null;
 
-      // 2. Enviar hasta los primeros 3 resultados (para no saturar el chat)
-      const maxResults = Math.min(json.results.length, 3);
-
-      for (let i = 0; i < maxResults; i++) {
-        const result = json.results[i];
-        
-        // Descargar la imagen PNG
-        const imgRes = await fetch(result.url);
-        const arrayBuffer = await imgRes.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-
-        // Convertir a sticker WebP
-        const sticker = new Sticker(buffer, {
-          pack,
-          author,
-          type: "full",
-          quality: 80
+    for (const url of estrategias) {
+      try {
+        const res = await axios.get(url, {
+          responseType: "arraybuffer",
+          timeout: 15000
         });
 
-        const stickerBuffer = await sticker.toBuffer();
+        const buffer = Buffer.from(res.data);
 
-        // Enviar sticker
-        await sock.sendMessage(from, { sticker: stickerBuffer }, { quoted: m });
-        
-        // Pequeña pausa entre envíos
-        await new Promise(r => setTimeout(r, 800));
+        // Si la respuesta es un JSON (empieza con '{'), extraemos la URL de la imagen
+        if (buffer.toString("utf8", 0, 1) === "{") {
+          const data = JSON.parse(buffer.toString());
+          const imgUrl = data.url || data.result?.url || data.image || data.result?.image;
+          if (imgUrl) {
+            const imgRes = await axios.get(imgUrl, { responseType: "arraybuffer" });
+            stickerBuffer = Buffer.from(imgRes.data);
+            break; // Éxito
+          }
+        } else {
+          // Si es un buffer de imagen directamente, lo usamos
+          stickerBuffer = buffer;
+          break; // Éxito
+        }
+      } catch (e) {
+        // Si esta estrategia falla, probamos la siguiente
+        console.log(`Estrategia fallida: ${url.split('?')[1]}`, e.message);
       }
+    }
 
-      await sock.sendMessage(from, { react: { text: "✔️", key: m.key } });
-
-    } catch (e) {
-      console.error("Error en #emojimix:", e.message);
+    if (!stickerBuffer) {
       await sock.sendMessage(from, { react: { text: "✖️", key: m.key } });
-      await enviartexto(`❌ Error al mezclar emojis:\n_${e.message}_`);
+      return enviartexto("❌ No se pudo generar el sticker. Verifica que la API esté funcionando y que los emojis sean válidos.");
+    }
+
+    try {
+      const sticker = new Sticker(stickerBuffer, {
+        pack: config.botName || "Ado-Bot",
+        author: config.ownerName || "Sergio Dev",
+        type: "full",
+        quality: 80
+      });
+
+      await sock.sendMessage(from, { sticker: await sticker.toBuffer() }, { quoted: m });
+      await sock.sendMessage(from, { react: { text: "✔️", key: m.key } });
+    } catch (e) {
+      console.error("Error al crear el sticker:", e.message);
+      await sock.sendMessage(from, { react: { text: "✖️", key: m.key } });
+      await enviartexto(`❌ Error al crear el sticker: ${e.message}`);
     }
   }
 };
