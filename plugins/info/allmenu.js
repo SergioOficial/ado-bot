@@ -18,6 +18,7 @@ const TITULOS = {
   descargas: "🎄 DESCARGAS",
   economia: "💰 ECONOMÍA",
   fun: "🎉 DIVERSIÓN",
+  gacha: "🎴 GACHA",
   ia: "🧠 IA",
   info: "ℹ️ INFO",
   owner: "👑 OWNER",

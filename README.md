@@ -12,7 +12,7 @@ un archivo que puedes leer, cambiar o borrar.
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/SergioOficial/ado-bot)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Baileys](https://img.shields.io/badge/Baileys-%40itsliaaa%2Fbaileys-blue?style=for-the-badge)](https://www.npmjs.com/package/@itsliaaa/baileys)
-[![Comandos](https://img.shields.io/badge/Comandos-374-informational?style=for-the-badge)](#-comandos)
+[![Comandos](https://img.shields.io/badge/Comandos-475-informational?style=for-the-badge)](#-comandos)
 [![Licencia](https://img.shields.io/badge/Licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 
 **Creado por [Jeferson Fernández](https://github.com/levi-hub805) en colaboración con [Sergio Gómez Gort](https://github.com/SergioOficial) y [riokuroxi-svg](https://github.com/riokuroxi-svg)**
@@ -35,6 +35,8 @@ un archivo que puedes leer, cambiar o borrar.
 | 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
 | 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
 | 🧠 **IA, economía y RPG** | Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
+| ⚔️ **Peleas de mascotas** | Combates por turnos contra una salvaje o contra otro entrenador, **con botones**: elegir ataque, cambiar de mascota, capturar o huir. Ocho tipos con tabla de eficacia. |
+| 🎴 **Gacha de personajes** | `.rw` tira un personaje con su imagen, `.claim` lo reclama y `harem`, `wtop` y `charinfo` llevan la colección del grupo. Se enciende y apaga por grupo. |
 | 🛡️ **Freno de envíos** | Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
 | ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 
@@ -243,12 +245,13 @@ ado-bot/
 │   ├── descargas/        # play, pinterest, tiktok, fb, gitclone
 │   ├── economia/         # daily, weekly, work, bal, dep, coffer, ruleta, casino
 │   ├── fun/              # meme, gato, trivia, 8ball, ship
+│   ├── gacha/            # rw, claim, harem, wtop, charinfo
 │   ├── ia/               # ia, iaaudio, imagen
 │   ├── info/             # menu, allmenu, ping, health, creadores
 │   ├── owner/            # fix, restart, backup, exec, block, getplugin
 │   ├── perfil/           # reg, perfil, level, lboard, afk, ficha
 │   ├── premium/          # canjear
-│   ├── rpg/              # cazar, pescar, minar, explorar
+│   ├── rpg/              # pelear, adoptar, cazar, pescar, minar, explorar
 │   ├── stickers/         # sticker, brat
 │   ├── subbots/          # code, jadibot, stopbot, bots
 │   ├── test/             # botones de prueba
@@ -302,8 +305,9 @@ incluidos.
 | 🛡️ **Admin** | 43 | `kick` `promote` `demote` `warn` `warns` `antilink` `hidetag` `bot off` `link` `revoke` `setgpname` `setgpdesc` `setgpbanner` `pin` `gp` `count` `topcount` `topinactive` |
 | 🧾 **Perfil** | 24 | `reg` `perfil` `level` `lboard` `afk` `setdesc` `setgenre` `sethobby` `setbirth` `delperfil` |
 | 💰 **Economía** | 54 | `daily` `weekly` `monthly` `work` `beg` `bal` `dep` `with` `pay` `rob` `cf` `slots` `dice` `ppt` `roulette` `casino` `coffer` `rankcoins` `einfo` |
-| ⚔️ **RPG** | 12 | `trabajar` `cazar` `pescar` `minar` `explorar` `clase` `ranknivel` `reiniciarrpg` |
-| 📥 **Descargas** | 25 | `play` `mp3` `tt` `fb` `pinterest` `toimg` `ytsearch` `gitclone` `gitsearch` `gituser` |
+| ⚔️ **RPG** | 21 | `trabajar` `cazar` `pescar` `minar` `explorar` `clase` `ranknivel` `reiniciarrpg` `adoptar` `animal` `nombrar` `acariciar` `pelear` `atacar` `cambiar` `huir` `capturar` `petactivo` |
+| 🎴 **Gacha** | 16 | `gacha` `togacha` `rw` `roll` `rollwaifu` `claim` `c` `reclamar` `harem` `waifus` `claims` `wtop` `topwaifus` `waifustop` `charinfo` `winfo` |
+| 📥 **Descargas** | 25 | `play` `mp3` `tt` `fb` `pinterest` `toimg` `ytsearch` `gitsearch` `githubsearch` `ghsearch` |
 | 🖌️ **Stickers** | 5 | `sticker` `brat` `searchsticker` |
 | 🧠 **IA** | 9 | `ia` `iaaudio` `imagen` |
 | 🎉 **Fun** | 22 | `trivia` `mate` `8ball` `meme` `gato` `perro` `waifu` `ship` `r` |
@@ -320,6 +324,19 @@ incluidos.
 
 ## 🔧 Novedades de esta versión
 
+- ⚔️ **Peleas de mascotas con botones** (`plugins/rpg/pelea.js`): `.pelear` saca
+  una salvaje del tamaño de tu mascota y `.pelear @alguien` reta a otro
+  entrenador. En la tarjeta de la pelea van tres botones — la lista de ataques
+  (con su poder y su precisión), `.cambiar` y `.huir` — y un cuarto, `.capturar`,
+  cuando la salvaje baja del 40 % de vida. Cada tipo (fuego, agua, planta,
+  tierra, aire, luz, sombra y normal) tiene tres ataques y su tabla de eficacia,
+  así que la misma pelea no sale igual dos veces. El turno se respeta: solo
+  ataca a quien le toca, cambiar gasta el turno y una pelea parada 20 minutos se
+  cierra sola. La id de cada botón es el comando escrito (`atacar 2`), o sea que
+  con los botones apagados (`BOTONES=off`) el respaldo en texto sigue sirviendo.
+- 🎴 **Gacha en el menú**: `.rw`, `.claim`, `.harem`, `.wtop`, `.charinfo` y su
+  `gacha on|off` ya salen en el menú principal y en `.menu gacha`, y la carpeta
+  `plugins/gacha/` aparece en `.allmenu` como una categoría más.
 - 🔖 **Menú con guía rápida**: la leyenda de símbolos del menú de Shin-MD
   (Ⓓ Dueño · Ⓟ Premium · Ⓐ Admin · Ⓖ Grupos · Ⓛ Límite) y su crédito, con el
   texto tal cual lo escribió su autor. Las marcas **no van a mano**: se leen de

@@ -61,6 +61,20 @@ export default {
 ┃ ➤ ${PREFIX}nombrar <pet> <nombre>
 ┃ ➤ ${PREFIX}acariciar / alimentar / pasear
 ┃ ➤ ${PREFIX}animaltop
+┃ ➤ ${PREFIX}pelear | ${PREFIX}pelear <@user>
+┃ ➤ ${PREFIX}atacar | ${PREFIX}cambiar | ${PREFIX}huir
+┃ ➤ ${PREFIX}capturar | ${PREFIX}petactivo
+┗━━━━━━━━━━━━━━━━━━┛
+
+┏━━━━━━━━━━━━━━━━━━┓
+┃ 🎴 *𝐆𝐀𝐂𝐇𝐀* 🎴
+┣━━━━━━━━━━━━━━━━━━┛
+┃ ➤ ${PREFIX}gacha on | off
+┃ ➤ ${PREFIX}rw | ${PREFIX}roll | ${PREFIX}rollwaifu
+┃ ➤ ${PREFIX}claim | ${PREFIX}c | ${PREFIX}reclamar
+┃ ➤ ${PREFIX}harem | ${PREFIX}waifus | ${PREFIX}claims
+┃ ➤ ${PREFIX}wtop | ${PREFIX}topwaifus | ${PREFIX}waifustop
+┃ ➤ ${PREFIX}charinfo | ${PREFIX}winfo
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -147,8 +161,7 @@ export default {
 ┃ 🐙 *GITHUB* 🐙
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}gitsearch <txt>
-┃ ➤ ${PREFIX}gituser <user>
-┃ ➤ ${PREFIX}gitclone <user/repo>
+┃ ➤ ${PREFIX}ghsearch <txt> (alias)
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -198,8 +211,8 @@ export default {
 ⋆｡°✩ 🐙 *GITHUB* 🐙 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
 ┃ ➤ ${PREFIX}gitsearch <txt>
-┃ ➤ ${PREFIX}gituser <user>
-┃ ➤ ${PREFIX}gitclone <user/repo>
+┃ ➤ ${PREFIX}githubsearch <txt>
+┃ ➤ ${PREFIX}ghsearch <txt>
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
@@ -231,7 +244,59 @@ export default {
 ┃ 🏷️ » ${PREFIX}nombrar <pet> <nombre>
 ┃ 🫱» ${PREFIX}acariciar / alimentar / pasear
 ┃ 🔝 » ${PREFIX}animaltop
+┃ ⚔️ » ${PREFIX}pelear (salvaje)
+┃ 🥊 » ${PREFIX}pelear <@user> (duelo)
+┃ 💢 » ${PREFIX}atacar <1-3>
+┃ 🔄 » ${PREFIX}cambiar (saca a otra)
+┃ 🏃 » ${PREFIX}huir
+┃ 🔮 » ${PREFIX}capturar | ${PREFIX}petactivo
 ┗━━━━━━━━━━━━━━━━━━┛
+> Volver: *${PREFIX}menu*
+`;
+    }
+    // 🐾 MASCOTAS Y PELEAS
+    else if (tipo === 'mascotas' || tipo === 'pets' || tipo === 'peleas') {
+      texto = `
+⋆｡°✩ 🐾 *𝐌𝐀𝐒𝐂𝐎𝐓𝐀𝐒 𝐘 𝐏𝐄𝐋𝐄𝐀𝐒* 🐾 ✩°｡⋆
+┏━━━━━━━━━━━━━━━━━━┓
+┃ 🐶 » ${PREFIX}adoptar <animal>
+┃ 🦍 » ${PREFIX}animal (Ver tus pets)
+┃ 🏷️ » ${PREFIX}nombrar <pet> <nombre>
+┃ 🫱 » ${PREFIX}acariciar | ${PREFIX}alimentar | ${PREFIX}pasear
+┃ 🔝 » ${PREFIX}animaltop
+┣━━━━━━━━━━━━━━━━━━┛
+┃ ⚔️ *Peleas con botones*
+┃ 🥊 » ${PREFIX}pelear (busca una salvaje)
+┃ 🤝 » ${PREFIX}pelear <@user> (duelo)
+┃ 💢 » ${PREFIX}atacar <1-3> (o el botón)
+┃ 🔄 » ${PREFIX}cambiar (saca a otra, gasta turno)
+┃ 🔮 » ${PREFIX}capturar (si está por debajo del 40 %)
+┃ 🏃 » ${PREFIX}huir
+┃ ⭐ » ${PREFIX}petactivo <pet> (cuál sale primero)
+┗━━━━━━━━━━━━━━━━━━┛
+> Cada ataque tiene su tipo: fuego, agua, planta, tierra, aire, luz, sombra y normal.
+> Volver: *${PREFIX}menu*
+`;
+    }
+    // 🎴 GACHA
+    else if (tipo === 'gacha' || tipo === 'waifus' || tipo === 'claims') {
+      texto = `
+⋆｡°✩ 🎴 *𝐆𝐀𝐂𝐇𝐀* 🎴 ✩°｡⋆
+┏━━━━━━━━━━━━━━━━━━┓
+┃ 🎲 *Tirar*
+┃ ➤ ${PREFIX}rw | ${PREFIX}roll | ${PREFIX}rollwaifu
+┃ 🏷️ *Reclamar*
+┃ ➤ ${PREFIX}claim | ${PREFIX}c | ${PREFIX}reclamar
+┃ 📚 *Tu colección*
+┃ ➤ ${PREFIX}harem | ${PREFIX}waifus | ${PREFIX}claims
+┃ 🏆 *Ranking del grupo*
+┃ ➤ ${PREFIX}wtop | ${PREFIX}topwaifus | ${PREFIX}waifustop
+┃ 🔎 *Ficha*
+┃ ➤ ${PREFIX}charinfo | ${PREFIX}winfo
+┃ ⚙️ *Encender o apagar*
+┃ ➤ ${PREFIX}gacha on | ${PREFIX}gacha off
+┗━━━━━━━━━━━━━━━━━━┛
+> Se tira cada 15 minutos, se reclama cada 30 y solo en grupos.
 > Volver: *${PREFIX}menu*
 `;
     }
@@ -451,6 +516,8 @@ export default {
               rows: [
                 { id: `${comando} economia`, title: "💰 Economía", description: "daily, work, bal, banco, apuestas" },
                 { id: `${comando} rpg`, title: "⚔️ RPG", description: "cazar, pescar, minar, explorar" },
+                { id: `${comando} mascotas`, title: "🐾 Mascotas", description: "adoptar, pelear, atacar, cambiar" },
+                { id: `${comando} gacha`, title: "🎴 Gacha", description: "rw, claim, harem, wtop" },
                 { id: `${comando} perfil`, title: "🧾 Perfil", description: "reg, level, afk, ficha" },
                 { id: `${comando} descargas`, title: "📥 Descargas", description: "play, tt, fb, pinterest" },
                 { id: `${comando} admin`, title: "🛡️ Admin", description: "kick, promote, warn, antilink" },

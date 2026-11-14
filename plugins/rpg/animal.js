@@ -18,6 +18,7 @@ export default {
         txt += `┃ ✨ *Puntos:* ${p.points}/${p.level * 100}\n`;
         txt += `┗━━━━━━━━━━━━━━━━━━┛\n`;
       }
+      txt += `\n> ⚔️ Pelea con ellas: *${config.prefix[0]}pelear* · reta a alguien con *${config.prefix[0]}pelear @user*`;
       return enviartexto(txt.trim());
     }
 
