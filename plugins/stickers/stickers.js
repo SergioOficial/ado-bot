@@ -17,7 +17,7 @@ export default {
       const packUrl = packs[0].url;
       const $pack = cheerio.load(await (await fetch(packUrl)).text());
       const links = [];
-      $pack('img.sticker-image').each((_, el) => { let src = $pack(el).attr('data-src-large') || $pack(el).attr('src'); if (src) links.push(src.startsWith('http') ? src : 'https://getstickerpack.com' + src); });
+      $pack('img.sticker-image').each((_, el) => { const src = $pack(el).attr('data-src-large') || $pack(el).attr('src'); if (src) links.push(src.startsWith('http') ? src : 'https://getstickerpack.com' + src); });
       for (let i = 0; i < Math.min(links.length, 5); i++) {
         const buffer = Buffer.from(await (await fetch(links[i], { headers: { Referer: 'https://getstickerpack.com' } })).arrayBuffer());
         const sticker = new Sticker(asegurarEntrada(buffer), { pack: config.botName, author: config.ownerName, type: 'full', quality: 70 });

@@ -15,7 +15,7 @@ export default {
       const imgRes = await axios.get(armar[0].image, { responseType: 'arraybuffer' });
       const Ibuff = await sharp(Buffer.from(imgRes.data)).resize({ width: 600 }).jpeg({ quality: 80 }).toBuffer();
 
-      let teks2 = armar.map((v) => {
+      const teks2 = armar.map((v) => {
         if (v.type === 'video') {
           return `➩ *Título ›* *${v.title}* \n\n> ⴵ *Duración ›* ${v.timestamp}\n> ❖ *Subido ›* ${v.ago}\n> ✿ *Vistas ›* ${v.views}\n> ❒ *Url ›* ${v.url}`.trim();
         }

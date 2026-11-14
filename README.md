@@ -206,11 +206,12 @@ vigilancia (míralo con `.warmup`), que baja el riesgo pero no lo elimina.
 | Comando | Qué hace |
 |---|---|
 | `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners. |
-| `npm run probar` | 229 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run probar` | 233 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 116 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en [docs/COMANDOS.md](docs/COMANDOS.md). |
 | `npm run sintaxis` | `node --check` en los 219 archivos del árbol, incluidos los plugins que solo se cargan al usarse. |
 | `npm run imports` | Que todo import apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en `package.json`. |
+| `npm run lint` | ESLint con las reglas que atrapan bugs: variables que no existen, claves duplicadas, código inalcanzable. Es lo que encuentra lo que `node --check` y las pruebas no ven. |
 | `npm run vigia` | Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o `nohup`). |
 
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
@@ -230,6 +231,7 @@ ado-bot/
 │   ├── subbots.js        #   ciclo de vida de los sub-bots, con techo de reintentos
 │   ├── vigilantes.js     #   recordatorios, memoria y anti-ban, con su apagado
 │   └── anti-cuelgue.js   #   que un error suelto o un corte de red no apague Node
+├── eslint.config.js      # Reglas que atrapan bugs, no opiniones de estilo
 ├── pluginLoader.js       # Escáner de comandos y eventos
 ├── config.js             # Prefijos, owners, nombre del bot, footer
 ├── lib/                  # Lo compartido, sin duplicar en cada plugin
@@ -336,6 +338,29 @@ incluidos.
 
 ## 🔧 Novedades de esta versión
 
+- 🔎 **ESLint como puerta** (`eslint.config.js`, `npm run lint`): reglas que
+  atrapan bugs, no opiniones de estilo — `no-undef`, `no-dupe-keys`,
+  `no-unreachable`, `no-cond-assign`, `no-var`. Las de higiene (`prefer-const`,
+  `no-unused-vars`, `eqeqeq`) arrancan en *warn* para no pintar de rojo un repo
+  ya escrito, y se suben a *error* cuando el conteo llegue a cero. Van 19.
+  No es decoración: `no-undef` es la regla que habría visto el `PREFIX` sin
+  definir **antes** de que tirara el servidor — corrida sobre el `index.js`
+  anterior al arreglo, lo señala en la línea 450.
+- 🐛 **Tres bugs que las 229 pruebas no veían**, encontrados por el lint y
+  cubiertos ahora en `pruebas/regresion-lint.test.mjs`:
+  · `lib/antiban.js` llamaba a `dormir()` desde `envolverSocket()`, pero
+    `dormir` estaba definida **dentro de `crearCola()`**. El `ReferenceError`
+    caía en un `catch {}` con su comentario explicativo, así que no se veía en
+    ningún sitio: la espera de ritmo humano antes de cada envío **no ocurría
+    nunca**. Se encendía el «escribiendo…» y el mensaje salía al instante, que
+    es justo el patrón que el anti-ban pretende evitar. (Nota: `no-empty` con
+    `allowEmptyCatch` no lo habría visto; lo vio `no-undef`.)
+  · `.say hola` contestaba «⚠️ No pude repetir eso. *text is not defined*»:
+    mandaba `{ text }` — forma corta, o sea `text: text` — donde la variable se
+    llama `texto`.
+  · Una prueba de botones afirmaba `igual(null ?? "sin viewOnce", "sin viewOnce")`:
+    una constante contra sí misma. Daba verde pasara lo que pasara con el proto.
+    Ahora comprueba `vuelta.viewOnceMessage === null` de verdad.
 - 🧱 **El núcleo se partió en piezas** (`boot/`): `index.js` era un archivo de 620
   líneas donde la conexión, los sub-bots, los vigilantes y el enrutado de
   mensajes compartían variables. Ahora `index.js` es una línea que arranca

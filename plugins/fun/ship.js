@@ -3,7 +3,7 @@ export default {
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
     
-    let user1 = m.pushName || "Tú";
+    const user1 = m.pushName || "Tú";
     let user2 = args.join(" ") || config.botName;
 
     const mentions = m.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
@@ -18,7 +18,7 @@ export default {
     }
     const porcentaje = Math.abs(hash % 101);
     
-    let barra = "❤️".repeat(Math.floor(porcentaje / 10)) + "🖤".repeat(10 - Math.floor(porcentaje / 10));
+    const barra = "❤️".repeat(Math.floor(porcentaje / 10)) + "🖤".repeat(10 - Math.floor(porcentaje / 10));
     let mensaje = "";
     
     if (porcentaje > 80) mensaje = "¡Están hechos el uno para el otro! 💍";

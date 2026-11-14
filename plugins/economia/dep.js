@@ -11,7 +11,7 @@ export default {
     const amountStr = args[0]?.toLowerCase();
     if (!amountStr) return enviartexto(`🏦 Uso: *${config.prefix[0]}dep <cantidad|all>*`);
 
-    let amount = amountStr === "all" || amountStr === "todo" ? user.coins : parseInt(amountStr);
+    const amount = amountStr === "all" || amountStr === "todo" ? user.coins : parseInt(amountStr);
     if (isNaN(amount) || amount <= 0) return enviartexto("⚠️ Ingresa una cantidad válida.");
 
     if (user.coins < amount) {

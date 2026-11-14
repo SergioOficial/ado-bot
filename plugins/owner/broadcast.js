@@ -22,7 +22,7 @@ export default {
     let enviados = 0;
     let fallidos = 0;
 
-    for (let id of users) {
+    for (const id of users) {
       try {
         // Delay de 5 segundos entre cada mensaje para evitar baneos (Spam)
         await new Promise(resolve => setTimeout(resolve, 5000));

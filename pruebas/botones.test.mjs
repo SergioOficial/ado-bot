@@ -130,7 +130,12 @@ export const pruebas = [
     esVerdad(Boolean(i), "el interactivo va en la raíz del mensaje");
     // El proto devuelve `null` en los campos que no se usaron: lo que importa
     // es que el mensaje NO vaya dentro de viewOnceMessage.
-    igual(null ?? "sin viewOnce", "sin viewOnce", "sin viewOnce");
+    // Era `igual(null ?? "sin viewOnce", "sin viewOnce")`: compara una constante
+    // consigo misma, o sea que pasara lo que pasara el test daba verde. El proto
+    // deja la clave `viewOnceMessage` presente y en null; lo que de verdad se
+    // quería afirmar es esto.
+    igual(vuelta.viewOnceMessage, null, "no va envuelto en viewOnceMessage");
+    esVerdad(i !== null && i !== undefined, "y el interactivo sí viene en la raíz");
     igual(i.nativeFlowMessage.buttons.length, 2, "botones");
     igual(params(JSON.parse(JSON.stringify(i.nativeFlowMessage.buttons[0]))).id, "menu rpg", "el id del botón");
     esVerdad(i.nativeFlowMessage.messageParamsJson.includes("bottom_sheet"), "hoja inferior intacta");

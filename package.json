@@ -46,7 +46,8 @@
     "mapa": "node scripts/mapa-porte.mjs",
     "test": "node scripts/probar.mjs",
     "sintaxis": "node scripts/revisar-sintaxis.mjs",
-    "imports": "node scripts/revisar-imports.mjs"
+    "imports": "node scripts/revisar-imports.mjs",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -58,5 +59,10 @@
   "bugs": {
     "url": "https://github.com/SergioOficial/ado-bot/issues"
   },
-  "homepage": "https://github.com/SergioOficial/ado-bot#readme"
+  "homepage": "https://github.com/SergioOficial/ado-bot#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0"
+  }
 }

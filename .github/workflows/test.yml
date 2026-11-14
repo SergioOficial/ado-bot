@@ -7,6 +7,10 @@
 #    2. sintaxis     → `node --check` sobre TODO el árbol, incluidos los
 #                      plugins que solo se cargan cuando se usan, más la
 #                      revisión de imports y dependencias declaradas.
+#    2b. lint        → ESLint con las reglas que atrapan bugs (no-undef,
+#                      no-dupe-keys, no-unreachable...). `node --check` no ve una
+#                      variable que no existe; esto sí. Errores bloquean, los
+#                      avisos de higiene aún no.
 #    3. dependencias → el árbol de producción no puede traer avisos altos.
 #
 #  Lo que NO se hace aquí: nada que hable con WhatsApp ni que salga a la
@@ -63,6 +67,24 @@ jobs:
       # cacha antes de llegar a main.
       - name: importaciones y dependencias declaradas
         run: npm run imports
+
+  lint:
+    name: lint · bugs que la sintaxis no ve
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      # max-warnings no se pone todavía: hay 19 avisos de higiene pendientes
+      # (prefer-const, imports sin usar, require-atomic-updates sobre el estado
+      # compartido). Cuando lleguen a cero se fija el tope en 0 y la puerta pasa
+      # a cubrir también la higiene.
+      - name: ESLint
+        run: npm run lint
 
   dependencias:
     name: dependencias · sin avisos altos

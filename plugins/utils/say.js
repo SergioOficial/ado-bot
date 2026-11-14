@@ -86,7 +86,10 @@ export default {
         return sock.sendMessage(from, { sticker: media });
       }
 
-      if (texto) return sock.sendMessage(from, { text, ...opciones });
+      // Era `{ text, ...opciones }`: la forma corta declara `text: text`, y en
+      // este ámbito la variable se llama `texto`. `.say hola` sin citar nada
+      // contestaba «⚠️ No pude repetir eso. _text is not defined_».
+      if (texto) return sock.sendMessage(from, { text: texto, ...opciones });
 
       return enviartexto(
         `《✧》 Escríbeme qué quiero decir, o cita el mensaje que quieres repetir.\n> Ejemplo: *${PREFIX}say hola a todos*`
