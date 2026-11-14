@@ -306,7 +306,7 @@ incluidos.
 | 🧾 **Perfil** | 24 | `reg` `perfil` `level` `lboard` `afk` `setdesc` `setgenre` `sethobby` `setbirth` `delperfil` |
 | 💰 **Economía** | 54 | `daily` `weekly` `monthly` `work` `beg` `bal` `dep` `with` `pay` `rob` `cf` `slots` `dice` `ppt` `roulette` `casino` `coffer` `rankcoins` `einfo` |
 | ⚔️ **RPG** | 21 | `trabajar` `cazar` `pescar` `minar` `explorar` `clase` `ranknivel` `reiniciarrpg` `adoptar` `animal` `nombrar` `acariciar` `pelear` `atacar` `cambiar` `huir` `capturar` `petactivo` |
-| 🎴 **Gacha** | 16 | `gacha` `togacha` `rw` `roll` `rollwaifu` `claim` `c` `reclamar` `harem` `waifus` `claims` `wtop` `topwaifus` `waifustop` `charinfo` `winfo` |
+| 🎴 **Gacha** | 19 | `gacha` `togacha` `rw` `roll` `rollwaifu` `claim` `c` `reclamar` `harem` `waifus` `claims` `wtop` `topwaifus` `waifustop` `waifusboard` `charinfo` `winfo` `waifuinfo` |
 | 📥 **Descargas** | 25 | `play` `mp3` `tt` `fb` `pinterest` `toimg` `ytsearch` `gitsearch` `githubsearch` `ghsearch` |
 | 🖌️ **Stickers** | 5 | `sticker` `brat` `searchsticker` |
 | 🧠 **IA** | 9 | `ia` `iaaudio` `imagen` |
@@ -334,6 +334,19 @@ incluidos.
   ataca a quien le toca, cambiar gasta el turno y una pelea parada 20 minutos se
   cierra sola. La id de cada botón es el comando escrito (`atacar 2`), o sea que
   con los botones apagados (`BOTONES=off`) el respaldo en texto sigue sirviendo.
+- 🎴 **Gacha reescrito y medido** (`plugins/gacha/` + `lib/gacha.js`): seis
+  comandos en su archivo, como el resto de categorías — `rw`, `claim`, `harem`,
+  `wtop`, `charinfo` y el interruptor `gacha on|off` (solo administradores).
+  Tres cosas que se arreglaron midiendo, no adivinando:
+  · **Danbooru contestaba 403 a todo** porque se le hablaba con el User-Agent de
+    un navegador; el respaldo estaba muerto y no se notaba porque Safebooru
+    tapaba el hueco casi siempre.
+  · **Se manda la muestra (850 px), no el original**: había originales de 3000 px
+    que no terminaban de bajar en 10 s, y de ahí salían los `.rw` de 16-18 s.
+  · **Las tres candidatas se bajan en paralelo** y la primera que llega gana.
+  Resultado de 20 tiradas seguidas: **0 fallos, promedio 0,9 s, máximo 1,7 s**
+  (antes: promedio 5,2 s y picos de 17,6 s). Con `GACHA_DEBUG=1` el bot escribe
+  en consola en qué se fue el tiempo de cada tirada.
 - 🎴 **Gacha en el menú**: `.rw`, `.claim`, `.harem`, `.wtop`, `.charinfo` y su
   `gacha on|off` ya salen en el menú principal y en `.menu gacha`, y la carpeta
   `plugins/gacha/` aparece en `.allmenu` como una categoría más.

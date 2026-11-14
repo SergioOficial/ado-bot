@@ -2,8 +2,8 @@
 
 _Generado por `npm run auditar -- --md`. No es una promesa: es lo que el código hace hoy._
 
-- Archivos de plugin: **149**
-- Nombres de comando: **475**
+- Archivos de plugin: **154**
+- Nombres de comando: **477**
 - Con algo pendiente: **0**
 - No cargan: **0**
 - El menú no anuncia ningún comando inexistente

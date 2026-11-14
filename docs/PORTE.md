@@ -9,6 +9,17 @@ _Generado el 2026-11-11 comparando los comandos de [Shin-MD](https://github.com/
 «Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
 
+
+## Gacha
+
+Los comandos de `plugins/gacha/` siguen el mismo esquema que usa **YukiBot-MD**
+(https://github.com/iamDestroy/YukiBot-MD, MIT): tiro con reserva de 20 s y
+caducidad de 60 s, reclamo por cita, colección por páginas, ranking del grupo y
+ficha con dueño y puesto. La implementación está escrita sobre la arquitectura
+de este bot (`ctx`, `db.chats`, `lib/botones.js`), no copiada: el archivo de
+personajes se lee una vez y se cachea, y las búsquedas y descargas tienen plazo
+y presupuesto propios (ver `lib/gacha.js`).
+
 ## Portados a mano (con cabecera de procedencia)
 
 | Comando | Archivo en Levi | Qué se corrigió al portarlo |
