@@ -1,32 +1,44 @@
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  command: ['tiktok', 'tt'],
+  command: ["tiktok", "tt", "ttdl"],
   execute: async (ctx) => {
-    const { sock, from, m, args, enviartexto } = ctx;
+    const { sock, from, m, args, enviartexto, config } = ctx;
     const url = args[0];
 
-    if (!url) return enviartexto('《✧》 Por favor, ingresa un enlace de TikTok.');
-    if (!url.match(/tiktok\.com/)) return enviartexto('《✧》 El enlace no es válido.');
+    if (!url) return enviartexto(`❌ Uso: ${config.prefix[0]}tt <enlace de tiktok>`);
+    if (!url.match(/tiktok\.com/)) return enviartexto("❌ El enlace no es de TikTok.");
+
+    await sock.sendMessage(from, { react: { text: "⏳", key: m.key } });
+    const waitMsg = await sock.sendMessage(from, { text: `⏳ *Descargando de TikTok...*` }, { quoted: m });
 
     try {
-      const api = `https://api.siputzx.my.id/api/d/tiktok?url=${encodeURIComponent(url)}`;
-      const res = await axios.get(api, { timeout: 15000 });
-      const data = res.data.data;
+      const evogbUrl = `https://evogb.win/api/dl/tiktok?url=${encodeURIComponent(url)}`;
+      const res = await axios.get(evogbUrl, { timeout: 25000 });
+      const data = res.data;
 
-      if (!data || !data.video) throw new Error('No se pudo obtener el video.');
+      const videoUrl = 
+        data.video || 
+        data.url || 
+        data.download || 
+        data.result?.video || 
+        data.result?.url || 
+        data.data?.url;
 
-      const caption = `ㅤ۟∩　ׅ　★ ໌　ׅ　🅣𝗂𝗄𝖳𝗈𝗄 🅓ownload　ׄᰙ\n\n> ✎ Título: ${data.title || 'Sin título'}\n> ❖ Autor: ${data.author || 'Desconocido'}`;
+      if (!videoUrl) throw new Error("No se pudo extraer el video.");
 
-      const vidRes = await axios.get(data.video, { responseType: 'arraybuffer' });
-      await sock.sendMessage(from, { video: Buffer.from(vidRes.data, 'binary'), caption, mimetype: 'video/mp4' }, { quoted: m });
+      const vidRes = await axios.get(videoUrl, { responseType: 'arraybuffer', timeout: 40000 });
+      const buffer = Buffer.from(vidRes.data);
 
-      if (data.audio) {
-        const audRes = await axios.get(data.audio, { responseType: 'arraybuffer' });
-        await sock.sendMessage(from, { audio: Buffer.from(audRes.data, 'binary'), mimetype: 'audio/mp4', fileName: 'tiktok_audio.mp4' }, { quoted: m });
-      }
+      const caption = `✅ *TikTok Descargado*\n\n> 👤 Autor: ${data.author || data.result?.author || "Desconocido"}\n> 🎵 Música: Original`;
+
+      await sock.sendMessage(from, { video: buffer, caption, mimetype: 'video/mp4' }, { quoted: m });
+      await sock.sendMessage(from, { delete: waitMsg.key }).catch(()=>{});
+      await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
     } catch (e) {
-      await enviartexto(`> Error: *${e.message}*`);
+      console.error("Error TikTok:", e.message);
+      await sock.sendMessage(from, { text: `❌ Error: ${e.message}`, edit: waitMsg.key }).catch(()=>{});
     }
   }
 };
