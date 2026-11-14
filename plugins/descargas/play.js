@@ -26,7 +26,7 @@ export default {
       }
 
       // 🌐 Endpoint de Evogb
-      const evogbUrl = `https://evogb.win/api/dl/ytmp3?url=${encodeURIComponent(youtubeUrl)}`;
+      const evogbUrl = `https://api.stellarwa.xyz=${encodeURIComponent(youtubeUrl)}`;
       
       const res = await axios.get(evogbUrl, { timeout: 25000 });
       const data = res.data;
