@@ -279,7 +279,9 @@ export const config = {
     { name: "Roxi",                      number: "5215574370309" }
   ],
 
-  version: "1.0.5",
+  // La versión no se pone aquí: se lee de package.json, que es lo que anuncia
+  // GitHub con su etiqueta. Cambiarla en un solo sitio la cambia en .info,
+  // .infobot, .estado y .botinfo.
   footer: "𝙰𝚍𝚘-𝑩𝒐𝒕 by Wyra Studios"
 };
 ```

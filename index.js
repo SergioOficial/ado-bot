@@ -344,6 +344,7 @@ async function startLevi() {
   const { state, saveCreds } = await useMultiFileAuthState("./session");
   const { version, texto: textoVersion } = await versionParaLog();
   console.log(`🔌 Cliente: ${PAQUETE_BAILEYS}`);
+  console.log(`📦 ${BOT_NAME} v${config.version}`);
   console.log(textoVersion);
 
   const sock = makeWASocket({
