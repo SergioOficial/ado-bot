@@ -440,7 +440,7 @@ async function handleMessages(sock, { messages, type }) {
   const m = messages[0];
   
   // Validar que exista el mensaje
-  if (!m.message) return;
+ if (!m.message || m.key.fromMe) return;
 
   // 🛡️ PROTECCIÓN ANTI-BUCLE
   if (m.key.fromMe) {
@@ -448,20 +448,7 @@ async function handleMessages(sock, { messages, type }) {
     
     // Solo procesar mensajes propios si son comandos (empiezan con prefijo)
     if (!textoPropio.startsWith(PREFIX)) return;
-    
-    // Anti-bucle: Ignorar si este mensaje ya fue procesado
-    if (!global.__processedMsgs) global.__processedMsgs = new Set();
-    if (global.__processedMsgs.has(m.key.id)) return;
-    global.__processedMsgs.add(m.key.id);
-    
-    // Limitar el Set a 100 mensajes para no consumir RAM
-    if (global.__processedMsgs.size > 100) {
-      const first = global.__processedMsgs.values().next().value;
-      global.__processedMsgs.delete(first);
-    }
-  }
-
-  ritmoAntiban?.anotarEntrante(m.key.remoteJid);
+ ritmoAntiban?.anotarEntrante(m.key.remoteJid);
 
   const pulsado = botonPulsado(m);
   const deBoton = Boolean(pulsado?.id);
