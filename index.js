@@ -438,7 +438,28 @@ async function handleMessages(sock, { messages, type }) {
   vigilanteAntiban?.latido(); 
   global.__contadorMensajes = (global.__contadorMensajes || 0) + 1;
   const m = messages[0];
-  if (!m.message || m.key.fromMe) return;
+  
+  // Validar que exista el mensaje
+  if (!m.message) return;
+
+  // 🛡️ PROTECCIÓN ANTI-BUCLE
+  if (m.key.fromMe) {
+    const textoPropio = m.message.conversation || m.message.extendedTextMessage?.text || "";
+    
+    // Solo procesar mensajes propios si son comandos (empiezan con prefijo)
+    if (!textoPropio.startsWith(PREFIX)) return;
+    
+    // Anti-bucle: Ignorar si este mensaje ya fue procesado
+    if (!global.__processedMsgs) global.__processedMsgs = new Set();
+    if (global.__processedMsgs.has(m.key.id)) return;
+    global.__processedMsgs.add(m.key.id);
+    
+    // Limitar el Set a 100 mensajes para no consumir RAM
+    if (global.__processedMsgs.size > 100) {
+      const first = global.__processedMsgs.values().next().value;
+      global.__processedMsgs.delete(first);
+    }
+  }
 
   ritmoAntiban?.anotarEntrante(m.key.remoteJid);
 
