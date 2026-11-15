@@ -6,3 +6,9 @@ database.backup.json
 .env
 *.log
 tmp/
+# Carpetas que el bot crea en marcha. Van aquí por lo mismo que session/ y sub/:
+# plugins/owner/backup.js hace `git add .` desde un mensaje de WhatsApp, y una
+# ruta de runtime sin ignorar es una ruta que tarde o temprano se publica. En la
+# rama seguridad-1.1.0 pasó exactamente eso con sub/SubBots/<número>/creds.json
+# (una sesión completa) y con lib/database.json (usuarios y un código premium).
+data/
