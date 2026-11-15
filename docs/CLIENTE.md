@@ -98,7 +98,8 @@ campos `interactiveMessage`, `nativeFlowMessage` y
 
 ## 5. Reconexión
 
-Antes, cada `close` lanzaba un `startLevi()` nuevo. Dos cierres seguidos (lo
+Antes, cada `close` lanzaba un arranque nuevo (lo que hoy es `arrancar()` en
+`boot/arranque.js`). Dos cierres seguidos (lo
 normal cuando WhatsApp está inestable) dejaban **dos sockets vivos a la vez**,
 cada uno con su lista de oyentes, y el bot contestaba dos veces. Ahora hay un
 candado: un solo reconectador, con 2 s de espera.
@@ -112,4 +113,4 @@ un fallo es del bot o de la sesión antes de culpar al teléfono.
 
 ---
 
-<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>
+<sub>Mantenido por **[riokuroxi-svg](https://github.com/riokuroxi-svg)** · autoría original de [SergioOficial](https://github.com/SergioOficial) · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/ado-bot).</sub>

@@ -1,7 +1,9 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
- * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
  * .afk [motivo]  — avisar de que no estás, y quitarlo al volver.
  *
@@ -10,7 +12,7 @@
  *     con tu motivo (una vez cada 10 minutos por chat, para no inundar).
  *   · Escribes cualquier cosa y el AFK se borra solo, diciendo cuánto duró.
  *
- * Esto se hace con un evento, no con un hook: Levi no tiene hooks `before`, y
+ * Esto se hace con un evento, no con un hook: este bot no tiene hooks `before`, y
  * meterlos solo para esto habría sido tocar el núcleo a lo grande.
  */
 import { numeroDe, mencion } from "../../lib/grupo.js";

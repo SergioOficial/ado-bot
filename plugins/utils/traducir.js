@@ -1,7 +1,9 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
- * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
  * utils/traducir.js — traducir texto sin instalar media dependencia.
  *
@@ -24,7 +26,7 @@ async function traducir(texto, destino) {
   const url = `${ENDPOINT}?client=gtx&sl=auto&tl=${encodeURIComponent(destino)}&dt=t&q=${encodeURIComponent(texto)}`;
   const res = await fetch(url, {
     signal: AbortSignal.timeout(PLAZO_MS),
-    headers: { "user-agent": "Levi-Bot (+https://github.com/SergioOficial/ado-bot)" },
+    headers: { "user-agent": "riokuroxi (+https://github.com/riokuroxi-svg)" },
   });
   if (!res.ok) throw new Error(`el traductor respondió ${res.status}`);
   const datos = await res.json();
@@ -34,7 +36,7 @@ async function traducir(texto, destino) {
 }
 
 export default {
-  command: ['translate', 'trad', 'traducir'],
+  command: ["translate", "trad", "traducir", "tl"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto } = ctx;
 

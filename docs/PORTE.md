@@ -1,13 +1,13 @@
 # Mapa del porteo desde Shin-MD
 
-_Generado el 2026-11-11 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._
+_Generado el 2026-11-11 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en este bot._
 
 - Comandos en Shin: **219**
-- Ya existen en Levi (al menos con un nombre): **121**
+- Ya existen en este bot (al menos con un nombre): **121**
 - Pendientes de portar o de descartar: **98**
 
-«Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.
-Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.
+«Ya existe» no significa «igual»: este bot puede tener el mismo comando con menos cosas.
+Cada comando que se porta se reescribe al formato de plugin de este bot y se apunta abajo.
 
 
 ## Gacha
@@ -22,7 +22,7 @@ y presupuesto propios (ver `lib/gacha.js`).
 
 ## Portados a mano (con cabecera de procedencia)
 
-| Comando | Archivo en Levi | Qué se corrigió al portarlo |
+| Comando | Archivo en el bot | Qué se corrigió al portarlo |
 |---|---|---|
 | `qr` | `plugins/utils/qr.js` | el QR se dibuja en el bot; antes dependía de api.qrserver.com |
 | `morse` / `demorse` | `plugins/utils/morse.js` | dice cuántos grupos no reconoce en vez de tragárselos |
@@ -34,7 +34,7 @@ y presupuesto propios (ver `lib/gacha.js`).
 | `kick` | `plugins/admin/kick.js` | no echa a administradores ni a dueños aunque se escriba el número a mano |
 | `promote` / `demote` | `plugins/admin/promote.js` | comprueba que WhatsApp aplicó el cambio antes de decir «hecho» |
 | `hidetag` | `plugins/admin/hidetag.js` | aviso a todos con las menciones ocultas |
-| `antilink` | `plugins/admin/antilink.js` | Levi no lo tenía; borra enlaces de grupo y avisa si le falta ser admin |
+| `antilink` | `plugins/admin/antilink.js` | Este bot no lo tenía; borra enlaces de grupo y avisa si le falta ser admin |
 | `get` | `plugins/utils/get.js` + `lib/red-segura.js` | solo el dueño, con filtro de IPs privadas, DNS y sin seguir redirecciones |
 | `pfp` | `plugins/utils/pfp.js` | si la foto es privada lo dice; no manda una imagen de relleno |
 | `wastalk` | `plugins/utils/wastalk.js` | solo lo público (existe, estado, foto); respeta la privacidad |

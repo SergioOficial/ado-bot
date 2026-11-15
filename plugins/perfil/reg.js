@@ -5,7 +5,7 @@ export default {
 
     const [nombre, edad, genero] = args;
     if (!nombre || !edad || !genero) {
-      return enviartexto(`⚠️ *Uso correcto:*\n${config.prefix}reg <nombre> <edad> <M/F>\n\n*Ejemplo:* ${config.prefix}reg Levi 20 M`);
+      return enviartexto(`⚠️ *Uso correcto:*\n${config.prefix}reg <nombre> <edad> <M/F>\n\n*Ejemplo:* ${config.prefix}reg Ana 20 M`);
     }
 
     // Verificar si ya está registrado

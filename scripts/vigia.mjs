@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
- * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
  * scripts/vigia.mjs — arranca el bot y lo vuelve a levantar si se cae.
  *

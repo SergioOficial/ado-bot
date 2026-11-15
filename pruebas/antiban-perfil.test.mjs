@@ -1,4 +1,4 @@
-/** Levi-Bot — AGPL-3.0-only · ver LICENSE y NOTICE */
+/** riokuroxi — https://github.com/riokuroxi-svg · Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only · ver LICENSE y NOTICE */
 /**
  * El comando `.warmup`: que el perfil veterano se explique antes de activarse
  * y que no se pueda activar por accidente con un dedazo.

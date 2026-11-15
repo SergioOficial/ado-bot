@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 /**
- * Levi-Bot — AGPL-3.0-only · ver LICENSE y NOTICE
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * scripts/humo.mjs — prueba de humo: llama a TODOS los plugins con un contexto
  * falso y se queda con los que revientan. Pilla lo que `node --check` no ve:
@@ -92,12 +95,16 @@ function contextoFalso(comando) {
     comando,
     texto: "",
     PREFIX: ".",
-    BOT_NAME: "Levi-Bot",
+    // El ctx real pasa `config?.botName || "Bot"` y `config.footer`. Aquí van
+    // valores neutros a propósito: importar config.js de verdad metería claves de
+    // API reales en la prueba de humo, y entonces un plugin que hoy contesta sin
+    // red se iría a la red.
+    BOT_NAME: "Bot",
     config: {
       version: "1.0.0",
       prefix: [".", "/"],
       owners: ["5210000000000"],
-      footer: "Levi-Bot",
+      footer: "riokuroxi",
       ownerName: "Dueño",
     },
     db,

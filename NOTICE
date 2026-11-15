@@ -1,6 +1,9 @@
 Ado-Bot
-Copyright (C) 2026 los autores de Ado-Bot
+Copyright (C) 2026 riokuroxi-svg — https://github.com/riokuroxi-svg
+Copyright (C) 2026 los autores de Ado-Bot (base original; ver «Créditos y procedencia»)
 Copyright (C) 2026 riokuroxi-svg (partes portadas de Shin-MD)
+
+Mantenimiento, arquitectura y pruebas desde noviembre de 2026: riokuroxi-svg.
 
 Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los
 términos de la Licencia Pública General Affero de GNU, versión 3, tal como la
@@ -13,6 +16,13 @@ PARTICULAR. Ver la Licencia Pública General Affero de GNU para más detalles.
 ────────────────────────────────────────────────────────────────────────────
 Créditos y procedencia
 ────────────────────────────────────────────────────────────────────────────
+
+riokuroxi-svg  ·  https://github.com/riokuroxi-svg
+  Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only.
+  De aquí son el núcleo en piezas (boot/), la lógica de lib/ (compuerta de
+  mensajes, anti-eco, bucles, antiban, base de datos atómica, rutas), las puertas
+  de CI (sintaxis, importaciones, ESLint) y sus pruebas. También el mantenimiento
+  del conjunto y el plugin de GitHub portado desde la rama seguridad-1.1.0.
 
 Ado-Bot
   Autoría original: Sergio Dev.

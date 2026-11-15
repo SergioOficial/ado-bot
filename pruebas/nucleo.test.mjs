@@ -2,7 +2,7 @@
  * riokuroxi — https://github.com/riokuroxi-svg
  * Copyright (C) 2026 riokuroxi-svg
  * SPDX-License-Identifier: AGPL-3.0-only
- * Mantener esta cabecera es obligatorio por AGPL.
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * pruebas/nucleo.test.mjs — que el núcleo arranque, de verdad.
  *

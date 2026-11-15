@@ -1,5 +1,9 @@
 /**
- * Levi-Bot — AGPL-3.0-only · ver LICENSE y NOTICE
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
+ *
  * scripts/probar.mjs — corre todas las pruebas que NO abren WhatsApp.
  *
  *   npm run probar

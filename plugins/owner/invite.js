@@ -28,8 +28,12 @@ export default {
 
     // Obtener credenciales desde las variables de entorno o config
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-    const GITHUB_OWNER = process.env.GITHUB_OWNER || "levi-hub805";
-    const GITHUB_REPO = process.env.GITHUB_REPO || "Levi-bot-";
+    // Los valores por defecto eran `levi-hub805` y `Levi-bot-`, o sea OTRO owner
+    // de GitHub: sin las variables puestas, `.invite` daba permisos de colaborador
+    // sobre un repo ajeno y el dueño creía que los daba sobre el suyo. Ahora el
+    // defecto es este repo, y las variables de entorno siguen mandando.
+    const GITHUB_OWNER = process.env.GITHUB_OWNER || "SergioOficial";
+    const GITHUB_REPO = process.env.GITHUB_REPO || "ado-bot";
 
     if (!GITHUB_TOKEN) {
       return enviartexto(
@@ -48,7 +52,7 @@ export default {
           Authorization: `Bearer ${GITHUB_TOKEN}`,
           Accept: "application/vnd.github+json",
           "Content-Type": "application/json",
-          "User-Agent": "Levi-Bot"
+          "User-Agent": "riokuroxi (+https://github.com/riokuroxi-svg)"
         }
       });
 

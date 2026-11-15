@@ -553,6 +553,7 @@ texto completo de la Free Software Foundation).
 
 | Parte | Autoría | Licencia |
 |---|---|---|
+| Núcleo en piezas (`boot/`), lógica de `lib/`, puertas de CI y pruebas | [riokuroxi-svg](https://github.com/riokuroxi-svg) | **AGPL-3.0-only** |
 | Ado-Bot (base original) | Sergio Dev | el repo no traía archivo de licencia; su `package.json` declaraba **ISC** |
 | Comandos portados de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) | riokuroxi-svg | **AGPL-3.0-only** (los archivos portados llevan su cabecera) |
 | Cliente de WhatsApp | `@itsliaaa/baileys` · respaldo `@whiskeysockets/baileys` | **MIT** (dependencias declaradas, no código incluido) |
@@ -610,7 +611,8 @@ línea.
 
 Hecho con 💫 desde Cuba, Colombia y México  para el mundo
 
-[![Repositorio](https://img.shields.io/badge/Repositorio-Oficial-181717?style=flat&logo=github&logoColor=white)](https://github.com/SergioOficial/Levi-bot)
+[![Repositorio](https://img.shields.io/badge/Repositorio-Oficial-181717?style=flat&logo=github&logoColor=white)](https://github.com/SergioOficial/ado-bot)
+[![Mantenimiento](https://img.shields.io/badge/Mantenimiento-riokuroxi--svg-8A2BE2?style=flat)](https://github.com/riokuroxi-svg)
 
 </div>
 

@@ -1,11 +1,13 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
- * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
  * .antilink on|off — borrar los enlaces de invitación que manden al grupo.
  *
- * Levi no tenía antilink. Este vigila `messages.upsert` igual que el router,
+ * La base original no tenía antilink. Este vigila `messages.upsert` igual que el router,
  * pero solo mira enlaces de grupos de WhatsApp (los `chat.whatsapp.com`), que
  * es lo que se usa para llenar grupos de spam. Ni administradores ni dueños se
  * ven afectados.

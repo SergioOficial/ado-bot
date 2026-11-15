@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default {
-  command: ['fb', 'facebook'],
+  command: ["fb", "facebook", "fbdl"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto } = ctx;
     const url = args[0];

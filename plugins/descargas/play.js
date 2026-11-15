@@ -5,7 +5,7 @@ const safeFileName = (name) => String(name || "audio").replace(/[/\\?%*:|"<>]/g,
 const YT_REGEX = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i;
 
 export default {
-  command: ["play", "mp3", "ytmp3", "ytaudio", "playaudio"],
+  command: ["play", "mp3", "ytmp3", "ytaudio", "playaudio", "audio"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
     const query = args.join(" ").trim();

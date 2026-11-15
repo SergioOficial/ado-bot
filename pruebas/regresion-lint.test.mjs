@@ -2,7 +2,7 @@
  * riokuroxi — https://github.com/riokuroxi-svg
  * Copyright (C) 2026 riokuroxi-svg
  * SPDX-License-Identifier: AGPL-3.0-only
- * Mantener esta cabecera es obligatorio por AGPL.
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * pruebas/regresion-lint.test.mjs — los tres bugs que encontró `no-undef`.
  *
@@ -55,6 +55,38 @@ function ctxFalso(sobre = {}) {
   };
 }
 
+/**
+ * Ajustes rápidos y con la curva circadiana apagada.
+ *
+ * Esto no es cosmético y costó encontrarlo: con los ajustes por defecto esta
+ * prueba se **colgaba para siempre** cuando el reloj local caía entre las 2 y las
+ * 6 de la mañana, que es la ventana de silencio de `lib/ritmo.js`
+ * (`silencioDesde: 2`, `silencioHasta: 6`). A esas horas `ritmo.permite()`
+ * contesta `{ ok: false, motivo: "madrugada" }` para una conversación nueva, la
+ * cola se queda esperando a que amanezca y el `await sock.sendMessage(...)` no
+ * vuelve nunca. En el CI pasaba en verde porque corre en UTC y a otra hora; en
+ * una máquina donde fueran las 3 de la mañana, no terminaba.
+ *
+ * `activo: false` en el ritmo hace que `permite` conteste siempre que sí, y el
+ * limitador va con esperas de milisegundos y `circadiano: false`. Lo que esta
+ * prueba mide es el ámbito de `dormir` y que el parche del socket quede puesto,
+ * no el estrangulamiento: para eso están `pruebas/antiban.test.mjs` y
+ * `pruebas/ritmo.test.mjs`.
+ */
+const RAPIDO = {
+  activo: false, // ritmo: ni puerta de madrugada ni cupo de chats nuevos
+  circadiano: false, // limitador: sin multiplicador nocturno
+  baseMs: 5,
+  minimoMs: 1,
+  maximoMs: 10,
+  diasCalentamiento: 0,
+  inicioMsgsDia: 1000,
+  maxMsgsDia: 1000,
+  tecleoMinMs: 1,
+  tecleoMaxMs: 2,
+  presencia: false,
+};
+
 export const pruebas = [
   ["`.say hola` repite el texto en vez de contestar con un error", async () => {
     const { enviados, ctx } = ctxFalso({ comando: "say", texto: "hola a todos", args: ["hola", "a", "todos"] });
@@ -71,10 +103,10 @@ export const pruebas = [
   }],
 
   ["envolverSocket parchea el socket sin tirar un ReferenceError", async () => {
-    const limitador = crearLimitador({ estado: {} });
+    const limitador = crearLimitador({ estado: {}, ajustes: RAPIDO });
     const salud = crearSalud();
-    const ritmo = crearRitmo({ estado: {} });
-    const cola = crearCola({ limitador, salud, ritmo });
+    const ritmo = crearRitmo({ estado: {}, ajustes: RAPIDO });
+    const cola = crearCola({ limitador, salud, ritmo, registro: {}, esperaTopeMs: 10 });
 
     const { ctx } = ctxFalso();
     const sock = ctx.sock;
@@ -95,7 +127,13 @@ export const pruebas = [
   }],
 
   ["la cola sigue exponiendo lo suyo tras mover `dormir` de sitio", () => {
-    const cola = crearCola({ limitador: crearLimitador({ estado: {} }), salud: crearSalud(), ritmo: crearRitmo({ estado: {} }) });
+    const cola = crearCola({
+      limitador: crearLimitador({ estado: {}, ajustes: RAPIDO }),
+      salud: crearSalud(),
+      ritmo: crearRitmo({ estado: {}, ajustes: RAPIDO }),
+      registro: {},
+      esperaTopeMs: 10,
+    });
     for (const nombre of ["encolar", "conPrioridad", "pausar", "reanudar", "motivos", "pausada", "largo", "limpiar", "estado"]) {
       esVerdad(nombre in cola, `cola.${nombre} existe`);
     }

@@ -1,5 +1,9 @@
 /**
- * Levi-Bot — AGPL-3.0-only · ver LICENSE y NOTICE
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
+ *
  * pruebas/ayuda.mjs — utilidades mínimas para las pruebas (sin dependencias).
  *
  * Cada archivo de pruebas exporta `pruebas` (lista de {nombre, fn}) donde fn

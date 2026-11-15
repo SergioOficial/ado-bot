@@ -21,7 +21,7 @@ export default {
     try {
       const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "Accept": "application/vnd.github+json", "Content-Type": "application/json", "User-Agent": "Levi-Bot" },
+        headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "Accept": "application/vnd.github+json", "Content-Type": "application/json", "User-Agent": "riokuroxi (+https://github.com/riokuroxi-svg)" },
         body: JSON.stringify({ title: `${tipo} de ${usuario}`, body: `### ${tipo}\n\n${textoReporte}\n\n---\n**👤 Usuario:** ${usuario}\n**📱 Número:** +${numero}\n**📅 Fecha:** ${fecha}\n**🤖 Bot:** ${BOT_NAME}` })
       });
 

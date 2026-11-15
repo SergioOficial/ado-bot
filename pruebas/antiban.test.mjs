@@ -1,4 +1,4 @@
-/** Levi-Bot — AGPL-3.0-only · ver LICENSE y NOTICE */
+/** riokuroxi — https://github.com/riokuroxi-svg · Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only · ver LICENSE y NOTICE */
 import { igual, esVerdad } from "./ayuda.mjs";
 import {
   crearLimitador,
@@ -26,6 +26,24 @@ const RAPIDO = {
   maxMsgsDia: 5,
   circadiano: false,
 };
+
+/**
+ * Un día fijo en vez del de verdad.
+ *
+ * Cinco pruebas de este archivo leían `new Date()` dos o tres veces: al armar el
+ * estado, dentro del limitador y al afirmar. Con el reloj real esas lecturas
+ * pueden caer a lados distintos de la medianoche UTC, y entonces la prueba falla
+ * una vez cada muchos meses — justo cuando nadie está mirando y no se puede
+ * reproducir. Con `reloj` inyectado las tres lecturas ven el mismo día, siempre.
+ */
+const DIA = "2026-11-15";
+
+/** El día que estaba `n` días antes de DIA, sin leer el reloj de verdad. */
+const haceDias = (n) =>
+  new Date(new Date(`${DIA}T12:00:00Z`).getTime() - n * 86_400_000).toISOString().slice(0, 10);
+
+/** Reloj clavado en DIA, para pasarle a `crearLimitador`. */
+const relojFijo = () => DIA;
 
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -68,9 +86,9 @@ export const pruebas = [
   }],
 
   ["el tope diario sube con los días y se puede gastar", () => {
-    const hace3 = new Date(Date.now() - 3 * 86_400_000).toISOString().slice(0, 10);
-    const estado = { inicio: hace3, ultimoDia: new Date().toISOString().slice(0, 10), msgsHoy: 0 };
-    const l = crearLimitador({ estado, ajustes: RAPIDO });
+    const hace3 = haceDias(3);
+    const estado = { inicio: hace3, ultimoDia: DIA, msgsHoy: 0 };
+    const l = crearLimitador({ estado, ajustes: RAPIDO, reloj: relojFijo });
 
     const r = l.resumen();
     igual(r.dia, 4, "cuarto día de calentamiento");
@@ -84,19 +102,38 @@ export const pruebas = [
   }],
 
   ["al octavo día ya no hay calentamiento", () => {
-    const hace10 = new Date(Date.now() - 10 * 86_400_000).toISOString().slice(0, 10);
-    const l = crearLimitador({ estado: { inicio: hace10, ultimoDia: hace10, msgsHoy: 0 }, ajustes: RAPIDO });
+    const hace10 = haceDias(10);
+    const l = crearLimitador({ estado: { inicio: hace10, ultimoDia: hace10, msgsHoy: 0 }, ajustes: RAPIDO, reloj: relojFijo });
     const r = l.resumen();
     igual(r.terminado, true, "terminado");
     igual(r.tope, RAPIDO.maxMsgsDia, "tope máximo");
   }],
 
   ["el contador diario se reinicia al cambiar el día", () => {
-    const ayer = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+    const ayer = haceDias(1);
     const estado = { inicio: ayer, ultimoDia: ayer, msgsHoy: 5 };
-    const l = crearLimitador({ estado, ajustes: RAPIDO });
+    const l = crearLimitador({ estado, ajustes: RAPIDO, reloj: relojFijo });
     igual(l.resumen().msgsHoy, 0, "vuelve a cero");
-    igual(estado.ultimoDia, new Date().toISOString().slice(0, 10), "apunta el día nuevo");
+    igual(estado.ultimoDia, DIA, "apunta el día nuevo");
+  }],
+
+  ["el reloj inyectado manda sobre el de verdad", () => {
+    const estado = {};
+    crearLimitador({ estado, ajustes: RAPIDO, reloj: () => "1999-01-01" });
+    igual(estado.inicio, "1999-01-01", "el inicio sale del reloj inyectado");
+    igual(estado.ultimoDia, "1999-01-01", "y el día también");
+  }],
+
+  ["sin reloj inyectado el día sale del de verdad", () => {
+    const antes = new Date().toISOString().slice(0, 10);
+    const estado = {};
+    crearLimitador({ estado, ajustes: RAPIDO });
+    const despues = new Date().toISOString().slice(0, 10);
+    esVerdad(/^\d{4}-\d{2}-\d{2}$/.test(estado.ultimoDia), "con forma de fecha");
+    // Se aceptan los dos días sólo si el día cambió de verdad en medio; si no, la
+    // afirmación es exacta. Así esta prueba no puede fallar por correr sobre la
+    // medianoche, que es justo lo que se está arreglando en este archivo.
+    esVerdad(estado.ultimoDia === antes || estado.ultimoDia === despues, "es el día en que corrió");
   }],
 
   ["el riesgo suma desconexiones, errores, fallos de envío y el 403", () => {
@@ -139,8 +176,8 @@ export const pruebas = [
   }],
 
   ["con el tope alcanzado, las reacciones pasan y los mensajes esperan", async () => {
-    const estado = { inicio: new Date().toISOString().slice(0, 10), ultimoDia: new Date().toISOString().slice(0, 10), msgsHoy: 99 };
-    const l = crearLimitador({ estado, ajustes: RAPIDO });
+    const estado = { inicio: DIA, ultimoDia: DIA, msgsHoy: 99 };
+    const l = crearLimitador({ estado, ajustes: RAPIDO, reloj: relojFijo });
     const cola = crearCola({ limitador: l, registro: {}, esperaTopeMs: 20 });
 
     esVerdad(!l.puedeEnviar(), "tope alcanzado");
@@ -156,8 +193,8 @@ export const pruebas = [
   }],
 
   ["las urgentes se adelantan al tope", async () => {
-    const estado = { inicio: new Date().toISOString().slice(0, 10), ultimoDia: new Date().toISOString().slice(0, 10), msgsHoy: 99 };
-    const l = crearLimitador({ estado, ajustes: RAPIDO });
+    const estado = { inicio: DIA, ultimoDia: DIA, msgsHoy: 99 };
+    const l = crearLimitador({ estado, ajustes: RAPIDO, reloj: relojFijo });
     const cola = crearCola({ limitador: l, registro: {}, esperaTopeMs: 20 });
 
     const orden = [];
@@ -377,10 +414,11 @@ pruebas.push(
   }],
 
   ["el perfil auto sigue subiendo con los días", () => {
-    const hace3 = new Date(Date.now() - 3 * 86_400_000).toISOString().slice(0, 10);
+    const hace3 = haceDias(3);
     const l = crearLimitador({
       estado: { inicio: hace3 },
       ajustes: { ...RAPIDO, perfil: "auto", diasCalentamiento: 7, inicioMsgsDia: 2, maxMsgsDia: 5 },
+      reloj: relojFijo,
     });
     const r = l.resumen();
     esVerdad(r.tope > RAPIDO.inicioMsgsDia && r.tope < RAPIDO.maxMsgsDia, `tope intermedio (${r.tope})`);

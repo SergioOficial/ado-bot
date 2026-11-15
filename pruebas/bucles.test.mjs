@@ -1,8 +1,8 @@
 /**
  * riokuroxi — https://github.com/riokuroxi-svg
- * SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 riokuroxi-svg
- * Mantener esta cabecera es obligatorio por AGPL.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * pruebas/bucles.test.mjs — el corte del eco entre cuentas de bot.
  *

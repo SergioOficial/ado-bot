@@ -38,17 +38,17 @@ for (const p of archivosShin) {
   shin.push({ archivo: relative(SHIN, p), cat, alias, nombre: p.split("/").pop().replace(/\.js$/, "") });
 }
 
-// 2. Comandos de Levi (cargando los plugins)
-const archivosLevi = [];
+// 2. Comandos de este bot (cargando los plugins)
+const archivosBot = [];
 (function rec(d) {
   for (const f of readdirSync(d)) {
     const p = join(d, f);
     if (statSync(p).isDirectory()) rec(p);
-    else if (f.endsWith(".js")) archivosLevi.push(p);
+    else if (f.endsWith(".js")) archivosBot.push(p);
   }
 })(join(LEVI, "plugins"));
 const levi = new Set();
-for (const p of archivosLevi) {
+for (const p of archivosBot) {
   try {
     const mod = await import(pathToFileURL(p).href);
     for (const c of (mod.default?.command || [])) levi.add(String(c).toLowerCase());
@@ -79,14 +79,14 @@ const lineas = [
   "# Mapa del porteo desde Shin-MD",
   "",
   `_Generado el ${new Date().toISOString().slice(0, 10)} comparando los comandos de ` +
-    `[Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en Levi-Bot._`,
+    `[Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en este bot._`,
   "",
   `- Comandos en Shin: **${total}**`,
-  `- Ya existen en Levi (al menos con un nombre): **${yaEsta.length}**`,
+  `- Ya existen en este bot (al menos con un nombre): **${yaEsta.length}**`,
   `- Pendientes de portar o de descartar: **${falta.length}**`,
   "",
-  "«Ya existe» no significa «igual»: Levi puede tener el mismo comando con menos cosas.",
-  "Cada comando que se porta se reescribe al formato de plugin de Levi y se apunta abajo.",
+  "«Ya existe» no significa «igual»: este bot puede tener el mismo comando con menos cosas.",
+  "Cada comando que se porta se reescribe al formato de plugin de este bot y se apunta abajo.",
   "",
   portados || "## Portados a mano (sin registrar todavía)",
   "",
@@ -102,5 +102,5 @@ for (const [cat, lista] of Object.entries(porCat).sort()) {
   lineas.push("");
 }
 writeFileSync(join(LEVI, "docs", "PORTE.md"), lineas.join("\n"));
-console.log(`Shin: ${total} · ya en Levi: ${yaEsta.length} · pendientes: ${falta.length}`);
+console.log(`Shin: ${total} · ya en el bot: ${yaEsta.length} · pendientes: ${falta.length}`);
 console.log(Object.entries(porCat).map(([c, l]) => `${c}:${l.length}`).join(" · "));

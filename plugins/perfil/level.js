@@ -1,12 +1,14 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
- * Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only. Ver NOTICE.
  *
  * .level [@quien]     tu nivel y cuánto falta para el siguiente
  * .lboard [n]         los de más nivel
  *
- * Se usa la MISMA cuenta de experiencia que ya usa Levi (100 × nivel por
+ * Se usa la MISMA cuenta de experiencia que ya usa este bot (100 × nivel por
  * escalón), no una curva nueva: si hubiera dos fórmulas, el nivel del perfil y
  * el de `.level` no cuadrarían, que es exactamente lo que pasaba en Shin.
  */

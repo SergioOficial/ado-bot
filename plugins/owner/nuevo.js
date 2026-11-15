@@ -1,12 +1,14 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
- * Ver LICENSE y NOTICE.
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * .nuevo <nombre> [carpeta]   (dueño) crea un plugin que ya funciona
  * .delplugin <nombre>         (dueño) lo borra, con confirmación de 2 minutos
  *
  * El archivo que se escribe **carga y responde de verdad**: cabecera de
- * licencia, formato de Levi (`command`/`execute`) y un mensaje de prueba que
+ * licencia, formato de plugin de este bot (`command`/`execute`) y un mensaje de prueba que
  * dice con qué argumentos lo llamaron. Así no queda un archivo vacío que haya
  * que arreglar después.
  */
@@ -53,8 +55,10 @@ export default {
       const ruta = join(RUTA_PLUGINS, carpeta, `${nombre}.js`);
 
       const codigo = `/**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
- * Ver LICENSE y NOTICE.
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * .${nombre} — (escribe aquí qué hace, en una línea)
  */

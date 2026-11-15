@@ -1,4 +1,4 @@
-/** Levi-Bot — AGPL-3.0-only · ver LICENSE y NOTICE */
+/** riokuroxi — https://github.com/riokuroxi-svg · Copyright (C) 2026 riokuroxi-svg · AGPL-3.0-only · ver LICENSE y NOTICE */
 import fs from "fs";
 import os from "os";
 import path from "path";

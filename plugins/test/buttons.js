@@ -1,6 +1,8 @@
 /**
- * Levi-Bot — Copyright (C) 2026 los autores de Levi-Bot · AGPL-3.0-only
- * Ver LICENSE y NOTICE.
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * .boton1 … .boton6 — probar los botones uno por uno, y `.botones` para el índice.
  *
@@ -18,7 +20,7 @@ export default {
   command: ["boton1", "boton2", "boton3", "boton4", "boton5", "boton6", "boton7", "botones"],
   execute: async (ctx) => {
     const { sock, from, m, comando, enviartexto, config } = ctx;
-    const pie = config.botName || "Levi-Bot";
+    const pie = config.botName || "riokuroxi";
 
     if (comando === "botones") {
       return enviartexto(
@@ -43,7 +45,7 @@ export default {
       },
       boton2: {
         texto: "🔗 *Enlaces del proyecto*",
-        botones: [enlace("🌐 Ver repositorio", "https://github.com/SergioOficial/Levi-bot")],
+        botones: [enlace("🌐 Ver repositorio", "https://github.com/SergioOficial/ado-bot")],
       },
       boton3: {
         texto: "🎮 *¿Qué quieres hacer?*",
@@ -84,7 +86,7 @@ export default {
         // comprueba que la hoja inferior (`messageParamsJson`) hace su trabajo.
         texto: "🎯 *Panel de control*\n\nCuatro opciones (el cuarto va en la hoja).",
         botones: [
-          enlace("🌐 Repositorio", "https://github.com/SergioOficial/Levi-bot"),
+          enlace("🌐 Repositorio", "https://github.com/SergioOficial/ado-bot"),
           copiar("📋 Comando de inicio", "npm start"),
           rapido("📋 Ver menú", "menu"),
           rapido("🩺 Salud", "health"),
@@ -95,7 +97,7 @@ export default {
         texto: "📍 *Ubicación y mini web*\n\nDos tipos poco usados, para probarlos.",
         botones: [
           ubicacion("📍 Mandar mi ubicación"),
-          webview("🌐 GitHub en WhatsApp", "https://github.com/SergioOficial/Levi-bot"),
+          webview("🌐 GitHub en WhatsApp", "https://github.com/SergioOficial/ado-bot"),
         ],
       },
     };

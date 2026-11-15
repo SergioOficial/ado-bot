@@ -73,4 +73,4 @@ bot **apagado** (con el bot encendido, el autoguardado lo pisa cada segundo).
 
 ---
 
-<sub>Escrito por **[SergioOficial](https://github.com/SergioOficial)** · Levi-Bot · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/Levi-bot).</sub>
+<sub>Mantenido por **[riokuroxi-svg](https://github.com/riokuroxi-svg)** · autoría original de [SergioOficial](https://github.com/SergioOficial) · AGPL-3.0-only · [repositorio](https://github.com/SergioOficial/ado-bot).</sub>
