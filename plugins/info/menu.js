@@ -51,6 +51,12 @@ export default {
 ┃ ➤ ${PREFIX}weekly | ${PREFIX}monthly
 ┃ ➤ ${PREFIX}coffer (no lo toca .rob)
 ┃ ➤ ${PREFIX}rankcoins | ${PREFIX}einfo
+┃ ➤ ${PREFIX}interest → Cobrar intereses del banco
+┃ ➤ ${PREFIX}ppt → Piedra, papel o tijera
+┃ ➤ ${PREFIX}cofre → Abrir caja misteriosa (5k)
+┃ ➤ ${PREFIX}invertir → Inversión de alto riesgo
+┃ ➤ ${PREFIX}shop → Comprar escudos o amuletos
+┃ ➤ ${PREFIX}give → Regalar coins
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -208,6 +214,12 @@ export default {
 ┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
 ┃ ➤ ${PREFIX}cf | ${PREFIX}slots | ${PREFIX}dice
 ┃ ➤ ${PREFIX}rankcoins
+┃ ➤ ${PREFIX}interest → Cobrar intereses del banco
+┃ ➤ ${PREFIX}ppt → Piedra, papel o tijera
+┃ ➤ ${PREFIX}cofre → Abrir caja misteriosa (5k)
+┃ ➤ ${PREFIX}invertir → Inversión de alto riesgo
+┃ ➤ ${PREFIX}shop → Comprar escudos o amuletos
+┃ ➤ ${PREFIX}give → Regalar coins
 ┗━━━━━━━━━━━━━━━━━━┛
 > Volver: *${PREFIX}menu*
 `;
