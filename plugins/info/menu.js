@@ -69,12 +69,19 @@ export default {
 ┏━━━━━━━━━━━━━━━━━━┓
 ┃ 🎴 *𝐆𝐀𝐂𝐇𝐀* 🎴
 ┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}gacha on | off
+>  ${PREFIX}gacha on | off
 ┃ ➤ ${PREFIX}rw | ${PREFIX}roll | ${PREFIX}rollwaifu
+> pedir un gacha 
 ┃ ➤ ${PREFIX}claim | ${PREFIX}c | ${PREFIX}reclamar
+> reclamar un gacha citando 
 ┃ ➤ ${PREFIX}harem | ${PREFIX}waifus | ${PREFIX}claims
+> tus reglamaciones 
 ┃ ➤ ${PREFIX}wtop | ${PREFIX}topwaifus | ${PREFIX}waifustop
+> top de gachas del grupo 
 ┃ ➤ ${PREFIX}charinfo | ${PREFIX}winfo
+> información de Gachas
+┃ ➤ ${PREFIX}vote <nombre> 
+> Vota por un personaje (+valor)
 ┗━━━━━━━━━━━━━━━━━━┛
 
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -293,6 +300,7 @@ export default {
 ┃ ➤ ${PREFIX}wtop | ${PREFIX}topwaifus | ${PREFIX}waifustop
 ┃ 🔎 *Ficha*
 ┃ ➤ ${PREFIX}charinfo | ${PREFIX}winfo
+┃ 🗳️ ${PREFIX}vote <nombre> → Vota por un personaje (+valor)
 ┃ ⚙️ *Encender o apagar*
 ┃ ➤ ${PREFIX}gacha on | ${PREFIX}gacha off
 ┗━━━━━━━━━━━━━━━━━━┛
