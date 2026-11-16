@@ -8,7 +8,7 @@ import { enviarJuegoHtml } from "../../lib/juego-html.js";
 const archivo = new URL("../../juegos/Cerito.html", import.meta.url);
 
 export default {
-  command: ["cerito", "ceritohtml", "gato", "tateti", "tictactoe", "3enlinea"],
+  command: ["cerito", "ceritohtml", "gatohtml", "tateti", "tictactoe", "3enlinea"],
   category: "fun",
   execute: async ({ sock, from }) => {
     const html = await readFile(archivo, "utf8");
