@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 // ⚠️ Cambia esta URL por la tuya de GitHub Pages / Vercel / Netlify
-const GATO_URL = "https://github/SergioOficial/ado-bot/Gato_en_el_bot.html";
+const GATO_URL = "https://github.com/SergioOficial/ado-bot/Gato_en_el_bot.html";
 
 // Ruta local del HTML (para el fallback de descarga)
 const HTML_LOCAL = path.resolve("./Gato_en_el_bot.html");
