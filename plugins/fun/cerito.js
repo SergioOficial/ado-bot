@@ -5,7 +5,7 @@
 import { readFile } from "node:fs/promises";
 import { enviarJuegoHtml } from "../../lib/juegos-html.js";
 
-const archivo = new URL("../../juegos/cerito.html", import.meta.url);
+const archivo = new URL("../../juegos/Cerito.html", import.meta.url);
 
 export default {
   command: ["cerito", "ceritohtml", "gato", "tateti", "tictactoe", "3enlinea"],
