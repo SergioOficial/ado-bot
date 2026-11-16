@@ -24,6 +24,82 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* ── Overlay de login ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, .92);
+    backdrop-filter: blur(10px);
+    display: none;
+    place-items: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .overlay.on { display: grid; }
+
+  .login-box {
+    width: min(360px, 100%);
+    background: rgba(15, 23, 42, .95);
+    border: 1px solid #1e293b;
+    border-radius: 20px;
+    padding: 26px 22px;
+    text-align: center;
+    box-shadow: 0 25px 60px -20px rgba(0, 0, 0, .9);
+  }
+  .login-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, var(--x), var(--o));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .login-box p { color: #94a3b8; font-size: .85rem; margin-bottom: 16px; }
+  .login-box input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-size: .95rem;
+    font-family: inherit;
+    margin-bottom: 10px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .login-box input:focus { border-color: var(--x); }
+  .login-box button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: filter .2s;
+  }
+  .login-box button:hover { filter: brightness(1.1); }
+  .login-box .link {
+    background: none;
+    color: #64748b;
+    font-weight: 500;
+    font-size: .78rem;
+    margin-top: 10px;
+    padding: 6px;
+  }
+  .login-box .link:hover { color: #94a3b8; }
+  #aviso {
+    min-height: 1.2em;
+    font-size: .78rem;
+    color: var(--o);
+    margin-bottom: 6px;
+  }
+
+  /* ── Layout principal ── */
   .juego {
     width: min(430px, 100%);
     background: rgba(15, 23, 42, .78);
@@ -48,45 +124,68 @@
     text-align: center;
     font-size: .78rem;
     color: #64748b;
-    margin: 4px 0 16px;
+    margin: 4px 0 14px;
   }
 
-  /* ---------- Modos de juego ---------- */
+  /* ── Barra de usuario ── */
+  .userbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: .85rem;
+  }
+  .userbar b { color: var(--x); }
+  .userbar button {
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #94a3b8;
+    font-size: .72rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .userbar button:hover { background: #2b3b52; color: #e2e8f0; }
+
+  /* ── Modos de juego ── */
   .modos {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     margin-bottom: 14px;
   }
-
   .modo {
     padding: 9px;
     border-radius: 12px;
     border: 1px solid #334155;
     background: #0f172a;
     color: #94a3b8;
-    font-size: .8rem;
+    font-size: .78rem;
     font-weight: 600;
     cursor: pointer;
     transition: .2s;
   }
-
   .modo:hover { background: #1e293b; color: #e2e8f0; }
-
   .modo.activo {
     background: linear-gradient(90deg, #0ea5e9, #6366f1);
     border-color: transparent;
     color: #fff;
   }
 
-  /* ---------- Marcador ---------- */
+  /* ── Marcador ── */
   .marcador {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin-bottom: 14px;
   }
-
   .marcador div {
     background: #0f172a;
     border: 1px solid #1e293b;
@@ -94,7 +193,6 @@
     padding: 8px 4px;
     text-align: center;
   }
-
   .marcador .etq {
     display: block;
     font-size: .62rem;
@@ -103,18 +201,16 @@
     color: #64748b;
     margin-bottom: 2px;
   }
-
   .marcador .num {
     display: block;
     font-size: 1.25rem;
     font-weight: 800;
   }
-
   .num.x { color: var(--x); }
   .num.o { color: var(--o); }
   .num.e { color: #a78bfa; }
 
-  /* ---------- Estado ---------- */
+  /* ── Estado ── */
   #estado {
     text-align: center;
     font-weight: 700;
@@ -123,18 +219,16 @@
     color: var(--x);
     transition: color .25s;
   }
-
   #estado.turno-o { color: var(--o); }
   #estado.fin { color: var(--ok); }
 
-  /* ---------- Tablero ---------- */
+  /* ── Tablero ── */
   .tablero {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     aspect-ratio: 1;
   }
-
   .celda {
     border: none;
     border-radius: 16px;
@@ -149,24 +243,19 @@
     transition: background .18s, transform .12s, box-shadow .2s;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
   }
-
   .celda:hover:not(.ocupada):not(:disabled) {
     background: #2b3b52;
     transform: translateY(-2px);
   }
-
   .celda:active:not(.ocupada):not(:disabled) { transform: scale(.97); }
-
   .celda:disabled { cursor: default; }
-
   .celda.x { color: var(--x); }
   .celda.o { color: var(--o); }
-
   .celda.ocupada { animation: pop .22s ease-out; }
 
   @keyframes pop {
-    0%   { transform: scale(.4); opacity: 0; }
-    70%  { transform: scale(1.12); }
+    0% { transform: scale(.4); opacity: 0; }
+    70% { transform: scale(1.12); }
     100% { transform: scale(1); opacity: 1; }
   }
 
@@ -175,19 +264,17 @@
     box-shadow: 0 0 0 2px var(--ok), 0 0 22px rgba(34, 197, 94, .55);
     animation: pulso .9s ease-in-out infinite alternate;
   }
-
   @keyframes pulso {
     from { box-shadow: 0 0 0 2px var(--ok), 0 0 12px rgba(34, 197, 94, .35); }
     to   { box-shadow: 0 0 0 2px var(--ok), 0 0 26px rgba(34, 197, 94, .8); }
   }
 
-  /* ---------- Acciones ---------- */
+  /* ── Acciones ── */
   .acciones {
     display: flex;
     gap: 8px;
     margin-top: 16px;
   }
-
   .accion {
     flex: 1;
     padding: 11px;
@@ -201,259 +288,444 @@
     cursor: pointer;
     transition: .2s;
   }
-
   .accion:hover { background: #2b3b52; transform: translateY(-1px); }
-
   .accion.primario {
     background: linear-gradient(90deg, #0ea5e9, #6366f1);
     border-color: transparent;
     color: #fff;
   }
-
   .accion.primario:hover { filter: brightness(1.1); }
+
+  /* ── Perfil / stats ── */
+  .perfil {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #1e293b;
+  }
+  .perfil h3 {
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #64748b;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .stats div {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 10px 4px;
+    text-align: center;
+  }
+  .stats span { display: block; font-size: 1.1rem; }
+  .stats b { display: block; font-size: 1.2rem; color: #e2e8f0; margin: 2px 0; }
+  .stats small {
+    font-size: .65rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
 </style>
 </head>
 <body>
 
-  <main class="juego">
-    <h1>Cerito Cruz</h1>
-    <p class="sub">Tres en línea · 3 × 3</p>
+<!-- ═══ Overlay de login ═══ -->
+<div class="overlay on" id="login">
+  <div class="login-box">
+    <h2>🎮 Cerito Cruz</h2>
+    <p>Ingresa tu nombre para jugar</p>
+    <input id="nombre" maxlength="20" placeholder="Tu nombre..." autocomplete="off">
+    <div id="aviso"></div>
+    <button id="entrar">Entrar</button>
+    <button class="link" id="verUsuarios">Ver usuarios registrados</button>
+  </div>
+</div>
 
-    <div class="modos">
-      <button class="modo activo" data-modo="2p">👥 2 jugadores</button>
-      <button class="modo" data-modo="cpu">🤖 Vs CPU</button>
+<!-- ═══ Juego ═══ -->
+<main class="juego">
+  <h1>Cerito Cruz</h1>
+  <p class="sub">Tres en línea · 3 × 3</p>
+
+  <div class="userbar">
+    <span>👤 <b id="userName">—</b></span>
+    <button id="cambiar">Cambiar usuario</button>
+  </div>
+
+  <div class="modos">
+    <button class="modo" data-modo="2p">👥 2 jugadores</button>
+    <button class="modo" data-modo="mancos">🟢 Mancos</button>
+    <button class="modo" data-modo="facil">🟡 Fácil</button>
+    <button class="modo activo" data-modo="dificil">🔴 Difícil</button>
+  </div>
+
+  <div class="marcador">
+    <div><span class="etq" id="etqX">Tú (X)</span><span class="num x" id="pX">0</span></div>
+    <div><span class="etq">Empates</span><span class="num e" id="pE">0</span></div>
+    <div><span class="etq" id="etqO">CPU (O)</span><span class="num o" id="pO">0</span></div>
+  </div>
+
+  <p id="estado" aria-live="polite">Turno de X</p>
+
+  <div class="tablero" id="tablero">
+    <button class="celda" data-i="0"></button>
+    <button class="celda" data-i="1"></button>
+    <button class="celda" data-i="2"></button>
+    <button class="celda" data-i="3"></button>
+    <button class="celda" data-i="4"></button>
+    <button class="celda" data-i="5"></button>
+    <button class="celda" data-i="6"></button>
+    <button class="celda" data-i="7"></button>
+    <button class="celda" data-i="8"></button>
+  </div>
+
+  <div class="acciones">
+    <button class="accion primario" id="nueva">Nueva ronda</button>
+    <button class="accion" id="reiniciar">Borrar marcador</button>
+  </div>
+
+  <div class="perfil">
+    <h3>📊 Tus estadísticas</h3>
+    <div class="stats">
+      <div><span>🏆</span><b id="stW">0</b><small>Victorias</small></div>
+      <div><span>💀</span><b id="stL">0</b><small>Derrotas</small></div>
+      <div><span>🤝</span><b id="stE">0</b><small>Empates</small></div>
     </div>
-
-    <div class="marcador">
-      <div><span class="etq" id="etqX">Jugador X</span><span class="num x" id="pX">0</span></div>
-      <div><span class="etq">Empates</span><span class="num e" id="pE">0</span></div>
-      <div><span class="etq" id="etqO">Jugador O</span><span class="num o" id="pO">0</span></div>
-    </div>
-
-    <p id="estado" aria-live="polite">Turno de X</p>
-
-    <div class="tablero" id="tablero">
-      <button class="celda" data-i="0" aria-label="Casilla 1"></button>
-      <button class="celda" data-i="1" aria-label="Casilla 2"></button>
-      <button class="celda" data-i="2" aria-label="Casilla 3"></button>
-      <button class="celda" data-i="3" aria-label="Casilla 4"></button>
-      <button class="celda" data-i="4" aria-label="Casilla 5"></button>
-      <button class="celda" data-i="5" aria-label="Casilla 6"></button>
-      <button class="celda" data-i="6" aria-label="Casilla 7"></button>
-      <button class="celda" data-i="7" aria-label="Casilla 8"></button>
-      <button class="celda" data-i="8" aria-label="Casilla 9"></button>
-    </div>
-
-    <div class="acciones">
-      <button class="accion primario" id="nueva">Nueva ronda</button>
-      <button class="accion" id="reiniciar">Borrar marcador</button>
-    </div>
-  </main>
+  </div>
+</main>
 
 <script>
-  /* ================== Configuración ================== */
-  const COMBINACIONES = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],   // filas
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],   // columnas
-    [0, 4, 8], [2, 4, 6]               // diagonales
-  ];
+/* ══════════════════════════════════════════════════════════════
+   1. PERSISTENCIA DE USUARIOS (localStorage, sin duplicados)
+   ══════════════════════════════════════════════════════════════ */
+const KEY_USERS  = "gato_usuarios";
+const KEY_ACTIVO = "gato_activo";
 
-  /* ================== Referencias DOM ================== */
-  const celdas    = [...document.querySelectorAll('.celda')];
-  const estadoEl  = document.getElementById('estado');
-  const pX        = document.getElementById('pX');
-  const pO        = document.getElementById('pO');
-  const pE        = document.getElementById('pE');
-  const etqX      = document.getElementById('etqX');
-  const etqO      = document.getElementById('etqO');
-  const btnNueva  = document.getElementById('nueva');
-  const btnReset  = document.getElementById('reiniciar');
-  const btnsModo  = document.querySelectorAll('.modo');
+function cargarUsuarios() {
+  try { return JSON.parse(localStorage.getItem(KEY_USERS)) || {}; }
+  catch { return {}; }
+}
+function guardarUsuarios(u) {
+  localStorage.setItem(KEY_USERS, JSON.stringify(u));
+}
 
-  /* ================== Estado del juego ================== */
-  let tablero  = Array(9).fill('');
-  let turno    = 'X';
-  let activo   = true;
-  let modo     = '2p';            // '2p' | 'cpu'
-  const puntos = { X: 0, O: 0, empate: 0 };
+// Normaliza el nombre: minúsculas, sin espacios dobles, sin símbolos raros
+function normalizarNombre(n) {
+  return n.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 20);
+}
 
-  /* ================== Lógica principal ================== */
+// Devuelve el nombre EXACTO si el usuario ya existe (evita duplicados)
+function buscarExistente(nombre) {
+  const norm = normalizarNombre(nombre);
+  const users = cargarUsuarios();
+  for (const key of Object.keys(users)) {
+    if (normalizarNombre(key) === norm) return key;
+  }
+  return null;
+}
 
-  function iniciarRonda() {
-    tablero = Array(9).fill('');
-    turno = 'X';
-    activo = true;
-    celdas.forEach(c => {
-      c.textContent = '';
-      c.className = 'celda';
-      c.disabled = false;
-    });
-    actualizarEstado();
+// Registra (o devuelve existente) sin crear duplicados
+function registrarUsuario(nombre) {
+  const norm = normalizarNombre(nombre);
+  if (!norm) return null;
+
+  const existente = buscarExistente(norm);
+  if (existente) {
+    // Bienvenido de vuelta: NO duplicar
+    localStorage.setItem(KEY_ACTIVO, existente);
+    return { nombre: existente, nuevo: false };
   }
 
-  function actualizarEstado() {
-    estadoEl.classList.remove('fin', 'turno-o');
-    if (modo === 'cpu') {
-      estadoEl.textContent = turno === 'X' ? 'Tu turno (X)' : 'Turno de la CPU (O)…';
-    } else {
-      estadoEl.textContent = `Turno de ${turno}`;
-    }
-    if (turno === 'O') estadoEl.classList.add('turno-o');
+  // Crear nuevo
+  const users = cargarUsuarios();
+  const pretty = nombre.trim().replace(/\s+/g, " ").slice(0, 20);
+  users[pretty] = {
+    victorias: 0,
+    derrotas: 0,
+    empates: 0,
+    creado: Date.now()
+  };
+  guardarUsuarios(users);
+  localStorage.setItem(KEY_ACTIVO, pretty);
+  return { nombre: pretty, nuevo: true };
+}
+
+function actualizarStats(campo) {
+  const activo = localStorage.getItem(KEY_ACTIVO);
+  if (!activo) return;
+  const users = cargarUsuarios();
+  if (!users[activo]) return;
+  users[activo][campo] = (users[activo][campo] || 0) + 1;
+  guardarUsuarios(users);
+  pintarStats();
+}
+
+function pintarStats() {
+  const activo = localStorage.getItem(KEY_ACTIVO);
+  const u = activo ? cargarUsuarios()[activo] : null;
+  document.getElementById("stW").textContent = u ? u.victorias : 0;
+  document.getElementById("stL").textContent = u ? u.derrotas : 0;
+  document.getElementById("stE").textContent = u ? u.empates  : 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   2. LOGIN
+   ══════════════════════════════════════════════════════════════ */
+const overlayLogin = document.getElementById("login");
+const inputNombre  = document.getElementById("nombre");
+const aviso        = document.getElementById("aviso");
+const btnEntrar    = document.getElementById("entrar");
+const btnVer       = document.getElementById("verUsuarios");
+const userLabel    = document.getElementById("userName");
+const btnCambiar   = document.getElementById("cambiar");
+
+function abrirLogin() {
+  overlayLogin.classList.add("on");
+  inputNombre.value = "";
+  aviso.textContent = "";
+  setTimeout(() => inputNombre.focus(), 100);
+}
+
+function entrar() {
+  const nombre = inputNombre.value.trim();
+  if (nombre.length < 2) {
+    aviso.textContent = "Escribe al menos 2 caracteres.";
+    return;
   }
+  const res = registrarUsuario(nombre);
+  if (!res) { aviso.textContent = "Nombre inválido."; return; }
 
-  function nombre(p) {
-    if (modo === 'cpu') return p === 'X' ? 'Tú' : 'la CPU';
-    return `el jugador ${p}`;
+  userLabel.textContent = res.nombre;
+  overlayLogin.classList.remove("on");
+  pintarStats();
+  iniciarRonda();
+}
+
+btnEntrar.addEventListener("click", entrar);
+inputNombre.addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
+
+btnVer.addEventListener("click", () => {
+  const users = cargarUsuarios();
+  const nombres = Object.keys(users);
+  if (!nombres.length) {
+    aviso.style.color = "#64748b";
+    aviso.textContent = "Todavía no hay usuarios registrados.";
+    return;
   }
+  aviso.style.color = "#94a3b8";
+  aviso.innerHTML = "👥 <b>Registrados:</b><br>" + nombres
+    .map(n => `• ${n} (${users[n].victorias}W)`).join("<br>");
+});
 
-  function colocar(i) {
-    if (!activo || tablero[i]) return;
+btnCambiar.addEventListener("click", () => {
+  abrirLogin();
+});
 
-    tablero[i] = turno;
-    const celda = celdas[i];
-    celda.textContent = turno;
-    celda.classList.add('ocupada', turno.toLowerCase());
-    celda.disabled = true;
+/* ══════════════════════════════════════════════════════════════
+   3. LÓGICA DEL JUEGO
+   ══════════════════════════════════════════════════════════════ */
+const COMBINACIONES = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
 
-    const res = resultado(tablero);
-    if (res) { terminar(res); return; }
+const celdas   = [...document.querySelectorAll(".celda")];
+const estadoEl = document.getElementById("estado");
+const pX       = document.getElementById("pX");
+const pO       = document.getElementById("pO");
+const pE       = document.getElementById("pE");
+const etqX     = document.getElementById("etqX");
+const etqO     = document.getElementById("etqO");
+const btnsModo = document.querySelectorAll(".modo");
 
-    turno = turno === 'X' ? 'O' : 'X';
-    actualizarEstado();
+let tablero = Array(9).fill("");
+let turno   = "X";
+let activo  = true;
+let modo    = "dificil";
+const puntos = { X: 0, O: 0, empate: 0 };
 
-    // Turno de la CPU
-    if (modo === 'cpu' && turno === 'O' && activo) {
-      setTimeout(() => colocar(mejorMovimiento([...tablero])), 380);
-    }
-  }
-
-  function resultado(t) {
-    for (const [a, b, c] of COMBINACIONES) {
-      if (t[a] && t[a] === t[b] && t[a] === t[c]) {
-        return { ganador: t[a], linea: [a, b, c] };
-      }
-    }
-    if (t.every(v => v !== '')) return { ganador: 'empate', linea: [] };
-    return null;
-  }
-
-  function terminar(res) {
-    activo = false;
-    celdas.forEach(c => c.disabled = true);
-    estadoEl.classList.remove('turno-o');
-    estadoEl.classList.add('fin');
-
-    if (res.ganador === 'empate') {
-      puntos.empate++;
-      estadoEl.textContent = '¡Empate! 🤝';
-      estadoEl.classList.remove('fin');
-    } else {
-      puntos[res.ganador]++;
-      res.linea.forEach(i => celdas[i].classList.add('ganadora'));
-      estadoEl.textContent = `¡Ganó ${nombre(res.ganador)}! 🎉`;
-    }
-    actualizarMarcador();
-  }
-
-  function actualizarMarcador() {
-    pX.textContent = puntos.X;
-    pO.textContent = puntos.O;
-    pE.textContent = puntos.empate;
-  }
-
-  function actualizarEtiquetas() {
-    if (modo === 'cpu') {
-      etqX.textContent = 'Tú (X)';
-      etqO.textContent = 'CPU (O)';
-    } else {
-      etqX.textContent = 'Jugador X';
-      etqO.textContent = 'Jugador O';
-    }
-  }
-
-  /* ================== IA: Minimax (imbatible) ================== */
-
-  function mejorMovimiento(t) {
-    let mejorPuntaje = -Infinity;
-    let mejorIndice = null;
-
-    for (let i = 0; i < 9; i++) {
-      if (t[i] === '') {
-        t[i] = 'O';
-        const puntaje = minimax(t, 0, false);
-        t[i] = '';
-        if (puntaje > mejorPuntaje) {
-          mejorPuntaje = puntaje;
-          mejorIndice = i;
-        }
-      }
-    }
-    return mejorIndice;
-  }
-
-  function minimax(t, profundidad, esMax) {
-    const r = resultado(t);
-    if (r) {
-      if (r.ganador === 'O') return 10 - profundidad;  // gana CPU
-      if (r.ganador === 'X') return profundidad - 10;  // gana humano
-      return 0;                                        // empate
-    }
-
-    if (esMax) {
-      let mejor = -Infinity;
-      for (let i = 0; i < 9; i++) {
-        if (t[i] === '') {
-          t[i] = 'O';
-          mejor = Math.max(mejor, minimax(t, profundidad + 1, false));
-          t[i] = '';
-        }
-      }
-      return mejor;
-    } else {
-      let peor = Infinity;
-      for (let i = 0; i < 9; i++) {
-        if (t[i] === '') {
-          t[i] = 'X';
-          peor = Math.min(peor, minimax(t, profundidad + 1, true));
-          t[i] = '';
-        }
-      }
-      return peor;
-    }
-  }
-
-  /* ================== Eventos ================== */
-
-  celdas.forEach(celda => {
-    celda.addEventListener('click', () => {
-      if (!activo) return;
-      if (modo === 'cpu' && turno === 'O') return; // esperando a la CPU
-      colocar(Number(celda.dataset.i));
-    });
+/* ── Rendimiento de la partida ── */
+function iniciarRonda() {
+  tablero = Array(9).fill("");
+  turno = "X";
+  activo = true;
+  celdas.forEach(c => {
+    c.textContent = "";
+    c.className = "celda";
+    c.disabled = false;
   });
+  actualizarEstado();
+}
 
-  btnsModo.forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (modo === btn.dataset.modo) return;
-      modo = btn.dataset.modo;
-      btnsModo.forEach(b => b.classList.toggle('activo', b === btn));
-      actualizarEtiquetas();
-      iniciarRonda();
-    });
+function actualizarEstado() {
+  estadoEl.classList.remove("fin", "turno-o");
+  const nombreActivo = localStorage.getItem(KEY_ACTIVO) || "jugador";
+
+  if (modo === "2p") {
+    estadoEl.textContent = `Turno de ${turno}`;
+  } else if (modo === "mancos") {
+    estadoEl.textContent = turno === "X" ? `Tu turno (${nombreActivo}) — 🟢 mancos` : "CPU pensando (mancos)…";
+  } else if (modo === "facil") {
+    estadoEl.textContent = turno === "X" ? `Tu turno (${nombreActivo}) — 🟡 fácil` : "CPU pensando (fácil)…";
+  } else {
+    estadoEl.textContent = turno === "X" ? `Tu turno (${nombreActivo}) — 🔴 difícil` : "CPU pensando (difícil)…";
+  }
+  if (turno === "O") estadoEl.classList.add("turno-o");
+}
+
+function nombre(p) {
+  const activo = localStorage.getItem(KEY_ACTIVO) || "Tú";
+  if (modo === "2p") return `el jugador ${p}`;
+  return p === "X" ? activo : "la CPU";
+}
+
+function colocar(i) {
+  if (!activo || tablero[i]) return;
+  tablero[i] = turno;
+  const celda = celdas[i];
+  celda.textContent = turno;
+  celda.classList.add("ocupada", turno.toLowerCase());
+  celda.disabled = true;
+
+  const res = resultado(tablero);
+  if (res) { terminar(res); return; }
+
+  turno = turno === "X" ? "O" : "X";
+  actualizarEstado();
+
+  if (modo !== "2p" && turno === "O" && activo) {
+    setTimeout(() => colocar(jugadaCPU([...tablero], modo)), 380);
+  }
+}
+
+function resultado(t) {
+  for (const [a, b, c] of COMBINACIONES) {
+    if (t[a] && t[a] === t[b] && t[a] === t[c]) {
+      return { ganador: t[a], linea: [a, b, c] };
+    }
+  }
+  if (t.every(v => v !== "")) return { ganador: "empate", linea: [] };
+  return null;
+}
+
+function terminar(res) {
+  activo = false;
+  celdas.forEach(c => c.disabled = true);
+  estadoEl.classList.remove("turno-o");
+  estadoEl.classList.add("fin");
+
+  if (res.ganador === "empate") {
+    puntos.empate++;
+    estadoEl.textContent = "¡Empate! 🤝";
+    estadoEl.classList.remove("fin");
+    if (modo !== "2p") actualizarStats("empates");
+  } else {
+    puntos[res.ganador]++;
+    res.linea.forEach(i => celdas[i].classList.add("ganadora"));
+    estadoEl.textContent = `¡Ganó ${nombre(res.ganador)}! 🎉`;
+    if (modo !== "2p") {
+      actualizarStats(res.ganador === "X" ? "victorias" : "derrotas");
+    }
+  }
+  actualizarMarcador();
+}
+
+function actualizarMarcador() {
+  pX.textContent = puntos.X;
+  pO.textContent = puntos.O;
+  pE.textContent = puntos.empate;
+}
+
+function actualizarEtiquetas() {
+  const activo = localStorage.getItem(KEY_ACTIVO) || "Tú";
+  if (modo === "2p") {
+    etqX.textContent = "Jugador X";
+    etqO.textContent = "Jugador O";
+  } else {
+    etqX.textContent = `${activo} (X)`;
+    etqO.textContent = "CPU (O)";
+  }
+}
+
+/* ══════════════ IA por dificultad ══════════════ */
+function mejorMovimiento(t) {
+  let mejorP = -Infinity, mejorI = null;
+  for (let i = 0; i < 9; i++) if (!t[i]) {
+    t[i] = "O";
+    const p = minimax(t, 0, false);
+    t[i] = "";
+    if (p > mejorP) { mejorP = p; mejorI = i; }
+  }
+  return mejorI;
+}
+
+function minimax(t, prof, esMax) {
+  const r = resultado(t);
+  if (r) {
+    if (r.ganador === "O") return 10 - prof;
+    if (r.ganador === "X") return prof - 10;
+    return 0;
+  }
+  if (esMax) {
+    let m = -Infinity;
+    for (let i = 0; i < 9; i++) if (!t[i]) {
+      t[i] = "O"; m = Math.max(m, minimax(t, prof + 1, false)); t[i] = "";
+    }
+    return m;
+  } else {
+    let m = Infinity;
+    for (let i = 0; i < 9; i++) if (!t[i]) {
+      t[i] = "X"; m = Math.min(m, minimax(t, prof + 1, true)); t[i] = "";
+    }
+    return m;
+  }
+}
+
+function libres(t) { return t.map((v, i) => v ? null : i).filter(v => v !== null); }
+function aleatorio(t) { const l = libres(t); return l[Math.floor(Math.random() * l.length)] ?? null; }
+
+function jugadaCPU(t, dif) {
+  const l = libres(t);
+  if (!l.length) return null;
+  if (dif === "mancos") return aleatorio(t);
+  if (dif === "facil") {
+    if (Math.random() < 0.55) return aleatorio(t);
+    return mejorMovimiento([...t]);
+  }
+  return mejorMovimiento([...t]);
+}
+
+/* ══════════════ Eventos ══════════════ */
+celdas.forEach(celda => {
+  celda.addEventListener("click", () => {
+    if (!activo) return;
+    if (modo !== "2p" && turno === "O") return;
+    colocar(Number(celda.dataset.i));
   });
+});
 
-  btnNueva.addEventListener('click', iniciarRonda);
-
-  btnReset.addEventListener('click', () => {
-    puntos.X = puntos.O = puntos.empate = 0;
-    actualizarMarcador();
+btnsModo.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (modo === btn.dataset.modo) return;
+    modo = btn.dataset.modo;
+    btnsModo.forEach(b => b.classList.toggle("activo", b === btn));
+    actualizarEtiquetas();
     iniciarRonda();
   });
+});
 
-  /* ================== Arranque ================== */
-  actualizarEtiquetas();
+document.getElementById("nueva").addEventListener("click", iniciarRonda);
+document.getElementById("reiniciar").addEventListener("click", () => {
+  puntos.X = puntos.O = puntos.empate = 0;
   actualizarMarcador();
   iniciarRonda();
-</script>
-</body>
-</html>
+});
+
+/* ══════════════ Arranque ══════════════ */
+(function boot() {
+  const activo = localStorage.getItem(K
