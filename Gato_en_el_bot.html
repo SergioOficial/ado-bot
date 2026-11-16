@@ -24,7 +24,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Layout principal ── */
   .juego {
     width: min(430px, 100%);
     background: rgba(15, 23, 42, .78);
@@ -49,35 +48,8 @@
     text-align: center;
     font-size: .78rem;
     color: #64748b;
-    margin: 4px 0 14px;
+    margin: 4px 0 16px;
   }
-
-  /* ── Barra de usuario ── */
-  .userbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    font-size: .85rem;
-  }
-  .userbar b { color: var(--x); }
-  .userbar button {
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 1px solid #334155;
-    background: #1e293b;
-    color: #94a3b8;
-    font-size: .72rem;
-    font-family: inherit;
-    font-weight: 600;
-    cursor: pointer;
-    transition: .2s;
-  }
-  .userbar button:hover { background: #2b3b52; color: #e2e8f0; }
 
   /* ── Modos de juego ── */
   .modos {
@@ -220,66 +192,13 @@
     color: #fff;
   }
   .accion.primario:hover { filter: brightness(1.1); }
-
-  /* ── Perfil / stats ── */
-  .perfil {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid #1e293b;
-  }
-  .perfil h3 {
-    font-size: .8rem;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: #64748b;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .stats div {
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
-    padding: 10px 4px;
-    text-align: center;
-  }
-  .stats span { display: block; font-size: 1.1rem; }
-  .stats b { display: block; font-size: 1.2rem; color: #e2e8f0; margin: 2px 0; }
-  .stats small {
-    font-size: .65rem;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-  }
 </style>
 </head>
 <body>
 
-<!-- ═══ Overlay de login ═══ -->
-<div class="overlay on" id="login">
-  <div class="login-box">
-    <h2>🎮 Cerito Cruz</h2>
-    <p>Ingresa tu nombre para jugar</p>
-    <input id="nombre" maxlength="20" placeholder="Tu nombre..." autocomplete="off">
-    <div id="aviso"></div>
-    <button id="entrar">Entrar</button>
-    <button class="link" id="verUsuarios">Ver usuarios registrados</button>
-  </div>
-</div>
-
-<!-- ═══ Juego ═══ -->
 <main class="juego">
   <h1>Cerito Cruz</h1>
   <p class="sub">Tres en línea · 3 × 3</p>
-
-  <div class="userbar">
-    <span>👤 <b id="userName">—</b></span>
-    <button id="cambiar">Cambiar usuario</button>
-  </div>
 
   <div class="modos">
     <button class="modo" data-modo="2p">👥 2 jugadores</button>
@@ -312,147 +231,10 @@
     <button class="accion primario" id="nueva">Nueva ronda</button>
     <button class="accion" id="reiniciar">Borrar marcador</button>
   </div>
-
-  <div class="perfil">
-    <h3>📊 Tus estadísticas</h3>
-    <div class="stats">
-      <div><span>🏆</span><b id="stW">0</b><small>Victorias</small></div>
-      <div><span>💀</span><b id="stL">0</b><small>Derrotas</small></div>
-      <div><span>🤝</span><b id="stE">0</b><small>Empates</small></div>
-    </div>
-  </div>
 </main>
 
 <script>
-/* ══════════════════════════════════════════════════════════════
-   1. PERSISTENCIA DE USUARIOS (localStorage, sin duplicados)
-   ══════════════════════════════════════════════════════════════ */
-const KEY_USERS  = "gato_usuarios";
-const KEY_ACTIVO = "gato_activo";
-
-function cargarUsuarios() {
-  try { return JSON.parse(localStorage.getItem(KEY_USERS)) || {}; }
-  catch { return {}; }
-}
-function guardarUsuarios(u) {
-  localStorage.setItem(KEY_USERS, JSON.stringify(u));
-}
-
-// Normaliza el nombre: minúsculas, sin espacios dobles, sin símbolos raros
-function normalizarNombre(n) {
-  return n.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 20);
-}
-
-// Devuelve el nombre EXACTO si el usuario ya existe (evita duplicados)
-function buscarExistente(nombre) {
-  const norm = normalizarNombre(nombre);
-  const users = cargarUsuarios();
-  for (const key of Object.keys(users)) {
-    if (normalizarNombre(key) === norm) return key;
-  }
-  return null;
-}
-
-// Registra (o devuelve existente) sin crear duplicados
-function registrarUsuario(nombre) {
-  const norm = normalizarNombre(nombre);
-  if (!norm) return null;
-
-  const existente = buscarExistente(norm);
-  if (existente) {
-    // Bienvenido de vuelta: NO duplicar
-    localStorage.setItem(KEY_ACTIVO, existente);
-    return { nombre: existente, nuevo: false };
-  }
-
-  // Crear nuevo
-  const users = cargarUsuarios();
-  const pretty = nombre.trim().replace(/\s+/g, " ").slice(0, 20);
-  users[pretty] = {
-    victorias: 0,
-    derrotas: 0,
-    empates: 0,
-    creado: Date.now()
-  };
-  guardarUsuarios(users);
-  localStorage.setItem(KEY_ACTIVO, pretty);
-  return { nombre: pretty, nuevo: true };
-}
-
-function actualizarStats(campo) {
-  const activo = localStorage.getItem(KEY_ACTIVO);
-  if (!activo) return;
-  const users = cargarUsuarios();
-  if (!users[activo]) return;
-  users[activo][campo] = (users[activo][campo] || 0) + 1;
-  guardarUsuarios(users);
-  pintarStats();
-}
-
-function pintarStats() {
-  const activo = localStorage.getItem(KEY_ACTIVO);
-  const u = activo ? cargarUsuarios()[activo] : null;
-  document.getElementById("stW").textContent = u ? u.victorias : 0;
-  document.getElementById("stL").textContent = u ? u.derrotas : 0;
-  document.getElementById("stE").textContent = u ? u.empates  : 0;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   2. LOGIN
-   ══════════════════════════════════════════════════════════════ */
-const overlayLogin = document.getElementById("login");
-const inputNombre  = document.getElementById("nombre");
-const aviso        = document.getElementById("aviso");
-const btnEntrar    = document.getElementById("entrar");
-const btnVer       = document.getElementById("verUsuarios");
-const userLabel    = document.getElementById("userName");
-const btnCambiar   = document.getElementById("cambiar");
-
-function abrirLogin() {
-  overlayLogin.classList.add("on");
-  inputNombre.value = "";
-  aviso.textContent = "";
-  setTimeout(() => inputNombre.focus(), 100);
-}
-
-function entrar() {
-  const nombre = inputNombre.value.trim();
-  if (nombre.length < 2) {
-    aviso.textContent = "Escribe al menos 2 caracteres.";
-    return;
-  }
-  const res = registrarUsuario(nombre);
-  if (!res) { aviso.textContent = "Nombre inválido."; return; }
-
-  userLabel.textContent = res.nombre;
-  overlayLogin.classList.remove("on");
-  pintarStats();
-  iniciarRonda();
-}
-
-btnEntrar.addEventListener("click", entrar);
-inputNombre.addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
-
-btnVer.addEventListener("click", () => {
-  const users = cargarUsuarios();
-  const nombres = Object.keys(users);
-  if (!nombres.length) {
-    aviso.style.color = "#64748b";
-    aviso.textContent = "Todavía no hay usuarios registrados.";
-    return;
-  }
-  aviso.style.color = "#94a3b8";
-  aviso.innerHTML = "👥 <b>Registrados:</b><br>" + nombres
-    .map(n => `• ${n} (${users[n].victorias}W)`).join("<br>");
-});
-
-btnCambiar.addEventListener("click", () => {
-  abrirLogin();
-});
-
-/* ══════════════════════════════════════════════════════════════
-   3. LÓGICA DEL JUEGO
-   ══════════════════════════════════════════════════════════════ */
+/* ══════════════ Lógica principal ══════════════ */
 const COMBINACIONES = [
   [0,1,2],[3,4,5],[6,7,8],
   [0,3,6],[1,4,7],[2,5,8],
@@ -474,7 +256,6 @@ let activo  = true;
 let modo    = "dificil";
 const puntos = { X: 0, O: 0, empate: 0 };
 
-/* ── Rendimiento de la partida ── */
 function iniciarRonda() {
   tablero = Array(9).fill("");
   turno = "X";
@@ -489,28 +270,27 @@ function iniciarRonda() {
 
 function actualizarEstado() {
   estadoEl.classList.remove("fin", "turno-o");
-  const nombreActivo = localStorage.getItem(KEY_ACTIVO) || "jugador";
 
   if (modo === "2p") {
     estadoEl.textContent = `Turno de ${turno}`;
   } else if (modo === "mancos") {
-    estadoEl.textContent = turno === "X" ? `Tu turno (${nombreActivo}) — 🟢 mancos` : "CPU pensando (mancos)…";
+    estadoEl.textContent = turno === "X" ? "Tu turno — 🟢 mancos" : "CPU pensando (mancos)…";
   } else if (modo === "facil") {
-    estadoEl.textContent = turno === "X" ? `Tu turno (${nombreActivo}) — 🟡 fácil` : "CPU pensando (fácil)…";
+    estadoEl.textContent = turno === "X" ? "Tu turno — 🟡 fácil" : "CPU pensando (fácil)…";
   } else {
-    estadoEl.textContent = turno === "X" ? `Tu turno (${nombreActivo}) — 🔴 difícil` : "CPU pensando (difícil)…";
+    estadoEl.textContent = turno === "X" ? "Tu turno — 🔴 difícil" : "CPU pensando (difícil)…";
   }
+
   if (turno === "O") estadoEl.classList.add("turno-o");
 }
 
 function nombre(p) {
-  const activo = localStorage.getItem(KEY_ACTIVO) || "Tú";
   if (modo === "2p") return `el jugador ${p}`;
-  return p === "X" ? activo : "la CPU";
+  return p === "X" ? "Tú" : "la CPU";
 }
 
 function colocar(i) {
-  if (!activo || tablero[i]) return;
+  if (!activo || tablero[i] || i === null || i === undefined) return;
   tablero[i] = turno;
   const celda = celdas[i];
   celda.textContent = turno;
@@ -524,7 +304,10 @@ function colocar(i) {
   actualizarEstado();
 
   if (modo !== "2p" && turno === "O" && activo) {
-    setTimeout(() => colocar(jugadaCPU([...tablero], modo)), 380);
+    setTimeout(() => {
+      const idx = jugadaCPU([...tablero], modo);
+      if (idx !== null) colocar(idx);
+    }, 380);
   }
 }
 
@@ -548,14 +331,10 @@ function terminar(res) {
     puntos.empate++;
     estadoEl.textContent = "¡Empate! 🤝";
     estadoEl.classList.remove("fin");
-    if (modo !== "2p") actualizarStats("empates");
   } else {
     puntos[res.ganador]++;
     res.linea.forEach(i => celdas[i].classList.add("ganadora"));
     estadoEl.textContent = `¡Ganó ${nombre(res.ganador)}! 🎉`;
-    if (modo !== "2p") {
-      actualizarStats(res.ganador === "X" ? "victorias" : "derrotas");
-    }
   }
   actualizarMarcador();
 }
@@ -567,12 +346,11 @@ function actualizarMarcador() {
 }
 
 function actualizarEtiquetas() {
-  const activo = localStorage.getItem(KEY_ACTIVO) || "Tú";
   if (modo === "2p") {
     etqX.textContent = "Jugador X";
     etqO.textContent = "Jugador O";
   } else {
-    etqX.textContent = `${activo} (X)`;
+    etqX.textContent = "Tú (X)";
     etqO.textContent = "CPU (O)";
   }
 }
@@ -652,5 +430,9 @@ document.getElementById("reiniciar").addEventListener("click", () => {
 });
 
 /* ══════════════ Arranque ══════════════ */
-(function boot() {
-  const activo = localStorage.getItem(K
+actualizarEtiquetas();
+actualizarMarcador();
+iniciarRonda();
+</script>
+</body>
+</html>
