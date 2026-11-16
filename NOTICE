@@ -48,3 +48,9 @@ Qué obliga la AGPL-3.0, en corto (no sustituye al texto de LICENSE)
    código fuente de la versión que está corriendo.
 3. Las modificaciones se mantienen bajo AGPL-3.0 y hay que decir qué se cambió.
 4. Hay que conservar los avisos de copyright y este NOTICE.
+
+Snake de prueba
+  Juego adaptado de wa-games-kit, por TEAM ABIX:
+  https://github.com/Jalalkhan96/wa-games-kit (commit 602cdf7470a55d3369438091849fdd007d2e6d99).
+  Copyright (c) 2025 TEAM ABIX. Licencia MIT íntegra: licencias/wa-games-kit-MIT.txt.
+  Adaptaciones para Ado: riokuroxi-svg (2026).
