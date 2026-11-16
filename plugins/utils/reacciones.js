@@ -20,8 +20,7 @@ const reacciones = {
   bonk:     { nekos: "bonk",     waifu: "bonk" },
   bite:     { nekos: "bite",     waifu: "bite" },
   blush:    { nekos: "blush",    waifu: "blush" },
-  cuddle:   { nekos: "cuddle",   waifu: "cuddle" },
-  kick:     { nekos: "kick",     waifu: "kick" }
+  cuddle:   { nekos: "cuddle",   waifu: "cuddle" }
 };
 
 export default {
