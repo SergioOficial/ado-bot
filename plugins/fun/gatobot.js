@@ -8,7 +8,7 @@ const GATO_URL = "https://github/SergioOficial/ado-bot/Gato_en_el_bot.html";
 const HTML_LOCAL = path.resolve("./Gato_en_el_bot.html");
 
 export default {
-  command: ["gato", "tateti", "tictactoe", "cerito", "3enlinea"],
+  command: ["gatobot", "tateti", "tictactoe", "cerito", "3enlinea"],
   category: "fun",
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config, comando } = ctx;
