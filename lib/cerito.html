@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerito Cruz 🎮</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --x: #38bdf8;
+    --o: #fb7185;
+    --ok: #22c55e;
+  }
+
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, #0b1120 60%);
+    color: #e2e8f0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .juego {
+    width: min(430px, 100%);
+    background: rgba(15, 23, 42, .78);
+    border: 1px solid #1e293b;
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 25px 60px -20px rgba(0, 0, 0, .85);
+    backdrop-filter: blur(8px);
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    text-align: center;
+    letter-spacing: .5px;
+    background: linear-gradient(90deg, var(--x), var(--o));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: .78rem;
+    color: #64748b;
+    margin: 4px 0 16px;
+  }
+
+  /* ── Modos de juego ── */
+  .modos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .modo {
+    padding: 9px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #94a3b8;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .modo:hover { background: #1e293b; color: #e2e8f0; }
+  .modo.activo {
+    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  /* ── Marcador ── */
+  .marcador {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .marcador div {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .marcador .etq {
+    display: block;
+    font-size: .62rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #64748b;
+    margin-bottom: 2px;
+  }
+  .marcador .num {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+  .num.x { color: var(--x); }
+  .num.o { color: var(--o); }
+  .num.e { color: #a78bfa; }
+
+  /* ── Estado ── */
+  #estado {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 14px;
+    min-height: 1.4em;
+    color: var(--x);
+    transition: color .25s;
+  }
+  #estado.turno-o { color: var(--o); }
+  #estado.fin { color: var(--ok); }
+
+  /* ── Tablero ── */
+  .tablero {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    aspect-ratio: 1;
+  }
+  .celda {
+    border: none;
+    border-radius: 16px;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-size: clamp(2rem, 11vw, 3.2rem);
+    font-weight: 800;
+    font-family: inherit;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background .18s, transform .12s, box-shadow .2s;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+  }
+  .celda:hover:not(.ocupada):not(:disabled) {
+    background: #2b3b52;
+    transform: translateY(-2px);
+  }
+  .celda:active:not(.ocupada):not(:disabled) { transform: scale(.97); }
+  .celda:disabled { cursor: default; }
+  .celda.x { color: var(--x); }
+  .celda.o { color: var(--o); }
+  .celda.ocupada { animation: pop .22s ease-out; }
+
+  @keyframes pop {
+    0% { transform: scale(.4); opacity: 0; }
+    70% { transform: scale(1.12); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .celda.ganadora {
+    background: #14532d;
+    box-shadow: 0 0 0 2px var(--ok), 0 0 22px rgba(34, 197, 94, .55);
+    animation: pulso .9s ease-in-out infinite alternate;
+  }
+  @keyframes pulso {
+    from { box-shadow: 0 0 0 2px var(--ok), 0 0 12px rgba(34, 197, 94, .35); }
+    to   { box-shadow: 0 0 0 2px var(--ok), 0 0 26px rgba(34, 197, 94, .8); }
+  }
+
+  /* ── Acciones ── */
+  .acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .accion {
+    flex: 1;
+    padding: 11px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .accion:hover { background: #2b3b52; transform: translateY(-1px); }
+  .accion.primario {
+    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    border-color: transparent;
+    color: #fff;
+  }
+  .accion.primario:hover { filter: brightness(1.1); }
+</style>
+</head>
+<body>
+
+<main class="juego">
+  <h1>Cerito Cruz</h1>
+  <p class="sub">Tres en línea · 3 × 3</p>
+
+  <div class="modos">
+    <button class="modo" data-modo="2p">👥 2 jugadores</button>
+    <button class="modo" data-modo="mancos">🟢 Mancos</button>
+    <button class="modo" data-modo="facil">🟡 Fácil</button>
+    <button class="modo activo" data-modo="dificil">🔴 Difícil</button>
+  </div>
+
+  <div class="marcador">
+    <div><span class="etq" id="etqX">Tú (X)</span><span class="num x" id="pX">0</span></div>
+    <div><span class="etq">Empates</span><span class="num e" id="pE">0</span></div>
+    <div><span class="etq" id="etqO">CPU (O)</span><span class="num o" id="pO">0</span></div>
+  </div>
+
+  <p id="estado" aria-live="polite">Turno de X</p>
+
+  <div class="tablero" id="tablero">
+    <button class="celda" data-i="0"></button>
+    <button class="celda" data-i="1"></button>
+    <button class="celda" data-i="2"></button>
+    <button class="celda" data-i="3"></button>
+    <button class="celda" data-i="4"></button>
+    <button class="celda" data-i="5"></button>
+    <button class="celda" data-i="6"></button>
+    <button class="celda" data-i="7"></button>
+    <button class="celda" data-i="8"></button>
+  </div>
+
+  <div class="acciones">
+    <button class="accion primario" id="nueva">Nueva ronda</button>
+    <button class="accion" id="reiniciar">Borrar marcador</button>
+  </div>
+</main>
+
+<script>
+/* ══════════════ Lógica principal ══════════════ */
+const COMBINACIONES = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+const celdas   = [...document.querySelectorAll(".celda")];
+const estadoEl = document.getElementById("estado");
+const pX       = document.getElementById("pX");
+const pO       = document.getElementById("pO");
+const pE       = document.getElementById("pE");
+const etqX     = document.getElementById("etqX");
+const etqO     = document.getElementById("etqO");
+const btnsModo = document.querySelectorAll(".modo");
+
+let tablero = Array(9).fill("");
+let turno   = "X";
+let activo  = true;
+let modo    = "dificil";
+const puntos = { X: 0, O: 0, empate: 0 };
+
+function iniciarRonda() {
+  tablero = Array(9).fill("");
+  turno = "X";
+  activo = true;
+  celdas.forEach(c => {
+    c.textContent = "";
+    c.className = "celda";
+    c.disabled = false;
+  });
+  actualizarEstado();
+}
+
+function actualizarEstado() {
+  estadoEl.classList.remove("fin", "turno-o");
+
+  if (modo === "2p") {
+    estadoEl.textContent = `Turno de ${turno}`;
+  } else if (modo === "mancos") {
+    estadoEl.textContent = turno === "X" ? "Tu turno — 🟢 mancos" : "CPU pensando (mancos)…";
+  } else if (modo === "facil") {
+    estadoEl.textContent = turno === "X" ? "Tu turno — 🟡 fácil" : "CPU pensando (fácil)…";
+  } else {
+    estadoEl.textContent = turno === "X" ? "Tu turno — 🔴 difícil" : "CPU pensando (difícil)…";
+  }
+
+  if (turno === "O") estadoEl.classList.add("turno-o");
+}
+
+function nombre(p) {
+  if (modo === "2p") return `el jugador ${p}`;
+  return p === "X" ? "Tú" : "la CPU";
+}
+
+function colocar(i) {
+  if (!activo || tablero[i] || i === null || i === undefined) return;
+  tablero[i] = turno;
+  const celda = celdas[i];
+  celda.textContent = turno;
+  celda.classList.add("ocupada", turno.toLowerCase());
+  celda.disabled = true;
+
+  const res = resultado(tablero);
+  if (res) { terminar(res); return; }
+
+  turno = turno === "X" ? "O" : "X";
+  actualizarEstado();
+
+  if (modo !== "2p" && turno === "O" && activo) {
+    setTimeout(() => {
+      const idx = jugadaCPU([...tablero], modo);
+      if (idx !== null) colocar(idx);
+    }, 380);
+  }
+}
+
+function resultado(t) {
+  for (const [a, b, c] of COMBINACIONES) {
+    if (t[a] && t[a] === t[b] && t[a] === t[c]) {
+      return { ganador: t[a], linea: [a, b, c] };
+    }
+  }
+  if (t.every(v => v !== "")) return { ganador: "empate", linea: [] };
+  return null;
+}
+
+function terminar(res) {
+  activo = false;
+  celdas.forEach(c => c.disabled = true);
+  estadoEl.classList.remove("turno-o");
+  estadoEl.classList.add("fin");
+
+  if (res.ganador === "empate") {
+    puntos.empate++;
+    estadoEl.textContent = "¡Empate! 🤝";
+    estadoEl.classList.remove("fin");
+  } else {
+    puntos[res.ganador]++;
+    res.linea.forEach(i => celdas[i].classList.add("ganadora"));
+    estadoEl.textContent = `¡Ganó ${nombre(res.ganador)}! 🎉`;
+  }
+  actualizarMarcador();
+}
+
+function actualizarMarcador() {
+  pX.textContent = puntos.X;
+  pO.textContent = puntos.O;
+  pE.textContent = puntos.empate;
+}
+
+function actualizarEtiquetas() {
+  if (modo === "2p") {
+    etqX.textContent = "Jugador X";
+    etqO.textContent = "Jugador O";
+  } else {
+    etqX.textContent = "Tú (X)";
+    etqO.textContent = "CPU (O)";
+  }
+}
+
+/* ══════════════ IA por dificultad ══════════════ */
+function mejorMovimiento(t) {
+  let mejorP = -Infinity, mejorI = null;
+  for (let i = 0; i < 9; i++) if (!t[i]) {
+    t[i] = "O";
+    const p = minimax(t, 0, false);
+    t[i] = "";
+    if (p > mejorP) { mejorP = p; mejorI = i; }
+  }
+  return mejorI;
+}
+
+function minimax(t, prof, esMax) {
+  const r = resultado(t);
+  if (r) {
+    if (r.ganador === "O") return 10 - prof;
+    if (r.ganador === "X") return prof - 10;
+    return 0;
+  }
+  if (esMax) {
+    let m = -Infinity;
+    for (let i = 0; i < 9; i++) if (!t[i]) {
+      t[i] = "O"; m = Math.max(m, minimax(t, prof + 1, false)); t[i] = "";
+    }
+    return m;
+  } else {
+    let m = Infinity;
+    for (let i = 0; i < 9; i++) if (!t[i]) {
+      t[i] = "X"; m = Math.min(m, minimax(t, prof + 1, true)); t[i] = "";
+    }
+    return m;
+  }
+}
+
+function libres(t) { return t.map((v, i) => v ? null : i).filter(v => v !== null); }
+function aleatorio(t) { const l = libres(t); return l[Math.floor(Math.random() * l.length)] ?? null; }
+
+function jugadaCPU(t, dif) {
+  const l = libres(t);
+  if (!l.length) return null;
+  if (dif === "mancos") return aleatorio(t);
+  if (dif === "facil") {
+    if (Math.random() < 0.55) return aleatorio(t);
+    return mejorMovimiento([...t]);
+  }
+  return mejorMovimiento([...t]);
+}
+
+/* ══════════════ Eventos ══════════════ */
+celdas.forEach(celda => {
+  celda.addEventListener("click", () => {
+    if (!activo) return;
+    if (modo !== "2p" && turno === "O") return;
+    colocar(Number(celda.dataset.i));
+  });
+});
+
+btnsModo.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (modo === btn.dataset.modo) return;
+    modo = btn.dataset.modo;
+    btnsModo.forEach(b => b.classList.toggle("activo", b === btn));
+    actualizarEtiquetas();
+    iniciarRonda();
+  });
+});
+
+document.getElementById("nueva").addEventListener("click", iniciarRonda);
+document.getElementById("reiniciar").addEventListener("click", () => {
+  puntos.X = puntos.O = puntos.empate = 0;
+  actualizarMarcador();
+  iniciarRonda();
+});
+
+/* ══════════════ Arranque ══════════════ */
+actualizarEtiquetas();
+actualizarMarcador();
+iniciarRonda();
+</script>
+</body>
+</html>
