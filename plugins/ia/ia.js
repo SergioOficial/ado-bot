@@ -12,7 +12,7 @@ export default {
 
     try {
       // 🌐 Endpoint de Evogb
-      const evogbUrl = `https://evogb.win/api/ai/gemini?text=${encodeURIComponent(text)}`;
+      const evogbUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}`;
       
       const res = await axios.get(evogbUrl, { timeout: 25000 });
       const data = res.data;
