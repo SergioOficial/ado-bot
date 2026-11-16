@@ -3,7 +3,7 @@
  * Usa el transporte de juego-html.js (rich response).
  */
 import { readFile } from "node:fs/promises";
-import { enviarJuegoHtml } from "../../lib/juegos-html.js";
+import { enviarJuegoHtml } from "../../lib/juego-html.js";
 
 const archivo = new URL("../../juegos/Cerito.html", import.meta.url);
 
