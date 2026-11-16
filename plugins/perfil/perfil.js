@@ -20,10 +20,11 @@ export default {
     catch { pfp = "https://i.postimg.cc/Y95RC8Jt/IMG-20261104-WA0014(1).jpg"; }
 
     // 4. Cálculos de RPG
-    const nivel = user.nivel || 1;
-    const exp = user.exp || 0;
+    // riokuroxi-svg: proteger la barra frente a datos antiguos o corruptos.
+    const nivel = Number.isFinite(Number(user.nivel)) ? Math.max(1, Number(user.nivel)) : 1;
+    const exp = Number.isFinite(Number(user.exp)) ? Math.max(0, Number(user.exp)) : 0;
     const nivelMaxXP = nivel * 100;
-    const progreso = Math.min(10, Math.floor((exp / nivelMaxXP) * 10));
+    const progreso = Math.max(0, Math.min(10, Math.floor((exp / nivelMaxXP) * 10)));
     const barraXP = "▰".repeat(progreso) + "▱".repeat(10 - progreso);
 
     // 5. Economía

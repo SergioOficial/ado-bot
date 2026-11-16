@@ -34,7 +34,7 @@ import makeWASocket, {
 } from "../lib/baileys.js";
 import { versionParaLog } from "../lib/wa-version.js";
 import { usarPrefijoBotones } from "../lib/botones.js";
-import { esAdmin, mismoNumero } from "../lib/grupo.js";
+import { esAdmin, mismoTelefonoInternacional } from "../lib/grupo.js";
 import { SESION_PRINCIPAL } from "../lib/rutas.js";
 import { crearGuardaBucles } from "../lib/bucles.js";
 import { loadPlugins, commands, events } from "../pluginLoader.js";
@@ -79,9 +79,20 @@ function pintarLetras() {
   }
 }
 
-function pedir(prompt) {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  return new Promise((resolve) => rl.question(prompt, (respuesta) => { rl.close(); resolve(respuesta.trim()); }));
+/** riokuroxi-svg: una entrada cerrada no debe dejar el arranque esperando para siempre. */
+export function pedir(prompt, { input = process.stdin, output = process.stdout } = {}) {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input, output });
+    let terminado = false;
+    const terminar = (respuesta = "") => {
+      if (terminado) return;
+      terminado = true;
+      rl.close();
+      resolve(String(respuesta).trim());
+    };
+    rl.once("close", () => terminar());
+    rl.question(prompt, terminar);
+  });
 }
 
 /**
@@ -96,7 +107,7 @@ export function autorReal(m) {
     k.participant, k.remoteJid,
   ];
   for (const c of candidatos) {
-    if (!c) continue;
+    if (!c || /@(lid|g\.us)$/i.test(c)) continue;
     const num = numeroDe(c);
     if (num.length >= 8 && num.length <= 15 && !/^1\d{14}$/.test(num)) return c;
   }
@@ -104,11 +115,11 @@ export function autorReal(m) {
 }
 
 export function esDueno(jid, sock) {
-  const num = numeroDe(jid);
-  const numBot = numeroDe(sock?.user?.id || "");
-  if (num && num === numBot) return true;
-  if ((config.owners || []).some((o) => mismoNumero(o.number, num))) return true;
-  if ((sock?.subconfig?.owners || []).some((o) => mismoNumero(o, num))) return true;
+  // riokuroxi-svg: no inferir privilegios a partir de LID o números locales.
+  if (typeof jid !== "string" || (jid.includes("@") && !/@(?:s\.whatsapp\.net|c\.us)$/i.test(jid))) return false;
+  if (mismoTelefonoInternacional(jid, sock?.user?.id)) return true;
+  if ((config.owners || []).some((o) => mismoTelefonoInternacional(o.number, jid))) return true;
+  if ((sock?.subconfig?.owners || []).some((o) => mismoTelefonoInternacional(o, jid))) return true;
   return false;
 }
 
@@ -147,6 +158,9 @@ const estado = {
   routerPara: null,
   subbots: null,
   pluginsCargados: false,
+  baseCargada: false,
+  intentosConexion: 0,
+  apagando: false,
 };
 
 /** Una guarda anti-bucle por socket (el principal y cada sub-bot tienen la suya). */
@@ -224,21 +238,42 @@ function crearRouterPara(sock) {
 }
 
 /** Apaga vigilantes y sub-bots. Se usa al reconectar y al recibir SIGTERM. */
-async function apagarTodo() {
+async function apagarTodo({ cerrarSubbots = false } = {}) {
   for (const v of estado.vigilantes) {
     try { v.detener?.(); } catch {}
   }
   estado.vigilantes = [];
   try { estado.antiban?.vigilante?.parar?.(); } catch {}
 
-  const gestor = estado.subbots;
-  if (gestor) {
-    for (const numero of [...gestor.getActiveSubbots().keys()]) {
-      try { await gestor.stopSubbot(numero); } catch {}
+  // riokuroxi-svg: una caída del principal no desvincula sub-bots sanos.
+  if (cerrarSubbots) {
+    try { await estado.subbots?.suspenderSubbots(); } catch (err) {
+      console.error("⚠️ No se pudieron suspender los sub-bots:", err?.message || err);
     }
   }
 
   try { estado.sock?.ws.close(); } catch {}
+}
+
+/** riokuroxi-svg: evita duplicados y conserva el proceso vivo entre intentos. */
+function programarReconexion() {
+  if (estado.apagando || estado.reconectando) return;
+  estado.reconectando = true;
+  estado.intentosConexion += 1;
+  const espera = Math.min(60_000, 2000 * 2 ** Math.min(estado.intentosConexion - 1, 5));
+  console.log(`♻️ Reconectando en ${espera / 1000} s (intento ${estado.intentosConexion}).`);
+  setTimeout(async () => {
+    if (estado.apagando) return;
+    try {
+      await apagarTodo();
+      estado.reconectando = false;
+      await arrancar();
+    } catch (err) {
+      console.error("❌ Falló la reconexión:", err?.stack || err);
+      estado.reconectando = false;
+      programarReconexion();
+    }
+  }, espera);
 }
 
 /**
@@ -248,8 +283,15 @@ async function apagarTodo() {
 export async function arrancar() {
   pintarLetras();
 
-  global.loadDatabase?.();
-  instalarAntiCuelgue({ alApagar: apagarTodo });
+  // riokuroxi-svg: una reconexión no debe reemplazar cambios aún en memoria.
+  if (!estado.baseCargada) {
+    global.loadDatabase?.();
+    estado.baseCargada = true;
+  }
+  instalarAntiCuelgue({ alApagar: () => {
+    estado.apagando = true;
+    return apagarTodo({ cerrarSubbots: true });
+  } });
 
   // Los plugins se cargan una vez; al reconectar ya están en memoria.
   if (!estado.pluginsCargados) {
@@ -344,11 +386,13 @@ export async function arrancar() {
       }
 
       if (connection === "open") {
+        estado.intentosConexion = 0;
         console.log(`✅ ${config.botName} conectado correctamente.`);
         alConectar();
       }
 
       if (connection === "close") {
+        if (estado.apagando || estado.sock !== sock) return;
         const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
 
         if (reason === DisconnectReason.loggedOut) {
@@ -359,16 +403,9 @@ export async function arrancar() {
           console.log("⚠️ WhatsApp rechazó la versión de Web que anuncia el bot.");
         }
 
-        if (estado.reconectando) return;
-        estado.reconectando = true;
-        console.log("♻️ Reconectando...");
-        setTimeout(async () => {
-          estado.reconectando = false;
-          // Soltar el socket caído antes de crear el nuevo: si no, se queda con
-          // sus listeners colgando del proceso y la memoria sube en cada caída.
-          try { await apagarTodo(); } catch {}
-          arrancar().catch((err) => console.error("❌ Falló la reconexión:", err?.message || err));
-        }, 2000).unref?.();
+        // riokuroxi-svg: un fallo al crear el socket también se reintenta con espera.
+        console.warn(`⚠️ Conexión cerrada (código ${reason || "desconocido"}).`);
+        programarReconexion();
       }
     } catch (err) {
       console.error("❌ En connection.update:", err?.stack || err);

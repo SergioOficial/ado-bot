@@ -1,12 +1,17 @@
+/**
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import { SunoAPI } from "sunoapi-sdk";
-import axios from "axios";
+import { pedirSeguro } from "../../lib/red-segura.js";
 
-const SUNO_API_KEY = process.env.SUNO_API_KEY || "c56eb844c3b6abdf7c9d04a8cd5c675e";
+// riokuroxi-svg: la clave se configura únicamente en el entorno.
 
 let sunoClient = null;
 function getSuno() {
   if (!sunoClient) {
-    sunoClient = new SunoAPI({ apiKey: SUNO_API_KEY });
+    sunoClient = new SunoAPI({ apiKey: process.env.SUNO_API_KEY });
   }
   return sunoClient;
 }
@@ -25,6 +30,10 @@ export default {
         `✧ *${BOT_NAME}* ✧\n\nEscribe una descripción para la canción.\n` +
         `> Ejemplo: *${config.prefix[0]}iam* una balada pop sobre el atardecer en la playa`
       );
+    }
+
+    if (!process.env.SUNO_API_KEY) {
+      return enviartexto("⚠️ El administrador debe configurar SUNO_API_KEY en el entorno del servidor.");
     }
 
     await sock.sendMessage(from, { react: { text: "🎵", key: m.key } });
@@ -52,11 +61,10 @@ export default {
         throw new Error("Suno no devolvió un enlace de audio válido.");
       }
 
-      const audioRes = await axios.get(track.audioUrl, {
-        responseType: "arraybuffer",
-        timeout: 30000,
-      });
-      const audioBuffer = Buffer.from(audioRes.data);
+      // riokuroxi-svg: límite de tamaño y plazo antes de cargar el audio.
+      const audioRes = await pedirSeguro(track.audioUrl, { max: 15 * 1024 * 1024, plazo: 30000 });
+      if (audioRes.estado !== 200) throw new Error(`El audio respondió HTTP ${audioRes.estado}.`);
+      const audioBuffer = audioRes.buffer;
 
       await sock.sendMessage(
         from,

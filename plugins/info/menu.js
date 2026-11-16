@@ -250,7 +250,9 @@ export default {
 
     texto = marcar(texto, PREFIX, commands);
 
-    await sock.sendMessage(from, {
+    // riokuroxi-svg: si falla la imagen, no dejar al usuario sin ayuda.
+    try {
+      await sock.sendMessage(from, {
       image: { url: pfp },
       caption: texto.trim(),
       mentions: [sender],
@@ -263,7 +265,11 @@ export default {
           serverMessageId: 1
         }
       }
-    }, { quoted: m });
+      }, { quoted: m });
+    } catch (err) {
+      console.error("⚠️ No se pudo enviar el menú con imagen:", err?.stack || err);
+      await enviartexto(texto.trim());
+    }
 
     if (!tipo) {
       await enviarConBotones(sock, from, {

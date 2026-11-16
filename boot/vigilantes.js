@@ -172,7 +172,8 @@ export function prepararAntiban(sock, { obtenerDb, encendido } = {}) {
 
     envolverSocket(sock, { cola, ritmo });
 
-    const vigilante = crearVigilante({ cola, salud, obtenerSock: () => sock });
+    // riokuroxi-svg: no hay latido de transporte fiable; el silencio no es una caída.
+    const vigilante = crearVigilante({ cola, salud, obtenerSock: () => sock, sinSenalMs: Infinity });
     vigilante.iniciar();
 
     if (limitador.resumen().perfil === "veterano") console.warn(`\n${AVISO_VETERANO}\n`);

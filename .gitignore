@@ -12,3 +12,6 @@ tmp/
 # rama seguridad-1.1.0 pasó exactamente eso con sub/SubBots/<número>/creds.json
 # (una sesión completa) y con lib/database.json (usuarios y un código premium).
 data/
+
+# riokuroxi-svg: las copias de bases dañadas también contienen datos privados.
+lib/database.json.roto-*

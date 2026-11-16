@@ -1,5 +1,6 @@
 import { TEMPORAL } from "../../lib/rutas.js";
 import fs from "fs";
+import { formatearLog } from "../../lib/log-formato.js";
 
 // 📁 Crear carpeta temporal si no existe
 if (!fs.existsSync(TEMPORAL)) fs.mkdirSync(TEMPORAL, { recursive: true });
@@ -15,12 +16,7 @@ if (!global.__consoleHooked) {
 
   const writeLog = (type, args) => {
     try {
-      const text = args.map(a => {
-        if (typeof a === "object") {
-          try { return JSON.stringify(a); } catch { return "[Objeto]"; }
-        }
-        return String(a);
-      }).join(" ");
+      const text = args.map(formatearLog).join(" ");
       
       const time = new Date().toLocaleTimeString("es-PE", { timeZone: "America/Lima" });
       fs.appendFileSync(logFile, `[${time}] [${type}] ${text}\n`);

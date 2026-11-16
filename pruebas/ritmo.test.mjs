@@ -59,9 +59,17 @@ export const pruebas = [
 
   // ── el tecleo ───────────────────────────────────────────────────────────
   ["un texto largo tarda más en escribirse, pero tiene techo", () => {
-    const corto = planDeEscritura("hola", AJUSTES).ms;
-    const largo = planDeEscritura("x".repeat(400), AJUSTES).ms;
-    const enorme = planDeEscritura("x".repeat(5000), AJUSTES).ms;
+    // riokuroxi-svg: fijar el azar hace comparable la velocidad de escritura.
+    const anterior = Math.random;
+    let corto, largo, enorme;
+    try {
+      Math.random = () => 0.5;
+      corto = planDeEscritura("hola", AJUSTES).ms;
+      largo = planDeEscritura("x".repeat(400), AJUSTES).ms;
+      enorme = planDeEscritura("x".repeat(5000), AJUSTES).ms;
+    } finally {
+      Math.random = anterior;
+    }
     esVerdad(largo > corto, "lo largo tarda más");
     igual(enorme, AJUSTES.tecleoMaxMs, "y nadie se queda 50 s escribiendo");
     esVerdad(corto >= AJUSTES.tecleoMinMs, "ni aparece y desaparece de golpe");

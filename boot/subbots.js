@@ -130,10 +130,17 @@ export function crearGestorSubbots(deps) {
     maximo = LIMITE_SUBBOTS,
     reintentos = REINTENTOS,
     registrar = (err) => console.error("❌ Sub-bots:", err?.stack || err),
+    crearSocket = makeWASocket,
+    leerSesion = useMultiFileAuthState,
+    prepararClaves = makeCacheableSignalKeyStore,
+    obtenerVersion = fetchLatestBaileysVersion,
   } = deps;
 
   /** numero → socket vivo. */
   const activos = new Map();
+  // riokuroxi-svg: también se rastrean sockets que aún están conectando.
+  const sockets = new Map();
+  const pendientes = new Map();
   /** numero → { intentos, ultima } para el techo de reconexión. */
   const intentos = new Map();
   /** numero → true mientras se está levantando, para no duplicar sockets. */
@@ -215,11 +222,11 @@ export function crearGestorSubbots(deps) {
       );
     }
 
-    if (activos.size >= maximo) {
+    if (sockets.size + enCurso.size >= maximo) {
       return contestar(`⚠️ Límite de subbots alcanzado (${maximo}).`);
     }
 
-    if (activos.has(phoneNumber)) {
+    if (sockets.has(phoneNumber)) {
       return contestar(`⚠️ Ya tienes un subbot activo (${phoneNumber}).`);
     }
 
@@ -246,12 +253,12 @@ export function crearGestorSubbots(deps) {
     const sessionPath = rutaSesion(phoneNumber);
     if (!fs.existsSync(SUB_SESIONES)) fs.mkdirSync(SUB_SESIONES, { recursive: true });
 
-    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    const { version } = await fetchLatestBaileysVersion();
+    const { state, saveCreds } = await leerSesion(sessionPath);
+    const { version } = await obtenerVersion();
 
-    const subSock = makeWASocket({
+    const subSock = crearSocket({
       version,
-      auth: { creds: state.creds, keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "silent" })) },
+      auth: { creds: state.creds, keys: prepararClaves(state.keys, pino({ level: "silent" })) },
       logger: pino({ level: "silent" }),
       printQRInTerminal: false,
       connectTimeoutMs: 60_000,
@@ -259,6 +266,7 @@ export function crearGestorSubbots(deps) {
       keepAliveIntervalMs: 25_000,
     });
 
+    sockets.set(phoneNumber, subSock);
     subSock.subconfig = loadSubConfig(phoneNumber);
     subSock.esSubbot = true;
     subSock.numeroSubbot = phoneNumber;
@@ -311,13 +319,15 @@ export function crearGestorSubbots(deps) {
         if (connection === "open") {
           if (borrarAviso) clearTimeout(borrarAviso);
           activos.set(phoneNumber, subSock);
-          limpiarIntentos(phoneNumber);
+          // riokuroxi-svg: la racha se reinicia tras estabilidad, no al abrir fugazmente.
           await avisar(remoteJid, `✅ *Sub-bot conectado*\n📱 ${phoneNumber}`);
         }
 
         // ── Cerrado ───────────────────────────────────────────────────────
         if (connection === "close") {
           const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+          if (sockets.get(phoneNumber) !== subSock) return;
+          sockets.delete(phoneNumber);
           activos.delete(phoneNumber);
           if (borrarAviso) clearTimeout(borrarAviso);
 
@@ -344,8 +354,10 @@ export function crearGestorSubbots(deps) {
               `🔄 Sub-bot ${phoneNumber} pide reinicio (515). ${decision.motivo}, en ${Math.round(decision.esperaMs / 1000)} s.`
             );
             const temporizador = setTimeout(() => {
+              pendientes.delete(phoneNumber);
               startSubbot(obtenerPadre?.(), senderJid, remoteJid, contestar, method).catch(registrar);
             }, decision.esperaMs);
+            pendientes.set(phoneNumber, temporizador);
             temporizador.unref?.();
             return;
           }
@@ -368,8 +380,22 @@ export function crearGestorSubbots(deps) {
             return;
           }
 
-          limpiarIntentos(phoneNumber);
-          console.log(`♻️ Sub-bot ${phoneNumber} cerrado (código ${reason}).`);
+          // riokuroxi-svg: una caída de red no debe dejar la sesión detenida.
+          const cuenta = cuentaIntentos(phoneNumber);
+          const decision = decideReintento(cuenta.intentos, cuenta.ultima, Date.now(), reintentos);
+          if (!decision.reintentar) {
+            console.error(`🛑 Sub-bot ${phoneNumber}: ${decision.motivo}; sesión conservada.`);
+            return;
+          }
+          cuenta.intentos += 1;
+          cuenta.ultima = Date.now();
+          console.log(`♻️ Sub-bot ${phoneNumber} cerrado (código ${reason}); reintento en ${decision.esperaMs / 1000} s.`);
+          const temporizador = setTimeout(() => {
+            pendientes.delete(phoneNumber);
+            startSubbot(obtenerPadre?.(), senderJid, remoteJid, contestar, "sesion").catch(registrar);
+          }, decision.esperaMs);
+          pendientes.set(phoneNumber, temporizador);
+          temporizador.unref?.();
         }
       } catch (err) {
         // Nada de lo que pase en este manejador puede salir de aquí: un error
@@ -407,14 +433,34 @@ export function crearGestorSubbots(deps) {
   /** Apaga un sub-bot y borra su sesión. Devuelve si había algo que apagar. */
   async function stopSubbot(phoneNumber) {
     const numero = numeroDe(phoneNumber);
-    const sub = activos.get(numero);
-    if (!sub) return false;
-    try { await sub.ws.close(); } catch {}
-    try { sub.ev.removeAllListeners?.(); } catch {}
+    const sub = sockets.get(numero) || activos.get(numero);
+    const pendiente = pendientes.get(numero);
+    if (!sub && !pendiente) return false;
+    if (pendiente) clearTimeout(pendiente);
+    pendientes.delete(numero);
+    sockets.delete(numero);
     activos.delete(numero);
+    // riokuroxi-svg: detener explícitamente también cancela reintentos.
+    try { sub?.ev.removeAllListeners?.(); } catch {}
+    try { await sub?.ws.close(); } catch {}
     limpiarIntentos(numero);
     try { borrarSesion(numero); } catch {}
     return true;
+  }
+
+  /** riokuroxi-svg: suspender no equivale a desvincular; conserva credenciales. */
+  async function suspenderSubbots() {
+    for (const timer of pendientes.values()) clearTimeout(timer);
+    pendientes.clear();
+    const cerrando = [...new Map([...activos, ...sockets]).entries()];
+    activos.clear();
+    sockets.clear();
+    for (const [numero, sub] of cerrando) {
+      limpiarIntentos(numero);
+      try { sub.ev.removeAllListeners?.(); } catch {}
+      try { await sub.ws.close(); } catch (err) { registrar(err); }
+    }
+    return cerrando.length;
   }
 
   /** Al conectar el principal, vuelven los sub-bots que ya estaban vinculados. */
@@ -434,8 +480,8 @@ export function crearGestorSubbots(deps) {
     }
 
     for (const numero of listos) {
-      if (activos.has(numero)) continue;
-      if (activos.size >= maximo) break;
+      if (sockets.has(numero) || enCurso.has(numero)) continue;
+      if (sockets.size + enCurso.size >= maximo) break;
       try {
         const destino = `${numero}@s.whatsapp.net`;
         await startSubbot(padre, destino, destino, (t) => avisar(destino, t), "sesion");
@@ -444,7 +490,7 @@ export function crearGestorSubbots(deps) {
       }
     }
 
-    if (listos.length) console.log(`♻️ Sub-bots restaurados: ${activos.size}/${listos.length}`);
+    if (listos.length) console.log(`♻️ Restauración de sub-bots iniciada: ${listos.length} sesiones; ${activos.size} ya conectadas.`);
     return listos;
   }
 
@@ -463,6 +509,7 @@ export function crearGestorSubbots(deps) {
   return {
     startSubbot,
     stopSubbot,
+    suspenderSubbots,
     getActiveSubbots,
     restaurarSubbots,
     loadSubConfig,

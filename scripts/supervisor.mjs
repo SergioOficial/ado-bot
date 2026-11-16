@@ -66,12 +66,14 @@ export function crearSupervisor({ raiz, argumentos = [], env = {}, ganchos = {} 
       env: { ...process.env, ...env, LEVI_VIGILADO: "1" },
     });
 
+    let reinicioPedido = false;
     const pid = hijo.pid;
     avisar("arrancado", { pid });
     estado = "activo";
 
     hijo.on("message", (mensaje) => {
       if (mensaje === "restart") {
+        reinicioPedido = true;
         reinicios += 1;
         estado = "reiniciando";
         avisar("pidioReiniciar", { reinicios });
@@ -91,7 +93,7 @@ export function crearSupervisor({ raiz, argumentos = [], env = {}, ganchos = {} 
     }
 
     // SIGTERM después de un reinicio pedido: no es una caída.
-    if (signal === "SIGTERM") {
+    if (reinicioPedido || signal === "SIGTERM") {
       estado = "reiniciando";
       avisar("reiniciando", { reinicios });
       await espera(400);

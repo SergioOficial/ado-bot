@@ -88,7 +88,7 @@ export const pruebas = [
     esVerdad(esDueno(`${primero}@s.whatsapp.net`, { user: { id: "0:1@s.whatsapp.net" } }), "el primer owner");
     esVerdad(esDueno(`${primero}:12@s.whatsapp.net`, {}), "con dispositivo sigue siendo él");
     igual(esDueno("5215500000000@s.whatsapp.net", {}), false, "un desconocido no");
-    esVerdad(esDueno("0:1@s.whatsapp.net", { user: { id: "0:1@s.whatsapp.net" } }), "el propio bot es dueño de sí");
+    esVerdad(esDueno("5350000000:1@s.whatsapp.net", { user: { id: "5350000000:1@s.whatsapp.net" } }), "el propio bot es dueño de sí");
   }],
 
   ["objetivoDelMensaje saca al mencionado o al citado", async () => {

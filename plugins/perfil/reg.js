@@ -4,8 +4,9 @@ export default {
     const { sock, sender, from, m, args, enviartexto, db, config } = ctx;
 
     const [nombre, edad, genero] = args;
+    const prefijo = Array.isArray(config.prefix) ? config.prefix[0] : config.prefix;
     if (!nombre || !edad || !genero) {
-      return enviartexto(`⚠️ *Uso correcto:*\n${config.prefix}reg <nombre> <edad> <M/F>\n\n*Ejemplo:* ${config.prefix}reg Ana 20 M`);
+      return enviartexto(`⚠️ *Uso correcto:*\n${prefijo}reg <nombre> <edad> <M/F>\n\n*Ejemplo:* ${prefijo}reg Ana 20 M`);
     }
 
     // Verificar si ya está registrado
@@ -42,7 +43,7 @@ export default {
 ┃ ➤ *Fecha:* ${fecha}
 ┃ ➤ *Estado:* Registrado ✅
 ┗━━━━━━━━━━━━━━━━━━━━━━━━┛
-> Usa ${config.prefix}perfil para ver tu tarjeta.
+> Usa ${prefijo}perfil para ver tu tarjeta.
 ${config.footer}
 `.trim();
 

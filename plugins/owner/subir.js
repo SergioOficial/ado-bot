@@ -42,6 +42,20 @@ export function resolverRuta(raiz, rutaCruda) {
   if (relativa === ".git" || relativa.startsWith(".git" + path.sep)) {
     return { ok: false, error: "🚫 `.git/` está protegido." };
   }
+  // riokuroxi-svg: como en Shin-MD, no confiar solo en la ruta textual.
+  // Se rechaza cualquier enlace, incluso uno roto o que apunte dentro del bot.
+  let actual = raiz;
+  for (const parte of relativa.split(path.sep).filter(Boolean)) {
+    actual = path.join(actual, parte);
+    try {
+      if (fs.lstatSync(actual).isSymbolicLink()) {
+        return { ok: false, error: "🚫 No se permiten enlaces simbólicos." };
+      }
+    } catch (err) {
+      if (err.code === "ENOENT") break;
+      return { ok: false, error: "🚫 No pude comprobar la ruta." };
+    }
+  }
   return { ok: true, ruta: destino, relativa };
 }
 

@@ -78,7 +78,7 @@ export function crearRouter(deps) {
   /**
    * El manejador. Nunca lanza: lo que falle se apunta y se contesta si se puede.
    */
-  return async function atender(ev) {
+  async function atenderMensaje(ev) {
     try {
       if (!ev || ev.type !== "notify") return;
       const mensajes = ev.messages;
@@ -212,6 +212,14 @@ export function crearRouter(deps) {
       // Fallo del propio router (no de un plugin). Se apunta y se sigue vivo.
       registrar(error);
       salud?.anotarError?.(error);
+    }
+  }
+
+  // riokuroxi-svg: Baileys puede entregar varios mensajes en una sola notificación.
+  return async function atender(ev) {
+    if (ev?.type !== "notify" || !Array.isArray(ev.messages)) return;
+    for (const mensaje of ev.messages) {
+      await atenderMensaje({ ...ev, messages: [mensaje] });
     }
   };
 }
