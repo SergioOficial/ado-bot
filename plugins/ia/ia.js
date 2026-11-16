@@ -1,43 +1,60 @@
 import axios from "axios";
 
 export default {
-  command: ["ia", "chatgpt", "gpt"],
+  command: ["chatgpt", "ia", "geminis", "ai"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, BOT_NAME, config } = ctx;
     const text = args.join(" ").trim();
-    
-    if (!text) return enviartexto(`✧ *${BOT_NAME}* ✧\n\nEscribe una petición.\nEjemplo: ${config.prefix[0]}ia ¿Qué es el amor?`);
 
-    const waitMsg = await sock.sendMessage(from, { text: `⏳ *${BOT_NAME}* está pensando...` }, { quoted: m });
+    if (!text) return enviartexto(`✧ *${BOT_NAME}* ✧\n\nEscribe una petición.\nEjemplo: ${config.prefix[0]}iaa ¿Qué es el amor?`);
+
+    const waitMsg = await sock.sendMessage(from, { text: `❀  *${BOT_NAME}* está pensando...` }, { quoted: m });
 
     try {
-      // 🌐 Endpoint de Evogb
-      const evogbUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}`;
-      
-      const res = await axios.get(evogbUrl, { timeout: 25000 });
-      const data = res.data;
+      let aiResponse = null;
+      const prompt = `Responde en el idioma que te escriban, de forma clara, actua como la waifu ado. Pregunta: ${text}`;
 
-      // 🕵️‍♂️ Extracción robusta de la respuesta de texto
-      const responseText = 
-        data.result || 
-        data.text || 
-        data.response || 
-        data.message || 
-        data.data?.text || 
-        data.data;
+      // 1. Intentar con Novita (la misma de .ia)
+      try {
+        const novitaUrl = `https://novita-api.darkcore.xyz/api/ia/gemini?texto=${encodeURIComponent(prompt)}`;
+        const res = await axios.get(novitaUrl, { timeout: 15000 });
+        let data = res.data;
 
-      if (!responseText || typeof responseText !== 'string') {
-        throw new Error("La IA devolvió una respuesta vacía o inválida.");
+        if (typeof data === 'object' && data !== null) {
+          data = data.result || data.texto || data.response || data.data;
+        }
+        if (data && typeof data === 'string') aiResponse = data.trim();
+      } catch (err) {
+        console.log("Fallo Novita IA, usando Pollinations de respaldo...");
       }
 
+      // 2. Respaldo: Pollinations
+      if (!aiResponse) {
+        try {
+          const res = await axios.get(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, { timeout: 15000 });
+          if (res.data && typeof res.data === "string") aiResponse = res.data.trim();
+        } catch (err) {
+          console.log("Fallo Pollinations también.");
+        }
+      }
+
+      if (!aiResponse) throw new Error("Las APIs de IA están saturadas, intenta más tarde.");
+      // 👇 FIX: Conversión limpia de ArrayBuffer a Buffer
+      const audioBuffer = Buffer.from(ttsRes.data);
+      // 3. Editar el mensaje con la respuesta completa
       await sock.sendMessage(from, { 
-        text: `${responseText.trim()}\n\n${config.footer}`, 
+        text: `✨ *Respuesta de la IA:*\n\n${aiResponse}\n\n${config.footer}`, 
         edit: waitMsg.key 
       });
 
+      await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+
     } catch (e) {
-      console.error("Error en IA (Evogb):", e.message);
-      await sock.sendMessage(from, { text: `⚠️ Error al conectar con la IA.\n_${e.message}_`, edit: waitMsg.key }).catch(() => {});
+      console.error("Error en IA Audio:", e.message);
+      await sock.sendMessage(from, { 
+        text: `⚠️ Error al generar el audio.\n_${e.message}_`, 
+        edit: waitMsg.key 
+      }).catch(() => {});
     }
   }
 };
