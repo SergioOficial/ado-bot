@@ -32,7 +32,7 @@ export default {
     const reaccion = reacciones[comando];
     if (!reaccion) return;
 
-    await sock.sendMessage(from, { react: { text: "🎬", key: m.key } });
+    await sock.sendMessage(from, { react: { text: "🫱", key: m.key } });
 
     let gifUrl = null;
 
@@ -59,7 +59,7 @@ export default {
       return enviartexto(`❌ No se pudo obtener el GIF para *${comando}*. Intenta de nuevo más tarde.`);
     }
 
-    // 3. Convertir GIF → MP4 real (esto arregla el problema de descarga)
+    // 3. Convertir GIF → MP4 real para enviarlo como video normal
     try {
       const gifPath = `./tmp-${Date.now()}.gif`;
       const mp4Path = `./tmp-${Date.now()}.mp4`;
@@ -74,7 +74,7 @@ export default {
       await sock.sendMessage(from, {
         video: fs.readFileSync(mp4Path),
         caption: `✨ *Reacción:* ${comando.toUpperCase()}`,
-        gifPlayback: true
+        mimetype: "video/mp4"
       }, { quoted: m });
 
       fs.unlinkSync(gifPath);
@@ -83,9 +83,9 @@ export default {
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
-      console.error("Error al enviar el GIF:", e.message);
+      console.error("Error al enviar el video:", e.message);
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      await enviartexto(`⚠️ No se pudo procesar el GIF de *${comando}*.`);
+      await enviartexto(`⚠️ No se pudo procesar el video de *${comando}*.`);
     }
   }
 };
