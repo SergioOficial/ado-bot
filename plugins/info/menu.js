@@ -197,6 +197,15 @@ export default {
 ┃ 🧪 *𝐓𝐄𝐒𝐓* 🧪
 ┣━━━━━━━━━━━━━━━━━━┛
 ┃ ➤ ${PREFIX}botones
+╭─「 🎭 𝐑𝐄𝐀𝐂𝐂𝐈𝐎𝐍𝐄𝐒 」─╮
+│ ➤ ${PREFIX}angry | ${PREFIX}kill
+│ ➤ ${PREFIX}sleep | ${PREFIX}hug
+│ ➤ ${PREFIX}kiss | ${PREFIX}pat
+│ ➤ ${PREFIX}slap | ${PREFIX}cry
+│ ➤ ${PREFIX}dance | ${PREFIX}smile
+│ ➤ ${PREFIX}wave | ${PREFIX}bonk
+│ ➤ ${PREFIX}bite | ${PREFIX}blush
+│ ➤ ${PREFIX}cuddle 
 ┗━━━━━━━━━━━━━━━━━━┛
 
 > 💡 *Tip:* También puedes usar *${PREFIX}menu <tipo>* (ej: *${PREFIX}menu rpg*) para ver las categorías de forma más limpia.
