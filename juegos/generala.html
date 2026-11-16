@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generala 🎲</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 10px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, #0b1120 60%);
+    color: #e2e8f0;
+    -webkit-font-smoothing: antialiased;
+  }
+  .juego {
+    width: min(460px, 100%);
+    background: rgba(15, 23, 42, .85);
+    border: 1px solid #1e293b;
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 25px 60px -20px rgba(0,0,0,.85);
+  }
+  h1 {
+    font-size: 1.3rem;
+    text-align: center;
+    background: linear-gradient(90deg, #22c55e, #eab308);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sub { text-align: center; font-size: .68rem; color: #64748b; margin: 2px 0 8px; }
+  .modos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .modo {
+    padding: 7px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #94a3b8;
+    font-size: .75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .modo.activo {
+    background: linear-gradient(90deg, #16a34a, #ca8a04);
+    border-color: transparent;
+    color: #fff;
+  }
+  #estado {
+    text-align: center;
+    font-weight: 700;
+    font-size: .88rem;
+    margin-bottom: 8px;
+    min-height: 1.4em;
+    color: #fbbf24;
+  }
+  #estado.fin { color: #22c55e; }
+  #estado.cpu { color: #a78bfa; }
+  .dados {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .dado {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #f8fafc, #cbd5e1);
+    color: #0f172a;
+    font-size: 2rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: .15s;
+    border: 3px solid transparent;
+    box-shadow: 0 3px 0 rgba(0,0,0,.3);
+    user-select: none;
+  }
+  .dado:hover:not(.disabled) { transform: translateY(-2px); }
+  .dado.fijo {
+    border-color: #22c55e;
+    box-shadow: 0 0 12px rgba(34,197,94,.6), 0 3px 0 rgba(0,0,0,.3);
+    background: linear-gradient(145deg, #dcfce7, #86efac);
+  }
+  .dado.disabled { cursor: not-allowed; }
+  .dado.vacio { background: #1e293b; color: #334155; font-size: 1.5rem; box-shadow: none; }
+  .acciones { display: flex; gap: 6px; margin-bottom: 10px; }
+  .accion {
+    flex: 1;
+    padding: 9px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: .78rem;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .accion:hover:not(:disabled) { background: #2b3b52; }
+  .accion:disabled { opacity: .4; cursor: not-allowed; }
+  .accion.primario {
+    background: linear-gradient(90deg, #16a34a, #ca8a04);
+    border-color: transparent;
+    color: #fff;
+  }
+  .tabla {
+    display: grid;
+    grid-template-columns: 1fr 44px 44px;
+    gap: 3px;
+    font-size: .78rem;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .hdr {
+    padding: 5px 8px;
+    font-size: .7rem;
+    font-weight: 800;
+    text-align: center;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .hdr.j1 { color: #38bdf8; }
+  .hdr.j2 { color: #fb7185; }
+  .cat {
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: .15s;
+    font-weight: 600;
+    font-size: .75rem;
+  }
+  .cat small { display: block; font-size: .58rem; color: #64748b; margin-top: 1px; }
+  .cat:hover:not(.usada):not(.disabled) { background: #1e293b; border-color: #22c55e; }
+  .cat.usada { opacity: .35; cursor: not-allowed; }
+  .cat.disabled { opacity: .5; cursor: not-allowed; }
+  .pts {
+    padding: 6px 4px;
+    text-align: center;
+    border-radius: 6px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    font-weight: 700;
+    font-size: .75rem;
+    color: #64748b;
+  }
+  .pts.s1 { color: #38bdf8; }
+  .pts.s2 { color: #fb7185; }
+  .total {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    margin-top: 4px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: .85rem;
+  }
+  .total span:first-child { color: #38bdf8; }
+  .total span:last-child { color: #fb7185; }
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2,6,23,.92);
+    display: none;
+    place-items: center;
+    z-index: 10;
+    padding: 20px;
+  }
+  .overlay.on { display: grid; }
+  .box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    padding: 22px 26px;
+    text-align: center;
+    max-width: 320px;
+  }
+  .box h2 { font-size: 1.4rem; margin-bottom: 8px; }
+  .box p { color: #94a3b8; font-size: .85rem; margin-bottom: 14px; }
+  .box button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(90deg, #16a34a, #ca8a04);
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<main class="juego">
+  <h1>🎲 Generala</h1>
+  <p class="sub">5 dados · 3 tiros · 11 categorías</p>
+
+  <div class="modos">
+    <button class="modo" data-modo="2p">👥 2 jugadores</button>
+    <button class="modo activo" data-modo="cpu">🤖 Vs CPU</button>
+  </div>
+
+  <p id="estado">Turno de jugador 1</p>
+
+  <div class="dados" id="dados"></div>
+
+  <div class="acciones">
+    <button class="accion primario" id="tirar">Tirar</button>
+    <button class="accion" id="nueva">Nueva partida</button>
+  </div>
+
+  <div class="tabla" id="tabla"></div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="box">
+    <h2 id="ovTitulo">Fin</h2>
+    <p id="ovTexto"></p>
+    <button id="ovBtn">Jugar de nuevo</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const CATS = [
+  { id: '1', name: 'Unos', hint: 'suma de 1s' },
+  { id: '2', name: 'Doses', hint: 'suma de 2s' },
+  { id: '3', name: 'Treses', hint: 'suma de 3s' },
+  { id: '4', name: 'Cuatros', hint: 'suma de 4s' },
+  { id: '5', name: 'Cincos', hint: 'suma de 5s' },
+  { id: '6', name: 'Seises', hint: 'suma de 6s' },
+  { id: 'escalera', name: 'Escalera', hint: '20 · servida 25' },
+  { id: 'full', name: 'Full', hint: '3 + 2 = 30' },
+  { id: 'poker', name: 'Póker', hint: '4 iguales = 40' },
+  { id: 'generala', name: 'Generala', hint: '5 iguales = 50' },
+  { id: 'doble', name: 'Doble Generala', hint: '100' }
+];
+const DADO = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+const NOMBRE = ['', 'Jugador 1', 'Jugador 2'];
+
+let mode = 'cpu';
+let dice = [null, null, null, null, null];
+let kept = [false, false, false, false, false];
+let rollsLeft = 3;
+let turn = 1;
+let scores = [{}, {}];
+let gameOver = false;
+let thinking = false;
+let isServida = false;
+let gameToken = 0;
+
+/* ── Cálculo de puntaje ── */
+function calcular(cat, d) {
+  if (!d || d.length !== 5 || d.some(x => !x)) return 0;
+  const counts = [0,0,0,0,0,0];
+  d.forEach(x => counts[x-1]++);
+  const has = n => counts.some(c => c === n);
+
+  if (/^[1-6]$/.test(cat)) return counts[+cat - 1] * (+cat);
+  if (cat === 'escalera') {
+    const uniq = [...new Set(d)].sort((a,b) => a-b);
+    const esEsc = uniq.length === 5 && (uniq[4] - uniq[0] === 4);
+    return esEsc ? (isServida ? 25 : 20) : 0;
+  }
+  if (cat === 'full') return (has(3) && has(2)) ? 30 : 0;
+  if (cat === 'poker') return has(4) ? 40 : 0;
+  if (cat === 'generala') return has(5) ? 50 : 0;
+  if (cat === 'doble') return has(5) ? 100 : 0;
+  return 0;
+}
+
+function esGeneralaServida(d) {
+  return d.every(x => x && x === d[0]);
+}
+
+/* ── Render ── */
+const dadosEl = document.getElementById('dados');
+const estadoEl = document.getElementById('estado');
+const tablaEl = document.getElementById('tabla');
+const tirarBtn = document.getElementById('tirar');
+
+function renderDados() {
+  dadosEl.innerHTML = '';
+  const bloqueado = thinking || gameOver || (mode === 'cpu' && turn === 2);
+  for (let i = 0; i < 5; i++) {
+    const d = document.createElement('div');
+    d.className = 'dado';
+    if (dice[i]) {
+      d.textContent = DADO[dice[i]-1];
+      if (kept[i]) d.classList.add('fijo');
+      if (bloqueado) d.classList.add('disabled');
+    } else {
+      d.textContent = '?';
+      d.classList.add('vacio');
+    }
+    d.addEventListener('click', () => toggleKeep(i));
+    dadosEl.appendChild(d);
+  }
+}
+
+function toggleKeep(i) {
+  if (thinking || gameOver || !dice[i]) return;
+  if (mode === 'cpu' && turn === 2) return;
+  kept[i] = !kept[i];
+  renderDados();
+}
+
+function renderTabla() {
+  tablaEl.innerHTML = '';
+
+  const h0 = document.createElement('div'); h0.className = 'hdr'; h0.textContent = 'Categoría';
+  const h1 = document.createElement('div'); h1.className = 'hdr j1'; h1.textContent = 'J1';
+  const h2 = document.createElement('div'); h2.className = 'hdr j2'; h2.textContent = 'J2';
+  tablaEl.append(h0, h1, h2);
+
+  let t1 = 0, t2 = 0;
+  const puedeElegir = !gameOver && !thinking && rollsLeft === 0 &&
+                      (mode === '2p' || turn === 1);
+
+  CATS.forEach(cat => {
+    const s1 = scores[0][cat.id];
+    const s2 = scores[1][cat.id];
+    if (s1 !== undefined) t1 += s1;
+    if (s2 !== undefined) t2 += s2;
+
+    const c = document.createElement('div');
+    c.className = 'cat';
+    c.innerHTML = `${cat.name}<small>${cat.hint}</small>`;
+    const yaUsada = scores[turn-1][cat.id] !== undefined;
+    if (yaUsada) c.classList.add('usada');
+    if (!puedeElegir) c.classList.add('disabled');
+    if (puedeElegir && !yaUsada) c.addEventListener('click', () => onCategoryClick(cat.id));
+    tablaEl.appendChild(c);
+
+    const p1 = document.createElement('div');
+    p1.className = 'pts s1';
+    p1.textContent = s1 !== undefined ? s1 : '—';
+    tablaEl.appendChild(p1);
+
+    const p2 = document.createElement('div');
+    p2.className = 'pts s2';
+    p2.textContent = s2 !== undefined ? s2 : '—';
+    tablaEl.appendChild(p2);
+  });
+
+  const tot = document.createElement('div');
+  tot.className = 'total';
+  tot.innerHTML = `<span>👤 J1: ${t1}</span><span>${mode === 'cpu' ? '🤖 CPU' : '👥 J2'}: ${t2}</span>`;
+  tablaEl.appendChild(tot);
+}
+
+function renderEstado() {
+  estadoEl.className = '';
+  if (gameOver) return;
+  if (thinking) {
+    estadoEl.textContent = '🤔 CPU tirando…';
+    estadoEl.classList.add('cpu');
+    return;
+  }
+  const name = turn === 1 ? (mode === 'cpu' ? 'Tú' : 'Jugador 1')
+                          : (mode === 'cpu' ? 'CPU' : 'Jugador 2');
+  if (rollsLeft === 3 && dice.every(d => !d)) {
+    estadoEl.textContent = `${name}: pulsa "Tirar"`;
+  } else if (rollsLeft > 0) {
+    estadoEl.textContent = `${name}: quedan ${rollsLeft} tiro${rollsLeft > 1 ? 's' : ''}`;
+  } else {
+    estadoEl.textContent = `${name}: elige dónde anotar`;
+  }
+}
+
+function renderTirarBtn() {
+  const esTurnoHumano = mode === '2p' || turn === 1;
+  tirarBtn.textContent = rollsLeft === 3 ? 'Tirar' : `Tirar (${rollsLeft})`;
+  tirarBtn.disabled = gameOver || thinking || !esTurnoHumano || rollsLeft === 0;
+}
+
+function renderAll() {
+  renderDados();
+  renderTabla();
+  renderEstado();
+  renderTirarBtn();
+}
+
+/* ── Turno ── */
+function tirarDados() {
+  if (rollsLeft <= 0 || gameOver || thinking) return;
+  isServida = rollsLeft === 3;
+  for (let i = 0; i < 5; i++) {
+    if (!kept[i]) dice[i] = Math.floor(Math.random() * 6) + 1;
+  }
+  rollsLeft--;
+  renderAll();
+
+  // Generala servida = victoria instantánea
+  if (isServida && esGeneralaServida(dice) && scores[turn-1]['generala'] === undefined) {
+    scores[turn-1]['generala'] = 50;
+    setTimeout(() => terminarPartida(turn, '¡Generala servida! 🎉'), 400);
+  }
+}
+
+function onCategoryClick(catId) {
+  if (thinking || gameOver) return;
+  if (mode === 'cpu' && turn === 2) return;
+  if (rollsLeft > 0) return;
+  if (scores[turn-1][catId] !== undefined) return;
+
+  scores[turn-1][catId] = calcular(catId, dice);
+  pasarTurno();
+}
+
+function pasarTurno() {
+  const llenos = Object.keys(scores[0]).length === CATS.length &&
+                 Object.keys(scores[1]).length === CATS.length;
+  if (llenos) { terminarPartida(null, ''); return; }
+
+  turn = turn === 1 ? 2 : 1;
+  dice = [null, null, null, null, null];
+  kept = [false, false, false, false, false];
+  rollsLeft = 3;
+  isServida = false;
+  renderAll();
+
+  if (mode === 'cpu' && turn === 2) {
+    const my = ++gameToken;
+    thinking = true;
+    renderAll();
+    setTimeout(() => cpuTirar(my), 600);
+  }
+}
+
+function cpuTirar(my) {
+  if (my !== gameToken || gameOver) return;
+  isServida = rollsLeft === 3;
+  for (let i = 0; i < 5; i++) {
+    if (!kept[i]) dice[i] = Math.floor(Math.random() * 6) + 1;
+  }
+  rollsLeft--;
+  renderDados();
+  renderEstado();
+
+  if (rollsLeft > 0) {
+    // Guardar dados del número más frecuente
+    const counts = [0,0,0,0,0,0];
+    dice.forEach(x => counts[x-1]++);
+    let bestN = 0, bestC = 0;
+    counts.forEach((c, i) => { if (c > bestC) { bestC = c; bestN = i; } });
+    if (bestC >= 2) {
+      dice.forEach((v, i) => { if (v === bestN + 1) kept[i] = true; });
+    }
+    setTimeout(() => cpuTirar(my), 500);
+  } else {
+    setTimeout(() => {
+      if (my !== gameToken || gameOver) return;
+      cpuElige(my);
+    }, 400);
+  }
+}
+
+function cpuElige(my) {
+  if (my !== gameToken || gameOver) return;
+  let bestCat = null, bestScore = -1;
+  for (const cat of CATS) {
+    if (scores[1][cat.id] !== undefined) continue;
+    const p = calcular(cat.id, dice);
+    if (p > bestScore) { bestScore = p; bestCat = cat.id; }
+  }
+  if (bestScore === 0) {
+    // Tachar lo menos valioso (números bajos primero)
+    const orden = ['1','2','3','4','5','6','escalera','full','poker','generala','doble'];
+    bestCat = orden.find(c => scores[1][c] === undefined);
+  }
+  scores[1][bestCat] = calcular(bestCat, dice);
+  thinking = false;
+  pasarTurno();
+}
+
+function terminarPartida(ganador, msg) {
+  gameOver = true;
+  thinking = false;
+  let t1 = 0, t2 = 0;
+  CATS.forEach(c => {
+    t1 += scores[0][c.id] || 0;
+    t2 += scores[1][c.id] || 0;
+  });
+  let titulo, texto;
+  if (ganador) {
+    titulo = msg || `¡Ganó ${NOMBRE[ganador]}!`;
+    texto = `J1: ${t1} · J2: ${t2}`;
+  } else if (t1 > t2) {
+    titulo = '¡Ganó Jugador 1! 🏆';
+    texto = `${t1} vs ${t2}`;
+  } else if (t2 > t1) {
+    titulo = mode === 'cpu' ? '💀 Ganó la CPU' : '¡Ganó Jugador 2! 🏆';
+    texto = `${t1} vs ${t2}`;
+  } else {
+    titulo = '¡Empate! 🤝';
+    texto = `Ambos: ${t1}`;
+  }
+  document.getElementById('ovTitulo').textContent = titulo;
+  document.getElementById('ovTexto').textContent = texto;
+  document.getElementById('overlay').classList.add('on');
+  renderAll();
+}
+
+/* ── Acciones ── */
+tirarBtn.addEventListener('click', tirarDados);
+
+document.querySelectorAll('.modo').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (mode === btn.dataset.modo) return;
+    mode = btn.dataset.modo;
+    document.querySelectorAll('.modo').forEach(b => b.classList.toggle('activo', b === btn));
+    nuevaPartida();
+  });
+});
+
+document.getElementById('nueva').addEventListener('click', nuevaPartida);
+document.getElementById('ovBtn').addEventListener('click', () => {
+  document.getElementById('overlay').classList.remove('on');
+  nuevaPartida();
+});
+
+function nuevaPartida() {
+  gameToken++;
+  dice = [null, null, null, null, null];
+  kept = [false, false, false, false, false];
+  rollsLeft = 3;
+  turn = 1;
+  scores = [{}, {}];
+  gameOver = false;
+  thinking = false;
+  isServida = false;
+  document.getElementById('overlay').classList.remove('on');
+  renderAll();
+}
+
+nuevaPartida();
+</script>
+</body>
+</html>
