@@ -212,7 +212,7 @@ export default {
 `;
     }
     // 🎁 ECONOMÍA
-    else if (tipo === 'economia') {
+    else if (tipo === 'economia' || tipo === 'economía' || tipo === 'economy' || tipo === 'economico' ) {
       texto = `
 ⋆｡°✩ 🎁 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -246,7 +246,7 @@ export default {
 `;
     }
     // ⚔️ RPG
-    else if (tipo === 'rpg') {
+    else if (tipo === 'rpg' || tipo === 'aventure' || tipo === 'aventura') {
       texto = `
 ⋆｡°✩ ⚔️ 𝐀𝐕𝐄𝐍𝐓𝐔𝐑𝐀 𝐘 𝐑𝐏𝐆 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -330,7 +330,7 @@ export default {
 `;
     }
     // 🌟 PERFIL
-    else if (tipo === 'perfil') {
+    else if (tipo === 'perfil'|| tipo === 'profile') {
       texto = `
 ⋆｡°✩ 🌟 𝐏𝐄𝐑𝐅𝐈𝐋 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -347,7 +347,7 @@ export default {
 `;
     }
     // 🎄 DESCARGAS
-    else if (tipo === 'descargas') {
+    else if (tipo === 'descargas' || tipo ==== 'downloads') {
       texto = `
 ⋆｡°✩ 🎄 𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -360,7 +360,7 @@ export default {
 `;
     }
     // ☃️ STICKERS
-    else if (tipo === 'stickers') {
+    else if (tipo === 'stickers'|| tipo === 's') {
       texto = `
 ⋆｡°✩ ☃️ 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -401,7 +401,7 @@ export default {
 `;
     }
     // 🔔 UTILS
-    else if (tipo === 'utils') {
+    else if (tipo === 'utils'|| tipo === 'utilidades') {
       texto = `
 ⋆｡°✩ 🔔 𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -430,7 +430,7 @@ export default {
 `;
     }
     // 🤖 SUBBOTS
-    else if (tipo === 'subbots') {
+    else if (tipo === 'subbots' || tipo === 'bot' || tipo === 'stockens') {
       texto = `
 ⋆｡°✩ 🤖 𝐒𝐔𝐁-𝐁𝐎𝐓𝐒 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
@@ -444,7 +444,7 @@ export default {
 `;
     }
     // 👑 OWNER
-    else if (tipo === 'owner') {
+    else if (tipo === 'owner' || tipo === 'dev') {
       texto = `
 ⋆｡°✩ 👑 𝐎𝐖𝐍𝐄𝐑 ✩°｡⋆
 ┏━━━━━━━━━━━━━━━━━━┓
