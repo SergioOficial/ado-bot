@@ -6,7 +6,7 @@ export default {
     const { sock, from, m, args, enviartexto, BOT_NAME, config } = ctx;
     const text = args.join(" ").trim();
 
-    if (!text) return enviartexto(`✧ *${BOT_NAME}* ✧\n\nEscribe una petición.\nEjemplo: ${config.prefix[0]}iaa ¿Qué es el amor?`);
+    if (!text) return enviartexto(`✧ *${BOT_NAME}* ✧\n\nEscribe una petición.\nEjemplo: ${config.prefix[0]}ia ¿Qué es el amor?`);
 
     const waitMsg = await sock.sendMessage(from, { text: `❀  *${BOT_NAME}* está pensando...` }, { quoted: m });
 
@@ -39,8 +39,6 @@ export default {
       }
 
       if (!aiResponse) throw new Error("Las APIs de IA están saturadas, intenta más tarde.");
-      // 👇 FIX: Conversión limpia de ArrayBuffer a Buffer
-      const audioBuffer = Buffer.from(ttsRes.data);
       // 3. Editar el mensaje con la respuesta completa
       await sock.sendMessage(from, { 
         text: `✨ *Respuesta de la IA:*\n\n${aiResponse}\n\n${config.footer}`, 
@@ -50,9 +48,9 @@ export default {
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
-      console.error("Error en IA Audio:", e.message);
+      console.error("Error en IA :", e.message);
       await sock.sendMessage(from, { 
-        text: `⚠️ Error al generar el audio.\n_${e.message}_`, 
+        text: `⚠️ Error al generar respuesta.\n_${e.message}_`, 
         edit: waitMsg.key 
       }).catch(() => {});
     }
