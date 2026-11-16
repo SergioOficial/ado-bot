@@ -1,6 +1,23 @@
 import { enviarConBotones, rapido, lista } from "../../lib/botones.js";
 import { LEYENDA, CREDITO, marcar } from "../../lib/menu-ayuda.js";
 import { commands } from "../../pluginLoader.js";
+import os from "node:os";
+
+const TOP = "╭╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ࣪ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╮";
+const MID = "├╾ׅ╴ׂ╌╶ׅ╌ׂ─ 〫─ׂ┄ׅ╴ׂ╌ׅ╶╼. ╾ׅ╴ׂ╌╶ׅ╶╼. ╾ׅ╴ׂ╌╶ׅ╌ׂ";
+const BOT = "╰╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╯";
+
+const compacta = (titulo, cmds) => `${TOP}
+│❀ *${titulo}* ☆(ﾉ◕ヮ◕)ﾉ*
+${MID}
+│✿ ${cmds.join(" › ")}
+${BOT}`;
+
+const detallada = (titulo, items) => `${TOP}
+│❀ *${titulo}* ☆(ﾉ◕ヮ◕)ﾉ*
+${MID}
+${items.map(([c, d]) => `│✿ ${c}\n> ✺ ${d}`).join("\n")}
+${BOT}`;
 
 export default {
   command: ["menu", "help", "menú", "ayuda"],
@@ -8,511 +25,231 @@ export default {
     const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args, comando } = ctx;
     const numero = sender.split("@")[0];
     const tipo = args[0]?.toLowerCase();
+    const p = PREFIX;
 
-    // 👤 Info del usuario
     const user = db.users[sender] || {};
     const totalUsers = Object.keys(db.users || {}).length;
-    const esPremium = user.premium === true ? "💎 PREMIUM" : "👤 FREE";
-    const nivelUser = user.nivel || 1;
-    const rangoTexto = user.nombre ? `Nv. ${nivelUser} | ${esPremium}` : "No registrado";
 
     const CANAL_JID = "120363425322183138@newsletter";
     const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const CANAL_URL = "https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j";
     const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
-    
+
+    // Info del sistema
+    const sistema = `${os.type()} ${os.release()} ${os.arch()}`;
+    const meses = ["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","sep.","oct.","nov.","dic."];
+    const ahora = new Date();
+    const fecha = `${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}, ${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")} ${ahora.getHours() >= 12 ? "PM" : "AM"}`;
+
+    // URL del grupo o canal
+    let urlGrupo = CANAL_URL;
+    if (m.isGroup) {
+      try {
+        const code = await sock.groupInviteCode(from);
+        urlGrupo = `https://chat.whatsapp.com/${code}`;
+      } catch {}
+    }
+
+    const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, como está tu día?, mucho gusto mi nombre es *ㅤ   ׅׄ⋰ּׅ    ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊ 𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🇨🇺ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
+ ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
+
+: ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${titulo}
+│☄︎ *sɪsᴛᴇᴍᴀ/ᴏᴘʀ ::* ${sistema}
+│❖ *ᴜsᴇʀs ::* ${totalUsers.toLocaleString()}
+│❖ *ᴍɪ ᴛɪᴇᴍᴘᴏ ::* ${fecha}
+│❖ *ᴜʀʟ ::* ${urlGrupo}
+
+ ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
+
+⋆｡ﾟ🩸 ｡° *ᴄᴏᴍ꯭ᴀ꯭ɴ꯭ᴅ꯭ᴏ꯭s* ﾟ｡˚₊ 𓂃
+`;
+
     let texto = "";
 
-    // 🌟 MENÚ PRINCIPAL
+    // ═══════════ MENÚ PRINCIPAL ═══════════
     if (!tipo) {
-      texto = `
-⋆｡°✩ 🐾 𝙰𝚍𝚘 - 𝐁𝐎𝐓 🐾 ✩°｡⋆
-✦ *¡Hola,* @${numero} *!*
-> *Tu rango:* ${rangoTexto}
+      texto = header("Menú Principal");
 
-┏━━━━━━━━━━━━━━━━━━┓
-┃   ⚙️ *𝐈𝐍𝐅𝐎* ⚙️
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ✦ *Usuarios:* ${totalUsers} 👥
-┃ ✦ *Prefijo:* [ ${PREFIX} ]
-┃ ✦ *Estado:* Online 🟢
-┗━━━━━━━━━━━━━━━━━━┛
+      texto += "\n" + compacta("🎁 Economía", ["work","daily","beg","bal","nivel","dep","with","pay","rob","crime","cf","slots","dice","rankcoins","interest","ppt","cofre","invertir","shop","give","weekly","monthly"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("⚔️ RPG", ["trabajar","cazar","pescar","minar","explorar","clase","ranknivel","talar","cultivar","repartir","pintar","hackear","streamer","policia","bombero","espiar","mago"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🐾 Mascotas", ["adoptar","animal","nombrar","acariciar","alimentar","pasear","animaltop","pelear","atacar","cambiar","huir","capturar","petactivo"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🎴 Gacha", ["gacha on","gacha off","rw","roll","rollwaifu","claim","c","reclamar","harem","waifus","claims","wtop","topwaifus","waifustop","charinfo","winfo","vote"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🌟 Perfil", ["reg","perfil","delperfil","level","lboard","afk"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🎄 Descargas", ["play","play2","fb","ig","tt","mf","apk","ytsearch","toimg"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("☃️ Stickers", ["s","brat","bratv","emojimix","stickers"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🧠 IA", ["ia","iaaudio","imagen"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🎉 Diversión", ["trivia","mate","8ball","meme","gato","perro","waifu","neko","ship"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🔔 Utilidades", ["ping","info","creadores","traducir","clima","wiki","qr","tts"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🐙 GitHub", ["gitsearch","ghsearch"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🤖 SubBots", ["code","jadibot","canjear","stopbot","bots"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🛡️ Admin", ["close","open","del","kick","promote","demote","warn","warns","delwarn","setwarnlimit","hidetag","antilink","bot","link","revoke","setgpname","setgpdesc","setgpbanner","pin","unpin","count","topcount","topinactive","gp","testwelcome"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("👑 Owner", ["fix","backup","restart","join","leave","gencode","error"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🧪 Test", [`${p}botones`]);
+      texto += "\n" + compacta("🎭 Reacciones", ["angry","kill","sleep","hug","kiss","pat","slap","cry","dance","smile","wave","bonk","bite","blush","cuddle"].map(c => `${p}${c}`));
 
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎁 *𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀* 🎁
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}work | ${PREFIX}daily | ${PREFIX}beg
-┃ ➤ ${PREFIX}bal | ${PREFIX}nivel
-┃ ➤ ${PREFIX}dep | ${PREFIX}with (Banco)
-┃ ➤ ${PREFIX}pay <@user> <monto>
-┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
-┃ ➤ ${PREFIX}cf | ${PREFIX}slots | ${PREFIX}dice
-┃ ➤ ${PREFIX}ppt | ${PREFIX}roulette | ${PREFIX}casino
-┃ ➤ ${PREFIX}weekly | ${PREFIX}monthly
-┃ ➤ ${PREFIX}coffer (no lo toca .rob)
-┃ ➤ ${PREFIX}rankcoins | ${PREFIX}einfo
-┃ ➤ ${PREFIX}interest → Cobrar intereses del banco
-┃ ➤ ${PREFIX}ppt → Piedra, papel o tijera
-┃ ➤ ${PREFIX}cofre → Abrir caja misteriosa (5k)
-┃ ➤ ${PREFIX}invertir → Inversión de alto riesgo
-┃ ➤ ${PREFIX}shop → Comprar escudos o amuletos
-┃ ➤ ${PREFIX}give → Regalar coins
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🐾 *𝐌𝐀𝐒𝐂𝐎𝐓𝐀𝐒* 🐾
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}adoptar <animal>
-┃ ➤ ${PREFIX}animal (Ver tus pets)
-┃ ➤ ${PREFIX}nombrar <pet> <nombre>
-┃ ➤ ${PREFIX}acariciar / alimentar / pasear
-┃ ➤ ${PREFIX}animaltop
-┃ ➤ ${PREFIX}pelear | ${PREFIX}pelear <@user>
-┃ ➤ ${PREFIX}atacar | ${PREFIX}cambiar | ${PREFIX}huir
-┃ ➤ ${PREFIX}capturar | ${PREFIX}petactivo
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎴 *𝐆𝐀𝐂𝐇𝐀* 🎴
-┣━━━━━━━━━━━━━━━━━━┛
->  ${PREFIX}gacha on | off
-┃ ➤ ${PREFIX}rw | ${PREFIX}roll | ${PREFIX}rollwaifu
-> pedir un gacha 
-┃ ➤ ${PREFIX}claim | ${PREFIX}c | ${PREFIX}reclamar
-> reclamar un gacha citando 
-┃ ➤ ${PREFIX}harem | ${PREFIX}waifus | ${PREFIX}claims
-> tus reglamaciones 
-┃ ➤ ${PREFIX}wtop | ${PREFIX}topwaifus | ${PREFIX}waifustop
-> top de gachas del grupo 
-┃ ➤ ${PREFIX}charinfo | ${PREFIX}winfo
-> información de Gachas
-┃ ➤ ${PREFIX}vote <nombre> 
-> Vota por un personaje (+valor)
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ ⚔️ *𝐑𝐏𝐆* ⚔️
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}trabajar | ${PREFIX}cazar | ${PREFIX}pescar
-┃ ➤ ${PREFIX}minar | ${PREFIX}explorar
-┃ ➤ ${PREFIX}clase | ${PREFIX}ranknivel
-┃ ➤ ${PREFIX}talar | ${PREFIX}cultivar
-┃ ➤ ${PREFIX}repartir | ${PREFIX}pintar
-┃ ➤ ${PREFIX}hackear | ${PREFIX}streamer
-┃ ➤ ${PREFIX}policia | ${PREFIX}bombero
-┃ ➤ ${PREFIX}espiar | ${PREFIX}mago
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🌟 *𝐏𝐄𝐑𝐅𝐈𝐋* 🌟
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}reg <nom> <edad> <gen>
-┃ ➤ ${PREFIX}perfil | ${PREFIX}delperfil
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎄 *𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒* 🎄
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}play | ${PREFIX}play2
-┃ ➤ ${PREFIX}fb | ${PREFIX}ig | ${PREFIX}tt
-┃ ➤ ${PREFIX}mf | ${PREFIX}apk
-┃ ➤ ${PREFIX}ytsearch | ${PREFIX}toimg
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ ☃️ *𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒* ☃️
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}s | ${PREFIX}brat
-┃ ➤ ${PREFIX}stickers
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🧠 *𝐈𝐀* 🧠
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}ia | ${PREFIX}iaaudio
-┃ ➤ ${PREFIX}imagen
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎉 *𝐃𝐈𝐕𝐄𝐑𝐒𝐈𝐎𝐍* 🎉
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}trivia | ${PREFIX}mate | ${PREFIX}8ball
-┃ ➤ ${PREFIX}meme | ${PREFIX}gato | ${PREFIX}perro
-┃ ➤ ${PREFIX}waifu | ${PREFIX}neko | ${PREFIX}ship
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🔔 *𝐔𝐓𝐈𝐋𝐒* 🔔
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}ping | ${PREFIX}info | ${PREFIX}creadores
-┃ ➤ ${PREFIX}traducir | ${PREFIX}clima
-┃ ➤ ${PREFIX}wiki | ${PREFIX}qr | ${PREFIX}tts
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🛡️ *𝐀𝐃𝐌𝐈𝐍* 🛡️
-┣━━━━━━━━━━━━━━━━━━┛
-┃ 🔒 » ${PREFIX}close | ${PREFIX}open
-┃ 🗑️ » ${PREFIX}del
-┃ 👢 » ${PREFIX}kick <@user> [motivo]
-┃ 👑 » ${PREFIX}promote | ${PREFIX}demote
-┃ ⚖️ » ${PREFIX}warn | ${PREFIX}warns | ${PREFIX}delwarn
-┃ 📏 » ${PREFIX}setwarnlimit <1-10>
-┃ 📢 » ${PREFIX}hidetag <mensaje>
-┃ 🔗 » ${PREFIX}antilink on|off
-┃ 🤖 » ${PREFIX}bot on|off
-┃ 🔗 » ${PREFIX}link | ${PREFIX}revoke
-┃ ✏️ » ${PREFIX}setgpname | ${PREFIX}setgpdesc
-┃ 🖼️ » ${PREFIX}setgpbanner (citando foto)
-┃ 📌 » ${PREFIX}pin | ${PREFIX}unpin
-┃ 📊 » ${PREFIX}count | ${PREFIX}topcount | ${PREFIX}topinactive
-┃ 📋 » ${PREFIX}gp
-┃ ➤ ${PREFIX}testwelcome (Probar bienvenida)
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🐙 *GITHUB* 🐙
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}gitsearch <txt>
-┃ ➤ ${PREFIX}ghsearch <txt> (alias)
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🤖 *𝐒𝐔𝐁𝐁𝐎𝐓𝐒* 🤖
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}code | ${PREFIX}jadibot
-┃ ➤ ${PREFIX}canjear | ${PREFIX}stopbot | ${PREFIX}bots
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 👑 *𝐎𝐖𝐍𝐄𝐑* 👑
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}fix | ${PREFIX}backup | ${PREFIX}restart
-┃ ➤ ${PREFIX}join | ${PREFIX}leave | ${PREFIX}gencode
-┃ ➤ ${PREFIX}error (Ver logs del bot)
-┃ ➤ ${PREFIX}error clear (Borrar logs)
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🧪 *𝐓𝐄𝐒𝐓* 🧪
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ➤ ${PREFIX}botones
-╭─「 🎭 𝐑𝐄𝐀𝐂𝐂𝐈𝐎𝐍𝐄𝐒 」─╮
-│ ➤ ${PREFIX}angry | ${PREFIX}kill
-│ ➤ ${PREFIX}sleep | ${PREFIX}hug
-│ ➤ ${PREFIX}kiss | ${PREFIX}pat
-│ ➤ ${PREFIX}slap | ${PREFIX}cry
-│ ➤ ${PREFIX}dance | ${PREFIX}smile
-│ ➤ ${PREFIX}wave | ${PREFIX}bonk
-│ ➤ ${PREFIX}bite | ${PREFIX}blush
-│ ➤ ${PREFIX}cuddle 
-┗━━━━━━━━━━━━━━━━━━┛
-
-> 💡 *Tip:* También puedes usar *${PREFIX}menu <tipo>* (ej: *${PREFIX}menu rpg*) para ver las categorías de forma más limpia.
-`;
+      texto += `\n\n> 💡 *Tip:* Usa *${p}menu <categoría>* para ver los detalles (ej: *${p}menu rpg*).\n`;
+      texto += `\n${LEYENDA}\n\n${CREDITO}`;
     }
-    // 🎁 ECONOMÍA
-    else if (tipo === 'economia' || tipo === 'economía' || tipo === 'economy' || tipo === 'economico' ) {
-      texto = `
-⋆｡°✩ 🎁 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ ➤ ${PREFIX}work | ${PREFIX}daily | ${PREFIX}beg
-┃ ➤ ${PREFIX}bal | ${PREFIX}nivel
-┃ ➤ ${PREFIX}dep | ${PREFIX}with (Banco)
-┃ ➤ ${PREFIX}pay <@user> <monto>
-┃ ➤ ${PREFIX}rob <@user> | ${PREFIX}crime
-┃ ➤ ${PREFIX}cf | ${PREFIX}slots | ${PREFIX}dice
-┃ ➤ ${PREFIX}rankcoins
-┃ ➤ ${PREFIX}interest → Cobrar intereses del banco
-┃ ➤ ${PREFIX}ppt → Piedra, papel o tijera
-┃ ➤ ${PREFIX}cofre → Abrir caja misteriosa (5k)
-┃ ➤ ${PREFIX}invertir → Inversión de alto riesgo
-┃ ➤ ${PREFIX}shop → Comprar escudos o amuletos
-┃ ➤ ${PREFIX}give → Regalar coins
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+    // ═══════════ CATEGORÍAS ═══════════
+    else if (tipo === 'economia' || tipo === 'economía' || tipo === 'economy' || tipo === 'economico') {
+      texto = header("Economía") + "\n" + detallada("🎁 Economía", [
+        [`${p}work › ${p}daily › ${p}beg`, "Ganar coins diarios"],
+        [`${p}bal › ${p}nivel`, "Ver balance y nivel"],
+        [`${p}dep › ${p}with`, "Depositar / retirar del banco"],
+        [`${p}pay <@user> <monto>`, "Transferir coins a otro usuario"],
+        [`${p}rob <@user> › ${p}crime`, "Robar o delinquir"],
+        [`${p}cf › ${p}slots › ${p}dice`, "Juegos de azar"],
+        [`${p}ppt`, "Piedra, papel o tijera"],
+        [`${p}roulette › ${p}casino`, "Ruleta y casino"],
+        [`${p}rankcoins › ${p}einfo`, "Top e info de economía"],
+        [`${p}interest`, "Cobrar intereses del banco"],
+        [`${p}cofre › ${p}invertir`, "Cofre (5k) e inversiones de riesgo"],
+        [`${p}shop › ${p}give`, "Tienda y regalar coins"],
+        [`${p}weekly › ${p}monthly`, "Recompensas semanal / mensual"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🐙 GITHUB
     else if (tipo === 'github') {
-      texto = `
-⋆｡°✩ 🐙 *GITHUB* 🐙 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ ➤ ${PREFIX}gitsearch <txt>
-┃ ➤ ${PREFIX}githubsearch <txt>
-┃ ➤ ${PREFIX}ghsearch <txt>
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("GitHub") + "\n" + detallada("🐙 GitHub", [
+        [`${p}gitsearch <txt>`, "Buscar repositorios en GitHub"],
+        [`${p}githubsearch <txt>`, "Alias de gitsearch"],
+        [`${p}ghsearch <txt>`, "Alias corto"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // ⚔️ RPG
-    else if (tipo === 'rpg' || tipo === 'aventure' || tipo === 'aventura') {
-      texto = `
-⋆｡°✩ ⚔️ 𝐀𝐕𝐄𝐍𝐓𝐔𝐑𝐀 𝐘 𝐑𝐏𝐆 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🌾 » ${PREFIX}trabajar
-┃ 🏹 » ${PREFIX}cazar
-┃ 🎣 » ${PREFIX}pescar
-┃ ⛏️ » ${PREFIX}minar
-┃ 🗺️ » ${PREFIX}explorar
-┃ 🎭 » ${PREFIX}clase
-┃ 🏅 » ${PREFIX}ranknivel
-┃ 🪓 » ${PREFIX}talar 
-┃ 🍠 » ${PREFIX}cultivar
-┃ 🚚 » ${PREFIX}repartir 
-┃ 🖌️ » ${PREFIX}pintar
-┃ 💻 » ${PREFIX}hackear 
-┃ 📷 » ${PREFIX}streamer
-┃ 🚔 » ${PREFIX}policia 
-┃ 💧 » ${PREFIX}bombero
-┃ 🫩 » ${PREFIX}espiar 
-┃ 🪄 » ${PREFIX}mago
-┃ 🐶 » ${PREFIX}adoptar <animal>
-┃ 🦍 » ${PREFIX}animal (Ver tus pets)
-┃ 🏷️ » ${PREFIX}nombrar <pet> <nombre>
-┃ 🫱» ${PREFIX}acariciar / alimentar / pasear
-┃ 🔝 » ${PREFIX}animaltop
-┃ ⚔️ » ${PREFIX}pelear (salvaje)
-┃ 🥊 » ${PREFIX}pelear <@user> (duelo)
-┃ 💢 » ${PREFIX}atacar <1-3>
-┃ 🔄 » ${PREFIX}cambiar (saca a otra)
-┃ 🏃 » ${PREFIX}huir
-┃ 🔮 » ${PREFIX}capturar | ${PREFIX}petactivo
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+    else if (tipo === 'rpg' || tipo === 'aventura' || tipo === 'aventure') {
+      texto = header("RPG") + "\n" + detallada("⚔️ Aventura y RPG", [
+        [`${p}trabajar`, "Trabajo básico del día"],
+        [`${p}cazar › ${p}pescar › ${p}minar › ${p}explorar`, "Recolectar recursos"],
+        [`${p}talar › ${p}cultivar › ${p}repartir › ${p}pintar`, "Oficios varios"],
+        [`${p}hackear › ${p}streamer › ${p}policia › ${p}bombero › ${p}espiar › ${p}mago`, "Trabajos especiales"],
+        [`${p}clase › ${p}ranknivel`, "Elegir clase y ranking"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🐾 MASCOTAS Y PELEAS
     else if (tipo === 'mascotas' || tipo === 'pets' || tipo === 'peleas') {
-      texto = `
-⋆｡°✩ 🐾 *𝐌𝐀𝐒𝐂𝐎𝐓𝐀𝐒 𝐘 𝐏𝐄𝐋𝐄𝐀𝐒* 🐾 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🐶 » ${PREFIX}adoptar <animal>
-┃ 🦍 » ${PREFIX}animal (Ver tus pets)
-┃ 🏷️ » ${PREFIX}nombrar <pet> <nombre>
-┃ 🫱 » ${PREFIX}acariciar | ${PREFIX}alimentar | ${PREFIX}pasear
-┃ 🔝 » ${PREFIX}animaltop
-┣━━━━━━━━━━━━━━━━━━┛
-┃ ⚔️ *Peleas con botones*
-┃ 🥊 » ${PREFIX}pelear (busca una salvaje)
-┃ 🤝 » ${PREFIX}pelear <@user> (duelo)
-┃ 💢 » ${PREFIX}atacar <1-3> (o el botón)
-┃ 🔄 » ${PREFIX}cambiar (saca a otra, gasta turno)
-┃ 🔮 » ${PREFIX}capturar (si está por debajo del 40 %)
-┃ 🏃 » ${PREFIX}huir
-┃ ⭐ » ${PREFIX}petactivo <pet> (cuál sale primero)
-┗━━━━━━━━━━━━━━━━━━┛
-> Cada ataque tiene su tipo: fuego, agua, planta, tierra, aire, luz, sombra y normal.
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Mascotas") + "\n" + detallada("🐾 Mascotas y Peleas", [
+        [`${p}adoptar <animal>`, "Adoptar una mascota"],
+        [`${p}animal`, "Ver tus mascotas"],
+        [`${p}nombrar <pet> <nombre>`, "Renombrar mascota"],
+        [`${p}acariciar › ${p}alimentar › ${p}pasear`, "Cuidar mascota"],
+        [`${p}animaltop`, "Ranking de mascotas"],
+        [`${p}pelear`, "Buscar pelea salvaje"],
+        [`${p}pelear <@user>`, "Duelo contra otro usuario"],
+        [`${p}atacar <1-3>`, "Atacar (eligiendo movimiento)"],
+        [`${p}cambiar › ${p}huir`, "Cambiar de mascota o huir"],
+        [`${p}capturar`, "Capturar si está bajo el 40%"],
+        [`${p}petactivo`, "Establecer mascota activa"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🎴 GACHA
     else if (tipo === 'gacha' || tipo === 'waifus' || tipo === 'claims') {
-      texto = `
-⋆｡°✩ 🎴 *𝐆𝐀𝐂𝐇𝐀* 🎴 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎲 *Tirar*
-┃ ➤ ${PREFIX}rw | ${PREFIX}roll | ${PREFIX}rollwaifu
-┃ 🏷️ *Reclamar*
-┃ ➤ ${PREFIX}claim | ${PREFIX}c | ${PREFIX}reclamar
-┃ 📚 *Tu colección*
-┃ ➤ ${PREFIX}harem | ${PREFIX}waifus | ${PREFIX}claims
-┃ 🏆 *Ranking del grupo*
-┃ ➤ ${PREFIX}wtop | ${PREFIX}topwaifus | ${PREFIX}waifustop
-┃ 🔎 *Ficha*
-┃ ➤ ${PREFIX}charinfo | ${PREFIX}winfo
-┃ 🗳️ ${PREFIX}vote <nombre> → Vota por un personaje (+valor)
-┃ ⚙️ *Encender o apagar*
-┃ ➤ ${PREFIX}gacha on | ${PREFIX}gacha off
-┗━━━━━━━━━━━━━━━━━━┛
-> Se tira cada 15 minutos, se reclama cada 30 y solo en grupos.
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Gacha") + "\n" + detallada("🎴 Gacha", [
+        [`${p}gacha on › ${p}gacha off`, "Activar / desactivar gacha"],
+        [`${p}rw › ${p}roll › ${p}rollwaifu`, "Tirar personaje aleatorio"],
+        [`${p}claim › ${p}c › ${p}reclamar`, "Reclamar personaje"],
+        [`${p}harem › ${p}waifus › ${p}claims`, "Tu colección"],
+        [`${p}wtop › ${p}topwaifus › ${p}waifustop`, "Top del grupo"],
+        [`${p}charinfo › ${p}winfo`, "Ficha de personaje"],
+        [`${p}vote <nombre>`, "Votar por un personaje (+valor)"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🌟 PERFIL
-    else if (tipo === 'perfil'|| tipo === 'profile') {
-      texto = `
-⋆｡°✩ 🌟 𝐏𝐄𝐑𝐅𝐈𝐋 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🧍 » ${PREFIX}reg <nom> <edad> <gen>
-┃ 👤 » ${PREFIX}perfil | ${PREFIX}level
-┃ 🏅 » ${PREFIX}lboard
-┃ ✏️ » ${PREFIX}setdesc | ${PREFIX}setgenre | ${PREFIX}sethobby
-┃ 🎂 » ${PREFIX}setbirth <DD/MM/AAAA>
-┃ 🗑️ » ${PREFIX}deldesc | ${PREFIX}delbirth
-┃ 💤 » ${PREFIX}afk [motivo]
-┃ 🗑️ » ${PREFIX}delperfil
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+    else if (tipo === 'perfil' || tipo === 'profile') {
+      texto = header("Perfil") + "\n" + detallada("🌟 Perfil", [
+        [`${p}reg <nom> <edad> <gen>`, "Registrarte"],
+        [`${p}perfil`, "Ver tu perfil"],
+        [`${p}delperfil`, "Borrar tu perfil"],
+        [`${p}level › ${p}lboard`, "Nivel y ranking"],
+        [`${p}afk [motivo]`, "Modo ausente"],
+        [`${p}setdesc › ${p}setgenre › ${p}sethobby`, "Personalizar perfil"],
+        [`${p}setbirth <DD/MM/AAAA>`, "Fecha de cumpleaños"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🎄 DESCARGAS
-    else if (tipo === 'descargas' || tipo ==== 'downloads') {
-      texto = `
-⋆｡°✩ 🎄 𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ ➤ ${PREFIX}play | ${PREFIX}play2
-┃ ➤ ${PREFIX}fb | ${PREFIX}ig | ${PREFIX}tt
-┃ ➤ ${PREFIX}mf | ${PREFIX}apk
-┃ ➤ ${PREFIX}ytsearch | ${PREFIX}toimg
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+    else if (tipo === 'descargas' || tipo === 'downloads') {
+      texto = header("Descargas") + "\n" + detallada("🎄 Descargas", [
+        [`${p}play › ${p}play2`, "Descargar música de YouTube"],
+        [`${p}fb › ${p}ig › ${p}tt`, "Facebook, Instagram, TikTok"],
+        [`${p}mf › ${p}apk`, "MediaFire y APKs"],
+        [`${p}ytsearch › ${p}toimg`, "Buscar YouTube / sticker a imagen"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // ☃️ STICKERS
-    else if (tipo === 'stickers'|| tipo === 's') {
-      texto = `
-⋆｡°✩ ☃️ 𝐒𝐓𝐈𝐂𝐊𝐄𝐑𝐒 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🎨 » ${PREFIX}s | ${PREFIX}sticker
-┃ 🖼️ » ${PREFIX}brat <texto>
-┃ 🔎 » ${PREFIX}stickers <busq>
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+    else if (tipo === 'stickers' || tipo === 's') {
+      texto = header("Stickers") + "\n" + detallada("☃️ Stickers", [
+        [`${p}s › ${p}sticker`, "Crear sticker desde imagen/video"],
+        [`${p}brat <texto>`, "Sticker estilo brat"],
+        [`${p}bratv <texto>`, "Video-sticker estilo brat"],
+        [`${p}emojimix <emoji+emoji>`, "Mezclar 2 emojis"],
+        [`${p}stickers <busq>`, "Buscar packs de stickers"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🧠 IA
     else if (tipo === 'ia') {
-      texto = `
-⋆｡°✩ 🧠 𝐈𝐍𝐓𝐄𝐋𝐈𝐆𝐄𝐍𝐂𝐈𝐀 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🤖 » ${PREFIX}ia <pregunta>
-┃ 🎙️ » ${PREFIX}iaaudio <pregunta>
-┃ 🎨 » ${PREFIX}imagen <prompt>
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("IA") + "\n" + detallada("🧠 Inteligencia Artificial", [
+        [`${p}ia <pregunta>`, "Chatear con la IA"],
+        [`${p}iaaudio <pregunta>`, "Respuesta en audio"],
+        [`${p}imagen <prompt>`, "Generar imagen con IA"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🎉 FUN
     else if (tipo === 'fun') {
-      texto = `
-⋆｡°✩ 🎉 𝐃𝐈𝐕𝐄𝐑𝐒𝐈𝐎𝐍 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🧠 » ${PREFIX}trivia
-┃ 🧮 » ${PREFIX}mate
-┃ 🎱 » ${PREFIX}8ball <preg>
-┃ 😂 » ${PREFIX}meme
-┃ 🐱 » ${PREFIX}gato | ${PREFIX}perro
-┃ 🌸 » ${PREFIX}waifu | ${PREFIX}neko
-┃ 🚢 » ${PREFIX}ship <@user>
-┃ 📝 » ${PREFIX}r <respuesta>
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Diversión") + "\n" + detallada("🎉 Diversión", [
+        [`${p}trivia › ${p}mate › ${p}8ball`, "Trivia, matemáticas, 8ball"],
+        [`${p}meme › ${p}gato › ${p}perro`, "Meme, gato, perro"],
+        [`${p}waifu › ${p}neko › ${p}ship`, "Waifu, neko, ship"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🔔 UTILS
-    else if (tipo === 'utils'|| tipo === 'utilidades') {
-      texto = `
-⋆｡°✩ 🔔 𝐔𝐓𝐈𝐋𝐈𝐃𝐀𝐃𝐄𝐒 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🏓 » ${PREFIX}ping
-┃ ℹ️ » ${PREFIX}info
-┃ 👑 » ${PREFIX}creadores
-┃ 🌍 » ${PREFIX}traducir <txt>
-┃ ⛅ » ${PREFIX}clima <ciudad>
-┃ 📚 » ${PREFIX}wiki <busq>
-┃ 📱 » ${PREFIX}qr | ${PREFIX}morse
-┃ 🗳️ » ${PREFIX}encuesta | ${PREFIX}say
-┃ 👁️ » ${PREFIX}read | ${PREFIX}pfp | ${PREFIX}wastalk
-┃ ⏰ » ${PREFIX}recordar <min>|<texto>
-┃ 📊 » ${PREFIX}allmenu | ${PREFIX}menucat
-┃ 🩺 » ${PREFIX}health | ${PREFIX}runtime | ${PREFIX}status
-┃ 🛡️ » ${PREFIX}warmup | ${PREFIX}antiban
-┃ 🤖 » ${PREFIX}botinfo | ${PREFIX}newsletter
-┃ 🚫 » ${PREFIX}blocklist | ${PREFIX}block | ${PREFIX}unblock
-┃ 📄 » ${PREFIX}getplugin | ${PREFIX}nuevo | ${PREFIX}delplugin
-┃ 🪪 » ${PREFIX}lid | ${PREFIX}cache | ${PREFIX}infobot
-┃ 💹 » ${PREFIX}crypto <btc> | ${PREFIX}letra <art> <tema>
-┃ 🔗 » ${PREFIX}acortar <url> | ${PREFIX}tourl
-┃ 🎤 » ${PREFIX}tts <txt>
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+    else if (tipo === 'utils' || tipo === 'utilidades') {
+      texto = header("Utilidades") + "\n" + detallada("🔔 Utilidades", [
+        [`${p}ping › ${p}info › ${p}creadores`, "Info básica del bot"],
+        [`${p}traducir <txt> › ${p}clima <ciudad> › ${p}wiki <busq>`, "Traducción, clima, wiki"],
+        [`${p}qr › ${p}tts <txt>`, "Código QR y texto a voz"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🤖 SUBBOTS
     else if (tipo === 'subbots' || tipo === 'bot' || tipo === 'stockens') {
-      texto = `
-⋆｡°✩ 🤖 𝐒𝐔𝐁-𝐁𝐎𝐓𝐒 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🚀 » ${PREFIX}code (Gratis)
-┃ 💎 » ${PREFIX}jadibot (Prem)
-┃ 🔑 » ${PREFIX}canjear <código>
-┃ 🛑 » ${PREFIX}stopbot
-┃ 📋 » ${PREFIX}bots
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Sub-Bots") + "\n" + detallada("🤖 Sub-Bots", [
+        [`${p}code`, "Obtener código (gratis)"],
+        [`${p}jadibot`, "Ser sub-bot (premium)"],
+        [`${p}canjear <código>`, "Canjear código de sub-bot"],
+        [`${p}stopbot › ${p}bots`, "Detener tu sub-bot / listar bots"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 👑 OWNER
     else if (tipo === 'owner' || tipo === 'dev') {
-      texto = `
-⋆｡°✩ 👑 𝐎𝐖𝐍𝐄𝐑 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ ♻️ » ${PREFIX}fix | ${PREFIX}backup
-┃ 🔄 » ${PREFIX}restart | ${PREFIX}clear
-┃ 🚪 » ${PREFIX}join | ${PREFIX}leave
-┃ 🔑 » ${PREFIX}gencode
-┃ 💎 » ${PREFIX}addpremium
-┃ ❌ » ${PREFIX}delpremium
-┃ 🩺 » ${PREFIX}compat (diagnóstico, solo privado)
-┃ 📤 » ${PREFIX}subir <ruta> | <contenido>
-┃ 🧠 » ${PREFIX}eval <código>
-┃ 🛡️ » ${PREFIX}warmup | ${PREFIX}antiban
-┃ 📄 » ${PREFIX}getplugin | ${PREFIX}botinfo
-┃ 🚫 » ${PREFIX}block | ${PREFIX}unblock
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Owner") + "\n" + detallada("👑 Owner", [
+        [`${p}fix › ${p}backup › ${p}restart`, "Mantenimiento del bot"],
+        [`${p}join › ${p}leave › ${p}gencode`, "Unir/salir de grupos"],
+        [`${p}error`, "Ver logs del bot"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🛡️ ADMIN
     else if (tipo === 'admin') {
-      texto = `
-⋆｡°✩ 🛡️ 𝐀𝐃𝐌𝐈𝐍 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🔒 » ${PREFIX}close | ${PREFIX}open
-┃ 🗑️ » ${PREFIX}del
-┃ 👢 » ${PREFIX}kick <@user> [motivo]
-┃ 👑 » ${PREFIX}promote | ${PREFIX}demote
-┃ ⚖️ » ${PREFIX}warn | ${PREFIX}warns | ${PREFIX}delwarn
-┃ 📏 » ${PREFIX}setwarnlimit <1-10>
-┃ 📢 » ${PREFIX}hidetag <mensaje>
-┃ 🔗 » ${PREFIX}antilink on|off
-┃ 🤖 » ${PREFIX}bot on|off
-┃ 🔗 » ${PREFIX}link | ${PREFIX}revoke
-┃ ✏️ » ${PREFIX}setgpname | ${PREFIX}setgpdesc
-┃ 🖼️ » ${PREFIX}setgpbanner (citando foto)
-┃ 📌 » ${PREFIX}pin | ${PREFIX}unpin
-┃ 📊 » ${PREFIX}count | ${PREFIX}topcount | ${PREFIX}topinactive
-┃ 📋 » ${PREFIX}gp
-┃ ➤ ${PREFIX}testwelcome (Probar bienvenida)
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Admin") + "\n" + detallada("🛡️ Admin", [
+        [`${p}close › ${p}open`, "Cerrar / abrir el grupo"],
+        [`${p}del › ${p}kick <@user> [motivo]`, "Eliminar mensaje / expulsar"],
+        [`${p}promote › ${p}demote`, "Ascender / degradar admin"],
+        [`${p}warn › ${p}warns › ${p}delwarn`, "Sistema de advertencias"],
+        [`${p}setwarnlimit <1-10>`, "Límite de advertencias"],
+        [`${p}hidetag <mensaje>`, "Mencionar a todos"],
+        [`${p}antilink on|off › ${p}bot on|off`, "Antilink y bot on/off"],
+        [`${p}link › ${p}revoke`, "Enlace y restablecer"],
+        [`${p}setgpname › ${p}setgpdesc › ${p}setgpbanner`, "Configurar grupo"],
+        [`${p}pin › ${p}unpin`, "Fijar / desfijar mensajes"],
+        [`${p}count › ${p}topcount › ${p}topinactive`, "Estadísticas"],
+        [`${p}gp › ${p}testwelcome`, "Info del grupo / test bienvenida"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
-    // 🧪 TEST
     else if (tipo === 'test') {
-      texto = `
-⋆｡°✩ 🧪 𝐁𝐎𝐓𝐎𝐍𝐄𝐒 ✩°｡⋆
-┏━━━━━━━━━━━━━━━━━━┓
-┃ 🧪 » ${PREFIX}botones
-┗━━━━━━━━━━━━━━━━━━┛
-> Volver: *${PREFIX}menu*
-`;
+      texto = header("Test") + "\n" + detallada("🧪 Test", [
+        [`${p}botones`, "Probar sistema de botones"],
+      ]) + `\n> Volver: *${p}menu*`;
+    }
+    else if (tipo === 'reacciones' || tipo === 'reactions') {
+      texto = header("Reacciones") + "\n" + detallada("🎭 Reacciones", [
+        [`${p}angry › ${p}kill › ${p}sleep`, "Enojo, matar, dormir"],
+        [`${p}hug › ${p}kiss › ${p}pat`, "Abrazo, beso, caricia"],
+        [`${p}slap › ${p}cry › ${p}dance`, "Bofetada, llorar, bailar"],
+        [`${p}smile › ${p}wave › ${p}bonk`, "Sonrisa, saludo, bonk"],
+        [`${p}bite › ${p}blush › ${p}cuddle`, "Morder, sonrojarse, acurrucar"],
+      ]) + `\n> Volver: *${p}menu*`;
     }
     else {
-      return enviartexto(`❌ La categoría *${tipo}* no existe.\nUsa *${PREFIX}menu* para ver las opciones.`);
+      return enviartexto(`❌ La categoría *${tipo}* no existe.\nUsa *${p}menu* para ver las opciones.`);
     }
 
-    // Guía rápida (la de Shin-MD, tal cual) y crédito de su autor. Solo en el
-    // menú principal: en una categoría ya estorbaba.
-    if (!tipo) {
-      texto += `\n\n${LEYENDA}\n\n${CREDITO}`;
-    }
-
-    // Marcas Ⓓ/Ⓐ/Ⓟ leídas de los plugins cargados: sin bandera, sin marca.
     texto = marcar(texto, PREFIX, commands);
 
-    // ✅ AQUÍ ESTÁ LA MAGIA DEL "VER CANAL" (Bien estructurado)
     await sock.sendMessage(from, {
       image: { url: pfp },
       caption: texto.trim(),
@@ -528,12 +265,6 @@ export default {
       }
     }, { quoted: m });
 
-    // Botones de categorías: solo en el menú principal y solo si el plugin se
-    // pidió con `menu` a secas. El id de cada botón es el comando completo
-    // (`menu economia`), que el router ya sabe ejecutar.
-    // Los tres botones del menú de Shin-MD: la lista de categorías, el atajo a
-    // `.menucat` y `.allmenu`. Son tres a propósito: WhatsApp solo dibuja tres;
-    // el cuarto se pierde sin avisar (para más, `paramsHoja`).
     if (!tipo) {
       await enviarConBotones(sock, from, {
         texto: "📂 *Selecciona una categoría*\n> O escribe el comando completo.",
@@ -557,8 +288,9 @@ export default {
               rows: [
                 { id: `${comando} utils`, title: "🔔 Utilidades", description: "qr, morse, encuesta, recordar" },
                 { id: `${comando} ia`, title: "🧠 IA", description: "ia, iaaudio, imagen" },
-                { id: `${comando} stickers`, title: "🖌️ Stickers", description: "sticker, brat" },
+                { id: `${comando} stickers`, title: "🖌️ Stickers", description: "sticker, brat, emojimix" },
                 { id: `${comando} owner`, title: "👑 Owner", description: "solo dueños" },
+                { id: `${comando} reacciones`, title: "🎭 Reacciones", description: "hug, kiss, pat, slap..." },
               ],
             },
           ]),
