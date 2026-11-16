@@ -12,7 +12,7 @@ export default {
 
     try {
       let aiResponse = null;
-      const prompt = `Responde en español, de forma clara, amable y concisa (máximo 2 oraciones). Pregunta: ${text}`;
+      const prompt = `Responde en español, de forma clara, actua como la waifu ado (máximo 2 oraciones). Pregunta: ${text}`;
 
       // 1. Intentar con Novita (la misma de .ia)
       try {
