@@ -2,97 +2,167 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"  content="width=device-width, initial-scale=1.0">
-<title>Cerito Cruz 🎮</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cerito Cruz ·🐱</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --x: #38bdf8;
-    --o: #fb7185;
-    --ok: #22c55e;
+    --gold: #fbbf24;
+    --gold2: #f59e0b;
+    --cyan: #22d3ee;
+    --purple: #a855f7;
+    --bg-deep: #070b14;
+    --bg-card: rgba(15, 23, 42, .85);
+    --border-glow: rgba(251, 191, 36, .35);
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
   body {
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
     font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-    background: radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, #0b1120 60%);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, var(--bg-deep) 60%),
+      radial-gradient(800px 400px at 100% 100%, rgba(168, 85, 247, .15) 0%, transparent 60%),
+      radial-gradient(800px 400px at 0% 100%, rgba(34, 211, 238, .12) 0%, transparent 60%);
     color: #e2e8f0;
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .juego {
-    width: min(430px, 100%);
-    background: rgba(15, 23, 42, .78);
-    border: 1px solid #1e293b;
-    border-radius: 24px;
-    padding: 22px;
-    box-shadow: 0 25px 60px -20px rgba(0, 0, 0, .85);
-    backdrop-filter: blur(8px);
+    width: min(100%, 340px);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  h1 {
-    font-size: 1.6rem;
+  /* ═══ BANNER PREMIUM (imagen del gato) ═══ */
+  .banner {
+    position: relative;
+    width: 100%;
+    height: 110px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-glow);
+    box-shadow:
+      0 0 0 1px rgba(251, 191, 36, .15),
+      0 10px 30px -10px rgba(251, 191, 36, .4),
+      inset 0 0 20px rgba(0, 0, 0, .6);
+    flex-shrink: 0;
+  }
+  .banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+  }
+  .banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, transparent 30%, rgba(7, 11, 20, .85) 100%),
+      linear-gradient(90deg, rgba(251, 191, 36, .15), transparent 40%, transparent 60%, rgba(168, 85, 247, .15));
+    pointer-events: none;
+  }
+  .banner-title {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
     text-align: center;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow:
+      0 0 10px rgba(251, 191, 36, .8),
+      0 0 20px rgba(251, 191, 36, .5),
+      0 2px 4px rgba(0, 0, 0, .9);
+    z-index: 2;
+  }
+  .banner-badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    color: #1a1a1a;
+    font-size: .55rem;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 20px;
     letter-spacing: .5px;
-    background: linear-gradient(90deg, var(--x), var(--o));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, .5);
+    z-index: 2;
   }
 
-  .sub {
-    text-align: center;
-    font-size: .78rem;
-    color: #64748b;
-    margin: 4px 0 16px;
-  }
-
-  /* ── Modos de juego ── */
+  /* ═══ MODOS ═══ */
   .modos {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
   }
   .modo {
-    padding: 9px;
-    border-radius: 12px;
+    padding: 9px 4px;
+    border-radius: 10px;
     border: 1px solid #334155;
-    background: #0f172a;
+    background: rgba(15, 23, 42, .85);
     color: #94a3b8;
-    font-size: .78rem;
-    font-weight: 600;
+    font-size: .65rem;
+    font-weight: 700;
     cursor: pointer;
     transition: .2s;
+    text-align: center;
+    line-height: 1.2;
   }
   .modo:hover { background: #1e293b; color: #e2e8f0; }
   .modo.activo {
-    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
     border-color: transparent;
-    color: #fff;
+    color: #1a1a1a;
+    box-shadow: 0 0 12px rgba(251, 191, 36, .45);
   }
 
-  /* ── Marcador ── */
+  /* ═══ MARCADOR ═══ */
   .marcador {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: 6px;
   }
-  .marcador div {
-    background: #0f172a;
+  .marcador > div {
+    background: var(--bg-card);
     border: 1px solid #1e293b;
     border-radius: 12px;
     padding: 8px 4px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .marcador > div::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(251, 191, 36, .06), transparent);
+    pointer-events: none;
   }
   .marcador .etq {
     display: block;
-    font-size: .62rem;
+    font-size: .55rem;
     text-transform: uppercase;
     letter-spacing: .06em;
     color: #64748b;
@@ -101,107 +171,147 @@
   .marcador .num {
     display: block;
     font-size: 1.25rem;
-    font-weight: 800;
+    font-weight: 900;
+    line-height: 1;
   }
-  .num.x { color: var(--x); }
-  .num.o { color: var(--o); }
-  .num.e { color: #a78bfa; }
+  .num.x { color: var(--cyan); }
+  .num.o { color: #fb7185; }
+  .num.e { color: #c4b5fd; }
 
-  /* ── Estado ── */
+  /* ═══ ESTADO ═══ */
   #estado {
     text-align: center;
-    font-weight: 700;
-    margin-bottom: 14px;
-    min-height: 1.4em;
-    color: var(--x);
+    font-weight: 800;
+    font-size: .85rem;
+    padding: 8px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, .7);
+    border: 1px solid #1e293b;
+    color: var(--gold);
     transition: color .25s;
   }
-  #estado.turno-o { color: var(--o); }
-  #estado.fin { color: var(--ok); }
+  #estado.turno-o { color: #fb7185; }
+  #estado.fin { color: #22c55e; text-shadow: 0 0 10px rgba(34, 197, 94, .5); }
 
-  /* ── Tablero ── */
+  /* ═══ TABLERO PREMIUM ═══ */
+  .tablero-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
   .tablero {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
     aspect-ratio: 1;
+    width: 100%;
+    max-width: 340px;
+    padding: 8px;
+    background: rgba(15, 23, 42, .6);
+    border-radius: 20px;
+    border: 1px solid var(--border-glow);
+    box-shadow:
+      0 0 0 1px rgba(251, 191, 36, .1),
+      0 20px 50px -20px rgba(0, 0, 0, .9),
+      inset 0 0 30px rgba(0, 0, 0, .5);
   }
   .celda {
     border: none;
-    border-radius: 16px;
-    background: #1e293b;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #1e293b, #172033);
     color: #e2e8f0;
-    font-size: clamp(2rem, 11vw, 3.2rem);
-    font-weight: 800;
+    font-size: clamp(2rem, 12vw, 3.5rem);
+    font-weight: 900;
     font-family: inherit;
     display: grid;
     place-items: center;
     cursor: pointer;
     transition: background .18s, transform .12s, box-shadow .2s;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .06),
+      inset 0 -2px 0 rgba(0, 0, 0, .3);
+    position: relative;
   }
   .celda:hover:not(.ocupada):not(:disabled) {
-    background: #2b3b52;
+    background: linear-gradient(145deg, #2b3b52, #1e2a3f);
     transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .1),
+      0 6px 16px -6px rgba(251, 191, 36, .4);
   }
-  .celda:active:not(.ocupada):not(:disabled) { transform: scale(.97); }
+  .celda:active:not(.ocupada):not(:disabled) { transform: scale(.96); }
   .celda:disabled { cursor: default; }
-  .celda.x { color: var(--x); }
-  .celda.o { color: var(--o); }
+  .celda.x { color: var(--cyan); text-shadow: 0 0 12px rgba(34, 211, 238, .6); }
+  .celda.o { color: #fb7185; text-shadow: 0 0 12px rgba(251, 113, 133, .6); }
   .celda.ocupada { animation: pop .22s ease-out; }
 
   @keyframes pop {
-    0% { transform: scale(.4); opacity: 0; }
-    70% { transform: scale(1.12); }
+    0%   { transform: scale(.4); opacity: 0; }
+    70%  { transform: scale(1.12); }
     100% { transform: scale(1); opacity: 1; }
   }
 
   .celda.ganadora {
-    background: #14532d;
-    box-shadow: 0 0 0 2px var(--ok), 0 0 22px rgba(34, 197, 94, .55);
+    background: linear-gradient(145deg, #14532d, #166534);
+    box-shadow:
+      0 0 0 2px #22c55e,
+      0 0 25px rgba(34, 197, 94, .7),
+      inset 0 0 20px rgba(34, 197, 94, .3);
     animation: pulso .9s ease-in-out infinite alternate;
   }
   @keyframes pulso {
-    from { box-shadow: 0 0 0 2px var(--ok), 0 0 12px rgba(34, 197, 94, .35); }
-    to   { box-shadow: 0 0 0 2px var(--ok), 0 0 26px rgba(34, 197, 94, .8); }
+    from { box-shadow: 0 0 0 2px #22c55e, 0 0 12px rgba(34, 197, 94, .4); }
+    to   { box-shadow: 0 0 0 2px #22c55e, 0 0 30px rgba(34, 197, 94, .9); }
   }
 
-  /* ── Acciones ── */
+  /* ═══ ACCIONES ═══ */
   .acciones {
     display: flex;
     gap: 8px;
-    margin-top: 16px;
   }
   .accion {
     flex: 1;
     padding: 11px;
     border-radius: 12px;
     border: 1px solid #334155;
-    background: #1e293b;
+    background: rgba(30, 41, 59, .9);
     color: #e2e8f0;
     font-family: inherit;
-    font-weight: 600;
-    font-size: .82rem;
+    font-weight: 700;
+    font-size: .8rem;
     cursor: pointer;
     transition: .2s;
   }
   .accion:hover { background: #2b3b52; transform: translateY(-1px); }
   .accion.primario {
-    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
     border-color: transparent;
-    color: #fff;
+    color: #1a1a1a;
+    box-shadow: 0 0 15px rgba(251, 191, 36, .35);
   }
-  .accion.primario:hover { filter: brightness(1.1); }
+  .accion.primario:hover { filter: brightness(1.08); }
 </style>
 </head>
 <body>
 
 <main class="juego">
-  <h1>Cerito Cruz</h1>
-  <p class="sub">Tres en línea · 3 × 3</p>
+  <!-- Banner premium con la imagen del gato semibot -->
+  <div class="banner">
+    <img
+      src="https://i.postimg.cc/3NFnkKKt/IMG-20261115-WA0024.jpg"
+      alt="Gato semibot guardián"
+      loading="eager"
+    >
+    <span class="banner-badge">Premium</span>
+    <div class="banner-title">Cerito Cruz</div>
+  </div>
 
   <div class="modos">
-    <button class="modo" data-modo="2p">👥 2 jugadores</button>
+    <button class="modo" data-modo="2p">👥 2P</button>
     <button class="modo" data-modo="mancos">🟢 Mancos</button>
     <button class="modo" data-modo="facil">🟡 Fácil</button>
     <button class="modo activo" data-modo="dificil">🔴 Difícil</button>
@@ -213,18 +323,20 @@
     <div><span class="etq" id="etqO">CPU (O)</span><span class="num o" id="pO">0</span></div>
   </div>
 
-  <p id="estado" aria-live="polite">Turno de X</p>
+  <p id="estado">Turno de X</p>
 
-  <div class="tablero" id="tablero">
-    <button class="celda" data-i="0"></button>
-    <button class="celda" data-i="1"></button>
-    <button class="celda" data-i="2"></button>
-    <button class="celda" data-i="3"></button>
-    <button class="celda" data-i="4"></button>
-    <button class="celda" data-i="5"></button>
-    <button class="celda" data-i="6"></button>
-    <button class="celda" data-i="7"></button>
-    <button class="celda" data-i="8"></button>
+  <div class="tablero-wrap">
+    <div class="tablero" id="tablero">
+      <button class="celda" data-i="0"></button>
+      <button class="celda" data-i="1"></button>
+      <button class="celda" data-i="2"></button>
+      <button class="celda" data-i="3"></button>
+      <button class="celda" data-i="4"></button>
+      <button class="celda" data-i="5"></button>
+      <button class="celda" data-i="6"></button>
+      <button class="celda" data-i="7"></button>
+      <button class="celda" data-i="8"></button>
+    </div>
   </div>
 
   <div class="acciones">
@@ -234,7 +346,9 @@
 </main>
 
 <script>
-/* ══════════════ Lógica principal ══════════════ */
+'use strict';
+
+/* ══════════════ Lógica principal (sin cambios) ══════════════ */
 const COMBINACIONES = [
   [0,1,2],[3,4,5],[6,7,8],
   [0,3,6],[1,4,7],[2,5,8],
