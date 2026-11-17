@@ -1,9 +1,4 @@
 import axios from "axios";
-import fs from "fs";
-import { exec } from "child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
 
 // Mapeo de comandos a categorías en las APIs
 const reacciones = {
@@ -24,16 +19,12 @@ const reacciones = {
   cuddle: { nekos: "cuddle", waifu: "cuddle" }
 };
 
-// 🔍 Busca recursivamente cualquier URL de imagen/video en un objeto JSON
+// Busca recursivamente cualquier URL de medio en el JSON de respuesta
 function extraerUrl(obj) {
   if (!obj || typeof obj !== "object") return null;
-
-  // Si es un string que parece una URL de medio, la devolvemos
-  if (typeof obj === "string" && /^https?:\/\/.+\.(gif|mp4|webm|png|jpg|jpeg)/i.test(obj)) {
+  if (typeof obj === "string" && /^https?:\/\/.+\.(gif|mp4|webm|png|jpg|jpeg)(\?|$)/i.test(obj)) {
     return obj;
   }
-
-  // Recorremos arrays y objetos
   for (const valor of Object.values(obj)) {
     const encontrada = extraerUrl(valor);
     if (encontrada) return encontrada;
@@ -44,7 +35,7 @@ function extraerUrl(obj) {
 export default {
   command: Object.keys(reacciones),
   execute: async (ctx) => {
-    const { sock, from, m, sender, comando, enviartexto, config } = ctx;
+    const { sock, from, m, comando, enviartexto } = ctx;
 
     const reaccion = reacciones[comando];
     if (!reaccion) return;
@@ -53,17 +44,19 @@ export default {
 
     let mediaUrl = null;
 
-    // 1️⃣ StellarWa (principal) — se le pasa el comando como categoría
+    // 1️⃣ StellarWa (principal)
     try {
-      const url = `https://api.stellarwa.xyz/sfw/interaction?key=api-uJijf&cat=${comando}`;
-      const res = await axios.get(url, { timeout: 8000 });
-      mediaUrl = extraerUrl(res.data); // busca la URL en cualquier parte del JSON
+      const res = await axios.get(
+        `https://api.stellarwa.xyz/sfw/interaction?key=api-uJijf&cat=${comando}`,
+        { timeout: 8000 }
+      );
+      mediaUrl = extraerUrl(res.data);
       if (mediaUrl) console.log(`StellarWa OK → ${mediaUrl}`);
     } catch (e) {
       console.log(`StellarWa falló para ${comando}:`, e.message);
     }
 
-    // 2️⃣ Nekos.best (respaldo 1)
+    // 2️⃣ Nekos.best (respaldo)
     if (!mediaUrl) {
       try {
         const res = await axios.get(`https://nekos.best/api/v2/${reaccion.nekos}`, { timeout: 8000 });
@@ -73,7 +66,7 @@ export default {
       }
     }
 
-    // 3️⃣ Waifu.pics (respaldo 2)
+    // 3️⃣ Waifu.pics (respaldo)
     if (!mediaUrl) {
       try {
         const res = await axios.get(`https://api.waifu.pics/sfw/${reaccion.waifu}`, { timeout: 8000 });
@@ -88,33 +81,43 @@ export default {
       return enviartexto(`❌ No se pudo obtener el GIF para *${comando}*. Intenta de nuevo más tarde.`);
     }
 
-    // 4️⃣ Convertir GIF → MP4 real (igual que antes)
+    // 4️⃣ Descargar y enviar como GIF (sin ffmpeg)
     try {
-      const gifPath = `./tmp-${Date.now()}.gif`;
-      const mp4Path = `./tmp-${Date.now()}.mp4`;
+      const res = await axios.get(mediaUrl, {
+        responseType: "arraybuffer",
+        timeout: 15000
+      });
+      const buffer = Buffer.from(res.data);
+      const contentType = (res.headers["content-type"] || "").toLowerCase();
+      const caption = `✨ *Reacción:* ${comando.toUpperCase()}`;
 
-      const buffer = (await axios.get(mediaUrl, { responseType: "arraybuffer", timeout: 10000 })).data;
-      fs.writeFileSync(gifPath, Buffer.from(buffer));
+      // Detectar si es imagen estática o GIF/video
+      const esGif     = contentType.includes("gif") || /\.gif(\?|$)/i.test(mediaUrl);
+      const esImagen  = contentType.startsWith("image/") && !esGif;
 
-      await execAsync(
-        `ffmpeg -y -i "${gifPath}" -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -an "${mp4Path}"`
-      );
-
-      await sock.sendMessage(from, {
-        video: fs.readFileSync(mp4Path),
-        caption: `✨ *Reacción:* ${comando.toUpperCase()}`,
-        mimetype: "video/mp4"
-      }, { quoted: m });
-
-      fs.unlinkSync(gifPath);
-      fs.unlinkSync(mp4Path);
+      if (esImagen) {
+        // PNG / JPG estáticos → enviar como imagen
+        await sock.sendMessage(from, { image: buffer, caption }, { quoted: m });
+      } else {
+        // GIF / MP4 / WEBM → enviar con gifPlayback (reproduce en bucle)
+        await sock.sendMessage(
+          from,
+          {
+            video: buffer,
+            gifPlayback: true,
+            caption,
+            mimetype: "video/mp4"
+          },
+          { quoted: m }
+        );
+      }
 
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
-      console.error("Error al enviar el video:", e.message);
+      console.error("Error al enviar media:", e.message);
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      await enviartexto(`⚠️ No se pudo procesar el video de *${comando}*.`);
+      await enviartexto(`⚠️ No se pudo enviar el GIF de *${comando}*.\n_${e.message}_`);
     }
   }
 };
