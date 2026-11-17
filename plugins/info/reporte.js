@@ -1,40 +1,84 @@
+const STAFF_GROUP_ID = "120363413955265605@g.us"; 
+
 export default {
-  command: ["reporte", "report", "sugerencia", "sugerir"],
+  command: ["report", "reporte", "sugerencia", "sug"],
   execute: async (ctx) => {
-    const { sock, from, m, args, enviartexto, comando, sender, jidToNumber, BOT_NAME, config } = ctx;
-    const textoReporte = args.join(" ").trim();
-    if (!textoReporte) return enviartexto(`❌ Uso:\n• ${config.prefix}reporte <problema>\n• ${config.prefix}sugerencia <idea>`);
+    const { sock, from, m, args, enviartexto, config } = ctx;
 
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-    if (!GITHUB_TOKEN) return enviartexto(`⚠️ El sistema de reportes no está disponible (Falta GITHUB_TOKEN).`);
+    
+    if (!STAFF_GROUP_ID || STAFF_GROUP_ID === "120363413955265605@g.us") {
+      return enviartexto("⚠️ El administrador no ha configurado el ID del grupo de Staff en el código.");
+    }
 
-    const GITHUB_OWNER = process.env.GITHUB_OWNER || "SergioOficial";
-    const GITHUB_REPO = process.env.GITHUB_REPO || "reportes-bot";
-    const usuario = m.pushName || "Anónimo";
-    const numero = jidToNumber(sender);
-    const fecha = new Date().toISOString().replace("T", " ").slice(0, 19);
-    const tipo = comando === "sugerencia" || comando === "sugerir" ? "💡 Sugerencia" : "📩 Reporte";
+    
+    let texto = (Array.isArray(args) ? args.join(" ") : "").trim();
+    if (!texto && m.quoted?.text) texto = m.quoted.text;
 
-    await sock.sendMessage(from, { react: { text: "📤", key: m.key } });
-    const waitMsg = await sock.sendMessage(from, { text: `📤 Enviando reporte al sitio...` }, { quoted: m });
+  
+    const mtype = m.mtype || "";
+    const tieneMedia = ["imageMessage", "videoMessage", "stickerMessage", "audioMessage", "documentMessage"].includes(mtype);
+
+    
+    if (!texto && !tieneMedia) {
+      return enviartexto(
+        `✧ *SISTEMA DE REPORTES* ✧\n\n` +
+        `Puedes enviar un reporte, sugerencia o queja al Staff.\n\n` +
+        `> *Ejemplo:* ${config.prefix[0]}report El bot no responde en el grupo X\n` +
+        `> *Ejemplo con foto:* Responde a una imagen con *${config.prefix[0]}sug*`
+      );
+    }
 
     try {
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "Accept": "application/vnd.github+json", "Content-Type": "application/json", "User-Agent": "riokuroxi (+https://github.com/riokuroxi-svg)" },
-        body: JSON.stringify({ title: `${tipo} de ${usuario}`, body: `### ${tipo}\n\n${textoReporte}\n\n---\n**👤 Usuario:** ${usuario}\n**📱 Número:** +${numero}\n**📅 Fecha:** ${fecha}\n**🤖 Bot:** ${BOT_NAME}` })
-      });
+      await sock.sendMessage(from, { react: { text: "📩", key: m.key } });
 
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message || `HTTP ${res.status}`);
-      const issue = await res.json();
       
-      await sock.sendMessage(from, { text: issue.html_url, edit: waitMsg.key }).catch(async () => {
-        await enviartexto(`✅ *Reporte enviado.*\n🔗 ${issue.html_url}`);
-      });
+      const nombreUsuario = m.pushName || "Usuario Desconocido";
+      const numeroUsuario = m.sender.split("@")[0];
+      
+      let origen = "Chat Privado";
+      if (from.endsWith("@g.us")) {
+        try {
+          const metadata = await sock.groupMetadata(from);
+          origen = `Grupo: *${metadata.subject}*`;
+        } catch {
+          origen = "Grupo (No se pudo obtener el nombre)";
+        }
+      }
+
+      
+      const comandoUsado = (m.text || "").replace(config.prefix[0], "").split(" ")[0].toLowerCase() || "reporte";
+      const tituloTipo = comandoUsado === "sug" || comandoUsado === "sugerencia" ? "SUGERENCIA" : "REPORTE";
+
+      
+      const mensajeStaff = 
+        `🚨 *NUEVO ${tituloTipo}* 🚨\n\n` +
+        `👤 *De:* ${nombreUsuario} (+${numeroUsuario})\n` +
+        `📍 *Origen:* ${origen}\n` +
+        `📝 *Mensaje:*\n${texto || "(Sin texto, ver archivo adjunto)"}`;
+
+      
+      if (tieneMedia) {
+       
+        await sock.sendMessage(STAFF_GROUP_ID, {
+          forward: m,
+          text: mensajeStaff
+        });
+      } else {
+        
+        await sock.sendMessage(STAFF_GROUP_ID, {
+          text: mensajeStaff,
+          mentions: [m.sender]
+        });
+      }
+
+     
+      await enviartexto(`✅ *¡${tituloTipo} enviado!*\n\nTu mensaje ha sido recibido por el equipo de Staff. Gracias por ayudar a mejorar el bot.`);
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
-    } catch (err) {
-      await sock.sendMessage(from, { text: `❌ No se pudo enviar el reporte.\n_${err.message}_`, edit: waitMsg.key }).catch(() => {});
+
+    } catch (e) {
+      console.error("Error al enviar al Staff:", e);
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      await enviartexto("❌ Hubo un error interno al intentar enviar tu mensaje al Staff.");
     }
   }
 };
