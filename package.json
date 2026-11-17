@@ -26,6 +26,7 @@
     "play-dl": "^1.9.7",
     "qr": "^0.7.2",
     "sharp": "^0.35.5",
+    "ffmpeg-static": "^5.2.0",
     "sunoapi-sdk": "^1.2.1",
     "untube": "^4.0.3",
     "wa-sticker-formatter": "^4.4.4",
