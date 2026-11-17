@@ -2,10 +2,10 @@ import axios from "axios";
 import fs from "fs";
 import { exec } from "child_process";
 import { promisify } from "util";
+import ffmpegPath from "ffmpeg-static"; // 📌 Importamos el binario estático
 
 const execAsync = promisify(exec);
 
-// Mapeo de comandos a categorías
 const reacciones = {
   angry:  { nekos: "angry",  waifu: "angry" },
   kill:   { nekos: "kill",   waifu: "kill" },
@@ -24,7 +24,6 @@ const reacciones = {
   cuddle: { nekos: "cuddle", waifu: "cuddle" }
 };
 
-// Busca recursivamente cualquier URL en el JSON de la API
 function extraerUrl(obj) {
   if (!obj || typeof obj !== "object") return null;
   if (typeof obj === "string" && /^https?:\/\/.+\.(gif|mp4|webm|png|jpg|jpeg)(\?|$)/i.test(obj)) {
@@ -49,13 +48,11 @@ export default {
 
     let mediaUrl = null;
 
-    // 1. StellarWa
     try {
       const res = await axios.get(`https://api.stellarwa.xyz/sfw/interaction?key=api-uJijf&cat=${comando}`, { timeout: 8000 });
       mediaUrl = extraerUrl(res.data);
     } catch (e) { console.log(`StellarWa falló:`, e.message); }
 
-    // 2. Nekos.best
     if (!mediaUrl) {
       try {
         const res = await axios.get(`https://nekos.best/api/v2/${reaccion.nekos}`, { timeout: 8000 });
@@ -63,7 +60,6 @@ export default {
       } catch (e) { console.log(`Nekos.best falló:`, e.message); }
     }
 
-    // 3. Waifu.pics
     if (!mediaUrl) {
       try {
         const res = await axios.get(`https://api.waifu.pics/sfw/${reaccion.waifu}`, { timeout: 8000 });
@@ -73,10 +69,9 @@ export default {
 
     if (!mediaUrl) {
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      return enviartexto(`❌ No se pudo obtener el GIF para *${comando}*. Intenta de nuevo más tarde.`);
+      return enviartexto(`❌ No se pudo obtener el GIF para *${comando}*.`);
     }
 
-    // 4. Descargar, convertir a MP4 y enviar
     const gifPath = `./tmp-${Date.now()}.gif`;
     const mp4Path = `./tmp-${Date.now()}.mp4`;
 
@@ -84,14 +79,14 @@ export default {
       const res = await axios.get(mediaUrl, { responseType: "arraybuffer", timeout: 15000 });
       fs.writeFileSync(gifPath, Buffer.from(res.data));
 
-      // Convertir GIF a MP4 con ffmpeg
+      // 📌 Usamos ffmpegPath en lugar del comando global "ffmpeg"
       await execAsync(
-        `ffmpeg -y -i "${gifPath}" -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -an "${mp4Path}"`
+        `"${ffmpegPath}" -y -i "${gifPath}" -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -an "${mp4Path}"`
       );
 
       await sock.sendMessage(from, {
         video: fs.readFileSync(mp4Path),
-        gifPlayback: true, // Esto hace que se reproduzca en bucle
+        gifPlayback: true,
         caption: `✨ *Reacción:* ${comando.toUpperCase()}`,
         mimetype: "video/mp4"
       }, { quoted: m });
@@ -99,9 +94,8 @@ export default {
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
-      console.error("Error con ffmpeg, enviando como documento de respaldo:", e.message);
-      
-      // Plan B: Si ffmpeg falla (no instalado), enviamos el GIF como documento
+      console.error("Error con ffmpeg-static:", e.message);
+      // Respaldo: enviar el GIF como documento
       try {
         await sock.sendMessage(from, {
           document: fs.readFileSync(gifPath),
@@ -112,10 +106,8 @@ export default {
         await sock.sendMessage(from, { react: { text: "⚠️", key: m.key } });
       } catch (err) {
         await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-        await enviartexto(`⚠️ No se pudo enviar el GIF de *${comando}*.`);
       }
     } finally {
-      // Limpiar archivos temporales sin importar lo que pase
       if (fs.existsSync(gifPath)) fs.unlinkSync(gifPath);
       if (fs.existsSync(mp4Path)) fs.unlinkSync(mp4Path);
     }
