@@ -1,17 +1,15 @@
 import axios from "axios";
 
 export default {
-  command: ["ado", "waifuado"],
+  command: ["nsfw", "waifunsfw"],
   execute: async (ctx) => {
     const { sock, from, m, enviartexto, config } = ctx;
 
-    await sock.sendMessage(from, { react: { text: "🎤", key: m.key } });
+    await sock.sendMessage(from, { react: { text: "😰", key: m.key } });
 
     try {
-      // 🌐 Usamos la API de Waifu.im (gratuita y sin clave)
-      // Nota: No hay un tag "ado" oficial, así que traerá una waifu aleatoria.
-      const res = await axios.get("https://api.waifu.im/search", {
-        params: { included_tags: "waifu", is_nsfw: false },
+      const res = await axios.get("https://api.stellarwa.xyz/nsfw/image?key=api-uJijf", {
+        params: { included_tags: "waifu", is_nsfw: true },
         timeout: 10000
       });
 
@@ -24,13 +22,13 @@ export default {
 
       await sock.sendMessage(from, {
         image: buffer,
-        caption: `🎤 *Ado Waifu*\n\n> _Imagen obtenida de Waifu.im_\n${config.footer}`
+        caption: `🚔 *NSFW Waifu*\n\n> _Imagen obtenida_\n${config.footer}`
       }, { quoted: m });
 
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
-      console.error("Error en #ado:", e.message);
+      console.error("Error en #NSFW:", e.message);
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
       await enviartexto(`❌ No se pudo obtener la imagen.\n_${e.message}_`);
     }
