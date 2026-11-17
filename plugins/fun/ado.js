@@ -17,8 +17,7 @@ export default {
         extract: (d) => ({ url: d.images[0].url, fuente: "waifu.im" })
       },
       {
-        url:
-"https://api.stellarwa.xyz/sfw/image?key=api-uJijf",
+        url: "https://api.stellarwa.xyz/nsfw/image?key=api-uJijf",
        extract: (d) => ({ url: d.url, fuente;
 "stellarwa.xyz" })
        },
