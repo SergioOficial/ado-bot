@@ -4,13 +4,6 @@ export default {
   command: ["report", "reporte", "sugerencia", "sug"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto, config } = ctx;
-
-    
-    if (!STAFF_GROUP_ID || STAFF_GROUP_ID === "120363413955265605@g.us") {
-      return enviartexto("⚠️ El administrador no ha configurado el ID del grupo de Staff en el código.");
-    }
-
-    
     let texto = (Array.isArray(args) ? args.join(" ") : "").trim();
     if (!texto && m.quoted?.text) texto = m.quoted.text;
 
