@@ -10,7 +10,7 @@ export default {
       // 1️⃣ Petición con parámetros en el BODY (por si la API los exige así)
       const { data } = await axios.post(
         "https://api.stellarwa.xyz/nsfw/image",
-        { cat: "waifu", key: "api-uJijf" }, // 👈 minúsculas
+        { cat: "image", key: "api-uJijf" }, // 👈 minúsculas
         {
           headers: { "Content-Type": "application/json" },
           timeout: 15000,
