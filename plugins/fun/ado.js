@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default {
-  command: ["nsfw", "imagensfw"],
+  command: ["imagensfw"],
   execute: async (ctx) => {
     const { sock, from, m, enviartexto, config } = ctx;
     await sock.sendMessage(from, { react: { text: "😰", key: m.key } });
