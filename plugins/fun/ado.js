@@ -16,6 +16,7 @@ export default {
         url: "https://api.waifu.im/search?included_tags=waifu&is_nsfw=true",
         extract: (d) => ({ url: d.images[0].url, fuente: "waifu.im" })
       },
+      {
         url:
 "https://api.stellarwa.xyz/sfw/image?key=api-uJijf",
        extract: (d) => ({ url: d.url, fuente;
