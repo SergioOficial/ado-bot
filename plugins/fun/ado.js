@@ -1,59 +1,69 @@
 import axios from "axios";
+import sharp from "sharp";
 
 export default {
-  command: ["imagensfw"],
+  command: ["nsfwimge", "waifusfw"],
   execute: async (ctx) => {
-    const { sock, from, m, enviartexto, config } = ctx;
+    const { sock, from, m, enviartexto } = ctx;
     await sock.sendMessage(from, { react: { text: "😰", key: m.key } });
 
+    const apis = [
+      {
+        url: "https://api.waifu.pics/nsfw/waifu",
+        extract: (d) => ({ url: d.url, fuente: "waifu.pics" })
+      },
+      {
+        url: "https://api.waifu.im/search?included_tags=waifu&is_nsfw=true",
+        extract: (d) => ({ url: d.images[0].url, fuente: "waifu.im" })
+      },
+      {
+        url: "https://nekos.life/api/v2/nsfw/nsfw",
+        extract: (d) => ({ url: d.url, fuente: "nekos.life" })
+      }
+    ];
+
     try {
-      // 1️⃣ Petición con parámetros en el BODY (por si la API los exige así)
-      const { data } = await axios.post(
-        "https://api.stellarwa.xyz/nsfw/image",
-        { cat: "image", key: "api-uJijf" }, // 👈 minúsculas
-        {
-          headers: { "Content-Type": "application/json" },
-          timeout: 15000,
+      let imagen = null;
+      for (const api of apis) {
+        try {
+          const res = await axios.get(api.url, { timeout: 8000 });
+          const data = api.extract(res.data);
+          if (data && data.url && data.url.startsWith("http")) {
+            imagen = data;
+            break;
+          }
+        } catch (e) {
+          console.log(`API ${new URL(api.url).hostname} falló, intentando siguiente...`);
         }
-      );
+      }
 
-      // 2️⃣ Extraer la URL (soporta varias formas de respuesta)
-      const images = data?.data?.images ?? data?.images ?? [];
-      const imageUrl = images[0]?.url;
-      if (!imageUrl) throw new Error("La API no devolvió ninguna imagen.");
+      if (!imagen) throw new Error("Todas las APIs NSFW fallaron.");
 
-      // 3️⃣ Descargar como Buffer
-      const imgRes = await axios.get(imageUrl, {
+      // 📥 Descarga + optimización con sharp
+      const imgRes = await axios.get(imagen.url, {
         responseType: "arraybuffer",
-        timeout: 15000,
+        timeout: 15000
       });
-      const buffer = Buffer.from(imgRes.data);
+      const buffer = await sharp(Buffer.from(imgRes.data))
+        .resize({ width: 800, withoutEnlargement: true })
+        .jpeg({ quality: 85 })
+        .toBuffer();
 
-      // 4️⃣ Enviar
       await sock.sendMessage(
         from,
         {
           image: buffer,
-          caption: `🚔 *NSFW Waifu*\n\n> _Imagen obtenida_\n${config.footer}`,
+          caption: `🚔 *NSFW Waifu*\n\n> 🖼️ Fuente: ${imagen.fuente}\n> 🔒 Contenido no seguro`
         },
         { quoted: m }
       );
+
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
-      // 🔍 Si el error es de la API, muestra el status y el mensaje exacto
-      if (e.response) {
-        console.error("Error de la API:", e.response.status, e.response.data);
-        await enviartexto(
-          `❌ La API respondió con ${e.response.status}.\n_${
-            e.response.data?.message || "Parámetros inválidos"
-          }_`
-        );
-      } else {
-        console.error("Error en #NSFW:", e.message);
-        await enviartexto(`❌ No se pudo obtener la imagen.\n_${e.message}_`);
-      }
+      console.error("Error en sfw:", e.message);
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
+      await enviartexto(`❌ Error: ${e.message}`);
     }
-  },
+  }
 };
