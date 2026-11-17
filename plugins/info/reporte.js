@@ -1,12 +1,12 @@
 export default {
   command: ["report", "reporte", "sugerencia", "sug"],
   execute: async (ctx) => {
-    const { sock, from, m, args, enviartexto, config } = ctx;
+    const { sock, from, m, args, enviartexto, config, sender } = ctx;
     
     let texto = (Array.isArray(args) ? args.join(" ") : "").trim();
     if (!texto && m.quoted?.text) texto = m.quoted.text;
 
-    const mtype = m.mtype || "";
+    const mtype = m.mtype || m.type || "";
     const tieneMedia = ["imageMessage", "videoMessage", "stickerMessage", "audioMessage", "documentMessage"].includes(mtype);
 
     if (!texto && !tieneMedia) {
@@ -22,7 +22,10 @@ export default {
       await sock.sendMessage(from, { react: { text: "📩", key: m.key } });
 
       const nombreUsuario = m.pushName || "Usuario Desconocido";
-      const numeroUsuario = m.sender.split("@")[0];
+      
+      // 🛠️ CORRECCIÓN: Usar 'sender' del ctx, o buscar en m.key si falla
+      const jidRemitente = sender || m.sender || m.key?.participant || m.key?.remoteJid || from;
+      const numeroUsuario = jidRemitente.split("@")[0];
 
       let origen = "Chat Privado";
       if (from.endsWith("@g.us")) {
@@ -34,7 +37,10 @@ export default {
         }
       }
 
-      const comandoUsado = (m.text || "").replace(config.prefix[0], "").split(" ")[0].toLowerCase() || "reporte";
+      // 🛠️ CORRECCIÓN: Evitar error si m.text es undefined
+      const textoComando = m.text || m.message?.conversation || m.message?.extendedTextMessage?.text || "";
+      const comandoUsado = textoComando.replace(config.prefix[0], "").split(" ")[0].toLowerCase() || "reporte";
+      
       const tituloTipo = comandoUsado === "sug" || comandoUsado === "sugerencia" ? "SUGERENCIA" : "REPORTE";
 
       const mensajeStaff = 
@@ -43,17 +49,15 @@ export default {
         `📍 *Origen:* ${origen}\n` +
         `📝 *Mensaje:*\n${texto || "(Sin texto, ver archivo adjunto)"}`;
 
-      // Si tiene imagen, video, etc., lo reenviamos con el texto
       if (tieneMedia) {
         await sock.sendMessage("120363413955265605@g.us", {
           forward: m,
           text: mensajeStaff
         });
       } else {
-        // Si es solo texto, lo enviamos normal
         await sock.sendMessage("120363413955265605@g.us", {
           text: mensajeStaff,
-          mentions: [m.sender]
+          mentions: [jidRemitente] // 🛠️ Usamos el JID verificado
         });
       }
 
