@@ -18,7 +18,7 @@ export default {
       },
       {
         url: "https://api.stellarwa.xyz/nsfw/image?key=api-uJijf",
-       extract: (d) => ({ url: d.url, fuente;
+       extract: (d) => ({ url: d.url, fuente:
 "stellarwa.xyz" })
        },
       {
