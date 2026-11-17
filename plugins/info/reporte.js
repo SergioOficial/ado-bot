@@ -52,13 +52,13 @@ export default {
       
       if (tieneMedia) {
        
-        await sock.sendMessage(STAFF_GROUP_ID, {
+        await sock.sendMessage("120363413955265605@g.us", {
           forward: m,
           text: mensajeStaff
         });
       } else {
         
-        await sock.sendMessage(STAFF_GROUP_ID, {
+        await sock.sendMessage("120363413955265605@g.us", {
           text: mensajeStaff,
           mentions: [m.sender]
         });
