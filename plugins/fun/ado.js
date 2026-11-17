@@ -8,16 +8,20 @@ export default {
     await sock.sendMessage(from, { react: { text: "😰", key: m.key } });
 
     try {
-      const res = await axios.get("https://api.stellarwa.xyz/nsfw/image?key=api-uJijf", {
-        params: { included_tags: "waifu", is_nsfw: true },
-        timeout: 10000
-      });
-
+      const res = await fetch("https://api.stellarwa.xyz/nsfw/image?cat=Waifu&key=api-uJijf", {
+  method: "POST",
+  headers: {
+  "Content-Type": "application/json"
+}
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.error(err));
       const imageUrl = res.data.images[0]?.url;
       if (!imageUrl) throw new Error("La API no devolvió ninguna imagen.");
 
       // 📥 Descargamos la imagen como Buffer para evitar el error de subida
-      const imgRes = await axios.get(imageUrl, { responseType: "arraybuffer", timeout: 15000 });
+      const imgRes = await fetch(imageUrl, { responseType: "arraybuffer", timeout: 15000 });
       const buffer = Buffer.from(imgRes.data, "binary");
 
       await sock.sendMessage(from, {
