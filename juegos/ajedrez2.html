@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajedrez</title>
+<style>
+:root {--fondo:#0b1220;--panel:#111a2c;--panel2:#16223a;--linea:#22304d;--texto:#eef3ff;--suave:#93a3c4;--azul:#4d7cff;--celeste:#57d4ff;--rosa:#ff4d8d;--verde:#3ddc97;--claro:#f0d9b5;--oscuro:#b58863;--ultimo:#f6e7a8;--ultimo2:#cfae74;}
+#app[data-tema="clasico"] {--claro:#f0d9b5;--oscuro:#b58863;--ultimo:#f6e7a8;--ultimo2:#cfae74;}
+#app[data-tema="verde"] {--claro:#eeeed2;--oscuro:#769656;--ultimo:#f4f0a0;--ultimo2:#8baa6b;}
+#app[data-tema="azul"] {--claro:#dee3e6;--oscuro:#8ca2ad;--ultimo:#f7e9a0;--ultimo2:#a3b8c1;}
+#app[data-tema="violeta"] {--claro:#e6dcff;--oscuro:#8b62d6;--ultimo:#ffe6a8;--ultimo2:#b98ad8;}
+#app[data-tema="noche"] {--claro:#4a4459;--oscuro:#2b2536;--ultimo:#6b5c86;--ultimo2:#43384f;}
+html {overflow-x:hidden;}
+body {margin:0;padding:0;background-color:#0b1220;background-image:linear-gradient(180deg,#0e1729,#0a1120);color:var(--texto);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
+::-webkit-scrollbar {width:0;height:0;}
+* {box-sizing:border-box;}
+.app {width:100%;padding:12px 12px 14px;}
+.cab {position:relative;display:flex;align-items:center;gap:10px;padding:10px 11px;background-color:var(--panel);background-image:linear-gradient(135deg,#17233c,#101a2c);border:1px solid var(--linea);border-radius:14px;box-shadow:inset 0 0 0 1px rgba(126,162,255,.10);}
+.raya {height:1px;margin:9px 2px 0;background-color:rgba(126,162,255,.26);border-radius:1px;}
+.sonido {flex-shrink:0;width:30px;height:30px;margin-left:auto;padding:0;border:1px solid var(--linea);border-radius:9px;background-color:#1b2740;color:#cdd9f2;font-family:inherit;font-size:15px;line-height:1;cursor:pointer;}
+.sonido:active {background-color:#24365a;}
+.sonido.off {color:#6b7a99;}
+.cab .ic {width:34px;height:34px;flex-shrink:0;border-radius:10px;background-image:linear-gradient(135deg,#5b8bff,#2f4fd8);display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;color:#fff;box-shadow:0 4px 12px rgba(77,124,255,.35);}
+.cab .tx {display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+.cab .tx b {font-size:13.5px;letter-spacing:.6px;white-space:nowrap;}
+.cab .tx span {font-size:10.5px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media (max-width:350px) {
+.cab .tx span {display:none;}
+.cab .tx b {font-size:12px;white-space:nowrap;}
+.chip {padding:6px 8px;font-size:9px;letter-spacing:.8px;}
+.sonido {width:27px;height:27px;font-size:14px;}
+}
+.chip {margin-left:6px;flex-shrink:0;border:1px solid var(--linea);background-color:#1b2740;color:#cdd9f2;font-family:inherit;font-size:10px;font-weight:800;letter-spacing:1.2px;padding:7px 11px;border-radius:9px;}
+.pant {display:none;padding-top:14px;}
+.pant.on {display:block;}
+.icono-grande {text-align:center;font-size:38px;line-height:1.1;letter-spacing:6px;color:#e8f0ff;text-shadow:0 6px 22px rgba(77,124,255,.45);}
+h1 {text-align:center;font-size:23px;font-weight:800;letter-spacing:-.4px;margin:6px 0 2px;}
+.sub2 {text-align:center;font-size:11.5px;color:var(--suave);margin:0 0 16px;line-height:1.45;}
+.rotulo {font-size:9.5px;letter-spacing:2px;font-weight:800;color:#7d8dad;margin:0 0 8px;}
+.grid2 {display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.nivel-carta {text-align:left;padding:11px 10px;border:1px solid var(--linea);border-radius:14px;background-color:var(--panel);font-family:inherit;color:var(--texto);cursor:pointer;display:flex;flex-direction:column;gap:3px;transition:all .15s ease;}
+.nivel-carta:active {transform:scale(.98);border-color:#3f5c94;}
+.nivel-carta .em {font-size:19px;line-height:1.2;}
+.nivel-carta b {font-size:13px;}
+.nivel-carta .d {font-size:10px;color:var(--suave);line-height:1.35;}
+.nivel-carta[data-n="0"] b {color:#5be584;} .nivel-carta[data-n="1"] b {color:#57d4ff;}
+.nivel-carta[data-n="2"] b {color:#b76cff;} .nivel-carta[data-n="3"] b {color:#ff5b8a;}
+.carta-color {display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 8px;border-radius:16px;cursor:pointer;font-family:inherit;border:1px solid var(--linea);}
+.carta-color .pz {font-size:30px;line-height:1;}
+.carta-color b {font-size:12.5px;letter-spacing:1px;}
+.carta-color .mini {font-size:10px;color:var(--suave);}
+.carta-color.blanca {background-color:#e8eefc;color:#16223a;}
+.carta-color.blanca .mini {color:#5a6b8c;}
+.carta-color.negra {background-color:var(--panel2);color:#eef3ff;}
+.carta-color:active {transform:scale(.98);}
+.temas {display:flex;gap:7px;}
+.tema {flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 2px 6px;border:1px solid var(--linea);border-radius:11px;background-color:var(--panel);color:#7d8dad;font-family:inherit;font-size:8px;font-weight:800;letter-spacing:.4px;cursor:pointer;}
+.tema.on {border-color:var(--azul);background-color:#18263f;color:#cfe0ff;}
+.muestra {display:flex;width:24px;height:24px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.35);}
+.muestra i {display:block;width:50%;height:100%;}
+.muestra i.a {background-color:var(--claro);}
+.muestra i.b {background-color:var(--oscuro);}
+.boton-largo {width:100%;margin-top:11px;padding:12px;border-radius:12px;border:1px solid var(--linea);background-color:var(--panel2);color:#cdd9f2;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+.duelo {display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.lado {flex:1;min-width:0;background-color:var(--panel);border:1px solid var(--linea);border-radius:11px;padding:7px 9px;}
+.lado.der {text-align:right;}
+.lado .rotulo-mini {display:block;font-size:8px;letter-spacing:1.2px;color:#7d8dad;font-weight:800;}
+.lado b {font-size:11.5px;font-weight:800;}
+.pieza.mini {display:inline-block;width:17px;height:17px;vertical-align:-3px;margin-right:5px;line-height:0;}
+.turno {flex-shrink:0;font-size:9px;font-weight:800;letter-spacing:1px;color:#9fb4dc;text-align:center;line-height:1.25;}
+.turno.ia {color:var(--celeste);}
+.marco-tablero {position:relative;width:100%;padding-bottom:100%;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.5),inset 0 0 0 1px rgba(198,216,255,.35);}
+.tablero {position:absolute;top:0;right:0;bottom:0;left:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);}
+.casilla {position:relative;border:0;padding:0;margin:0;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;cursor:pointer;}
+.casilla.c {background-color:var(--claro);}
+.casilla.o {background-color:var(--oscuro);}
+.casilla.sel {box-shadow:inset 0 0 0 3px rgba(77,124,255,.9);}
+.casilla.ultimo.c {background-color:var(--ultimo);} .casilla.ultimo.o {background-color:var(--ultimo2);}
+.casilla.jaque {box-shadow:inset 0 0 0 3px rgba(255,80,90,.95),inset 0 0 18px rgba(255,60,70,.45);}
+.casilla .punto-mov {position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background-color:rgba(20,40,80,.32);}
+.casilla .anillo-mov {position:absolute;top:4px;right:4px;bottom:4px;left:4px;border-radius:50%;border:3px solid rgba(20,40,80,.28);}
+.pieza {position:relative;z-index:1;display:block;width:90%;height:90%;line-height:0;}
+.psvg {display:block;width:100%;height:100%;overflow:visible;}
+.psvg .cuerpo {stroke-width:1.7;stroke-linejoin:round;}
+.psvg .linea {fill:none;stroke-width:1.7;stroke-linecap:round;}
+.psvg .linea2 {fill:none;stroke-width:2.6;stroke-linecap:round;}
+.pieza.w .cuerpo {fill:#fdfbf6;stroke:#3b3733;}
+.pieza.w .linea, .pieza.w .linea2 {stroke:#3b3733;}
+.pieza.b .cuerpo {fill:#35313d;stroke:#121017;}
+.pieza.b .linea, .pieza.b .linea2 {stroke:#dcd6e6;}
+.coord {position:absolute;font-size:7.5px;font-weight:800;line-height:1;opacity:.75;}
+.coord.r {top:1px;left:2px;} .coord.f {bottom:1px;right:2px;}
+.casilla.c .coord {color:#7a5a34;} .casilla.o .coord {color:#f3e6d2;}
+.aviso {text-align:center;font-size:10.5px;color:var(--suave);margin:9px 0 8px;min-height:13px;}
+.stats {display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+.stat {background-color:var(--panel);border:1px solid var(--linea);border-radius:10px;padding:6px 8px;text-align:center;}
+.stat span {display:block;font-size:8px;letter-spacing:1.1px;color:#7d8dad;font-weight:800;}
+.stat b {font-size:11.5px;}
+.panel-hist {margin-top:8px;background-color:var(--panel);border:1px solid var(--linea);border-radius:10px;padding:7px 9px;}
+.panel-hist .rotulo {margin:0 0 3px;}
+.hist {font-size:10px;color:#a9b8d6;line-height:1.5;max-height:44px;overflow:hidden;}
+.fila {display:flex;gap:7px;margin-top:8px;}
+.boton {flex:1;padding:11px;border-radius:11px;border:1px solid var(--linea);background-color:var(--panel2);color:#cdd9f2;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+.boton:active {background-color:#233352;}
+.boton-rojo {width:100%;margin-top:8px;padding:12px;border-radius:12px;border:1px solid #3b2338;background-image:linear-gradient(135deg,#2a1730,#1d1226);color:#ffd8e5;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;}
+.volver {width:100%;margin-top:8px;padding:10px;border-radius:11px;border:1px solid var(--linea);background:transparent;color:var(--suave);font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;}
+.pie {margin-top:10px;text-align:center;font-size:9px;color:#5d6c8c;letter-spacing:1.4px;}
+.modal {position:fixed;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;background:rgba(5,9,18,.78);padding:20px;z-index:20;}
+.modal[hidden] {display:none;}
+.modal-caja {width:100%;max-width:290px;text-align:center;background-image:linear-gradient(180deg,#182541,#0f1728);border:1px solid var(--linea);border-radius:18px;padding:22px 18px;box-shadow:0 22px 50px rgba(0,0,0,.6);}
+.modal-em {font-size:34px;} .modal-t {font-size:19px;font-weight:800;margin-top:5px;}
+.modal-t.gana {color:var(--verde);} .modal-t.pierde {color:var(--rosa);} .modal-t.tablas {color:var(--celeste);}
+.modal-x {font-size:12px;color:var(--suave);margin-top:6px;line-height:1.5;}
+.modal-b {margin-top:15px;width:100%;padding:11px;border:0;border-radius:11px;background-image:linear-gradient(90deg,#4d7cff,#7b5cff);color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;}
+</style>
+</head>
+<body>
+<main class="app" id="app" data-pantalla="nivel" data-tema="clasico">
+<header class="cab">
+<div class="ic">♞</div>
+<div class="tx"><b>AKAME CHESS</b><span>Motor completo · 4 niveles</span></div>
+<button class="sonido" id="btnSonido" aria-label="Sonido">🔊</button>
+<button class="chip" id="chip">MENÚ</button>
+</header>
+
+<section class="pant on" id="pNivel">
+<div class="icono-grande">♔</div>
+<h1>Ajedrez</h1>
+<p class="sub2">Selecciona el nivel de la inteligencia artificial</p>
+<div class="rotulo">NIVEL DE JUEGO</div>
+<div class="grid2" id="niveles"></div>
+<div class="raya"></div>
+<div class="rotulo" style="margin-top:12px">COLOR DEL TABLERO</div>
+<div class="temas" id="temas"></div>
+</section>
+
+<section class="pant" id="pPiezas">
+<div class="icono-grande">♔♚</div>
+<h1>Elige tus piezas</h1>
+<p class="sub2">Nivel: <b id="nivelElegido">Fácil</b></p>
+<div class="grid2">
+<button class="carta-color blanca" id="btnBlancas"><span class="pz">♔</span><b>BLANCAS</b><span class="mini">Tú comienzas</span></button>
+<button class="carta-color negra" id="btnNegras"><span class="pz">♚</span><b>NEGRAS</b><span class="mini">La IA comienza</span></button>
+</div>
+<button class="boton-largo" id="btnCambiarNivel">← Cambiar dificultad</button>
+</section>
+
+<section class="pant" id="pTablero">
+<div class="duelo">
+<div class="lado"><span class="rotulo-mini">OPONENTE</span><b id="iaTexto">♚ IA · <span id="iaNivel">Fácil</span></b></div>
+<div class="turno" id="turnoChip">TU TURNO</div>
+<div class="lado der"><span class="rotulo-mini">JUGADOR</span><b id="yoTexto">♔ Tú</b></div>
+</div>
+<div class="marco-tablero"><div class="tablero" id="tablero" role="grid" aria-label="Tablero de ajedrez"></div></div>
+<p class="aviso" id="aviso">Tu turno · selecciona una pieza.</p>
+<div class="stats">
+<div class="stat"><span>NIVEL</span><b id="stNivel">Fácil</b></div>
+<div class="stat"><span>TURNO</span><b id="stTurno">BLANCAS</b></div>
+<div class="stat"><span>MOVIMIENTOS</span><b id="stMovs">0</b></div>
+</div>
+<div class="panel-hist"><div class="rotulo">HISTORIAL</div><div class="hist" id="hist">—</div></div>
+<div class="fila">
+<button class="boton" id="btnGirar">↻ Girar</button>
+<button class="boton" id="btnDeshacer">↶ Deshacer</button>
+</div>
+<button class="boton-rojo" id="btnReiniciar">✕ Reiniciar partida</button>
+<button class="volver" id="btnMenu">‹ Menú</button>
+</section>
+
+<div class="raya"></div>
+<div class="pie">akame-md</div>
+</main>
+
+<div class="modal" id="modal" hidden>
+<div class="modal-caja" role="dialog" aria-modal="true">
+<div class="modal-em" id="modalEm">🌸</div>
+<div class="modal-t" id="modalT">Fin</div>
+<div class="modal-x" id="modalX"></div>
+<button class="modal-b" id="modalB">Jugar otra vez</button>
+</div>
+</div>
+
+<script>
+/* ═════════════════ MOTOR (sin dependencias) ═════════════════ */
+var LETRAS = { K: '♚', Q: '♛', R: '♜', B: '♝', N: '♞', P: '♟' };
+
+var BASE_PIEZA = '<rect class="cuerpo" x="12.2" y="28.2" width="20.6" height="3" rx="1.2"/>' +
+    '<rect class="cuerpo" x="10.4" y="31.2" width="24.2" height="6.8" rx="2.4"/>';
+var PIEZAS = {
+    K: '<path class="linea2" d="M22.5 3.4v8.6M18.4 6.4h8.2"/>' +
+        '<path class="cuerpo" d="M12.8 14.6l3-4.2 3.3 4.2 3.4-4.2 3.4 4.2 3.3-4.2 2.8 4.2v4.4H12.8z"/>' +
+        '<rect class="cuerpo" x="12.6" y="19" width="19.8" height="3.1" rx="1.2"/>' +
+        '<path class="cuerpo" d="M14.8 22.1h15.4l1.4 6.1H13.4z"/>' + BASE_PIEZA,
+    Q: '<circle class="cuerpo" cx="12" cy="11.4" r="2.3"/><circle class="cuerpo" cx="17.2" cy="9.2" r="2.3"/>' +
+        '<circle class="cuerpo" cx="22.5" cy="8.2" r="2.5"/><circle class="cuerpo" cx="27.8" cy="9.2" r="2.3"/>' +
+        '<circle class="cuerpo" cx="33" cy="11.4" r="2.3"/>' +
+        '<path class="cuerpo" d="M12 13.6l3.6 9.2h13.8l3.6-9.2-5.6 5.6-4.9-8.2-4.9 8.2z"/>' +
+        '<path class="linea" d="M15.9 17.4h13.2"/>' +
+        '<rect class="cuerpo" x="15.2" y="22.8" width="14.6" height="2.8" rx="1.3"/>' +
+        '<path class="cuerpo" d="M16.8 25.6h11.4l1.5 2.6H15.3z"/>' + BASE_PIEZA,
+    R: '<path class="cuerpo" d="M11.3 9h4.4v4.2h4V9h5.6v4.2h4V9h4.4v8.6H11.3z"/>' +
+        '<rect class="cuerpo" x="12.6" y="17.4" width="19.8" height="2.9" rx="1.3"/>' +
+        '<path class="cuerpo" d="M14.2 20.3h16.6l-1.3 7.9H15.5z"/>' +
+        '<path class="linea" d="M17.6 22.4v3M22.5 22.4v3M27.4 22.4v3"/>' + BASE_PIEZA,
+    B: '<circle class="cuerpo" cx="22.5" cy="7.6" r="2.6"/>' +
+        '<path class="cuerpo" d="M22.5 10.8c4.9 3.9 7.4 7.8 7.4 11.3 0 3-3.2 5.2-7.4 5.2s-7.4-2.2-7.4-5.2c0-3.5 2.5-7.4 7.4-11.3z"/>' +
+        '<path class="linea" d="M18.7 20.4h7.6"/>' +
+        '<rect class="cuerpo" x="15.6" y="26.6" width="13.8" height="2.6" rx="1.3"/>' + BASE_PIEZA,
+    N: '<path class="cuerpo" d="M25.8 6.4l2.9-.6-1 4.2c2.4 1.9 3.9 4.7 3.9 7.6v10.2H16.9l4.1-3.8-1.4-5-4.5 3-2-3.1 5.5-6.2c1.2-1.4 2.9-2.2 4.8-2.2.5 0 1 .1 1.5.2z"/>' +
+        '<circle class="linea" cx="21.2" cy="14.8" r="1"/>' +
+        '<path class="linea" d="M25.9 10.4l2.4-.5"/>' + BASE_PIEZA,
+    P: '<circle class="cuerpo" cx="22.5" cy="12.4" r="6"/>' +
+        '<path class="cuerpo" d="M17.8 17.4h9.4c.5 1.3.8 2.6.9 3.9H16.9c.1-1.3.4-2.6.9-3.9z"/>' +
+        '<rect class="cuerpo" x="15.8" y="20.6" width="13.4" height="2.9" rx="1.4"/>' +
+        '<path class="cuerpo" d="M17.3 23.5h10.4l2.5 4.7H14.8z"/>' + BASE_PIEZA
+};
+
+var svgPieza = function (t) { return '<svg viewBox="4.5 2.6 36 36" class="psvg">' + PIEZAS[t] + '</svg>'; };
+var DIRS = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+var SALTOS = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+var VALOR = { P: 100, N: 320, B: 330, R: 500, Q: 900, K: 0 };
+var NIVELES = [
+{ nombre: 'Fácil', em: '🌱', detalle: 'Movimientos sencillos', prof: 1, azar: 0.55 },
+{ nombre: 'Medio', em: '⚔️', detalle: 'Busca buenas jugadas', prof: 2, azar: 0.18 },
+{ nombre: 'Difícil', em: '🧠', detalle: 'Analiza varias posiciones', prof: 3, azar: 0.03 },
+{ nombre: 'Extremo', em: '👑', detalle: 'Máxima profundidad', prof: 4, azar: 0 }
+];
+
+function fila(i) { return i >> 3; }
+function col(i) { return i & 7; }
+function dentro(f, c) { return f >= 0 && f < 8 && c >= 0 && c < 8; }
+function enTablero(f, c) { return f * 8 + c; }
+function colorDe(p) { return p ? p[0] : null; }
+function contrario(c) { return c === 'w' ? 'b' : 'w'; }
+
+function inicial() {
+var b = new Array(64).fill(null);
+var orden = ['R','N','B','Q','K','B','N','R'];
+for (var c = 0; c < 8; c++) {
+b[c] = 'b' + orden[c];
+b[8 + c] = 'bP';
+b[48 + c] = 'wP';
+b[56 + c] = 'w' + orden[c];
+}
+return { b: b, turno: 'w', enroque: { wK: true, wQ: true, bK: true, bQ: true }, alPaso: null, medio: 0 };
+}
+
+function clonar(e) {
+return { b: e.b.slice(), turno: e.turno, enroque: { wK: e.enroque.wK, wQ: e.enroque.wQ, bK: e.enroque.bK, bQ: e.enroque.bQ }, alPaso: e.alPaso, medio: e.medio };
+}
+
+function atacada(e, i, por) {
+var f = fila(i), c = col(i), k, nf, nc, p, df, dc, rf, rc, t, diagonal, q, dirs;
+for (k = 0; k < SALTOS.length; k++) {
+nf = f + SALTOS[k][0]; nc = c + SALTOS[k][1];
+if (!dentro(nf, nc)) continue;
+p = e.b[enTablero(nf, nc)];
+if (p && p[0] === por && p[1] === 'N') return true;
+}
+for (k = 0; k < DIRS.length; k++) {
+df = DIRS[k][0]; dc = DIRS[k][1];
+rf = f + df; rc = c + dc;
+var primero = true;
+while (dentro(rf, rc)) {
+q = e.b[enTablero(rf, rc)];
+if (q) {
+t = q[1];
+diagonal = df !== 0 && dc !== 0;
+if (q[0] === por) {
+if (t === 'Q') return true;
+if (diagonal && (t === 'B' || (t === 'P' && primero && df === (por === 'w' ? 1 : -1)))) return true;
+if (!diagonal && t === 'R') return true;
+if (primero && t === 'K') return true;
+}
+break;
+}
+primero = false;
+rf += df; rc += dc;
+}
+}
+return false;
+}
+
+function reyDe(e, color) {
+for (var i = 0; i < 64; i++) if (e.b[i] === color + 'K') return i;
+return -1;
+}
+function enJaque(e, color) {
+var r = reyDe(e, color);
+return r >= 0 && atacada(e, r, contrario(color));
+}
+
+function pseudo(e) {
+var salida = [];
+var yo = e.turno, otro = contrario(yo);
+function agregar(desde, hasta, extra) {
+var mv = { from: desde, to: hasta, tipo: 'normal' };
+if (extra) for (var k in extra) mv[k] = extra[k];
+salida.push(mv);
+}
+function coronar(desde, hasta) {
+var opciones = ['Q', 'R', 'B', 'N'];
+for (var z = 0; z < 4; z++) agregar(desde, hasta, { promo: opciones[z] });
+}
+for (var i = 0; i < 64; i++) {
+var p = e.b[i];
+if (!p || p[0] !== yo) continue;
+var f = fila(i), c = col(i), t = p[1];
+if (t === 'P') {
+var avanza = yo === 'w' ? -1 : 1;
+var inicio = yo === 'w' ? 6 : 1;
+var uno = dentro(f + avanza, c) ? enTablero(f + avanza, c) : -1;
+if (uno >= 0 && !e.b[uno]) {
+if (fila(uno) === (yo === 'w' ? 0 : 7)) coronar(i, uno); else agregar(i, uno);
+}
+if (f === inicio) {
+var dos = enTablero(f + 2 * avanza, c);
+if (!e.b[uno] && !e.b[dos]) agregar(i, dos, { doble: true });
+}
+for (var d = 0; d < 2; d++) {
+var dc = d === 0 ? -1 : 1;
+var nc = c + dc;
+if (dentro(f + avanza, nc)) {
+var target = enTablero(f + avanza, nc);
+var tp = e.b[target];
+if (tp && tp[0] === otro) {
+if (fila(target) === (yo === 'w' ? 0 : 7)) coronar(i, target); else agregar(i, target, { captura: true });
+} else if (e.alPaso === target) {
+agregar(i, target, { alPaso: true });
+}
+}
+}
+} else if (t === 'N') {
+for (var k = 0; k < SALTOS.length; k++) {
+var nf = f + SALTOS[k][0], nc = c + SALTOS[k][1];
+if (dentro(nf, nc)) {
+var target = enTablero(nf, nc);
+var tp = e.b[target];
+if (!tp || tp[0] === otro) {
+agregar(i, target, { captura: !!tp });
+}
+}
+}
+} else if (t === 'B' || t === 'R' || t === 'Q') {
+var dirs = t === 'B' ? [[-1,-1],[-1,1],[1,-1],[1,1]] :
+t === 'R' ? [[-1,0],[1,0],[0,-1],[0,1]] : DIRS;
+for (var k = 0; k < dirs.length; k++) {
+var df = dirs[k][0], dc = dirs[k][1];
+var rf = f + df, rc = c + dc;
+while (dentro(rf, rc)) {
+var target = enTablero(rf, rc);
+var tp = e.b[target];
+if (!tp) {
+agregar(i, target);
+} else {
+if (tp[0] === otro) agregar(i, target, { captura: true });
+break;
+}
+rf += df; rc += dc;
+}
+}
+} else if (t === 'K') {
+for (var k = 0; k < DIRS.length; k++) {
+var nf = f + DIRS[k][0], nc = c + DIRS[k][1];
+if (dentro(nf, nc)) {
+var target = enTablero(nf, nc);
+var tp = e.b[target];
+if (!tp || tp[0] === otro) {
+agregar(i, target, { captura: !!tp });
+}
+}
+}
+var filaEnroque = yo === 'w' ? 7 : 0;
+if (f === filaEnroque && c === 4) {
+if (e.enroque[yo + 'K'] && !e.b[enTablero(filaEnroque, 5)] && !e.b[enTablero(filaEnroque, 6)] &&
+!atacada(e, enTablero(filaEnroque, 4), otro) && !atacada(e, enTablero(filaEnroque, 5), otro) && !atacada(e, enTablero(filaEnroque, 6), otro)) {
+agregar(i, enTablero(filaEnroque, 6), { enroque: 'K' });
+}
+if (e.enroque[yo + 'Q'] && !e.b[enTablero(filaEnroque, 3)] && !e.b[enTablero(filaEnroque, 2)] && !e.b[enTablero(filaEnroque, 1)] &&
+!atacada(e, enTablero(filaEnroque, 4), otro) && !atacada(e, enTablero(filaEnroque, 3), otro) && !atacada(e, enTablero(filaEnroque, 2), otro)) {
+agregar(i, enTablero(filaEnroque, 2), { enroque: 'Q' });
+}
+}
+}
+}
+return salida;
+}
+
+function legales(e) {
+var pseudoMovs = pseudo(e);
+var validos = [];
+for (var i = 0; i < pseudoMovs.length; i++) {
+var mv = pseudoMovs[i];
+var despues = aplicar(e, mv);
+if (!enJaque(despues, e.turno)) {
+validos.push(mv);
+}
+}
+return validos;
+}
+
+function aplicar(e, mv) {
+var n = clonar(e);
+var p = n.b[mv.from];
+n.b[mv.from] = null;
+if (mv.alPaso) {
+var f = fila(mv.to);
+var c = col(mv.to);
+var capIdx = enTablero(f + (n.turno === 'w' ? 1 : -1), c);
+n.b[capIdx] = null;
+}
+if (mv.promo) {
+n.b[mv.to] = n.turno + mv.promo;
+} else {
+n.b[mv.to] = p;
+}
+if (mv.enroque === 'K') {
+var rf = n.turno === 'w' ? 7 : 0;
+n.b[enTablero(rf, 5)] = n.b[enTablero(rf, 7)];
+n.b[enTablero(rf, 7)] = null;
+} else if (mv.enroque === 'Q') {
+var rf = n.turno === 'w' ? 7 : 0;
+n.b[enTablero(rf, 3)] = n.b[enTablero(rf, 0)];
+n.b[enTablero(rf, 0)] = null;
+}
+if (p[1] === 'K') { n.enroque[n.turno + 'K'] = false; n.enroque[n.turno + 'Q'] = false; }
+if (p[1] === 'R') {
+if (mv.from === enTablero(7, 0)) n.enroque.wQ = false;
+if (mv.from === enTablero(7, 7)) n.enroque.wK = false;
+if (mv.from === enTablero(0, 0)) n.enroque.bQ = false;
+if (mv.from === enTablero(0, 7)) n.enroque.bK = false;
+}
+if (mv.to === enTablero(7, 0)) n.enroque.wQ = false;
+if (mv.to === enTablero(7, 7)) n.enroque.wK = false;
+if (mv.to === enTablero(0, 0)) n.enroque.bQ = false;
+if (mv.to === enTablero(0, 7)) n.enroque.bK = false;
+
+n.alPaso = null;
+if (p[1] === 'P' && mv.doble) {
+n.alPaso = enTablero((fila(mv.from) + fila(mv.to)) / 2, col(mv.from));
+}
+n.turno = contrario(n.turno);
+n.medio++;
+return n;
+}
+
+function evaluar(e) {
+var pts = 0;
+for (var i = 0; i < 64; i++) {
+var p = e.b[i];
+if (!p) continue;
+var valor = VALOR[p[1]];
+var f = fila(i), c = col(i);
+var bonus = 0;
+if (p[1] === 'P') {
+var avance = p[0] === 'w' ? (6 - f) : (f - 1);
+bonus = avance * 10;
+} else if (p[1] === 'N' || p[1] === 'B') {
+bonus = (3.5 - Math.abs(3.5 - f)) * 5 + (3.5 - Math.abs(3.5 - c)) * 5;
+}
+if (p[0] === 'w') pts += valor + bonus;
+else pts -= valor + bonus;
+}
+return pts;
+}
+
+function negamax(e, prof, alfa, beta) {
+var movs = legales(e);
+if (movs.length === 0) {
+if (enJaque(e, e.turno)) return -100000 + e.medio;
+return 0;
+}
+if (prof === 0) {
+var val = evaluar(e);
+return e.turno === 'w' ? val : -val;
+}
+
+movs.sort(function(a, b) {
+var aCap = a.captura ? (VALOR[e.b[a.to]?.[1]] || 0) : 0;
+var bCap = b.captura ? (VALOR[e.b[b.to]?.[1]] || 0) : 0;
+return bCap - aCap;
+});
+
+var mejor = -Infinity;
+for (var i = 0; i < movs.length; i++) {
+var hijo = aplicar(e, movs[i]);
+var val = -negamax(hijo, prof - 1, -beta, -alfa);
+if (val > mejor) mejor = val;
+if (val > alfa) alfa = val;
+if (alfa >= beta) break;
+}
+return mejor;
+}
+
+function elegirMovimientoIA(e) {
+var movs = legales(e);
+if (movs.length === 0) return null;
+
+var nivel = NIVELES[nivelActual];
+if (Math.random() < nivel.azar) {
+return movs[Math.floor(Math.random() * movs.length)];
+}
+
+movs.sort(function(a, b) {
+var aCap = a.captura ? (VALOR[e.b[a.to]?.[1]] || 0) : 0;
+var bCap = b.captura ? (VALOR[e.b[b.to]?.[1]] || 0) : 0;
+return bCap - aCap;
+});
+
+var mejorVal = -Infinity;
+var mejores = [];
+
+for (var i = 0; i < movs.length; i++) {
+var hijo = aplicar(e, movs[i]);
+var val = -negamax(hijo, nivel.prof - 1, -Infinity, Infinity);
+if (val > mejorVal) {
+mejorVal = val;
+mejores = [movs[i]];
+} else if (val === mejorVal) {
+mejores.push(movs[i]);
+}
+}
+return mejores[Math.floor(Math.random() * mejores.length)];
+}
+
+/* ═════════════════ UI ═════════════════ */
+var app = document.getElementById('app');
+var tableroEl = document.getElementById('tablero');
+var avisoEl = document.getElementById('aviso');
+var stNivel = document.getElementById('stNivel');
+var stTurno = document.getElementById('stTurno');
+var stMovs = document.getElementById('stMovs');
+var histEl = document.getElementById('hist');
+var turnoChip = document.getElementById('turnoChip');
+var iaTexto = document.getElementById('iaTexto');
+var iaNivel = document.getElementById('iaNivel');
+var yoTexto = document.getElementById('yoTexto');
+var nivelElegido = document.getElementById('nivelElegido');
+var modal = document.getElementById('modal');
+var modalEm = document.getElementById('modalEm');
+var modalT = document.getElementById('modalT');
+var modalX = document.getElementById('modalX');
+var modalB = document.getElementById('modalB');
+
+var estado = inicial();
+var historial = [];
+var nivelActual = 0;
+var colorJugador = 'w';
+var tableroGirado = false;
+var sel = -1;
+var movsLegales = [];
+var ultimoMovimiento = null;
+var enJuego = true;
+
+function initUI() {
+var nivelesContenedor = document.getElementById('niveles');
+NIVELES.forEach(function(n, idx) {
+var btn = document.createElement('button');
+btn.className = 'nivel-carta';
+btn.dataset.n = idx;
+btn.innerHTML = '<span class="em">' + n.em + '</span><b>' + n.nombre + '</b><span class="d">' + n.detalle + '</span>';
+btn.addEventListener('click', function() {
+nivelActual = idx;
+nivelElegido.textContent = n.nombre;
+app.dataset.pantalla = 'piezas';
+document.getElementById('pNivel').classList.remove('on');
+document.getElementById('pPiezas').classList.add('on');
+});
+nivelesContenedor.appendChild(btn);
+});
+
+var temasContenedor = document.getElementById('temas');
+var temas = [
+{ id: 'clasico', nombre: 'Clásico', claro: '#f0d9b5', oscuro: '#b58863' },
+{ id: 'verde', nombre: 'Verde', claro: '#eeeed2', oscuro: '#769656' },
+{ id: 'azul', nombre: 'Azul', claro: '#dee3e6', oscuro: '#8ca2ad' },
+{ id: 'violeta', nombre: 'Violeta', claro: '#e6dcff', oscuro: '#8b62d6' },
+{ id: 'noche', nombre: 'Noche', claro: '#4a4459', oscuro: '#2b2536' }
+];
+temas.forEach(function(t) {
+var btn = document.createElement('button');
+btn.className = 'tema' + (t.id === 'clasico' ? ' on' : '');
+btn.innerHTML = '<div class="muestra"><i class="a" style="background:'+t.claro+'"></i><i class="b" style="background:'+t.oscuro+'"></i></div><span>'+t.nombre+'</span>';
+btn.addEventListener('click', function() {
+document.querySelectorAll('.tema').forEach(function(b) { b.classList.remove('on'); });
+btn.classList.add('on');
+app.dataset.tema = t.id;
+});
+temasContenedor.appendChild(btn);
+});
+
+document.getElementById('btnBlancas').addEventListener('click', function() {
+colorJugador = 'w';
+iniciarPartida();
+});
+document.getElementById('btnNegras').addEventListener('click', function() {
+colorJugador = 'b';
+iniciarPartida();
+});
+document.getElementById('btnCambiarNivel').addEventListener('click', function() {
+app.dataset.pantalla = 'nivel';
+document.getElementById('pNivel').classList.add('on');
+document.getElementById('pPiezas').classList.remove('on');
+});
+
+document.getElementById('btnGirar').addEventListener('click', function() {
+tableroGirado = !tableroGirado;
+renderTablero();
+});
+document.getElementById('btnDeshacer').addEventListener('click', deshacer);
+document.getElementById('btnReiniciar').addEventListener('click', function() {
+if (confirm('¿Reiniciar partida?')) iniciarPartida();
+});
+document.getElementById('btnMenu').addEventListener('click', irAlMenu);
+document.getElementById('chip').addEventListener('click', irAlMenu);
+modalB.addEventListener('click', function() {
+modal.hidden = true;
+iniciarPartida();
+});
+
+var btnSonido = document.getElementById('btnSonido');
+btnSonido.addEventListener('click', function() {
+btnSonido.textContent = btnSonido.textContent === '🔊' ? '🔇' : '🔊';
+btnSonido.classList.toggle('off');
+});
+}
+
+function irAlMenu() {
+app.dataset.pantalla = 'nivel';
+document.getElementById('pTablero').classList.remove('on');
+document.getElementById('pPiezas').classList.remove('on');
+document.getElementById('pNivel').classList.add('on');
+modal.hidden = true;
+}
+
+function iniciarPartida() {
+estado = inicial();
+historial = [];
+ultimoMovimiento = null;
+sel = -1;
+movsLegales = [];
+enJuego = true;
+modal.hidden = true;
+
+app.dataset.pantalla = 'tablero';
+document.getElementById('pNivel').classList.remove('on');
+document.getElementById('pPiezas').classList.remove('on');
+document.getElementById('pTablero').classList.add('on');
+
+var nivel = NIVELES[nivelActual];
+stNivel.textContent = nivel.nombre;
+iaNivel.textContent = nivel.nombre;
+iaTexto.innerHTML = (colorJugador === 'w' ? '♚' : '♔') + ' IA · ' + nivel.nombre;
+yoTexto.innerHTML = (colorJugador === 'w' ? '♔' : '♚') + ' Tú';
+
+tableroGirado = colorJugador === 'b';
+renderTablero();
+
+if (estado.turno !== colorJugador) {
+setTimeout(turnoIA, 500);
+}
+}
+
+function renderTablero() {
+tableroEl.innerHTML = '';
+var inds = [];
+for (var i = 0; i < 64; i++) inds.push(i);
+if (tableroGirado) inds.reverse();
+
+for (var k = 0; k < 64; k++) {
+var i = inds[k];
+var f = fila(i), c = col(i);
+var esClara = (f + c) % 2 === 0;
+var p = estado.b[i];
+
+var btn = document.createElement('button');
+btn.className = 'casilla ' + (esClara ? 'c' : 'o');
+btn.dataset.i = i;
+
+if (ultimoMovimiento && (ultimoMovimiento.from === i || ultimoMovimiento.to === i)) {
+btn.classList.add('ultimo');
+}
+if (sel === i) {
+btn.classList.add('sel');
+}
+if (p && p[1] === 'K' && enJaque(estado, p[0]) && p[0] === estado.turno) {
+btn.classList.add('jaque');
+}
+
+if ((tableroGirado ? c === 7 : c === 0)) {
+var coordR = document.createElement('span');
+coordR.className = 'coord r';
+coordR.textContent = 8 - f;
+btn.appendChild(coordR);
+}
+var filaAbecedario = tableroGirado ? 0 : 7;
+if (f === filaAbecedario) {
+var coordF = document.createElement('span');
+coordF.className = 'coord f';
+coordF.textContent = 'abcdefgh'[c];
+btn.appendChild(coordF);
+}
+
+if (p) {
+var contenedor = document.createElement('span');
+contenedor.className = 'pieza ' + p[0];
+contenedor.innerHTML = svgPieza(p[1]);
+btn.appendChild(contenedor);
+}
+
+var mov = movsLegales.find(function(m) { return m.to === i; });
+if (mov) {
+if (p) {
+var anillo = document.createElement('span');
+anillo.className = 'anillo-mov';
+btn.appendChild(anillo);
+} else {
+var punto = document.createElement('span');
+punto.className = 'punto-mov';
+btn.appendChild(punto);
+}
+}
+
+btn.addEventListener('click', onCasillaClick);
+tableroEl.appendChild(btn);
+}
+actualizarEstadoUI();
+}
+
+function actualizarEstadoUI() {
+stTurno.textContent = estado.turno === 'w' ? 'BLANCAS' : 'NEGRAS';
+stMovs.textContent = estado.medio;
+
+if (enJaque(estado, estado.turno)) {
+avisoEl.textContent = '¡Jaque al rey ' + (estado.turno === 'w' ? 'blanco' : 'negro') + '!';
+} else {
+avisoEl.textContent = estado.turno === colorJugador ? 'Tu turno · selecciona una pieza.' : 'Turno de la IA...';
+}
+
+if (estado.turno === colorJugador) {
+turnoChip.textContent = 'TU TURNO';
+turnoChip.classList.remove('ia');
+} else {
+turnoChip.textContent = 'IA PENSANDO';
+turnoChip.classList.add('ia');
+}
+
+if (historial.length === 0) {
+histEl.textContent = '—';
+} else {
+var html = '';
+for (var i = 0; i < historial.length; i++) {
+html += (i + 1) + '. ' + historial[i].notacion + '<br>';
+}
+histEl.innerHTML = html;
+histEl.scrollTop = histEl.scrollHeight;
+}
+}
+
+function onCasillaClick(ev) {
+if (!enJuego || estado.turno !== colorJugador) return;
+
+var i = parseInt(ev.currentTarget.dataset.i);
+var p = estado.b[i];
+
+if (sel !== -1) {
+var mv = movsLegales.find(function(m) { return m.to === i; });
+if (mv) {
+hacerMovimiento(mv);
+return;
+}
+}
+
+if (p && p[0] === colorJugador) {
+sel = i;
+movsLegales = legales(estado).filter(function(m) { return m.from === i; });
+renderTablero();
+if (movsLegales.length === 0) {
+avisoEl.textContent = 'Esa pieza no tiene movimientos legales.';
+}
+} else {
+sel = -1;
+movsLegales = [];
+renderTablero();
+}
+}
+
+function hacerMovimiento(mv) {
+historial.push({ estado: clonar(estado), mv: mv, notacion: notacionMovimiento(estado, mv) });
+estado = aplicar(estado, mv);
+ultimoMovimiento = { from: mv.from, to: mv.to };
+sel = -1;
+movsLegales = [];
+
+renderTablero();
+verificarFin();
+
+if (enJuego && estado.turno !== colorJugador) {
+setTimeout(turnoIA, 300);
+}
+}
+
+function notacionMovimiento(e, mv) {
+var p = e.b[mv.from];
+if (!p) return '';
+var letra = p[1] === 'P' ? '' : p[1];
+var captura = e.b[mv.to] || mv.alPaso ? 'x' : '';
+var destino = 'abcdefgh'[col(mv.to)] + (8 - fila(mv.to));
+var jaque = '';
+var despues = aplicar(e, mv);
+if (enJaque(despues, despues.turno)) {
+jaque = legales(despues).length === 0 ? '#' : '+';
+}
+return letra + captura + destino + jaque;
+}
+
+function turnoIA() {
+if (!enJuego) return;
+var mv = elegirMovimientoIA(estado);
+if (mv) {
+historial.push({ estado: clonar(estado), mv: mv, notacion: notacionMovimiento(estado, mv) });
+estado = aplicar(estado, mv);
+ultimoMovimiento = { from: mv.from, to: mv.to };
+renderTablero();
+verificarFin();
+}
+}
+function verificarFin() {
+var movs = legales(estado);
+if (movs.length === 0) {
+enJuego = false;
+if (enJaque(estado, estado.turno)) {
+var ganador = estado.turno === 'w' ? 'b' : 'w';
+modalEm.textContent = ganador === colorJugador ? '🎉' : '😢';
+modalT.textContent = ganador === colorJugador ? '¡Ganaste!' : 'Perdiste';
+modalT.className = 'modal-t ' + (ganador === colorJugador ? 'gana' : 'pierde');
+modalX.textContent = 'Jaque mate en ' + estado.medio + ' movimientos.';
+} else {
+modalEm.textContent = '🤝';
+modalT.textContent = 'Tablas';
+modalT.className = 'modal-t tablas';
+modalX.textContent = 'Rey ahogado. No hay movimientos legales.';
+}
+modal.hidden = false;
+}
+}
+
+function deshacer() {
+if (historial.length === 0 || !enJuego) return;
+
+var deshacerDos = (estado.turno === colorJugador && historial.length >= 2);
+
+if (deshacerDos) {
+historial.pop();
+var prev = historial.pop();
+estado = prev.estado;
+} else {
+var prev = historial.pop();
+estado = prev.estado;
+}
+
+ultimoMovimiento = null;
+if (historial.length > 0) {
+var last = historial[historial.length - 1];
+ultimoMovimiento = { from: last.mv.from, to: last.mv.to };
+}
+
+sel = -1;
+movsLegales = [];
+enJuego = true;
+modal.hidden = true;
+renderTablero();
+
+if (estado.turno !== colorJugador) {
+setTimeout(turnoIA, 300);
+}
+}
+
+initUI();
+</script>
+</body>
+</html>
