@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>AKAME · Memoria</title>
+<style>
+:root {--fondo:#0b1220;--panel:#111a2c;--linea:#22304d;--texto:#eef3ff;--azul:#4d7cff;--verde:#3ddc97;--rosa:#ff4d8d;}
+* {box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+body {background-color:var(--fondo); color:var(--texto); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:15px; user-select:none;}
+.cab {width:100%; max-width:400px; display:flex; justify-content:space-between; align-items:center; background:var(--panel); padding:12px 15px; border-radius:14px; border:1px solid var(--linea); margin-bottom:20px;}
+.cab h1 {font-size:16px; font-weight:800; color:#e8f0ff;}
+.cab span {font-size:14px; font-weight:800; color:var(--azul);}
+.grid {display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; width:100%; max-width:400px; perspective:1000px;}
+.carta {aspect-ratio:1; position:relative; cursor:pointer; transform-style:preserve-3d; transition:transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);}
+.carta.girada {transform:rotateY(180deg);}
+.cara {position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:28px; border:1px solid var(--linea);}
+.cara-frontal {background:linear-gradient(135deg, #1b2740, #16223a); box-shadow:inset 0 0 0 1px rgba(126,162,255,.1);}
+.cara-trasera {background:var(--azul); transform:rotateY(180deg); box-shadow:0 0 15px rgba(77,124,255,.4);}
+.carta.encontrada .cara-trasera {background:var(--verde); box-shadow:0 0 15px rgba(61,220,151,.6);}
+.modal {position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(5,9,18,.85); display:flex; align-items:center; justify-content:center; z-index:10; opacity:0; pointer-events:none; transition:opacity 0.3s;}
+.modal.on {opacity:1; pointer-events:all;}
+.modal-caja {background:var(--panel); padding:30px; border-radius:20px; text-align:center; border:1px solid var(--linea); transform:scale(0.9); transition:transform 0.3s;}
+.modal.on .modal-caja {transform:scale(1);}
+.modal h2 {color:var(--verde); font-size:24px; margin-bottom:10px;}
+.modal p {color:#93a3c4; font-size:14px; margin-bottom:20px;}
+button {background:linear-gradient(90deg, #4d7cff, #6366f1); color:#fff; border:0; padding:12px 24px; border-radius:12px; font-family:inherit; font-weight:800; font-size:14px; cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="cab">
+  <h1>🧠 Memoria</h1>
+  <span id="contador">0 / 8 Pares</span>
+</div>
+<div class="grid" id="grid"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-caja">
+    <h2>¡Felicidades! 🎉</h2>
+    <p>Has encontrado todos los pares.</p>
+    <button onclick="reiniciar()">Jugar otra vez</button>
+  </div>
+</div>
+
+<script>
+const emojis = ['🐶','🐱','🦊','🐼','🦁','🐸','🐵','🦄'];
+let mazo = [...emojis, ...emojis];
+let primeraCarta = null, segundaCarta = null;
+let bloqueo = false, paresEncontrados = 0;
+
+// Mezclar cartas
+mazo.sort(() => Math.random() - 0.5);
+
+const grid = document.getElementById('grid');
+const contador = document.getElementById('contador');
+const modal = document.getElementById('modal');
+
+function crearTablero() {
+  grid.innerHTML = '';
+  mazo.forEach((emoji, index) => {
+    const carta = document.createElement('div');
+    carta.className = 'carta';
+    carta.dataset.emoji = emoji;
+    carta.innerHTML = `
+      <div class="cara cara-frontal">❓</div>
+      <div class="cara cara-trasera">${emoji}</div>
+    `;
+    carta.addEventListener('click', girarCarta);
+    grid.appendChild(carta);
+  });
+}
+
+function girarCarta() {
+  if (bloqueo || this.classList.contains('girada') || this.classList.contains('encontrada')) return;
+  
+  this.classList.add('girada');
+
+  if (!primeraCarta) {
+    primeraCarta = this;
+    return;
+  }
+
+  segundaCarta = this;
+  verificarPareja();
+}
+
+function verificarPareja() {
+  const esPareja = primeraCarta.dataset.emoji === segundaCarta.dataset.emoji;
+  esPareja ? deshabilitarCartas() : voltearCartas();
+}
+
+function deshabilitarCartas() {
+  primeraCarta.classList.add('encontrada');
+  segundaCarta.classList.add('encontrada');
+  paresEncontrados++;
+  contador.textContent = `${paresEncontrados} / 8 Pares`;
+  resetearTablero();
+  if (paresEncontrados === 8) setTimeout(() => modal.classList.add('on'), 600);
+}
+
+function voltearCartas() {
+  bloqueo = true;
+  setTimeout(() => {
+    primeraCarta.classList.remove('girada');
+    segundaCarta.classList.remove('girada');
+    resetearTablero();
+  }, 800);
+}
+
+function resetearTablero() {
+  primeraCarta = null;
+  segundaCarta = null;
+  bloqueo = false;
+}
+
+function reiniciar() {
+  modal.classList.remove('on');
+  paresEncontrados = 0;
+  contador.textContent = '0 / 8 Pares';
+  mazo.sort(() => Math.random() - 0.5);
+  crearTablero();
+  resetearTablero();
+}
+
+crearTablero();
+</script>
+</body>
+</html>
