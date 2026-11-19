@@ -71,7 +71,7 @@ export default {
   command: ["evento", "event", "eventos"],
   category: "admin",
   execute: async (ctx) => {
-    const { sock, from, m, args, enviartexto, config, isOwner, isAdmin, comando } = ctx;
+    const { sock, from, m, args, enviartexto, config, comando, sender } = ctx;
     const p = config.prefix[0];
     const cmd = comando || "evento";
     const sub = (args[0] || "").toLowerCase();
@@ -79,9 +79,14 @@ export default {
     // Guardamos el socket para el temporizador global
     if (!sockInstance) sockInstance = sock;
 
-    // Verificar permisos (Owner o Admin)
-    if (!isOwner && !isAdmin) {
-      return enviartexto("❌ Solo los administradores pueden usar este comando.");
+    // Verificar permisos (Buscando en los owners de config.js)
+    // Limpiamos el JID para comparar solo el número
+    const numeroSender = sender.split('@')[0];
+    const ownersList = config.owners || [];
+    const esOwner = ownersList.some(o => o.includes(numeroSender) || numeroSender.includes(o));
+
+    if (!esOwner) {
+      return enviartexto("❌ Solo los administradores/owners pueden usar este comando.");
     }
 
     let eventos = cargarEventos();
@@ -123,7 +128,7 @@ export default {
         timestamp,
         mensaje,
         enviado: false,
-        creadoPor: m.sender
+        creadoPor: sender
       });
       guardarEventos(eventos);
 
