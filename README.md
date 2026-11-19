@@ -15,9 +15,9 @@ un archivo que puedes leer, cambiar o borrar.
 [![Comandos](https://img.shields.io/badge/Comandos-475-informational?style=for-the-badge)](#-comandos)
 [![Licencia](https://img.shields.io/badge/Licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 
-**Creado por [Jeferson Fernández](https://github.com/levi-hub805) en colaboración con [Sergio Gómez Gort](https://github.com/SergioOficial) y [riokuroxi-svg](https://github.com/riokuroxi-svg)**
+**Creado por [Sergio Gómez Gort](https://github.com/SergioOficial) y [riokuroxi-svg](https://github.com/riokuroxi-svg)**
 
-[Qué es](#-qué-es-levi-bot) • [Instalación](#-instalación) • [Estructura](#️-estructura-del-proyecto) • [Comandos](#-comandos) • [Licencia](#-licencia) • [Créditos](#-créditos)
+[Qué es](#-qué-es-ado-bot) • [Instalación](#-instalación) • [Estructura](#️-estructura-del-proyecto) • [Comandos](#-comandos) • [Licencia](#-licencia) • [Créditos](#-créditos)
 
 </div>
 
@@ -571,20 +571,10 @@ línea.
 <table>
   <tr>
     <td align="center" width="33%">
-      <a href="https://github.com/levi-hub805">
-        <img src="https://github.com/levi-hub805.png" width="100" alt="Jeferson"/><br/>
-        <b>Jeferson Fernández</b><br/>
-        <sub>💫 Creador y Lead Developer</sub>
-      </a><br/><br/>
-      <a href="https://wa.me/573005255807">
-        <img src="https://img.shields.io/badge/WhatsApp-+57 300 525 5807-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Jeferson"/>
-      </a>
-    </td>
-    <td align="center" width="33%">
       <a href="https://github.com/SergioOficial">
         <img src="https://github.com/SergioOficial.png" width="100" alt="Sergio"/><br/>
-        <b>Sergio Gómez Gort</b><br/>
-        <sub>🔧 Colaborador y Mantenimiento</sub>
+        <b>Sergio Dev</b><br/>
+        <sub>💫 Creador y Lead Developer</sub>
       </a><br/><br/>
       <a href="https://wa.me/5358090650">
         <img src="https://img.shields.io/badge/WhatsApp-+53 580 906 50-25D366?style=flat&logo=whatsapp&logoColor=white" alt="WhatsApp Sergio"/>
