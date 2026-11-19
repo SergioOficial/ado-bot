@@ -4,7 +4,7 @@ import { commands } from "../../pluginLoader.js";
 import os from "node:os";
 
 const TOP = "╭╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ࣪ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╮";
-const MID = "├╾ׅ╴ׂ╌╶ׅ╌ׂ─ 〫─ׂ┄ׅ╴ׂ╌ׅ╶╼. ╾ׅ╴ׂ╌╶ׅ╶╼. ╾ׅ╴ׂ╌╶ׅ╌ׂ";
+const MID = "├╾ׅ╴ׂ╌╶ׅ╌ׂ─ 〫─ׂ┄ׅ╴ׂ╌ׅ╶╼.. ╾ׅ╴ׂ╌╶ׅ╌ׂ";
 const BOT = "╰╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╯";
 
 const compacta = (titulo, cmds) => `${TOP}
@@ -50,7 +50,7 @@ export default {
       } catch {}
     }
 
-    const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, como está tu día?, mucho gusto mi nombre es *ㅤ   ׅׄ⋰ּׅ    ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊ 𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🇨🇺ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
+    const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, Como estas en esta navidad?, mucho gusto mi nombre es *ㅤ ⋰ּׅ ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🎄ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
  ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
 
 : ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${titulo}
@@ -61,7 +61,7 @@ export default {
 
  ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
 
-⋆｡ﾟ🩸 ｡° *ᴄᴏᴍ꯭ᴀ꯭ɴ꯭ᴅ꯭ᴏ꯭s* ﾟ｡˚₊ 𓂃
+⋆｡ﾟ🎄 ｡° *ᴄᴏᴍ꯭ᴀ꯭ɴ꯭ᴅ꯭ᴏ꯭s* ﾟ｡˚₊ 𓂃
 `;
 
     let texto = "";
@@ -78,7 +78,7 @@ export default {
       texto += "\n" + compacta("🎄 Descargas", ["play","play2","fb","ig","tt","mf","apk","ytsearch","toimg"].map(c => `${p}${c}`));
       texto += "\n" + compacta("☃️ Stickers", ["s","brat","bratv","emojimix","stickers"].map(c => `${p}${c}`));
       texto += "\n" + compacta("🧠 IA", ["ia","iaaudio","imagen"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🎉 Diversión", ["trivia","mate","8ball","meme","gato","perro","waifu","neko","ship"].map(c => `${p}${c}`));
+      texto += "\n" + compacta("🎉 Diversión", ["trivia","mate","8ball","meme","gato","perro","waifu","neko","ship", "papel", "memoria", "Cerito", "tetris", "ajedrez", "ajedrez 2"].map(c => `${p}${c}`));
       texto += "\n" + compacta("🔔 Utilidades", ["ping","info","creadores","traducir","clima","wiki","qr","tts"].map(c => `${p}${c}`));
       texto += "\n" + compacta("🐙 GitHub", ["gitsearch","ghsearch"].map(c => `${p}${c}`));
       texto += "\n" + compacta("🤖 SubBots", ["code","jadibot","canjear","stopbot","bots"].map(c => `${p}${c}`));
@@ -188,6 +188,8 @@ export default {
     else if (tipo === 'fun') {
       texto = header("Diversión") + "\n" + detallada("🎉 Diversión", [
         [`${p}trivia › ${p}mate › ${p}8ball`, "Trivia, matemáticas, 8ball"],
+[`${p}papel › ${p}memoria › ${p}Cerito › ${p}ajedrez › ${p}ajedrez2`,
+"comandos tipo web en WhatsApp"],
         [`${p}meme › ${p}gato › ${p}perro`, "Meme, gato, perro"],
         [`${p}waifu › ${p}neko › ${p}ship`, "Waifu, neko, ship"],
       ]) + `\n> Volver: *${p}menu*`;
