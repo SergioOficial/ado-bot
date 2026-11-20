@@ -5,25 +5,6 @@
  * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
  *
  * boot/router.js — de `messages.upsert` a un plugin, con aislamiento de fallos.
- *
- * Antes todo esto vivía dentro de `index.js`, mezclado con la conexión, los
- * sub-bots y los vigilantes, y compartiendo variables del módulo. Cualquier
- * cambio ahí obligaba a releer seiscientas líneas para saber qué se rompió, y un
- * error suelto se llevaba el proceso entero.
- *
- * Aquí el manejador es una fábrica: recibe lo que necesita y devuelve una
- * función. Dos consecuencias que importan:
- *
- *   · Se puede probar sin abrir WhatsApp (pruebas/router.test.mjs le pasa un
- *     socket y unos plugins falsos).
- *   · Cada mensaje va dentro de su propio `try`. Un plugin que revienta pierde
- *     ese comando y nada más; el siguiente mensaje se atiende igual.
- *
- * Las reglas de qué se atiende están en `lib/compuerta.js` y el corte del eco
- * entre cuentas en `lib/bucles.js`. Este archivo solo orquesta.
- *
- * El aislamiento por mensaje y el filtro de los errores de red siguen el esquema
- * del router de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD).
  */
 
 import { compuerta } from "../lib/compuerta.js";
@@ -45,6 +26,7 @@ import { compuerta } from "../lib/compuerta.js";
  * @param {Set}      [deps.urgentes]    comandos que pasan con prioridad
  * @param {object}   [deps.extras]      ayudas que se le pasan al plugin en el ctx
  * @param {string}   [deps.nombreBot]
+ * @param {boolean}  [deps.permitirPropios] Permite que el bot procese sus propios mensajes (Self-bot)
  * @param {function} [deps.registrar]   dónde apuntar los fallos
  * @returns {(ev: object) => Promise<void>}
  */
@@ -65,6 +47,7 @@ export function crearRouter(deps) {
     urgentes = new Set(),
     extras = {},
     nombreBot = config?.botName || "Bot",
+    permitirPropios = false, // 👈 NUEVO: por defecto el bot no se escucha a sí mismo para evitar bucles.
     registrar = (err) => console.error("❌ Router:", err?.stack || err),
   } = deps;
 
@@ -75,9 +58,6 @@ export function crearRouter(deps) {
     enviar ||
     ((jid, contenido, opciones) => Promise.resolve(sock.sendMessage(jid, contenido, opciones)));
 
-  /**
-   * El manejador. Nunca lanza: lo que falle se apunta y se contesta si se puede.
-   */
   async function atenderMensaje(ev) {
     try {
       if (!ev || ev.type !== "notify") return;
@@ -86,11 +66,12 @@ export function crearRouter(deps) {
 
       const m = mensajes[0];
 
-      // 🚪 ¿Esto es un comando que me toca? Lo decide lib/compuerta.js.
+      // 🚪 ¿Esto es un comando que me toca?
       const entrada = compuerta(m, {
         prefijos,
         conoce: (nombre) => commands?.has?.(nombre) ?? false,
         prefijoBoton: prefijoPrincipal,
+        permitirPropios, // 👈 Le pasamos la configuración a la compuerta
       });
       if (!entrada.pasa) return;
 
@@ -98,8 +79,6 @@ export function crearRouter(deps) {
 
       const db = obtenerDb?.();
       if (!db) {
-        // Sin base no se puede atender nada con garantías (economía, RPG,
-        // ajustes del grupo). Mejor decirlo que escribir a medias.
         console.error("⚠️ Mensaje descartado: la base de datos no está cargada.");
         return;
       }
@@ -110,8 +89,7 @@ export function crearRouter(deps) {
       const from = remoteJid;
       const sender = autorReal(m) || remoteJid;
 
-      // Sufijo «-» en el comando: se ejecuta en privado y, si era un grupo, se
-      // borra el mensaje para no dejar el pedido a la vista de todos.
+      // Sufijo «-» en el comando para privado
       let textoLimpio = [entrada.comando, ...entrada.args].join(" ");
       let esPrivado = false;
 
@@ -128,8 +106,7 @@ export function crearRouter(deps) {
       const comando = (args.shift() || "").toLowerCase();
       if (!comando) return;
 
-      // 🔁 Eco entre cuentas: el mismo pedido calcado dos veces seguidas, o una
-      // respuesta mía que vuelve citada. Se corta antes de tocar el plugin.
+      // 🔁 Anti-bucle
       const antiBucle = guarda?.();
       if (antiBucle) {
         const veredicto = antiBucle.permite({ chat: from, autor: sender, comando, args }, m);
@@ -146,18 +123,23 @@ export function crearRouter(deps) {
       const plugin = commands.get(comando);
       if (!plugin) return;
 
-      // El grupo puede tener el bot apagado; solo se deja pasar el interruptor.
+      // 🚨 INTERRUPTORES DE GRUPO (Bot apagado)
       if (isGroup && db?.chats?.[remoteJid]?.botApagado) {
         if (comando !== "bot" && comando !== "boton") return;
       }
 
-      // Si el grupo tiene un bot primario asignado, los demás se callan.
-      // `setprimary` queda fuera para poder cambiarlo.
-      if (isGroup && comando !== "setprimary" && comando !== "primary") {
+      // 🚨 BOT PRIMARIO: Reparado
+      // Ignoramos el mensaje si el grupo tiene un bot primario y no soy yo.
+      // Los comandos de control (setprimary, primary, bot) siempre pasan para poder recuperar el control.
+      if (isGroup && !["setprimary", "primary", "bot"].includes(comando)) {
         const primario = db?.chats?.[remoteJid]?.primaryBot;
         if (primario) {
-          const yo = `${numeroDe(sock?.user?.id)}@s.whatsapp.net`;
-          if (yo !== primario) return;
+          const numeroYo = numeroDe(sock?.user?.id);
+          const numeroPrimario = numeroDe(primario);
+          if (numeroYo !== numeroPrimario) {
+            console.log(`🤫 [${from}] ignorado: no soy el bot primario (${numeroYo} != ${numeroPrimario})`);
+            return; 
+          }
         }
       }
 
@@ -169,13 +151,18 @@ export function crearRouter(deps) {
 
       console.log(`💬 [${from}] ${entrada.texto} ${esPrivado ? "🔒 (Privado)" : ""}`);
 
-      if (plugin.isOwner && !esOwner(sender, sock)) {
+      // 🛡️ PERMISOS: Verificamos si es Owner, o si es un Bot autorizado (para que los bots puedan usar comandos)
+      const esBotAutorizado = m.key.fromMe || sender.endsWith('@bot') || Boolean(db?.subbots?.[sender]);
+      const tienePermisosOwner = esOwner(sender, sock) || esBotAutorizado;
+
+      if (plugin.isOwner && !tienePermisosOwner) {
         return enviartexto("⚠️ Este comando es exclusivo de los Owners.");
       }
 
       if (plugin.isAdmin) {
         if (!isGroup) return enviartexto("⚠️ Este comando solo funciona en grupos.");
-        const autorizado = await esAdminGrupo(sock, from, sender, esOwner(sender, sock));
+        // Pasamos "tienePermisosOwner" a la validación de admin
+        const autorizado = await esAdminGrupo(sock, from, sender, tienePermisosOwner);
         if (!autorizado) return enviartexto("⚠️ Solo los administradores pueden usar este comando.");
       }
 
@@ -196,7 +183,7 @@ export function crearRouter(deps) {
         ...extras,
       };
 
-      // 🔒 El plugin va aislado. Lo que reviente aquí no pasa al siguiente mensaje.
+      // 🔒 Ejecución aislada
       try {
         if (urgentes.has(comando) && cola?.conPrioridad) {
           await cola.conPrioridad(() => plugin.execute(ctx));
@@ -209,13 +196,11 @@ export function crearRouter(deps) {
         await enviartexto(`⚠️ Error en *${comando}*.\n_${error?.message || error}_`);
       }
     } catch (error) {
-      // Fallo del propio router (no de un plugin). Se apunta y se sigue vivo.
       registrar(error);
       salud?.anotarError?.(error);
     }
   }
 
-  // riokuroxi-svg: Baileys puede entregar varios mensajes en una sola notificación.
   return async function atender(ev) {
     if (ev?.type !== "notify" || !Array.isArray(ev.messages)) return;
     for (const mensaje of ev.messages) {
