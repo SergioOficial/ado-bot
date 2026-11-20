@@ -73,12 +73,15 @@ internet. Nada más.
 1. Instala Termux **desde F-Droid o GitHub**, no desde Play Store (esa versión
    está abandonada y no actualiza paquetes).
 
-   ```https://f-droid.org/es/packages/com.termux/
+   ```bash
+   https://f-droid.org/es/packages/com.termux/
    ```
 ----
 
 2. Abre Termux y actualiza los paquetes base:
-   ```pkg update && pkg upgrade -y
+
+   ```bash
+   pkg update && pkg upgrade -y
    ```
 ---
 
@@ -91,6 +94,7 @@ internet. Nada más.
 ---
 
 4. Evita que Android duerma el bot cuando apagues la pantalla:
+
    ```bash
    termux-wake-lock
    ```
@@ -98,6 +102,7 @@ internet. Nada más.
 ---
 
 5. Descarga el bot y entra en la carpeta:
+
    ```bash
    git clone https://github.com/SergioOficial/ado-bot.git
    cd ado-bot
@@ -106,18 +111,21 @@ internet. Nada más.
 
 6. Instala las dependencias. En un móvil esto tarda entre 10 y 25 minutos y
    parece colgado: está compilando. No cierres Termux.
+
    ```bash
    npm install
    ```
 ---
 
 7. Comprueba que todo está en su sitio (no abre WhatsApp todavía):
+
    ```bash
    npm run verificar
    ```
 ---
 
 8. Arranca:
+
    ```bash
    npm start
    ```
