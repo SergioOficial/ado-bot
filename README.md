@@ -74,39 +74,59 @@ internet. Nada más.
    está abandonada y no actualiza paquetes).
 
    ```bash
+
    https://f-droid.org/es/packages/com.termux/
-```
-2. Abre Termux y actualiza los paquetes base:
    ```
+----
+
+2. Abre Termux y actualiza los paquetes base:
+   ```bash
+
 pkg update && pkg upgrade -y
    ```
+---
+
 3. Instala lo necesario. python, make y clang no son adorno: un paquete
    del cliente es nativo y en ARM se compila.
+
    ```bash
    pkg install git nodejs-lts python make clang ffmpeg libvips -y
    ```
+---
+
 4. Evita que Android duerma el bot cuando apagues la pantalla:
    ```bash
    termux-wake-lock
    ```
+
+---
+
 5. Descarga el bot y entra en la carpeta:
    ```bash
    git clone https://github.com/SergioOficial/ado-bot.git
    cd ado-bot
    ```
+---
+
 6. Instala las dependencias. En un móvil esto tarda entre 10 y 25 minutos y
    parece colgado: está compilando. No cierres Termux.
    ```bash
    npm install
    ```
+---
+
 7. Comprueba que todo está en su sitio (no abre WhatsApp todavía):
    ```bash
    npm run verificar
    ```
+---
+
 8. Arranca:
    ```bash
    npm start
    ```
+---
+
 9. Escribe tu número con código de país cuando lo pida, sin + ni espacios
    (ejemplo: 5215512345678), y usa el código de 8 caracteres que aparece en
    WhatsApp → Dispositivos vinculados → Vincular con número de teléfono.
