@@ -10,6 +10,10 @@
 <p align="center"> 
 <a href="#"><img title="Ado-bot" src="https://img.shields.io/badge/¡Disfruta de un Bot totalmente gratuito, con múltiples funciones y de código abierto! -purple?colorA=%239b33b0&colorB=%231c007b&style=for-the-badge"></a> 
 </p>
+
+---
+
+## 🌃 Descripción 
 **El bot de WhatsApp multi-dispositivo, modular y sin cajas negras.**
 
 Se conecta con Baileys, arranca con un código de vinculación y cada comando es
@@ -29,8 +33,8 @@ un archivo que puedes leer, cambiar o borrar.
 
 ---
 
-## ✨ Qué es Ado-Bot
-
+<details>
+<summary><strong>Que es Ado-bot</strong> — Te explico</summary>
 | Lo que trae | Para qué sirve |
 |---|---|
 | 🧩 **Todo es un plugin** | Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
@@ -45,15 +49,13 @@ un archivo que puedes leer, cambiar o borrar.
 | 🎴 **Gacha de personajes** | `.rw` tira un personaje con su imagen, `.claim` lo reclama y `harem`, `wtop` y `charinfo` llevan la colección del grupo. Se enciende y apaga por grupo. |
 | 🛡️ **Freno de envíos** | Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
 | ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
+</details>
 
----
-
-## 🛠️ Instalación
+<details>
+<summary><strong>🩸 Instalaciones</strong> — Paso a paso</summary>
 
 Requisitos en todos los casos: **Node.js 20 o superior**, `git` y conexión a
 internet. Nada más.
-
-### 📱 Termux (Android) — paso a paso
 
 1. Instala Termux **desde F-Droid o GitHub**, no desde Play Store (esa versión
    está abandonada y no actualiza paquetes).
@@ -103,8 +105,11 @@ internet. Nada más.
     ```
     vigia (en vez de start) es lo que hace que el bot se levante solo si se
     cae o si reinicias desde WhatsApp con .restart.
+</details>
 
-🖥️ Servidor VPS (Ubuntu / Debian) — paso a paso
+
+<details>
+<summary>🖥️ Servidor VPS (Ubuntu / Debian)<strong></strong> — paso a paso </summary>
 
 1. Entra por SSH y actualiza:
    ```bash
@@ -140,9 +145,11 @@ internet. Nada más.
    ```
    Sin pm2, usa npm run vigia dentro de tmux o screen: arranca el bot
    y lo vuelve a levantar si se cae, sin instalar nada más.
+</details>
 
-☁️ Hosting con panel (BotKeep, Railway, Pterodactyl…)
 
+<details>
+<summary><strong>☁️ Hosting con panel</strong> — (BotKeep, Railway, Pterodactyl…)</summary>
 1. Sube el repositorio a tu cuenta (o haz un fork) y conéctalo al panel.
 2. Pon el proyecto en Node 20.
 3. En Variables de entorno añade:
@@ -157,6 +164,7 @@ internet. Nada más.
    · BOTONES_VIEWONCE=1 — opcional, vuelve al envoltorio viejo de los interactivos.
 4. Comando de inicio: npm start (o node index.js).
 5. Mira los logs del panel para copiar el código de vinculación.
+</details>
 
 🔄 Actualizar el bot
 
