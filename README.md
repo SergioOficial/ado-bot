@@ -120,7 +120,6 @@ internet. Nada más.
     cae o si reinicias desde WhatsApp con .restart.
 </details>
 
-
 <details>
 <summary>🖥️ Servidor VPS (Ubuntu / Debian)<strong></strong> — paso a paso </summary>
 
@@ -159,8 +158,6 @@ internet. Nada más.
    Sin pm2, usa npm run vigia dentro de tmux o screen: arranca el bot
    y lo vuelve a levantar si se cae, sin instalar nada más.
 </details>
-
-
 <details>
 <summary><strong>☁️ Hosting con panel</strong> — (BotKeep, Railway, Pterodactyl…)</summary>
 1. Sube el repositorio a tu cuenta (o haz un fork) y conéctalo al panel.
@@ -192,7 +189,7 @@ git pull
 npm install          # solo si cambió package.json
 npm start
 ```
-<details>
+</details>
 
 ---
 
@@ -218,8 +215,7 @@ npm run vigia Arranca el bot con un vigilante que lo levanta si se cae (para Ter
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
 culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
 docs/RETORNO.md.
-
-<details>
+</details>
 
 ---
 
@@ -299,7 +295,7 @@ export const config = {
   footer: "𝙰𝚍𝚘-𝑩𝒐𝒕 by Wyra Studios"
 };
 ```
-<details>
+</details>
 
 Los comandos con isOwner (.restart, .exec, .fix, .backup, .getplugin…)
 solo los usan los números de owners. La comparación vale con y sin lada:
@@ -336,7 +332,7 @@ Categoría Comandos Ejemplos
 🧪 Test 7 botones boton1…boton6
 
 💡 Cualquier comando funciona en modo privado con un guion al final: .menu-.
-<details>
+</details>
 
 ---
 
@@ -518,7 +514,7 @@ Categoría Comandos Ejemplos
 · 🧩 Un solo sitio para el cliente: todo importa de lib/baileys.js, con
   @itsliaaa/baileys por defecto y respaldo automático al oficial si no carga.
 · 📄 Licencia AGPL-3.0 con NOTICE de procedencia: ver Licencia
-<details>
+</details>
 
 ---
 
