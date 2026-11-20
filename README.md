@@ -35,20 +35,33 @@ un archivo que puedes leer, cambiar o borrar.
 
 <details>
 <summary><strong>Que es Ado-bot</strong> — Te explico</summary>
+
 | Lo que trae | Para qué sirve |
 |---|---|
-| 🧩 **Todo es un plugin** | Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
-| 🔀 **Multi-prefijo** | Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
-| 🕵️ **Modo privado** | `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
-| 🔘 **Botones nativos** | Respuesta rápida, copiar, enlace, llamar, ubicación, mini web y **listas desplegables**, con los nodos binarios que WhatsApp exige y respaldo en texto si el móvil no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
-| 📅 **Versión de WhatsApp al día** | La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
-| 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
-| 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
-| 🧠 **IA, economía y RPG** | Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
-| ⚔️ **Peleas de mascotas** | Combates por turnos contra una salvaje o contra otro entrenador, **con botones**: elegir ataque, cambiar de mascota, capturar o huir. Ocho tipos con tabla de eficacia. |
-| 🎴 **Gacha de personajes** | `.rw` tira un personaje con su imagen, `.claim` lo reclama y `harem`, `wtop` y `charinfo` llevan la colección del grupo. Se enciende y apaga por grupo. |
-| 🛡️ **Freno de envíos** | Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
-| ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
+| 🧩 **Todo es un plugin** 
+| Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
+| 🔀 **Multi-prefijo**
+| Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
+| 🕵️ **Modo privado** 
+| `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
+| 🔘 **Botones nativos** 
+| Respuesta rápida, copiar, enlace, llamar, ubicación, mini web y **listas desplegables**, con los nodos binarios que WhatsApp exige y respaldo en texto si el móvil no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
+| 📅 **Versión de WhatsApp al día** 
+| La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
+| 💎 **Premium y sub-bots** 
+| Clones del bot vinculando otros números, con sus propios owners. |
+| 🎨 **Multimedia sin romperse** 
+| Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
+| 🧠 **IA, economía y RPG** 
+| Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
+| ⚔️ **Peleas de mascotas** 
+| Combates por turnos contra una salvaje o contra otro entrenador, **con botones**: elegir ataque, cambiar de mascota, capturar o huir. Ocho tipos con tabla de eficacia. |
+| 🎴 **Gacha de personajes** 
+| `.rw` tira un personaje con su imagen, `.claim` lo reclama y `harem`, `wtop` y `charinfo` llevan la colección del grupo. Se enciende y apaga por grupo. |
+| 🛡️ **Freno de envíos** 
+| Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
+| ✅ **Se puede comprobar** 
+| Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 </details>
 
 <details>
