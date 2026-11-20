@@ -597,11 +597,8 @@ línea.
 
 Hecho con 💫 desde Cuba, Colombia y México  para el mundo
 
-https://img.shields.io/badge/Repositorio-Oficial-181717?style=flat&logo=github&logoColor=white
-https://img.shields.io/badge/Mantenimiento-riokuroxi--svg-8A2BE2?style=flat
-
 </div>
 
 ---
 
-<sub>Escrito por SergioOficial · Ado-Bot · AGPL-3.0-only · repositorio.</sub>
+<sub>Escrito por [SergioOficial](https://github.com/SergioOficial)· [Ado-Bot](https://github.com/SergioOficial/ado-bot) · AGPL-3.0-only · repositorio.</sub>
