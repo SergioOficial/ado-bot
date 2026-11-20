@@ -7,6 +7,9 @@
 
 #  𝙰𝚍𝚘-𝑩𝒐𝒕
 
+<p align="center"> 
+<a href="#"><img title="Ado-bot" src="https://img.shields.io/badge/¡Disfruta de un Bot totalmente gratuito, con múltiples funciones y de código abierto! -purple?colorA=%239b33b0&colorB=%231c007b&style=for-the-badge"></a> 
+</p>
 **El bot de WhatsApp multi-dispositivo, modular y sin cajas negras.**
 
 Se conecta con Baileys, arranca con un código de vinculación y cada comando es
