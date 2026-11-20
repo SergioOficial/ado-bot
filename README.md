@@ -1,6 +1,4 @@
-Aquí tienes el archivo README.md completo con todo el contenido que me enviaste, listo para que lo copies y lo guardes en tu repositorio.
 
-```markdown
 <div align="center">
 
 <img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="190" alt="ado-Bot"/>
