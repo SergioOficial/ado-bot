@@ -297,7 +297,7 @@ export const config = {
 ```
 </details>
 
-Los comandos con isOwner (.restart, .exec, .fix, .backup, .getplugin…)
+> Los comandos con isOwner (.restart, .exec, .fix, .backup, .getplugin…)
 solo los usan los números de owners. La comparación vale con y sin lada:
 5215574370309, 5574370309 y 525574370309 se reconocen como el mismo
 número, así que da igual cómo esté escrito en la lista. Si un comando de administrador no
@@ -518,9 +518,9 @@ Categoría Comandos Ejemplos
 
 ---
 
-🌐 Nuestras Redes y Comunidad
+> 🌐 Nuestras Redes y Comunidad
 
-¡Únete a nuestros canales oficiales y participa en la comunidad!
+**¡Únete a nuestros canales oficiales y participa en la comunidad!**
 
 <div align="center">
   <a href="https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d">
