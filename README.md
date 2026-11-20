@@ -73,13 +73,12 @@ internet. Nada más.
 1. Instala Termux **desde F-Droid o GitHub**, no desde Play Store (esa versión
    está abandonada y no actualiza paquetes).
 
-   ```text
+   ```bash
    https://f-droid.org/es/packages/com.termux/
 ```
-
 2. Abre Termux y actualiza los paquetes base:
-   ```bash
-   pkg update && pkg upgrade -y
+   ```
+pkg update && pkg upgrade -y
    ```
 3. Instala lo necesario. python, make y clang no son adorno: un paquete
    del cliente es nativo y en ARM se compila.
