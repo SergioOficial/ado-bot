@@ -1,92 +1,46 @@
+
 export default {
-  command: ["report", "reporte", "sugerencia", "sug"],
+  command: ["reporte", "report", "sug", "suggest", "r"],
+  category: "info",
   execute: async (ctx) => {
-    const { sock, from, m, args, enviartexto, config, sender } = ctx;
+    const { sock, from, m, args, enviartexto, sender, config, BOT_NAME } = ctx;
+    const texto = args.join(" ").trim();
 
-    let texto = (Array.isArray(args) ? args.join(" ") : "").trim();
-    if (!texto && m.quoted?.text) texto = m.quoted.text;
-
-    const mtype = m.mtype || m.type || "";
-    const tieneMedia = ["imageMessage", "videoMessage", "stickerMessage", "audioMessage", "documentMessage"].includes(mtype);
-
-    if (!texto && !tieneMedia) {
-      return enviartexto(
-        `✧ *SISTEMA DE REPORTES* ✧\n\n` +
-        `Puedes enviar un reporte, sugerencia o queja al Staff.\n\n` +
-        `> *Ejemplo:* ${config.prefix[0]}report El bot no responde en el grupo X\n` +
-        `> *Ejemplo con foto:* Responde a una imagen con *${config.prefix[0]}sug*`
-      );
+    if (!texto) {
+      return enviartexto(`✍️ *Uso correcto:*\n> ${config.prefix[0]}reporte <tu mensaje o sugerencia>\n\nEjemplo:\n> ${config.prefix[0]}reporte El comando .play no funciona.`);
     }
 
+    // Reacción para avisar que se está procesando
+    await sock.sendMessage(from, { react: { text: "📩", key: m.key } });
+
     try {
-      await sock.sendMessage(from, { react: { text: "📩", key: m.key } });
+      // Formatear el mensaje del reporte
+      const numeroSender = sender.split("@")[0];
+      const reporteTexto = `🚨 *NUEVO REPORTE* 🚨\n\n` +
+        `👤 *De:* @${numeroSender}\n` +
+        `📍 *Chat:* ${m.isGroup ? "Grupo" : "Privado"}\n` +
+        `📝 *Mensaje:*\n${texto}`;
 
-      const nombreUsuario = m.pushName || "Usuario Desconocido";
-      const jidRemitente = sender || m.sender || m.key?.participant || m.key?.remoteJid || from;
-      const numeroUsuario = String(jidRemitente).split("@")[0];
+      // Extraer el primer owner del config (que es un objeto)
+      const ownerPrincipal = config.owners[0];
+      // Verificar si es objeto o string para armar el JID correctamente
+      const ownerNumero = typeof ownerPrincipal === 'object' ? ownerPrincipal.number : ownerPrincipal;
+      const ownerJid = `${ownerNumero}@s.whatsapp.net`;
 
-      let origen = "Chat Privado";
-      if (String(from).endsWith("@g.us")) {
-        try {
-          const metadata = await sock.groupMetadata(from);
-          origen = `Grupo: *${metadata.subject}*`;
-        } catch {
-          origen = "Grupo (No se pudo obtener el nombre)";
-        }
-      }
+      // Enviar al owner
+      await sock.sendMessage(ownerJid, {
+        text: reporteTexto,
+        mentions: [sender]
+      });
 
-      // Si es sub-bot, mandar el reporte por el bot principal
-      const esSubbot = !!sock.esSubbot;
-      const sockPrincipal = global.nucleo?.obtenerSock?.() || null;
-      const sockEnvio = (esSubbot && sockPrincipal) ? sockPrincipal : sock;
-
-      if (esSubbot && !sockPrincipal) {
-        await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-        return enviartexto("❌ El bot principal no está disponible ahora. Intenta de nuevo en unos segundos.");
-      }
-
-      const textoComando = m.text || m.message?.conversation || m.message?.extendedTextMessage?.text || "";
-      const comandoUsado = textoComando.replace(config.prefix[0], "").split(" ")[0].toLowerCase() || "reporte";
-      const tituloTipo = (comandoUsado === "sug" || comandoUsado === "sugerencia") ? "SUGERENCIA" : "REPORTE";
-
-      const origenBot = esSubbot
-        ? `🤖 *Bot:* Sub-bot (${sock.numeroSubbot || "desconocido"})`
-        : `🤖 *Bot:* Principal`;
-
-      const mensajeStaff =
-        `🚨 *NUEVO ${tituloTipo}* 🚨\n\n` +
-        `👤 *De:* \( {nombreUsuario} (+ \){numeroUsuario})\n` +
-        `📍 *Origen:* ${origen}\n` +
-        `${origenBot}\n` +
-        `📝 *Mensaje:*\n${texto || "(Sin texto, ver archivo adjunto)"}`;
-
-      const STAFF_GROUP = "120363413955265605@g.us";
-
-      if (tieneMedia) {
-        try {
-          await sockEnvio.sendMessage(STAFF_GROUP, {
-            forward: m,
-            caption: mensajeStaff
-          });
-        } catch {
-          await sockEnvio.sendMessage(STAFF_GROUP, {
-            text: mensajeStaff + "\n\n⚠️ _Había un archivo adjunto que no se pudo reenviar desde el sub-bot._"
-          });
-        }
-      } else {
-        await sockEnvio.sendMessage(STAFF_GROUP, {
-          text: mensajeStaff,
-          mentions: [jidRemitente]
-        });
-      }
-
-      await enviartexto(`✅ *¡${tituloTipo} enviado!*\n\nTu mensaje ha sido recibido por el equipo de Staff. Gracias por ayudar a mejorar el bot.`);
+      // Confirmar al usuario
+      await enviartexto("✅ *¡Reporte enviado!* Gracias por ayudar a mejorar el bot. Tu mensaje ha llegado a los desarrolladores.");
       await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
 
-    } catch (e) {
-      console.error("Error al enviar al Staff:", e);
+    } catch (error) {
+      console.error("Error en comando reporte:", error);
       await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
-      await enviartexto("❌ Hubo un error interno al intentar enviar tu mensaje al Staff.");
+      await enviartexto(`❌ Hubo un error al enviar el reporte.\n_${error.message}_`);
     }
   }
 };
