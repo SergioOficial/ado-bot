@@ -179,8 +179,8 @@ internet. Nada más.
 5. Mira los logs del panel para copiar el código de vinculación.
 </details>
 
-🔄 Actualizar el bot
-
+<details>
+<summary><strong>🗣️ Actualizar El Bot </strong> — Simple</summary>
 Desde WhatsApp, con el bot encendido: .fix (solo dueños). Si hay cambios
 locales sin subir, avisa y no toca nada hasta que lo confirmes otra vez; el
 parche queda guardado en tmp/.
@@ -192,6 +192,9 @@ git pull
 npm install          # solo si cambió package.json
 npm start
 ```
+<details>
+
+---
 
 ⚠️ Antes de usar una cuenta
 
@@ -199,8 +202,9 @@ Usa un número secundario, no el tuyo personal. Ningún bot puede garantizar que
 una cuenta no sea bloqueada; este lleva freno de ritmo, calentamiento y
 vigilancia (míralo con .warmup), que baja el riesgo pero no lo elimina.
 
-🧪 Comprobar que está bien (sin abrir WhatsApp)
-
+<details>
+<summary><strong>🧪 Comprobar que está bien</strong> — (sin abrir WhatsApp)
+</summary>
 Comando Qué hace
 npm run verificar Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners.
 npm run probar 233 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad.
@@ -214,6 +218,8 @@ npm run vigia Arranca el bot con un vigilante que lo levanta si se cae (para Ter
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
 culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
 docs/RETORNO.md.
+
+<details>
 
 ---
 
@@ -271,20 +277,19 @@ ado-bot/
 ```
 
 ---
-
-⚙️ Configuración (config.js)
+<details>
+<summary><strong>🔩 Ajustes</strong> — (config.js) </summary>
 
 ```javascript
 export const config = {
   // 🔥 El bot responde a cualquiera de estos prefijos
-  prefix: [".", "#", "/", "🇨🇺"],
+  prefix: [".", "#", "/"],
 
   botName: "𝐀𝐝𝐨-𝐁𝐨𝐭 🩸",
 
   owners: [
     { name: "Sergio Gómez Gort",         number: "5358090650" },
     { name: "Jeferson Fernández",        number: "573005255807" },
-    { name: "atencion al cliente bots",  number: "50494874330" },
     { name: "Roxi",                      number: "5215574370309" }
   ],
 
@@ -294,6 +299,7 @@ export const config = {
   footer: "𝙰𝚍𝚘-𝑩𝒐𝒕 by Wyra Studios"
 };
 ```
+<details>
 
 Los comandos con isOwner (.restart, .exec, .fix, .backup, .getplugin…)
 solo los usan los números de owners. La comparación vale con y sin lada:
@@ -304,7 +310,8 @@ cuando no puede.
 
 ---
 
-🧩 Comandos
+<details>
+<summary><strong>🧩 Comandos</strong> — Todos dentro de Plugins</summary>
 
 Prefijo de ejemplo .. Casi todos tienen alias en español (#diario, #robar,
 #fijar…): la lista completa está en docs/COMANDOS.md y en
@@ -329,10 +336,12 @@ Categoría Comandos Ejemplos
 🧪 Test 7 botones boton1…boton6
 
 💡 Cualquier comando funciona en modo privado con un guion al final: .menu-.
+<details>
 
 ---
 
-🔧 Novedades de esta versión
+<details>
+<summary><strong>🔑 Explicación de la Versión</strong> — Te explico</summary>
 
 · 🔎 ESLint como puerta (eslint.config.js, npm run lint): reglas que
   atrapan bugs, no opiniones de estilo — no-undef, no-dupe-keys,
@@ -508,7 +517,8 @@ Categoría Comandos Ejemplos
   parche en tmp/ y pide confirmación antes de tocar nada.
 · 🧩 Un solo sitio para el cliente: todo importa de lib/baileys.js, con
   @itsliaaa/baileys por defecto y respaldo automático al oficial si no carga.
-· 📄 Licencia AGPL-3.0 con NOTICE de procedencia: ver Licencia.
+· 📄 Licencia AGPL-3.0 con NOTICE de procedencia: ver Licencia
+<details>
 
 ---
 
