@@ -39,7 +39,7 @@ jobs:
           node-version: 22
           cache: npm
       - name: Instalar dependencias
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Pruebas
         run: npm test
       - name: Humo de los plugins
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          #cache: npm
+          cache: npm
       - run: npm ci --no-audit --no-fund
       - name: node --check en todos los archivos
         run: npm run sintaxis
