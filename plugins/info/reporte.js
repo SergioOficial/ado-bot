@@ -23,10 +23,10 @@ export default {
 
       const nombreUsuario = m.pushName || "Usuario Desconocido";
       const jidRemitente = sender || m.sender || m.key?.participant || m.key?.remoteJid || from;
-      const numeroUsuario = jidRemitente.split("@")[0];
+      const numeroUsuario = String(jidRemitente).split("@")[0];
 
       let origen = "Chat Privado";
-      if (from.endsWith("@g.us")) {
+      if (String(from).endsWith("@g.us")) {
         try {
           const metadata = await sock.groupMetadata(from);
           origen = `Grupo: *${metadata.subject}*`;
@@ -35,12 +35,11 @@ export default {
         }
       }
 
-      // Detectar si viene de un sub-bot y usar el socket del bot principal
+      // Si es sub-bot, mandar el reporte por el bot principal
       const esSubbot = !!sock.esSubbot;
       const sockPrincipal = global.nucleo?.obtenerSock?.() || null;
       const sockEnvio = (esSubbot && sockPrincipal) ? sockPrincipal : sock;
 
-      // Si es sub-bot y no hay principal disponible, avisar
       if (esSubbot && !sockPrincipal) {
         await sock.sendMessage(from, { react: { text: "❌", key: m.key } });
         return enviartexto("❌ El bot principal no está disponible ahora. Intenta de nuevo en unos segundos.");
@@ -48,9 +47,8 @@ export default {
 
       const textoComando = m.text || m.message?.conversation || m.message?.extendedTextMessage?.text || "";
       const comandoUsado = textoComando.replace(config.prefix[0], "").split(" ")[0].toLowerCase() || "reporte";
-      const tituloTipo = comandoUsado === "sug" || comandoUsado === "sugerencia" ? "SUGERENCIA" : "REPORTE";
+      const tituloTipo = (comandoUsado === "sug" || comandoUsado === "sugerencia") ? "SUGERENCIA" : "REPORTE";
 
-      // Indicar de qué cuenta sale el reporte
       const origenBot = esSubbot
         ? `🤖 *Bot:* Sub-bot (${sock.numeroSubbot || "desconocido"})`
         : `🤖 *Bot:* Principal`;
@@ -65,14 +63,12 @@ export default {
       const STAFF_GROUP = "120363413955265605@g.us";
 
       if (tieneMedia) {
-        // Intentar reenviar el mensaje original (con media)
         try {
           await sockEnvio.sendMessage(STAFF_GROUP, {
             forward: m,
             caption: mensajeStaff
           });
         } catch {
-          // Si el forward falla (típico entre cuentas distintas), mandar solo el texto
           await sockEnvio.sendMessage(STAFF_GROUP, {
             text: mensajeStaff + "\n\n⚠️ _Había un archivo adjunto que no se pudo reenviar desde el sub-bot._"
           });
