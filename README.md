@@ -74,14 +74,12 @@ internet. Nada más.
    está abandonada y no actualiza paquetes).
 
    ```bash
-
-   https://f-droid.org/es/packages/com.termux/
+https://f-droid.org/es/packages/com.termux/
    ```
 ----
 
 2. Abre Termux y actualiza los paquetes base:
    ```bash
-
 pkg update && pkg upgrade -y
    ```
 ---
