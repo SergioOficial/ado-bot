@@ -214,6 +214,7 @@ function crearRouterPara(sock) {
     config,
     obtenerDb,
     esOwner: esDueno,
+    permitirPropios: true,
     esAdminGrupo: esAdmin,
     autorReal,
     guarda: () => guardaDe(sock),
