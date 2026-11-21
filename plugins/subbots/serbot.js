@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { enviarJuegoHtml } from "../../lib/juego-html.js";
 
 const SUBS_DIR = path.resolve('./subs');
-const htmlPath = new URL("../../juegos/codes.html", import.meta.url);
+const htmlPath = new URL("../../juegos/code.html", import.meta.url);
 
 export default {
   command: ["serbot", "mibots", "gestorbots"],
