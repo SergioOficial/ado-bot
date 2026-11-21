@@ -30,10 +30,10 @@ export default {
     const p = PREFIX;
 
     // ═══════════ DATOS DEL BOT ═══════════
-    let version = "1.0.0";
+    let version = "1.1.3";
     try {
       const pkg = JSON.parse(fs.readFileSync(path.resolve('./package.json'), 'utf8'));
-      version = pkg.version || "1.0.0";
+      version = pkg.version || "1.1.3";
     } catch {}
 
     const uptime = process.uptime();
@@ -59,14 +59,7 @@ export default {
       tipoBot = esPremium ? "Prem-bot" : "Sub-Bot";
     }
 
-    let urlLink = "https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j";
-    if (isGroup) {
-      try {
-        const code = await sock.groupInviteCode(from);
-        urlLink = `https://chat.whatsapp.com/${code}`;
-      } catch {}
-    }
-
+    let urlLink = "https://github.com/SergioOficial/ado-bot";
     const meses = ["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","sep.","oct.","nov.","dic."];
     const ahora = new Date();
     const fecha = `${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}, ${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")} ${ahora.getHours() >= 12 ? "PM" : "AM"}`;
@@ -79,8 +72,10 @@ export default {
     const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, Como estas en esta navidad?, mucho gusto mi nombre es *ㅤ ⋰ּׅ ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🎄ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
  ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
 
-: ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${titulo}
+: ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${tipoBot}
+│❀  *ᴅᴇsᴀʀʀᴏʟʟᴀᴅᴏʀ ::* Sergio Dev
 │☄︎ *sɪsᴛᴇᴍᴀ/ᴏᴘʀ ::* ${plataforma}
+│✧ *ᴠᴇʀsɪóɴ ::*  ${version}
 │❖ *ᴜsᴇʀs ::* ${totalUsers}
 │❖ *ᴍɪ ᴛɪᴇᴍᴘᴏ ::* ${fecha}
 │❖ *ᴜʀʟ ::* ${urlLink}
