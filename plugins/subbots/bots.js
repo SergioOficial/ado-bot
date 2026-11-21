@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { conns as connsImportados } from '../../boot/subbots.js'; // 👈 Intentamos importar directo
+import { conns as connsImportados } from './boot/subbots.js'; // 👈 Intentamos importar directo
 
 export default {
   command: ["bots", "sockets", "subbots"],
