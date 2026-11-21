@@ -48,9 +48,9 @@ export default {
 
     // 3. Construir el mensaje con el diseño solicitado
     let texto = `ꕥ Números de Sockets activos *(${totalSockets})*\n\n`;
-    texto += `ੈ❖‧₊˚ Principales › *${principales}*\n`;
-    texto += `ੈ✰︎︎‧₊˚ Premiums › *${premiums}*\n`;
-    texto += `ੈ✿‧₊˚ Subs › *${subs}*\n\n\n`;
+    texto += `❖₊˚ Principales › *${principales}*\n`;
+    texto += `✰︎︎₊˚ Premiums › *${premiums}*\n`;
+    texto += `✿₊˚ Subs › *${subs}*\n\n\n`;
 
     // 4. Buscar bots en el grupo actual
     const mentions = [];
