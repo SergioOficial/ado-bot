@@ -32,7 +32,7 @@ export const pruebas = [
     for (const forma of ["5215574370309", "5574370309", "525574370309"]) {
       esVerdad(mismoNumero(dueno.number, forma), `coincide con ${forma}`);
     }
-    igual((config.owners || []).length, 4, "cuatro dueños (José ya no está)");
+    igual((config.owners || []).length, 3, "tres dueños (José ya no está)");
     esVerdad(
       !(config.owners || []).some((o) => String(o.number).includes("584245610338")),
       "el número de José no quedó en la lista"
