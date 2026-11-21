@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
  * La versión NO se escribe aquí.
  *
  * Estaba a mano en dos sitios y se quedaron descolgadas: `package.json` decía
- * 1.1.0 (lo que se publicó en GitHub, con su etiqueta v1.1.0) y aquí seguía
+ * 1.1.3 (lo que se publicó en GitHub, con su etiqueta v1.1.3) y aquí seguía
  * puesto 1.0.6, así que `.info`, `.infobot`, `.estado` y `.botinfo` anunciaban
  * una versión que ya no era. Ahora hay una sola fuente y manda `package.json`:
  * para sacar una versión nueva se cambia ahí y ya lo dice todo el bot.
@@ -26,16 +26,15 @@ function versionDelPaquete() {
 // Configuración global.
 export const config = {
   // 🔥 MULTI-PREFIJO: El bot responderá a cualquiera de estos
-  prefix: [".", "#", "/", "🇨🇺"],
+  prefix: [".", "#", "/", "🇨🇺","°"],
   
-  botName: "Ado Bot",
+  botName: "𝙰𝚍𝚘𝑩𝒐𝒕",
   
 
   // Lista de owners (múltiples)
   owners: [
     { name: "Sergio Dev",  number: "5358090650" },
     { name: "Jeferson Fernández", number: "573005255807" },
-    { name: "atencion al cliente bots", number: "50494874330" },
     { name: "Roxi", number: "5215574370309" }
   ],
 
