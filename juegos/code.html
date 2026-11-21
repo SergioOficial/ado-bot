@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestión de Sub Bots</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #0b2b26 0%, #0a1c1a 100%); min-height: 100vh; padding: 15px; color: #fff; }
+        .container { max-width: 400px; margin: 0 auto; }
+        
+        h1 { text-align: center; font-size: 1.4rem; margin-bottom: 5px; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .sub { text-align: center; color: #a5f0d1; margin-bottom: 15px; font-size: 0.8rem; }
+        
+        .card { background: rgba(22, 34, 32, 0.85); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(72, 187, 150, 0.3); }
+        .card h2 { color: #2dd4bf; font-size: 1rem; margin-bottom: 10px; border-left: 3px solid #2dd4bf; padding-left: 8px; }
+        
+        .bot-item { background: #1e2a28; border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .bot-item span { font-weight: bold; font-size: 0.9rem; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        
+        a.btn {
+            display: block; text-align: center; text-decoration: none;
+            background: #2dd4bf; color: #0a2b25; padding: 10px; 
+            border-radius: 30px; font-weight: bold; font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        a.btn:hover { background: #1fa594; color: #fff; }
+        
+        a.btn-outline { background: transparent; border: 1px solid #2dd4bf; color: #2dd4bf; }
+        a.btn-outline:hover { background: rgba(45,212,191,0.1); }
+        
+        a.btn-danger { background: #e11d48; color: white; border: none; }
+        a.btn-danger:hover { background: #be123c; }
+
+        .empty { text-align: center; color: #a5f0d1; font-size: 0.85rem; padding: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🤖 Gestor de Sub-Bots</h1>
+    <div class="sub">Administra tus bots vinculados</div>
+
+    <div class="card">
+        <h2>📱 Vincular nuevo bot</h2>
+        <p style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 10px;">Presiona el botón para pedir el código de 8 dígitos.</p>
+        <!-- El número se inyecta automáticamente desde el bot -->
+        <a href="https://wa.me/{{BOT_NUMBER}}?text=.serbot%20code%20{{USER_PHONE}}" class="btn">🔗 Obtener Código</a>
+    </div>
+
+    <div class="card">
+        <h2>⚙️ Tus bots activos</h2>
+        <div id="bots-list">
+            <!-- El bot inyectará aquí los bots del usuario -->
+            {{LISTA_BOTS}}
+        </div>
+    </div>
+</div>
+</body>
+</html>
