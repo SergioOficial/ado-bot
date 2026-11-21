@@ -4,7 +4,6 @@ import { conns as connsImportados } from '../../boot/subbots.js'; // 👈 Intent
 
 export default {
   command: ["bots", "sockets", "subbots"],
-  category: "subbots",
   execute: async (ctx) => {
     const { sock, from, m, isGroup, db } = ctx;
 
