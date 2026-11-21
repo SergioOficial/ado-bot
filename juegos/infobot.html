@@ -1,744 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ado-Bot ⚔️ | Bot de WhatsApp Multi-Device</title>
-  <meta name="description" content="Ado-Bot - Bot de WhatsApp modular con IA, RPG, descargas y más. Creado por Sergio Dev y Roxi." />
-  <link rel="icon" href="https://i.postimg.cc/zvV6H1Yh/IMG-20261104-WA0051.jpg" type="image/jpeg" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ado-Bot | Info</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #050510;
-      --bg-2: #0a0a1a;
       --card: #0f0f1f;
       --border: #1e1e3a;
       --text: #ffffff;
       --muted: #8b8ba7;
       --neon-cyan: #00ffff;
       --neon-pink: #ff007f;
+      --neon-purple: #8b5cf6;
       --gradient: linear-gradient(135deg, #00ffff 0%, #8b5cf6 50%, #ff007f 100%);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html {
-      background: var(--bg);
-      color-scheme: dark;
-      scroll-behavior: smooth;
-    }
-
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 15px;
       overflow-x: hidden;
-      min-height: 100vh;
-      position: relative;
     }
 
-    /* ===== FONDO (una sola capa fija, sin animaciones que rompan) ===== */
-    .bg-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-color: #050510;
-      background-image:
-        radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.10) 0%, transparent 45%),
-        radial-gradient(circle at 80% 80%, rgba(255, 0, 127, 0.10) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.07) 0%, transparent 65%),
-        linear-gradient(rgba(0, 255, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.035) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 100% 100%, 50px 50px, 50px 50px;
-    }
-
-    /* Contenido por encima del fondo */
-    nav, main, footer { position: relative; z-index: 1; }
-
-    /* ============ NAVBAR ============ */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      padding: 1rem 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(7, 7, 20, 0.95);
-      border-bottom: 1px solid var(--border);
-      z-index: 100;
-    }
-
-    @supports (backdrop-filter: blur(10px)) {
-      nav {
-        background: rgba(7, 7, 20, 0.85);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-      }
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: 1.2rem;
-      letter-spacing: 2px;
-    }
-
-    .logo img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 2px solid var(--neon-cyan);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-      display: block;
-    }
-
-    .logo span {
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.3s;
-      position: relative;
-    }
-
-    .nav-links a:hover { color: var(--neon-cyan); }
-
-    .nav-links a::after {
+    /* Fondo animado */
+    body::before {
       content: '';
-      position: absolute;
-      bottom: -5px; left: 0;
-      width: 0; height: 2px;
-      background: var(--gradient);
-      transition: width 0.3s;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(255, 0, 127, 0.1) 0%, transparent 50%);
+      z-index: -1;
+      animation: pulse 5s ease-in-out infinite;
     }
 
-    .nav-links a:hover::after { width: 100%; }
-
-    /* ============ HERO ============ */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 8rem 1rem 4rem;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
-    /* Avatar con anillo degradado (sin mask, 100% compatible) */
-    .hero-avatar {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      padding: 4px;
-      background: var(--gradient);
-      box-shadow: 0 0 50px rgba(0, 255, 255, 0.35), 0 0 90px rgba(255, 0, 127, 0.18);
-      margin-bottom: 2rem;
-      flex-shrink: 0;
-      animation: float 4s ease-in-out infinite;
-    }
-
-    .hero-avatar img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      background: var(--bg);
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-
-    .hero h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      font-weight: 900;
-      letter-spacing: 4px;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-    }
-
-    .hero .tagline {
-      color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 600px;
-      margin-bottom: 1rem;
-    }
-
-    .hero .credits-line {
-      color: var(--muted);
-      font-size: 0.9rem;
-      letter-spacing: 0.5px;
-      margin-bottom: 2rem;
-    }
-
-    .hero .credits-line strong {
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-      font-weight: 700;
-    }
-
-    .hero-badges {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .hero-badges img { height: 28px; }
-
-    .cta-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .btn {
-      padding: 0.9rem 2rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, color 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      border: none;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .btn-primary {
-      background: var(--gradient);
-      color: #050510;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 2px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--neon-cyan);
-      color: var(--neon-cyan);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-    }
-
-    /* ============ SECCIONES ============ */
-    section {
-      padding: 5rem 5%;
-      max-width: 1300px;
-      margin: 0 auto;
-    }
-
-    .section-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      letter-spacing: 2px;
-    }
-
-    .section-title span {
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .section-subtitle {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 3rem;
-      font-size: 1rem;
-    }
-
-    /* Features */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .feature-card {
+    .dashboard {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 2rem 1.5rem;
-      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
     }
 
-    .feature-card::before {
+    /* Línea superior de neón */
+    .dashboard::before {
       content: '';
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 3px;
+      top: 0; left: 0; width: 100%; height: 4px;
       background: var(--gradient);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s;
     }
 
-    .feature-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--neon-cyan);
-      box-shadow: 0 10px 40px rgba(0, 255, 255, 0.15);
-    }
-
-    .feature-card:hover::before { transform: scaleX(1); }
-
-    .feature-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      display: inline-block;
-    }
-
-    .feature-card h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.1rem;
-      margin-bottom: 0.7rem;
-      letter-spacing: 1px;
-    }
-
-    .feature-card p {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    /* Comandos */
-    .commands-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.2rem;
-    }
-
-    .command-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.3rem;
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
       display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      transition: border-color 0.3s, box-shadow 0.3s;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .command-card:hover {
+    .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+      margin-bottom: 12px;
+      /* Si la imagen falla en WhatsApp, este degradado actúa como respaldo */
+      background: var(--gradient);
+      object-fit: cover;
+    }
+
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      transition: all 0.3s;
+    }
+
+    .item:hover {
       border-color: var(--neon-pink);
-      box-shadow: 0 0 25px rgba(255, 0, 127, 0.15);
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.15);
     }
 
-    .command-card .ico {
-      font-size: 1.8rem;
-      flex-shrink: 0;
-      line-height: 1;
-    }
-
-    .command-card h4 {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
+    .item span {
+      display: block;
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
       font-weight: 600;
     }
 
-    .command-card code {
-      display: inline-block;
-      background: rgba(0, 255, 255, 0.1);
+    .item strong {
+      display: block;
+      font-size: 13px;
       color: var(--neon-cyan);
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.85rem;
-      margin: 0 4px 4px 0;
-    }
-
-    .command-card p {
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin-top: 0.5rem;
-    }
-
-    /* Contacto */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .contact-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      text-align: center;
-      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-      text-decoration: none;
-      color: var(--text);
-    }
-
-    .contact-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--neon-cyan);
-      box-shadow: 0 10px 40px rgba(0, 255, 255, 0.2);
-    }
-
-    .contact-card .ico-big {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      line-height: 1;
-    }
-
-    .contact-card h4 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.1rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .contact-card p {
-      color: var(--muted);
-      font-size: 0.9rem;
       word-break: break-word;
     }
 
-    /* Footer */
-    footer {
+    .item strong.pink { color: var(--neon-pink); }
+    .item strong.purple { color: var(--neon-purple); }
+
+    .credits {
       text-align: center;
-      padding: 3rem 1rem;
       border-top: 1px solid var(--border);
+      padding-top: 15px;
+      font-size: 10px;
       color: var(--muted);
-      font-size: 0.9rem;
-      margin-top: 4rem;
     }
 
-    footer a {
-      color: var(--neon-cyan);
-      text-decoration: none;
-      transition: color 0.3s;
+    .credits b {
+      color: #fff;
     }
 
-    footer a:hover { color: var(--neon-pink); }
-
-    .roxi-credit {
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
+    .credits .roxi {
+      color: var(--neon-pink);
       font-weight: 700;
-    }
-
-    .credits-dev {
-      margin-top: 0.8rem;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .credits-dev strong { color: var(--text); }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      nav { padding: 0.8rem 4%; }
-      .nav-links { display: none; }
-      .hero { padding-top: 6rem; }
-      .hero-avatar { width: 140px; height: 140px; }
-      section { padding: 3rem 5%; }
-    }
-
-    /* Accesibilidad: sin animaciones si el usuario lo pide */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: var(--bg-2); }
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #00ffff, #8b5cf6, #ff007f);
-      border-radius: 5px;
     }
   </style>
 </head>
 <body>
-
-  <!-- Capa de fondo (aislada, no interfiere con el contenido) -->
-  <div class="bg-layer" aria-hidden="true"></div>
-
-  <!-- NAVBAR -->
-  <nav>
-    <div class="logo">
-      <img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" alt="Ado-Bot" />
-      <span>ADO-BOT</span>
+  <div class="dashboard">
+    <div class="header">
+      <img src="{{PFP}}" class="avatar" alt="Bot">
+      <h1>{{BOT_NAME}}</h1>
+      <p>Sistema en Línea 🟢</p>
     </div>
-    <ul class="nav-links">
-      <li><a href="#features">Características</a></li>
-      <li><a href="#comandos">Comandos</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-      <li><a href="https://github.com/SergioOficial" target="_blank" rel="noopener">GitHub</a></li>
-    </ul>
-  </nav>
-
-  <main>
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-avatar">
-        <img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" alt="Ado-Bot Avatar" />
+    
+    <div class="grid">
+      <div class="item">
+        <span>Tipo de Bot</span>
+        <strong class="pink">{{TIPO}}</strong>
       </div>
-
-      <h1>ADO-BOT</h1>
-
-      <p class="tagline">
-        El bot de WhatsApp multi-dispositivo, modular y sin cajas negras.
-        IA, RPG, descargas, stickers, economía y mucho más en un solo lugar.
-      </p>
-
-      <p class="credits-line">
-        Creado por <strong>Sergio Dev</strong> &amp; <strong>Roxi</strong>
-      </p>
-
-      <div class="hero-badges">
-        <img src="https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" />
-        <img src="https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
-        <img src="https://img.shields.io/badge/Baileys-Multi--Device-blue?style=for-the-badge" alt="Baileys" />
-        <img src="https://img.shields.io/badge/License-AGPL--3.0-red?style=for-the-badge" alt="License" />
+      <div class="item">
+        <span>Prefijo</span>
+        <strong>{{PREFIX}}</strong>
       </div>
-
-      <div class="cta-buttons">
-        <a href="https://wa.me/5358090650" target="_blank" rel="noopener" class="btn btn-primary">
-          💬 Contactar por WhatsApp
-        </a>
-        <a href="https://github.com/SergioOficial" target="_blank" rel="noopener" class="btn btn-secondary">
-          🐙 Ver en GitHub
-        </a>
+      <div class="item">
+        <span>Uptime</span>
+        <strong>{{UPTIME}}</strong>
       </div>
-    </section>
-
-    <!-- CARACTERÍSTICAS -->
-    <section id="features">
-      <h2 class="section-title">CARACTERÍSTICAS <span>DEL BOT</span></h2>
-      <p class="section-subtitle">Todo lo que Ado-Bot puede hacer por ti</p>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <span class="feature-icon">🧩</span>
-          <h3>Sistema Modular</h3>
-          <p>Cada comando es un plugin independiente. Fácil de mantener, actualizar y expandir sin tocar el núcleo.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🔀</span>
-          <h3>Multi-Prefijo</h3>
-          <p>Responde a múltiples prefijos como <code>.</code> <code>#</code> <code>/</code> y emojis de bandera a la vez.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🕵️</span>
-          <h3>Modo Privado</h3>
-          <p>Añade un guion al final del comando (<code>.menu-</code>) y el bot te responde solo a ti por privado.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🤖</span>
-          <h3>Sub-Bots</h3>
-          <p>Crea clones del bot vinculando otros números, con sus propios owners y configuración independiente.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🛡️</span>
-          <h3>Anti-Ban</h3>
-          <p>Sistema inteligente de cola de envíos, calentamiento diario y vigilante de riesgo para proteger tu cuenta.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🧠</span>
-          <h3>Inteligencia Artificial</h3>
-          <p>Generación de texto, imágenes y notas de voz con IA de última generación, directamente en el chat.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🎨</span>
-          <h3>Multimedia</h3>
-          <p>Descargas de Pinterest, TikTok, Facebook, Instagram, YouTube y Spotify con compresión inteligente.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🎮</span>
-          <h3>RPG y Economía</h3>
-          <p>Sistema completo de monedas, banco, apuestas, niveles, caza, minería, pesca y profesiones.</p>
-        </div>
-
-        <div class="feature-card">
-          <span class="feature-icon">🔘</span>
-          <h3>Botones Nativos</h3>
-          <p>Menús con botones interactivos, listas desplegables y respuestas rápidas nativas de WhatsApp.</p>
-        </div>
+      <div class="item">
+        <span>Usuarios</span>
+        <strong>{{USERS}}</strong>
       </div>
-    </section>
-
-    <!-- COMANDOS -->
-    <section id="comandos">
-      <h2 class="section-title">COMANDOS <span>DESTACADOS</span></h2>
-      <p class="section-subtitle">Más de 454 comandos disponibles. Usa <code>.allmenu</code> para ver todos</p>
-
-      <div class="commands-grid">
-        <div class="command-card">
-          <span class="ico">🧠</span>
-          <div>
-            <h4>IA &amp; ChatGPT</h4>
-            <code>#ia</code><code>#iaaudio</code><code>#imagen</code>
-            <p>Chatea con IA, genera imágenes y recibe respuestas por voz.</p>
-          </div>
-        </div>
-
-        <div class="command-card">
-          <span class="ico">📥</span>
-          <div>
-            <h4>Descargas</h4>
-            <code>#play</code><code>#pin</code><code>#tt</code><code>#sp</code>
-            <p>YouTube, Pinterest, TikTok, Spotify, Facebook e Instagram.</p>
-          </div>
-        </div>
-
-        <div class="command-card">
-          <span class="ico">💰</span>
-          <div>
-            <h4>Economía</h4>
-            <code>#daily</code><code>#work</code><code>#slots</code><code>#rob</code>
-            <p>Trabaja, apuesta, roba y conviértete en el más rico del grupo.</p>
-          </div>
-        </div>
-
-        <div class="command-card">
-          <span class="ico">⚔️</span>
-          <div>
-            <h4>RPG</h4>
-            <code>#cazar</code><code>#minar</code><code>#hackear</code><code>#adoptar</code>
-            <p>Sube de nivel, elige tu clase y adopta tu mascota para dominar el ranking.</p>
-          </div>
-        </div>
-
-        <div class="command-card">
-          <span class="ico">🖌️</span>
-          <div>
-            <h4>Stickers</h4>
-            <code>#s</code><code>#brat</code>
-            <p>Crea stickers a partir de imágenes o videos.</p>
-          </div>
-        </div>
-
-        <div class="command-card">
-          <span class="ico">💎</span>
-          <div>
-            <h4>Premium</h4>
-            <code>Ultra Economía</code><code>#perfil</code><code>#jadibot</code>
-            <p>#set para opciones del perfil, menos tiempo de regeneración de economía, daily cada 12 horas y jadibot disponible para crear tu bot prem.</p>
-          </div>
-        </div>
-
-        <div class="command-card">
-          <span class="ico">🛡️</span>
-          <div>
-            <h4>Administración</h4>
-            <code>#close</code><code>#welcome</code><code>#tag</code>
-            <p>Controla tu grupo con herramientas de admin avanzadas.</p>
-          </div>
-        </div>
+      <div class="item">
+        <span>RAM Usada</span>
+        <strong class="purple">{{RAM_USADA}}</strong>
       </div>
-    </section>
-
-    <!-- CONTACTO -->
-    <section id="contacto">
-      <h2 class="section-title">CONTACTO <span>Y REDES</span></h2>
-      <p class="section-subtitle">Síguenos y contáctanos por cualquiera de estos medios</p>
-
-      <div class="contact-grid">
-        <a href="https://wa.me/5358090650" target="_blank" rel="noopener" class="contact-card">
-          <div class="ico-big">💬</div>
-<h4>WhatsApp</h4>
-          <p>+53 580 906 50</p>
-        </a>
-
-        <a href="https://github.com/SergioOficial" target="_blank" rel="noopener" class="contact-card">
-          <div class="ico-big">🐙</div>
-          <h4>GitHub</h4>
-          <p>@SergioOficial</p>
-        </a>
-
-        <a href="https://whatsapp.com/channel/0029VbDLUk5H5JLsWeYxxD1d" target="_blank" rel="noopener" class="contact-card">
-          <div class="ico-big">📢</div>
-          <h4>Canal Principal</h4>
-          <p>Únete al canal oficial</p>
-        </a>
-
-        <a href="https://chat.whatsapp.com/FAWaPaXIcbpLxpcq823WiE" target="_blank" rel="noopener" class="contact-card">
-          <div class="ico-big">👥</div>
-          <h4>Comunidad</h4>
-          <p>Grupo de soporte</p>
-        </a>
+      <div class="item">
+        <span>Plataforma</span>
+        <strong style="font-size: 11px;">{{PLATAFORMA}}</strong>
       </div>
-    </section>
-  </main>
+    </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>
-      Hecho con 💫 desde Cuba para el mundo ·
-      <a href="https://github.com/SergioOficial" target="_blank" rel="noopener">SergioOficial</a> &amp;
-      <span class="roxi-credit">Roxi</span> ·
-      Ado-Bot © 2026
-    </p>
-    <p class="credits-dev">
-      Desarrollado por <strong>Sergio Dev</strong> &amp; <strong>Roxi</strong> · Licencia AGPL-3.0 · Bot construido con Baileys
-    </p>
-  </footer>
-
+    <div class="credits">
+      Desarrollado por <b>Sergio Dev</b><br>
+      Colaborador <span class="roxi">riokuroxi-svg</span>
+    </div>
+  </div>
 </body>
 </html>
-
-    
