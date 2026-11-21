@@ -19,9 +19,7 @@
       --neon-purple: #8b5cf6;
       --gradient: linear-gradient(135deg, #00ffff 0%, #8b5cf6 50%, #ff007f 100%);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg);
@@ -31,10 +29,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 15px;
-      overflow-x: hidden;
     }
-
-    /* Fondo animado */
     body::before {
       content: '';
       position: fixed;
@@ -45,12 +40,10 @@
       z-index: -1;
       animation: pulse 5s ease-in-out infinite;
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
-
     .dashboard {
       background: var(--card);
       border: 1px solid var(--border);
@@ -62,15 +55,12 @@
       position: relative;
       overflow: hidden;
     }
-
-    /* Línea superior de neón */
     .dashboard::before {
       content: '';
       position: absolute;
       top: 0; left: 0; width: 100%; height: 4px;
       background: var(--gradient);
     }
-
     .header {
       text-align: center;
       margin-bottom: 25px;
@@ -78,7 +68,6 @@
       flex-direction: column;
       align-items: center;
     }
-
     .avatar {
       width: 70px;
       height: 70px;
@@ -86,11 +75,9 @@
       border: 2px solid var(--neon-cyan);
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
       margin-bottom: 12px;
-      /* Si la imagen falla en WhatsApp, este degradado actúa como respaldo */
       background: var(--gradient);
       object-fit: cover;
     }
-
     .header h1 {
       font-family: 'Orbitron', sans-serif;
       font-size: 22px;
@@ -103,34 +90,24 @@
       margin-bottom: 4px;
       text-transform: uppercase;
     }
-
     .header p {
       color: var(--muted);
       font-size: 11px;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 20px;
     }
-
     .item {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 12px;
-      transition: all 0.3s;
     }
-
-    .item:hover {
-      border-color: var(--neon-pink);
-      box-shadow: 0 0 15px rgba(255, 0, 127, 0.15);
-    }
-
     .item span {
       display: block;
       font-size: 9px;
@@ -140,7 +117,6 @@
       margin-bottom: 4px;
       font-weight: 600;
     }
-
     .item strong {
       display: block;
       font-size: 13px;
@@ -148,10 +124,8 @@
       font-family: 'Orbitron', sans-serif;
       word-break: break-word;
     }
-
     .item strong.pink { color: var(--neon-pink); }
     .item strong.purple { color: var(--neon-purple); }
-
     .credits {
       text-align: center;
       border-top: 1px solid var(--border);
@@ -159,15 +133,8 @@
       font-size: 10px;
       color: var(--muted);
     }
-
-    .credits b {
-      color: #fff;
-    }
-
-    .credits .roxi {
-      color: var(--neon-pink);
-      font-weight: 700;
-    }
+    .credits b { color: #fff; }
+    .credits .roxi { color: var(--neon-pink); font-weight: 700; }
   </style>
 </head>
 <body>
