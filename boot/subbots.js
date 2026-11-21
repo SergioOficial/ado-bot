@@ -320,7 +320,7 @@ export function crearGestorSubbots(deps) {
           if (borrarAviso) clearTimeout(borrarAviso);
           activos.set(phoneNumber, subSock);
           // riokuroxi-svg: la racha se reinicia tras estabilidad, no al abrir fugazmente.
-          await avisar(remoteJid, `✅ *Sub-bot conectado*\n📱 ${phoneNumber}`);
+          await avisar(remoteJid, `✅ *Sub-bot conectado leyendo el mensaje*\n> ${phoneNumber}`);
         }
 
         // ── Cerrado ───────────────────────────────────────────────────────
