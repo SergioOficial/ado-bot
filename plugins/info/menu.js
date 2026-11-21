@@ -2,6 +2,8 @@ import { enviarConBotones, rapido, lista } from "../../lib/botones.js";
 import { LEYENDA, CREDITO, marcar } from "../../lib/menu-ayuda.js";
 import { commands } from "../../pluginLoader.js";
 import os from "node:os";
+import fs from "node:fs";
+import path from "node:path";
 
 const TOP = "╭╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ࣪ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╮";
 const MID = "├╾ׅ╴ׂ╌╶ׅ╌ׂ─ 〫─ׂ┄ׅ╴ׂ╌ׅ╶╼.. ╾ׅ╴ׂ╌╶ׅ╌ׂ";
@@ -22,42 +24,66 @@ ${BOT}`;
 export default {
   command: ["menu", "help", "menú", "ayuda"],
   execute: async (ctx) => {
-    const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args, comando } = ctx;
+    const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args, comando, isGroup } = ctx;
     const numero = sender.split("@")[0];
     const tipo = args[0]?.toLowerCase();
     const p = PREFIX;
 
-    const user = db.users[sender] || {};
-    const totalUsers = Object.keys(db.users || {}).length;
+    // ═══════════ DATOS DEL BOT ═══════════
+    let version = "1.0.0";
+    try {
+      const pkg = JSON.parse(fs.readFileSync(path.resolve('./package.json'), 'utf8'));
+      version = pkg.version || "1.0.0";
+    } catch {}
 
-    const CANAL_JID = "120363425322183138@newsletter";
-    const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
-    const CANAL_URL = "https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j";
-    const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
+    const uptime = process.uptime();
+    const dias = Math.floor(uptime / 86400);
+    const horas = Math.floor((uptime % 86400) / 3600);
+    const mins = Math.floor((uptime % 3600) / 60);
+    let tiempoStr = "";
+    if (dias > 0) tiempoStr += `${dias}d `;
+    if (horas > 0) tiempoStr += `${horas}h `;
+    tiempoStr += `${mins}m`;
 
-    // Info del sistema
-    const sistema = `${os.type()} ${os.release()} ${os.arch()}`;
+    const plataforma = `${os.type()} ${os.release()} ${os.arch()}`;
+    const totalUsers = Object.keys(db.users || {}).length.toLocaleString('en-US');
+
+    const miJid = sock.user?.id || "";
+    const miNumero = miJid.split('@')[0].split(':')[0];
+    const esPrincipal = (config.owners || []).some(o => (o.number || o) === miNumero);
+    const botDb = db.users[`${miNumero}@s.whatsapp.net`] || {};
+    const esPremium = botDb.premium === true;
+
+    let tipoBot = "Owner";
+    if (!esPrincipal) {
+      tipoBot = esPremium ? "Prem-bot" : "Sub-Bot";
+    }
+
+    let urlLink = "https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j";
+    if (isGroup) {
+      try {
+        const code = await sock.groupInviteCode(from);
+        urlLink = `https://chat.whatsapp.com/${code}`;
+      } catch {}
+    }
+
     const meses = ["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","sep.","oct.","nov.","dic."];
     const ahora = new Date();
     const fecha = `${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}, ${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")} ${ahora.getHours() >= 12 ? "PM" : "AM"}`;
 
-    // URL del grupo o canal
-    let urlGrupo = CANAL_URL;
-    if (m.isGroup) {
-      try {
-        const code = await sock.groupInviteCode(from);
-        urlGrupo = `https://chat.whatsapp.com/${code}`;
-      } catch {}
-    }
+    const CANAL_JID = "120363425322183138@newsletter";
+    const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
+    const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
 
-    const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, Como estas en esta navidad?, mucho gusto mi nombre es *ㅤ ⋰ּׅ ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🎄ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
+    // Cabecera fusionada con el bloque de info
+    const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, Como estas en esta navidad?, mucho gusto mi nombre es *ㅤ ⋰ּׅ ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🎄ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
  ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
 
 : ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${titulo}
-│☄︎ *sɪsᴛᴇᴍᴀ/ᴏᴘʀ ::* ${sistema}
-│❖ *ᴜsᴇʀs ::* ${totalUsers.toLocaleString()}
+│☄︎ *sɪsᴛᴇᴍᴀ/ᴏᴘʀ ::* ${plataforma}
+│❖ *ᴜsᴇʀs ::* ${totalUsers}
 │❖ *ᴍɪ ᴛɪᴇᴍᴘᴏ ::* ${fecha}
-│❖ *ᴜʀʟ ::* ${urlGrupo}
+│❖ *ᴜʀʟ ::* ${urlLink}
 
  ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
 
@@ -68,26 +94,25 @@ export default {
 
     // ═══════════ MENÚ PRINCIPAL ═══════════
     if (!tipo) {
-      texto = header("Menú Principal");
+      texto = header("Menú Principal") + `\n> 💡 *Tip:* Usa *${p}menu <categoría>* para ver los detalles.\n\n`;
 
-      texto += "\n" + compacta("🎁 Economía", ["work","daily","beg","bal","nivel","dep","with","pay","rob","crime","cf","slots","dice","rankcoins","interest","ppt","cofre","invertir","shop","give","weekly","monthly"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("⚔️ RPG", ["trabajar","cazar","pescar","minar","explorar","clase","ranknivel","talar","cultivar","repartir","pintar","hackear","streamer","policia","bombero","espiar","mago"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🐾 Mascotas", ["adoptar","animal","nombrar","acariciar","alimentar","pasear","animaltop","pelear","atacar","cambiar","huir","capturar","petactivo"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🎴 Gacha", ["gacha on","gacha off","rw","roll","rollwaifu","claim","c","reclamar","harem","waifus","claims","wtop","topwaifus","waifustop","charinfo","winfo","vote"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🌟 Perfil", ["reg","perfil","delperfil","level","lboard","afk"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🎄 Descargas", ["play","play2","fb","ig","tt","mf","apk","ytsearch","toimg"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("☃️ Stickers", ["s","brat","bratv","emojimix","stickers"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🧠 IA", ["ia","iaaudio","imagen"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🎉 Diversión", ["trivia","mate","8ball","meme","gato","perro","waifu","neko","ship", "papel", "memoria", "Cerito", "tetris", "ajedrez", "ajedrez 2"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🔔 Utilidades", ["ping","info","creadores","traducir","clima","wiki","qr","tts"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🐙 GitHub", ["gitsearch","ghsearch"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🤖 SubBots", ["code","jadibot","canjear","stopbot","bots"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🛡️ Admin", ["close","open","del","kick","promote","demote","warn","warns","delwarn","setwarnlimit","hidetag","antilink","bot","link","revoke","setgpname","setgpdesc","setgpbanner","pin","unpin","count","topcount","topinactive","gp","testwelcome"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("👑 Owner", ["fix","backup","restart","join","leave","gencode","error"].map(c => `${p}${c}`));
-      texto += "\n" + compacta("🧪 Test", [`${p}botones`]);
-      texto += "\n" + compacta("🎭 Reacciones", ["angry","kill","sleep","hug","kiss","pat","slap","cry","dance","smile","wave","bonk","bite","blush","cuddle"].map(c => `${p}${c}`));
+      texto += compacta("🎁 Economía", ["work","daily","beg","bal","nivel","dep","with","pay","rob","crime","cf","slots","dice","rankcoins","interest","ppt","cofre","invertir","shop","give","weekly","monthly"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("⚔️ RPG", ["trabajar","cazar","pescar","minar","explorar","clase","ranknivel","talar","cultivar","repartir","pintar","hackear","streamer","policia","bombero","espiar","mago"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🐾 Mascotas", ["adoptar","animal","nombrar","acariciar","alimentar","pasear","animaltop","pelear","atacar","cambiar","huir","capturar","petactivo"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🎴 Gacha", ["gacha on","gacha off","rw","roll","rollwaifu","claim","c","reclamar","harem","waifus","claims","wtop","topwaifus","waifustop","charinfo","winfo","vote"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🌟 Perfil", ["reg","perfil","delperfil","level","lboard","afk"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🎄 Descargas", ["play","play2","fb","ig","tt","mf","apk","ytsearch","toimg"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("☃️ Stickers", ["s","brat","bratv","emojimix","stickers"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🧠 IA", ["ia","iaaudio","imagen", "iam"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🎉 Diversión", ["trivia","mate","8ball","meme","gato","perro","waifu","neko","ship","papel","memoria","cerito","tetris","ajedrez"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🔔 Utilidades", ["ping","info","creadores","traducir","clima","wiki","qr","tts","evento"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🐙 GitHub", ["gitsearch","ghsearch"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🤖 SubBots", ["code","jadibot","canjear","stopbot","bots"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🛡️ Admin", ["close","open","del","kick","promote","demote","warn","warns","delwarn","setwarnlimit","hidetag","antilink","bot","link","revoke","setgpname","setgpdesc","setgpbanner","pin","unpin","count","topcount","topinactive","gp","testwelcome"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("👑 Owner", ["fix","backup","restart","join","leave","gencode","error"].map(c => `${p}${c}`)) + "\n";
+      texto += compacta("🧪 Test", [`${p}botones`]) + "\n";
+      texto += compacta("🎭 Reacciones", ["angry","kill","sleep","hug","kiss","pat","slap","cry","dance","smile","wave","bonk","bite","blush","cuddle"].map(c => `${p}${c}`)) + "\n";
 
-      texto += `\n\n> 💡 *Tip:* Usa *${p}menu <categoría>* para ver los detalles (ej: *${p}menu rpg*).\n`;
       texto += `\n${LEYENDA}\n\n${CREDITO}`;
     }
     // ═══════════ CATEGORÍAS ═══════════
@@ -183,22 +208,23 @@ export default {
         [`${p}ia <pregunta>`, "Chatear con la IA"],
         [`${p}iaaudio <pregunta>`, "Respuesta en audio"],
         [`${p}imagen <prompt>`, "Generar imagen con IA"],
+        [`${p}iam <prompt>`, "Generar música con IA (Suno)"],
       ]) + `\n> Volver: *${p}menu*`;
     }
-    else if (tipo === 'fun') {
+    else if (tipo === 'fun' || tipo === 'juegos') {
       texto = header("Diversión") + "\n" + detallada("🎉 Diversión", [
         [`${p}trivia › ${p}mate › ${p}8ball`, "Trivia, matemáticas, 8ball"],
-[`${p}papel › ${p}memoria › ${p}Cerito › ${p}ajedrez › ${p}ajedrez2`,
-"comandos tipo web en WhatsApp"],
         [`${p}meme › ${p}gato › ${p}perro`, "Meme, gato, perro"],
         [`${p}waifu › ${p}neko › ${p}ship`, "Waifu, neko, ship"],
+        [`${p}cerito › ${p}ajedrez › ${p}tetris`, "Juegos web en WhatsApp"],
+        [`${p}papel › ${p}memoria`, "Juegos clásicos"],
       ]) + `\n> Volver: *${p}menu*`;
     }
     else if (tipo === 'utils' || tipo === 'utilidades') {
       texto = header("Utilidades") + "\n" + detallada("🔔 Utilidades", [
         [`${p}ping › ${p}info › ${p}creadores`, "Info básica del bot"],
         [`${p}traducir <txt> › ${p}clima <ciudad> › ${p}wiki <busq>`, "Traducción, clima, wiki"],
-        [`${p}qr › ${p}tts <txt>`, "Código QR y texto a voz"],
+        [`${p}qr › ${p}tts <txt> › ${p}evento`, "Código QR, texto a voz, eventos"],
       ]) + `\n> Volver: *${p}menu*`;
     }
     else if (tipo === 'subbots' || tipo === 'bot' || tipo === 'stockens') {
@@ -252,21 +278,20 @@ export default {
 
     texto = marcar(texto, PREFIX, commands);
 
-    // riokuroxi-svg: si falla la imagen, no dejar al usuario sin ayuda.
     try {
       await sock.sendMessage(from, {
-      image: { url: pfp },
-      caption: texto.trim(),
-      mentions: [sender],
-      contextInfo: {
-        forwardingScore: 1,
-        isForwarded: true,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: CANAL_JID,
-          newsletterName: CANAL_NOMBRE,
-          serverMessageId: 1
+        image: { url: pfp },
+        caption: texto.trim(),
+        mentions: [sender],
+        contextInfo: {
+          forwardingScore: 1,
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: CANAL_JID,
+            newsletterName: CANAL_NOMBRE,
+            serverMessageId: 1
+          }
         }
-      }
       }, { quoted: m });
     } catch (err) {
       console.error("⚠️ No se pudo enviar el menú con imagen:", err?.stack || err);
@@ -299,6 +324,7 @@ export default {
                 { id: `${comando} stickers`, title: "🖌️ Stickers", description: "sticker, brat, emojimix" },
                 { id: `${comando} owner`, title: "👑 Owner", description: "solo dueños" },
                 { id: `${comando} reacciones`, title: "🎭 Reacciones", description: "hug, kiss, pat, slap..." },
+                { id: `${comando} fun`, title: "🎮 Juegos", description: "cerito, ajedrez, tetris" },
               ],
             },
           ]),
