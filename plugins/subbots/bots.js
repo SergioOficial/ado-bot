@@ -1,35 +1,37 @@
-/**
- * bots.js — Lista y estadísticas de los sockets activos.
- */
-
 export default {
   command: ["bots", "sockets", "subbots"],
+  category: "subbots",
   execute: async (ctx) => {
     const { sock, from, m, isGroup, db, enviartexto } = ctx;
 
-    // 1. Obtener la lista de sockets conectados (sub-bots + principal)
-    // En la mayoría de los bots con Baileys, se guardan en global.conns
-    const conns = global.conns || global.subbots || [];
-    
-    // Si el bot principal no está en el array (a veces se maneja aparte), lo sumamos
-    let totalSockets = conns.length;
-    if (!conns.some(c => c.user?.id === sock.user?.id)) {
-      totalSockets++; 
+    // 1. Obtener la lista de sockets de forma segura (soporta Array, Objeto o Map)
+    const rawConns = global.conns || global.subbots || [];
+    let conns = [];
+    if (rawConns instanceof Map) conns = Array.from(rawConns.values());
+    else if (Array.isArray(rawConns)) conns = rawConns;
+    else if (typeof rawConns === 'object') conns = Object.values(rawConns);
+
+    const miJid = sock.user?.id || sock.user?.jid;
+    const miNumero = miJid.split('@')[0].split(':')[0];
+
+    // Si el bot actual (principal) no está en el array, lo agregamos para contarlo
+    if (!conns.some(c => (c.user?.id || c.user?.jid)?.includes(miNumero))) {
+      conns.push({ user: sock.user, isMain: true, socket: sock });
     }
 
+    let totalSockets = conns.length;
     let principales = 0;
     let premiums = 0;
     let subs = 0;
 
     // 2. Clasificar los sockets
     for (const c of conns) {
-      const jid = c.user?.id || c.user?.jid;
+      const jid = c.user?.id || c.user?.jid || "";
       if (!jid) continue;
-      
       const numero = jid.split("@")[0].split(":")[0];
       const userDb = db.users[`${numero}@s.whatsapp.net`] || {};
 
-      // Verificamos si es owner (principal) o si es premium
+      // Comprobar si es Owner/Principal (revisando config.owners o isMain)
       const esOwner = (db.settings?.owners || []).some(o => (o.number || o) === numero);
       
       if (c.isMain || esOwner) {
@@ -41,16 +43,11 @@ export default {
       }
     }
 
-    // Si somos el bot principal y no está en la lista, sumamos 1 a principales
-    if (!conns.some(c => c.user?.id === sock.user?.id)) {
-      principales++;
-    }
-
     // 3. Construir el mensaje con el diseño solicitado
     let texto = `ꕥ Números de Sockets activos *(${totalSockets})*\n\n`;
-    texto += `❖₊˚ Principales › *${principales}*\n`;
-    texto += `✰︎︎₊˚ Premiums › *${premiums}*\n`;
-    texto += `✿₊˚ Subs › *${subs}*\n\n\n`;
+    texto += `❖‧₊˚ Principales › *${principales}*\n`;
+    texto += `✰︎︎‧₊˚ Premiums › *${premiums}*\n`;
+    texto += `✿‧₊˚ Subs › *${subs}*\n\n\n`;
 
     // 4. Buscar bots en el grupo actual
     const mentions = [];
@@ -61,9 +58,8 @@ export default {
         const metadata = await sock.groupMetadata(from);
         const participantes = metadata.participants.map(p => p.id.split('@')[0].split(':')[0]);
 
-        // Revisar la lista de conexiones
         for (const c of conns) {
-          const jid = c.user?.id || c.user?.jid;
+          const jid = c.user?.id || c.user?.jid || "";
           if (!jid) continue;
           const numero = jid.split("@")[0].split(":")[0];
 
@@ -71,16 +67,12 @@ export default {
             botsEnGrupo.push({ jid: `${numero}@s.whatsapp.net`, socket: c, numero });
           }
         }
-
-        // Revisar si el bot principal (yo) está en el grupo (siempre lo está si ejecuto el comando)
-        const numeroYo = sock.user.id.split("@")[0].split(":")[0];
-        if (!botsEnGrupo.some(b => b.numero === numeroYo)) {
-          botsEnGrupo.push({ jid: `${numeroYo}@s.whatsapp.net`, socket: sock, numero: numeroYo, esYo: true });
-        }
-
       } catch (e) {
         console.error("Error al obtener metadata del grupo:", e);
       }
+
+      // Ordenar para que el bot actual salga primero
+      botsEnGrupo.sort((a, b) => (a.numero === miNumero ? -1 : 1));
 
       texto += `➭ *Bots en el grupo ›* ${botsEnGrupo.length}\n`;
       
@@ -88,22 +80,23 @@ export default {
         texto += `> _No hay otros bots en este grupo._`;
       } else {
         for (const b of botsEnGrupo) {
+          // Intentar sacar el nombre de la DB, del perfil de WhatsApp, o poner su número
           const userDb = db.users[b.jid] || {};
-          const pushName = b.socket?.user?.name || userDb.name || "Desconocido";
+          const pushName = userDb.name || b.socket?.user?.name || b.socket?.user?.verifiedName || "Desconocido";
           
-          // Si el bot es un sub-bot, mostramos la etiqueta [Sub]
-          const esSub = !b.esYo && !b.socket?.isMain && !(db.settings?.owners || []).some(o => (o.number||o) === b.numero);
-          const etiqueta = esSub ? "Sub *" + pushName + "*" : (pushName || "Principal");
+          // Si es el bot actual, se marca como [Principal], si no, como [Sub]
+          const esSub = b.numero !== miNumero;
+          const etiqueta = esSub ? `Sub *${pushName}*` : `Principal *${pushName}*`;
           
           texto += `- [${etiqueta}] › @${b.numero}\n`;
           mentions.push(b.jid);
         }
       }
     } else {
-      texto += `➭ *Bots en el grupo ›* 0\n> _Este comando es mejor usarlo en un grupo._`;
+      texto += `➭ *Bots en el grupo ›* 0\n> _Usa este comando en un grupo para ver los bots presentes._`;
     }
 
-    // 5. Enviar el mensaje con las menciones correctas para que WhatsApp pinte los @numero
+    // 5. Enviar el mensaje con las menciones correctas
     await sock.sendMessage(from, {
       text: texto.trim(),
       mentions: mentions
