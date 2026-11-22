@@ -21,6 +21,9 @@
  * conexión, los sub-bots y el enrutado comparten variables.
  */
 
+// Lo PRIMERO: en ESM las importaciones se evalúan en orden, así que esto
+// carga el `.env` antes de que nadie lea `process.env`.
+import "../env.js";
 import readline from "readline";
 import pino from "pino";
 import cfonts from "cfonts";

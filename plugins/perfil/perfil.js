@@ -64,7 +64,7 @@ ${premiumSection}
 ⚥ Género › ${user.genero}
 ♡ Casadx con › ${user.marry ? `@${user.marry.split("@")[0]}\n` : ""}
 ❀ Plan › ${rangoTexto}
-```#``` Número › +${user.numero}
+✆ Número › +${user.numero}
 
 ✿ Nivel › ${nivel}
 ❀ Experiencia › ${exp}/${nivelMaxXP}

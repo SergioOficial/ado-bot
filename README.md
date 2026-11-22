@@ -109,8 +109,8 @@ internet. Nada más.
    ```
 ---
 
-6. Instala las dependencias. En un móvil esto tarda entre 10 y 25 minutos y
-   parece colgado: está compilando. No cierres Termux.
+6. Instala las dependencias. Tarda unos minutos y parece colgado: está
+   descargando sharp y sus binarios. No cierres Termux.
 
    ```bash
    npm install
@@ -141,6 +141,25 @@ internet. Nada más.
     ```
     vigia (en vez de start) es lo que hace que el bot se levante solo si se
     cae o si reinicias desde WhatsApp con .restart.
+
+<details>
+<summary>🔑 Opcional: dueños y claves en <code>.env</code></summary>
+
+Si no quieres que tu número quede escrito en el repo, copia el ejemplo y
+rellénalo:
+
+```bash
+cp .env.example .env
+nano .env        # pon OWNERS con tu número; deja lo demás si no lo usas
+```
+
+`.env` está en `.gitignore` y nunca se sube. Lo que haya dentro manda sobre lo
+que está escrito en `config.js`, y si el archivo no existe no pasa nada: el bot
+arranca igual con los valores de siempre.
+
+Variables: `OWNERS` (números separados por comas), `OWNER_NAME`, `OWNER_NUMBER`,
+`PREFIX`, `NOMBRE_BOT`, y las claves de las APIs que uses. Todas están
+comentadas en `.env.example`.
 </details>
 
 <details>
@@ -226,11 +245,11 @@ vigilancia (míralo con .warmup), que baja el riesgo pero no lo elimina.
 <summary><strong>🧪 Comprobar que está bien</strong> — (sin abrir WhatsApp)
 </summary>
 Comando Qué hace
-npm run verificar Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 124 plugins y owners.
-npm run probar 233 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad.
-npm run humo Llama a los 116 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca).
+npm run verificar Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 183 plugins y owners.
+npm run probar 290 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad.
+npm run humo Llama a los 143 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca).
 npm run auditar Qué comandos dependen de una API externa y qué archivo no existe. Informe en docs/COMANDOS.md.
-npm run sintaxis node --check en los 219 archivos del árbol, incluidos los plugins que solo se cargan al usarse.
+npm run sintaxis node --check en los 259 archivos del árbol, incluidos los plugins que solo se cargan al usarse.
 npm run imports Que todo import apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en package.json.
 npm run lint ESLint con las reglas que atrapan bugs: variables que no existen, claves duplicadas, código inalcanzable. Es lo que encuentra lo que node --check y las pruebas no ven.
 npm run vigia Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o nohup).
