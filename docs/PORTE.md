@@ -1,24 +1,13 @@
 # Mapa del porteo desde Shin-MD
 
-_Generado el 2026-11-11 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en este bot._
+_Generado el 2026-11-22 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en este bot._
 
-- Comandos en Shin: **219**
-- Ya existen en este bot (al menos con un nombre): **121**
-- Pendientes de portar o de descartar: **98**
+- Comandos en Shin: **222**
+- Ya existen en este bot (al menos con un nombre): **138**
+- Pendientes de portar o de descartar: **84**
 
 «Ya existe» no significa «igual»: este bot puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de este bot y se apunta abajo.
-
-
-## Gacha
-
-Los comandos de `plugins/gacha/` siguen el mismo esquema que usa **YukiBot-MD**
-(https://github.com/iamDestroy/YukiBot-MD, MIT): tiro con reserva de 20 s y
-caducidad de 60 s, reclamo por cita, colección por páginas, ranking del grupo y
-ficha con dueño y puesto. La implementación está escrita sobre la arquitectura
-de este bot (`ctx`, `db.chats`, `lib/botones.js`), no copiada: el archivo de
-personajes se lee una vez y se cachea, y las búsquedas y descargas tienen plazo
-y presupuesto propios (ver `lib/gacha.js`).
 
 ## Portados a mano (con cabecera de procedencia)
 
@@ -81,27 +70,24 @@ y presupuesto propios (ver `lib/gacha.js`).
 |---|---|---|
 | ppcouple | `cmds/anime/ppcouple.js` | ppcouple, ppcp |
 
-### downloads (6)
+### downloads (5)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | deezer | `cmds/downloads/deezer.js` | deezer, dzr, deezermusic |
 | gdrive | `cmds/downloads/gdrive.js` | gdrive, drive |
 | soundcloud | `cmds/downloads/soundcloud.js` | soundcloud |
-| spotify | `cmds/downloads/spotify.js` | spotify |
 | twitter | `cmds/downloads/twitter.js` | twitter, x |
 | ytdlp | `cmds/downloads/ytdlp.js` | ytdlp, ytdl |
 
-### economy (9)
+### economy (7)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | adventure | `cmds/economy/adventure.js` | adventure, aventura |
 | dungeon | `cmds/economy/dungeon.js` | dungeon, mazmorra |
-| economyboard | `cmds/economy/economyboard.js` | economyboard, eboard, baltop |
 | heal | `cmds/economy/heal.js` | heal, curar, pocion, potion |
 | invoke | `cmds/economy/invoke.js` | invoke, ritual, invocar |
-| shop | `cmds/economy/shop.js` | shop, tienda, buy, comprar, inventory, inv, inventario |
 | slot | `cmds/economy/slot.js` | slot |
 | slut | `cmds/economy/slut.js` | slut, prostituirse |
 | transfer | `cmds/economy/transfer.js` | transfer |
@@ -112,14 +98,12 @@ y presupuesto propios (ver `lib/gacha.js`).
 |---|---|---|
 | fax | `cmds/fun/fax.js` | fax |
 
-### gacha (24)
+### gacha (17)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | buychar | `cmds/gacha/buychar.js` | buychar, buyc, buycharacter |
 | charimage | `cmds/gacha/charimage.js` | charimage, waifuimage, cimage, wimage |
-| charinfo | `cmds/gacha/charinfo.js` | charinfo, winfo, waifuinfo |
-| claim | `cmds/gacha/claim.js` | claim, c, reclamar |
 | delclaimmsg | `cmds/gacha/delclaimmsg.js` | delclaimmsg, resetclaimmsg |
 | deletefav | `cmds/gacha/deletefav.js` | deletefav, delfav |
 | deletewaifu | `cmds/gacha/deletewaifu.js` | deletewaifu, delchar, delwaifu |
@@ -127,19 +111,14 @@ y presupuesto propios (ver `lib/gacha.js`).
 | gachainfo | `cmds/gacha/gachainfo.js` | gachainfo, ginfo, infogacha |
 | giveallharem | `cmds/gacha/giveallharem.js` | giveallharem |
 | givechar | `cmds/gacha/givechar.js` | givechar, givewaifu, regalar |
-| harem | `cmds/gacha/harem.js` | harem, waifus, claims |
 | haremshop | `cmds/gacha/haremshop.js` | haremshop, wshop, tiendawaifus |
 | removesale | `cmds/gacha/removesale.js` | removesale, removerventa |
 | robwaifu | `cmds/gacha/robwaifu.js` | robwaifu, robarwaifu |
-| rollwaifu | `cmds/gacha/rollwaifu.js` | rollwaifu, rw, roll |
-| sell | `cmds/gacha/sell.js` | sell, vender |
 | serieinfo | `cmds/gacha/serieinfo.js` | serieinfo, ainfo, animeinfo |
 | serielist | `cmds/gacha/serielist.js` | serielist, slist, animelist |
 | setclaimmsg | `cmds/gacha/setclaimmsg.js` | setclaimmsg, setclaim |
 | setfavourite | `cmds/gacha/setfavourite.js` | setfavourite, setfav |
 | trade | `cmds/gacha/trade.js` | trade, intercambiar |
-| vote | `cmds/gacha/vote.js` | vote, votar |
-| waifusboard | `cmds/gacha/waifusboard.js` | waifusboard, waifustop, topwaifus, wtop |
 
 ### games (4)
 
@@ -150,7 +129,7 @@ y presupuesto propios (ver `lib/gacha.js`).
 | kuro | `cmds/games/kuro.js` | kuro |
 | ttt | `cmds/games/ttt.js` | ttt |
 
-### group (6)
+### group (5)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
@@ -158,7 +137,6 @@ y presupuesto propios (ver `lib/gacha.js`).
 | evento | `cmds/group/evento.js` | evento |
 | guardar | `cmds/group/guardar.js` | guardar |
 | setgoodbye | `cmds/group/setgoodbye.js` | setgoodbye |
-| setprimary | `cmds/group/setprimary.js` | setprimary |
 | setwelcome | `cmds/group/setwelcome.js` | setwelcome |
 
 ### main (1)
@@ -191,13 +169,12 @@ y presupuesto propios (ver `lib/gacha.js`).
 | setmenu | `cmds/owner/setmenu.js` | setmenu |
 | subircookies | `cmds/owner/subircookies.js` | subircookies |
 
-### profile (3)
+### profile (2)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | afktime | `cmds/profile/afktime.js` | afktime |
 | divorce | `cmds/profile/divorce.js` | divorce |
-| marry | `cmds/profile/marry.js` | marry, casarse |
 
 ### raíz (3)
 
@@ -223,16 +200,14 @@ y presupuesto propios (ver `lib/gacha.js`).
 | setstatus | `cmds/socket/setstatus.js` | setstatus |
 | setusername | `cmds/socket/setusername.js` | setusername |
 
-### stickers (14)
+### stickers (12)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | addsticker | `cmds/stickers/addsticker.js` | addsticker, stickeradd |
-| bratv | `cmds/stickers/bratv.js` | bratv |
 | delmeta | `cmds/stickers/delmeta.js` | delmeta, delstickermeta |
 | delpack | `cmds/stickers/delpack.js` | delpack |
 | delsticker | `cmds/stickers/delsticker.js` | delsticker, stickerdel |
-| emojimix | `cmds/stickers/emojimix.js` | emojimix |
 | getpack | `cmds/stickers/getpack.js` | getpack, pack, stickerpack |
 | newpack | `cmds/stickers/newpack.js` | newpack, newstickerpack |
 | packlist | `cmds/stickers/packlist.js` | packlist, stickerpacks |
