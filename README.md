@@ -246,10 +246,11 @@ vigilancia (míralo con .warmup), que baja el riesgo pero no lo elimina.
 </summary>
 Comando Qué hace
 npm run verificar Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 183 plugins y owners.
-npm run probar 290 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad.
+npm run probar 305 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad.
 npm run humo Llama a los 143 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca).
 npm run auditar Qué comandos dependen de una API externa y qué archivo no existe. Informe en docs/COMANDOS.md.
-npm run sintaxis node --check en los 259 archivos del árbol, incluidos los plugins que solo se cargan al usarse.
+npm run auditar-antiban Qué archivos mandan mensajes sin pasar por la cola del anti-ban: sockets propios, websocket a mano, bucles de envío y difusiones. Informe en docs/ANTIBAN.md.
+npm run sintaxis node --check en los 263 archivos del árbol, incluidos los plugins que solo se cargan al usarse.
 npm run imports Que todo import apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en package.json.
 npm run lint ESLint con las reglas que atrapan bugs: variables que no existen, claves duplicadas, código inalcanzable. Es lo que encuentra lo que node --check y las pruebas no ven.
 npm run vigia Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o nohup).
