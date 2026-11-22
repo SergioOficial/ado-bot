@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="150" alt="Ado-Bot">
+<img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="140" alt="Ado-Bot">
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1000&color=8A2BE2&center=true&vCenter=true&width=560&lines=Bot+de+WhatsApp+modular;Cada+comando%2C+un+archivo;Sin+cajas+negras" alt="Ado-Bot">
 
 # 𝘼𝙙𝙤-𝑩𝒐𝒕
 
@@ -10,7 +12,7 @@ archivo que puedes leer, cambiar o borrar.
 
 [![CI](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml/badge.svg)](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml)
 [![Versión](https://img.shields.io/github/package-json/v/SergioOficial/ado-bot?style=for-the-badge&label=versi%C3%B3n&color=8A2BE2)](package.json)
-[![Pruebas](https://img.shields.io/badge/323%20pruebas-en%20verde-2ea043?style=for-the-badge)](#-comprobado)
+[![Pruebas](https://img.shields.io/badge/327%20pruebas-en%20verde-2ea043?style=for-the-badge)](#-comprobado)
 [![Licencia](https://img.shields.io/badge/licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 [![Node](https://img.shields.io/badge/node-20.9%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 
@@ -21,6 +23,21 @@ archivo que puedes leer, cambiar o borrar.
 [![Visitas](https://komarev.com/ghpvc/?username=SergioOficial-ado-bot&label=visitas&color=8A2BE2&style=flat-square)](https://github.com/SergioOficial/ado-bot)
 
 </div>
+
+---
+
+## 📊 Estado
+
+<!-- estado:inicio -->
+_Actualizado el 2026-11-22 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
+
+| | |
+|---|---|
+| **Versión** | `3.7.9` |
+| **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
+| **Código** | 273 archivos JavaScript |
+| **Pruebas** | **327** en verde |
+<!-- estado:fin -->
 
 ---
 
@@ -36,7 +53,7 @@ todo carga. Al terminar te dice exactamente qué escribir para arrancarlo.
 <div align="center">
 <sub>
 
-[Instalación](#-instalación-en-un-comando) • [El menú](#-el-menú) • [Comprobado](#-comprobado) • [Colaboradores](#-colaboradores-y-actividad)
+[Estado](#-estado) • [Instalación](#-instalación-en-un-comando) • [El menú](#-el-menú) • [Comprobado](#-comprobado) • [Últimos cambios](#-últimos-cambios) • [Colaboradores](#-colaboradores-y-actividad)
 
 </sub>
 </div>
@@ -107,6 +124,32 @@ Y la categoría, con los alias y una línea por comando:
 
 El menú no lleva una lista escrita a mano: se arma con los plugins que están
 cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
+
+<details>
+<summary><strong>Todos los comandos, por categoría</strong></summary>
+
+<!-- categorias:inicio -->
+| Categoría | Comandos | Algunos |
+|---|---|---|
+| 🎁 **Economía** | 22 | `.beg` `.cf` `.coffer` `.cofre` `.coins` `.crime` … |
+| 🐾 **Mascotas** |  4 | `.acariciar` `.adoptar` `.animal` `.pelear` |
+| ⚔️ **RPG** |  9 | `.cazar` `.clase` `.explorar` `.minar` `.pescar` `.ranknivel` … |
+| 🎴 **Gacha** |  7 | `.charinfo` `.claim` `.gacha` `.harem` `.rw` `.vote` … |
+| 🌟 **Perfil** |  8 | `.afk` `.delperfil` `.level` `.marry` `.perfil` `.reg` … |
+| 📥 **Descargas** | 12 | `.apk` `.fb` `.gitsearch` `.instagram` `.mediafire` `.pinterest` … |
+| 🖌️ **Stickers** |  5 | `.brat` `.bratv` `.emojimix` `.sticker` `.stickers` |
+| 🧠 **IA** |  4 | `.chatgpt` `.iaaudio` `.iam` `.imagen` |
+| 🎉 **Diversión** | 20 | `.8ball` `.ajedrez` `.ajedrez2` `.cerito` `.dahs` `.gato` … |
+| 🔔 **Utilidades** | 25 | `.acortar` `.angry` `.clima` `.close` `.crypto` `.del` … |
+| ℹ️ **Info** | 10 | `.allmenu` `.creadores` `.health` `.info` `.infobothtml` `.menuprem` … |
+| 🛡️ **Admin** | 13 | `.antilink` `.bot` `.count` `.gp` `.hidetag` `.kick` … |
+| 🤖 **Sub-bots** |  6 | `.addowner` `.bots` `.delowner` `.jadibot` `.serbot` `.stopbot` |
+| 👑 **Owner** | 36 | `.addpremium` `.backup` `.bc` `.botinfo` `.botsesion` `.clear` … |
+| 💎 **Premium** |  2 | `.canjear` `.prem` |
+| 🧪 **Test** |  1 | `.boton1` |
+<!-- categorias:fin -->
+
+</details>
 
 <details>
 <summary><strong>🩸 Instalaciones</strong> — Paso a paso</summary>
@@ -298,10 +341,10 @@ sesión vinculada.
 
 | Comando | Qué hace |
 |---|---|
-| `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 182 plugins y owners. |
-| `npm run probar` | **313 pruebas**: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 187 plugins y owners. |
+| `npm run probar` | **327 pruebas**: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
 | `npm run humo` | Llama a los 143 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
-| `npm run sintaxis` | `node --check` en los 263 archivos del árbol, incluidos los plugins que solo se cargan al usarse. |
+| `npm run sintaxis` | `node --check` en los 273 archivos del árbol, incluidos los plugins que solo se cargan al usarse. |
 | `npm run imports` | Que todo `import` apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en `package.json`. |
 | `npm run lint` | ESLint con las reglas que atrapan bugs: variables que no existen, claves duplicadas, código inalcanzable. Encuentra lo que `node --check` y las pruebas no ven. |
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en `docs/COMANDOS.md`. |
@@ -697,6 +740,23 @@ línea.
 
 ---
 
+## 🕒 Últimos cambios
+
+<!-- cambios:inicio -->
+| Fecha | Cambio |
+|---|---|
+| 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
+| 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
+| 2026-11-22 | feat(menú): un solo mensaje, sin desplegable, y armado con los plugins reales |
+| 2026-11-22 | feat(porte): los nombres de la base para bio, nombre, foto y banner |
+| 2026-11-22 | fix(antiban): la difusión deja de ser un disparo, sub-bots con freno y relleno único |
+| 2026-11-22 | feat(auditoría): informe de los sitios que se saltan el anti-ban |
+| 2026-11-22 | docs: el mapa de porteo deja de comerse las notas escritas a mano |
+| 2026-11-22 | docs: mapa de porteo al día con la base 3.7.9 |
+<!-- cambios:fin -->
+
+---
+
 ## 📊 Colaboradores y actividad
 
 <div align="center">
@@ -716,12 +776,12 @@ _Datos pedidos a GitHub el 2026-11-22. Se actualizan con `npm run readme`._
 | Días desde el primer commit | **12** |
 | Último cambio | **2026-11-22** (hace 0 d) |
 | Estrellas · forks · avisos abiertos | **3** · **0** · **0** |
-| Tamaño del repositorio | **1.4 MB** |
+| Tamaño del repositorio | **1.5 MB** |
 
 | Colaborador | Qué hizo | Commits | % |
 |---|---|---|---|
 | [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 358 | 85.0% |
-| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú y porteo de la base | 55 | 13.1% |
+| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 55 | 13.1% |
 | [@levi-hub805](https://github.com/levi-hub805) | Contribuciones puntuales | 4 | 1.0% |
 | [@afvm2025](https://github.com/afvm2025) | Contribuciones puntuales | 3 | 0.7% |
 | [@sergio](https://github.com/sergio) | Contribuciones puntuales | 1 | 0.2% |

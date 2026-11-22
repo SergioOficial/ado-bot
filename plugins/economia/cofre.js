@@ -1,5 +1,5 @@
 export default {
-  command: ["cofre", "caja", "mysterybox"],
+  command: ["cofre", "mysterybox", "cajasorpresa"],
   execute: async (ctx) => {
     const { enviartexto, sender, db, config } = ctx;
     if (!db.users[sender]) db.users[sender] = { coins: 0 };

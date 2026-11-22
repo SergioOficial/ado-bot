@@ -36,8 +36,14 @@ export default {
 
     // ── piedra, papel o tijera ────────────────────────────────────────────
     if (comando === "ppt" || comando === "piedrapapel") {
-      const eleccion = OPCIONES_PPT[String(args[0] || "").toLowerCase()];
-      const apuesta = leerApuesta(u, args[1]);
+      // Se aceptan los dos órdenes: `<piedra|papel|tijera> <apuesta>` y el viejo
+      // `<apuesta> <piedra|papel|tijera>`. Antes había dos archivos con el mismo
+      // `ppt` y cada uno pedía los argumentos al revés; ahora hay uno solo y
+      // entiende las dos formas, así nadie tiene que reaprender el comando.
+      const comoEleccion = (v) => OPCIONES_PPT[String(v || "").toLowerCase()];
+      const primero = comoEleccion(args[0]);
+      const eleccion = primero || comoEleccion(args[1]);
+      const apuesta = leerApuesta(u, primero ? args[1] : args[0]);
 
       if (!eleccion || !apuesta.ok) {
         return enviartexto(

@@ -1,6 +1,6 @@
 {
   "name": "ado-bot",
-  "version": "1.2.0",
+  "version": "3.7.9",
   "author": "SergioOficial",
   "description": "ado-Bot con conexión por pairing code (Baileys 2025)",
   "main": "index.js",

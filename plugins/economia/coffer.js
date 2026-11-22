@@ -9,6 +9,9 @@
  * .coffer sacar <cantidad|all>   sacar
  * .coffer                  ver cuánto hay
  *
+ * No confundir con `.cofre`: ese es una caja sorpresa que se paga y da un premio
+ * al azar. Este es la caja fuerte, donde se guarda sin riesgo.
+ *
  * Para qué sirve: `.rob` solo alcanza el *efectivo*. Lo que está en la caja
  * fuerte no se lo lleva nadie. **No da intereses**: darlos sería fabricar dinero
  * sin que nadie lo gane, y en un bot eso se nota en una semana.
@@ -16,7 +19,7 @@
 import { usuario, dinero } from "../../lib/economia.js";
 
 export default {
-  command: ["coffer", "caja", "cajafuerte", "vault"],
+  command: ["coffer", "cajafuerte", "vault"],
   execute: async (ctx) => {
     const { sender, args, db, enviartexto, PREFIX } = ctx;
     const u = usuario(db, sender);
