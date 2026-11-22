@@ -202,6 +202,8 @@ function subbots() {
       // Se resuelve en el momento de levantar el sub-bot, no al crearlo: así un
       // sub-bot restaurado usa el router del socket que esté vigente entonces.
       obtenerRouter: (subSock) => (estado.routerPara ? estado.routerPara(subSock) : null),
+      // Cada sub-bot es otra cuenta: su propio tope diario y su propio horario.
+      armarAntiban: (subSock, numero) => prepararAntiban(subSock, { obtenerDb, encendido: true, clave: numero }),
       events,
       config,
     });

@@ -156,18 +156,33 @@ export function vigilarMemoria({ ajustes = {}, registrar = console.warn } = {}) 
  *
  * @returns {{limitador:any, cola:any, salud:any, vigilante:any, ritmo:any}|null}
  */
-export function prepararAntiban(sock, { obtenerDb, encendido } = {}) {
+export function prepararAntiban(sock, { obtenerDb, encendido, clave } = {}) {
   if (!encendido) return null;
   const db = obtenerDb?.();
   if (!db) return null;
 
   try {
-    db.antiban ||= {};
-    db.ritmo ||= {};
+    // `clave` = número de un sub-bot: cada sub-bot es otra cuenta, así que lleva
+    // su propio tope diario y su propio horario. Compartirlos con el bot padre
+    // dejaría al sub-bot sin freno en cuanto el padre gastara la cuota del día
+    // (o al revés, lo frenaría por mensajes que no mandó).
+    let estadoAntiban;
+    let estadoRitmo;
+    if (clave) {
+      db.antibanSubbots ||= {};
+      db.ritmoSubbots ||= {};
+      estadoAntiban = db.antibanSubbots[clave] ||= {};
+      estadoRitmo = db.ritmoSubbots[clave] ||= {};
+    } else {
+      db.antiban ||= {};
+      db.ritmo ||= {};
+      estadoAntiban = db.antiban;
+      estadoRitmo = db.ritmo;
+    }
 
-    const limitador = crearLimitador({ estado: db.antiban });
+    const limitador = crearLimitador({ estado: estadoAntiban });
     const salud = crearSalud();
-    const ritmo = crearRitmo({ estado: db.ritmo });
+    const ritmo = crearRitmo({ estado: estadoRitmo });
     const cola = crearCola({ limitador, salud, ritmo });
 
     envolverSocket(sock, { cola, ritmo });

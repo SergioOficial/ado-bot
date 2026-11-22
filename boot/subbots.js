@@ -131,6 +131,7 @@ export function crearGestorSubbots(deps) {
     reintentos = REINTENTOS,
     registrar = (err) => console.error("❌ Sub-bots:", err?.stack || err),
     crearSocket = makeWASocket,
+    armarAntiban = null,
     leerSesion = useMultiFileAuthState,
     prepararClaves = makeCacheableSignalKeyStore,
     obtenerVersion = fetchLatestBaileysVersion,
@@ -266,7 +267,18 @@ export function crearGestorSubbots(deps) {
       keepAliveIntervalMs: 25_000,
     });
 
+    // El anti-ban se arma ANTES de conectar: así lo primero que salga de este
+    // socket (el código de vinculación) ya pasa por la cola. Cada sub-bot es una
+    // cuenta distinta y lleva su propio tope diario (ver prepararAntiban).
+    let antiban = null;
+    try {
+      antiban = armarAntiban?.(subSock, phoneNumber) || null;
+    } catch (err) {
+      registrar(err);
+    }
+
     sockets.set(phoneNumber, subSock);
+    subSock.antiban = antiban;
     subSock.subconfig = loadSubConfig(phoneNumber);
     subSock.esSubbot = true;
     subSock.numeroSubbot = phoneNumber;
