@@ -37,6 +37,7 @@ _Actualizado el 2026-11-22 con `npm run readme`; los números salen del árbol, 
 | **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
 | **Código** | 273 archivos JavaScript |
 | **Pruebas** | **327** en verde |
+| **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
 ---
@@ -53,7 +54,7 @@ todo carga. Al terminar te dice exactamente qué escribir para arrancarlo.
 <div align="center">
 <sub>
 
-[Estado](#-estado) • [Instalación](#-instalación-en-un-comando) • [El menú](#-el-menú) • [Comprobado](#-comprobado) • [Últimos cambios](#-últimos-cambios) • [Colaboradores](#-colaboradores-y-actividad)
+[Estado](#-estado) • [Instalación](#-instalación-en-un-comando) • [El menú](#-el-menú) • [Comprobado](#-comprobado) • [Estructura](#-estructura-del-proyecto) • [Últimos cambios](#-últimos-cambios) • [Colaboradores](#-colaboradores-y-actividad)
 
 </sub>
 </div>
@@ -129,6 +130,7 @@ cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
 <summary><strong>Todos los comandos, por categoría</strong></summary>
 
 <!-- categorias:inicio -->
+
 | Categoría | Comandos | Algunos |
 |---|---|---|
 | 🎁 **Economía** | 22 | `.beg` `.cf` `.coffer` `.cofre` `.coins` `.crime` … |
@@ -324,15 +326,11 @@ npm start
 
 ---
 
-⚠️ Antes de usar una cuenta
+## ⚠️ Antes de usar una cuenta
 
 Usa un número secundario, no el tuyo personal. Ningún bot puede garantizar que
 una cuenta no sea bloqueada; este lleva freno de ritmo, calentamiento y
 vigilancia (míralo con .warmup), que baja el riesgo pero no lo elimina.
-
-<details>
-<summary><strong>🧪 Comprobar que está bien</strong> — (sin abrir WhatsApp)
-</summary>
 
 ## ✅ Comprobado
 
@@ -356,11 +354,10 @@ sesión vinculada.
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
 culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
 `docs/RETORNO.md`.
-</details>
 
 ---
 
-🏗️ Estructura del proyecto
+## 🏗️ Estructura del proyecto
 
 ```text
 ado-bot/
@@ -450,29 +447,12 @@ cuando no puede.
 <details>
 <summary><strong>🧩 Comandos</strong> — Todos dentro de Plugins</summary>
 
-Prefijo de ejemplo .. Casi todos tienen alias en español (#diario, #robar,
-#fijar…): la lista completa está en docs/COMANDOS.md y en
-el propio WhatsApp con .allmenu y .menucat. Los números cuentan nombres, alias
-incluidos.
+Prefijo de ejemplo, `.`. Casi todos los comandos tienen alias en español
+(`#diario`, `#robar`, `#fijar`…): la lista completa, uno por uno, está en
+[`docs/COMANDOS.md`](docs/COMANDOS.md) y en el propio WhatsApp con `.allmenu`
+y `.menucat`. El reparto por categorías está más arriba, en **El menú**.
 
-Categoría Comandos Ejemplos
-🛡️ Admin 43 kick promote demote warn warns antilink hidetag bot off link revoke setgpname setgpdesc setgpbanner pin gp count topcount topinactive
-🧾 Perfil 24 reg perfil level lboard afk setdesc setgenre sethobby setbirth delperfil
-💰 Economía 54 daily weekly monthly work beg bal dep with pay rob cf slots dice ppt roulette casino coffer rankcoins einfo
-⚔️ RPG 21 trabajar cazar pescar minar explorar clase ranknivel reiniciarrpg adoptar animal nombrar acariciar pelear atacar cambiar huir capturar petactivo
-🎴 Gacha 19 gacha togacha rw roll rollwaifu claim c reclamar harem waifus claims wtop topwaifus waifustop waifusboard charinfo winfo waifuinfo
-📥 Descargas 25 play mp3 tt fb pinterest toimg ytsearch gitsearch githubsearch ghsearch
-🖌️ Stickers 5 sticker brat searchsticker
-🧠 IA 9 ia iaaudio imagen
-🎉 Fun 22 trivia mate 8ball meme gato perro waifu ship r
-ℹ️ Info 32 menu allmenu menucat ping info creadores health runtime cache lid reporte
-🔔 Utilidades 70 ping info menu allmenu health traducir clima wiki tts qr morse demorse encuesta say read recordar pfp wastalk crypto letra acortar tourl tag
-🤖 Sub-bots 13 code jadibot stopbot bots addowner delowner
-💎 Premium 2 canjear
-👑 Owner 61 fix restart reload backup exec eval subir compat getplugin nuevo delplugin block unblock blocklist botsesion setbotname setbotpp clear warmup antiban
-🧪 Test 7 botones boton1…boton6
-
-💡 Cualquier comando funciona en modo privado con un guion al final: .menu-.
+💡 Cualquier comando funciona en modo privado con un guion al final: `.menu-`.
 </details>
 
 ---
@@ -681,7 +661,7 @@ Categoría Comandos Ejemplos
 
 ---
 
-📄 Licencia
+## 📄 Licencia
 
 Este proyecto se distribuye bajo GNU AGPL-3.0 (archivo LICENSE,
 texto completo de la Free Software Foundation).
@@ -695,11 +675,12 @@ Qué obliga, en corto (el texto de LICENSE manda):
 
 Procedencia, sin adornos — el detalle está en NOTICE:
 
-Parte Autoría Licencia
-Núcleo en piezas (boot/), lógica de lib/, puertas de CI y pruebas riokuroxi-svg AGPL-3.0-only
-Ado-Bot (base original) Sergio Dev el repo no traía archivo de licencia; su package.json declaraba ISC
-Comandos portados de Shin-MD riokuroxi-svg AGPL-3.0-only (los archivos portados llevan su cabecera)
-Cliente de WhatsApp @itsliaaa/baileys · respaldo @whiskeysockets/baileys MIT (dependencias declaradas, no código incluido)
+| Parte | Autoría | Licencia |
+|---|---|---|
+| Núcleo en piezas (`boot/`), lógica de `lib/`, puertas de CI y pruebas | riokuroxi-svg | AGPL-3.0-only |
+| Ado-Bot (base original) | Sergio Dev | el repo no traía archivo de licencia; su `package.json` declaraba ISC |
+| Comandos portados de Shin-MD | riokuroxi-svg | AGPL-3.0-only (los archivos portados llevan su cabecera) |
+| Cliente de WhatsApp `@itsliaaa/baileys` · respaldo `@whiskeysockets/baileys` | sus autores | MIT (dependencias declaradas, no código incluido) |
 
 Lo portado de Shin-MD no se puede relicenciar: entra con su AGPL, y por eso el
 conjunto queda en AGPL-3.0. Cada archivo que viene de ahí lo dice en su primera
@@ -707,7 +688,7 @@ línea.
 
 ---
 
-🤝 Créditos
+## 🤝 Créditos
 
 <div align="center">
 
@@ -743,8 +724,10 @@ línea.
 ## 🕒 Últimos cambios
 
 <!-- cambios:inicio -->
+
 | Fecha | Cambio |
 |---|---|
+| 2026-11-22 | fix(3.7.9): una sola casa para los duplicados y un README que se cuenta solo |
 | 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
 | 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
 | 2026-11-22 | feat(menú): un solo mensaje, sin desplegable, y armado con los plugins reales |
@@ -752,7 +735,7 @@ línea.
 | 2026-11-22 | fix(antiban): la difusión deja de ser un disparo, sub-bots con freno y relleno único |
 | 2026-11-22 | feat(auditoría): informe de los sitios que se saltan el anti-ban |
 | 2026-11-22 | docs: el mapa de porteo deja de comerse las notas escritas a mano |
-| 2026-11-22 | docs: mapa de porteo al día con la base 3.7.9 |
+
 <!-- cambios:fin -->
 
 ---

@@ -92,6 +92,23 @@ async function contarPlugins() {
   };
 }
 
+/** El reparto del porteo, leído de docs/PORTE.md (que lo escribe `npm run mapa`). */
+function contarPorteo() {
+  try {
+    const texto = readFileSync(join(RAIZ, "docs/PORTE.md"), "utf8");
+    const num = (re) => {
+      const m = texto.match(re);
+      return m ? Number(m[1]) : null;
+    };
+    const shin = num(/Comandos en Shin: \*\*(\d+)\*\*/);
+    const ya = num(/Ya existen en este bot[^:]*: \*\*(\d+)\*\*/);
+    const pendientes = num(/Pendientes de portar[^:]*: \*\*(\d+)\*\*/);
+    return shin && ya !== null && pendientes !== null ? { shin, ya, pendientes } : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Cuántas pruebas pasan, ejecutando la suite de verdad. */
 function contarPruebas() {
   try {
@@ -120,7 +137,7 @@ async function api(ruta) {
 
 // ── Los bloques ─────────────────────────────────────────────────────────────
 
-function bloqueEstado({ version, plugins, nombres, categorias, archivos, pruebas, ci }) {
+function bloqueEstado({ version, plugins, nombres, categorias, archivos, pruebas, porteo, ci }) {
   const [ini, fin] = MARCAS.estado;
   return [
     ini,
@@ -133,6 +150,9 @@ function bloqueEstado({ version, plugins, nombres, categorias, archivos, pruebas
     `| **Plugins** | ${plugins} archivos, ${nombres} nombres de comando en ${categorias} categorías |`,
     `| **Código** | ${archivos} archivos JavaScript |`,
     `| **Pruebas** | ${pruebas ? `**${pruebas}** en verde` : "_no ejecutadas_"} |`,
+    porteo
+      ? `| **Porteo** | ${porteo.ya} de ${porteo.shin} comandos de la base; ${porteo.pendientes} pendientes ([detalle](docs/PORTE.md)) |`
+      : null,
     ci ? `| **Último CI** | ${ci} |` : null,
     fin,
   ]
@@ -149,6 +169,7 @@ function bloqueCategorias({ grupos, prefijo = "." }) {
   );
   return [
     ini,
+    "",
     "| Categoría | Comandos | Algunos |",
     "|---|---|---|",
     ...filas,
@@ -175,7 +196,7 @@ function bloqueCambios(limite = 8) {
       const titulo = resto.join(" ").replace(/\|/g, "\\|");
       return `| ${cuando} | ${titulo} |`;
     });
-  return [ini, "| Fecha | Cambio |", "|---|---|", ...filas, fin].join("\n");
+  return [ini, "", "| Fecha | Cambio |", "|---|---|", ...filas, "", fin].join("\n");
 }
 
 function bloqueStats({ repo, gente, totalCommits }) {
@@ -231,6 +252,7 @@ const bloques = {
     categorias: conteo.categorias,
     archivos: archivosJs().length,
     pruebas,
+    porteo: contarPorteo(),
   }),
   categorias: bloqueCategorias(conteo),
   cambios: bloqueCambios(),
