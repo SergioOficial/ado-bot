@@ -1,5 +1,5 @@
 export default {
-  command: ["setbotname", "botnombre"],
+  command: ["setbotname", "botnombre", "setusername"],
   isOwner: true,
   execute: async (ctx) => {
     const { sock, args, enviartexto, jidToNumber, db, BOT_NAME } = ctx;

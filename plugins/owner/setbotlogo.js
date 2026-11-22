@@ -1,5 +1,5 @@
 export default {
-  command: ["setbotlogo"],
+  command: ["setbotlogo", "setbanner", "setbotbanner"],
   isOwner: true,
   execute: async (ctx) => {
     const { sock, args, enviartexto, jidToNumber, loadSubConfig, saveSubConfig } = ctx;

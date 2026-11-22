@@ -1,5 +1,5 @@
 export default {
-  command: ["setbotbio"],
+  command: ["setbotbio", "setstatus"],
   isOwner: true,
   execute: async (ctx) => {
     const { sock, args, enviartexto } = ctx;

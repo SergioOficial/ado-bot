@@ -3,8 +3,8 @@
 _Generado el 2026-11-22 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en este bot._
 
 - Comandos en Shin: **222**
-- Ya existen en este bot (al menos con un nombre): **138**
-- Pendientes de portar o de descartar: **84**
+- Ya existen en este bot (al menos con un nombre): **142**
+- Pendientes de portar o de descartar: **80**
 
 «Ya existe» no significa «igual»: este bot puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de este bot y se apunta abajo.
@@ -27,6 +27,10 @@ Cada comando que se porta se reescribe al formato de plugin de este bot y se apu
 | `get` | `plugins/utils/get.js` + `lib/red-segura.js` | solo el dueño, con filtro de IPs privadas, DNS y sin seguir redirecciones |
 | `pfp` | `plugins/utils/pfp.js` | si la foto es privada lo dice; no manda una imagen de relleno |
 | `wastalk` | `plugins/utils/wastalk.js` | solo lo público (existe, estado, foto); respeta la privacidad |
+| `setstatus` | `plugins/owner/setbotbio.js` | ya existía: solo se añadió el nombre de Shin al mismo plugin (`updateProfileStatus`). |
+| `setusername` | `plugins/owner/setbotname.js` | ya existía: nombre añadido; el comando sigue guardando el nombre en `db.settings`. |
+| `setpfp` / `setimage` | `plugins/owner/setbotpp.js` | ya existía: nombres añadidos. |
+| `setbanner` | `plugins/owner/setbotlogo.js` | ya existía como logo del menú: nombre añadido. |
 | `bot on/off` | `plugins/admin/bot.js` | el apagado lo respeta el router, no cada plugin |
 | `link` / `revoke` | `plugins/admin/link.js` | si el grupo no tiene enlace, se crea en vez de dar error |
 | `setgpname` / `setgpdesc` / `setgpbanner` | `plugins/admin/setgp.js` | comprueban en `groupMetadata` que el cambio se aplicó |
@@ -194,21 +198,17 @@ y presupuesto propios (ver `lib/gacha.js`).
 | events | `cmds/events.js` | events |
 | gachareserved | `cmds/gachareserved.js` | gachareserved |
 
-### socket (11)
+### socket (7)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
 | logout | `cmds/socket/logout.js` | logout |
 | self | `cmds/socket/self.js` | self |
-| setbanner | `cmds/socket/setbanner.js` | setbanner, setbotbanner |
 | setchannel | `cmds/socket/setchannel.js` | setchannel, setbotchannel |
 | setcurrency | `cmds/socket/setcurrency.js` | setcurrency, setbotcurrency |
 | setlink | `cmds/socket/setlink.js` | setlink, setbotlink |
 | setowner | `cmds/socket/setowner.js` | setowner, setbotowner |
-| setpfp | `cmds/socket/setpfp.js` | setpfp, setimage |
 | setprefix | `cmds/socket/setprefix.js` | setprefix, setbotprefix |
-| setstatus | `cmds/socket/setstatus.js` | setstatus |
-| setusername | `cmds/socket/setusername.js` | setusername |
 
 ### stickers (12)
 

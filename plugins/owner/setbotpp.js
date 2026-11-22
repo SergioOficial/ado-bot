@@ -1,6 +1,6 @@
 import { downloadContentFromMessage } from "../../lib/baileys.js";
 export default {
-  command: ["setbotpp"],
+  command: ["setbotpp", "setpfp", "setimage"],
   isOwner: true,
   execute: async (ctx) => {
     const { sock, m, enviartexto, jidToNumber } = ctx;
