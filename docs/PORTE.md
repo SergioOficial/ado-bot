@@ -62,6 +62,16 @@ Cada comando que se porta se reescribe al formato de plugin de este bot y se apu
 | `eval` | `plugins/owner/evaluar.js` | de `cmds/owner/exec.js` (`.e`): ejecutar JavaScript y ver el resultado, con la salida recortada |
 | `restart` (relevo) + `scripts/vigia.mjs` + `scripts/supervisor.mjs` | `plugins/owner/restart.js` | de `cmds/owner/restart.js` y `scripts/{vigia,supervisor}.mjs`: el bot se levanta solo y no se queda apagado tras reiniciar |
 
+## Gacha
+
+Los comandos de `plugins/gacha/` siguen el mismo esquema que usa **YukiBot-MD**
+(https://github.com/iamDestroy/YukiBot-MD, MIT): tiro con reserva de 20 s y
+caducidad de 60 s, reclamo por cita, colección por páginas, ranking del grupo y
+ficha con dueño y puesto. La implementación está escrita sobre la arquitectura
+de este bot (`ctx`, `db.chats`, `lib/botones.js`), no copiada: el archivo de
+personajes se lee una vez y se cachea, y las búsquedas y descargas tienen plazo
+y presupuesto propios (ver `lib/gacha.js`).
+
 ## Pendientes por categoría
 
 ### anime (1)

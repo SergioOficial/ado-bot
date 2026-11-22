@@ -67,11 +67,12 @@ const porCat = {};
 for (const f of falta) (porCat[f.cat] ||= []).push(f);
 
 const total = shin.length;
-// La tabla de «portados a mano» la escribe una persona: se conserva tal cual.
+// Lo que va entre «Portados a mano» y «Pendientes por categoría» lo escribe una
+// persona (la tabla y las notas de procedencia): se conserva tal cual.
 let portados = null;
 try {
   const previo = readFileSync(join(LEVI, "docs", "PORTE.md"), "utf8");
-  const m = previo.match(/## Portados a mano[\s\S]*?(?=\n## )/);
+  const m = previo.match(/## Portados a mano[\s\S]*?(?=\n## Pendientes por categoría)/);
   if (m) portados = m[0].trimEnd();
 } catch {}
 
