@@ -3,8 +3,8 @@
 _Generado el 2026-11-22 comparando los comandos de [Shin-MD](https://github.com/riokuroxi-svg/Shin-MD) con los registrados hoy en este bot._
 
 - Comandos en Shin: **222**
-- Ya existen en este bot (al menos con un nombre): **142**
-- Pendientes de portar o de descartar: **80**
+- Ya existen en este bot (al menos con un nombre): **147**
+- Pendientes de portar o de descartar: **75**
 
 «Ya existe» no significa «igual»: este bot puede tener el mismo comando con menos cosas.
 Cada comando que se porta se reescribe al formato de plugin de este bot y se apunta abajo.
@@ -31,6 +31,12 @@ Cada comando que se porta se reescribe al formato de plugin de este bot y se apu
 | `setusername` | `plugins/owner/setbotname.js` | ya existía: nombre añadido; el comando sigue guardando el nombre en `db.settings`. |
 | `setpfp` / `setimage` | `plugins/owner/setbotpp.js` | ya existía: nombres añadidos. |
 | `setbanner` | `plugins/owner/setbotlogo.js` | ya existía como logo del menú: nombre añadido. |
+| `setprefix` | `plugins/owner/setprefix.js` | nuevo: el prefijo se guarda en la base (`lib/ajustes.js`) y el router lo lee en cada mensaje, así que no hay que reiniciar. Rechaza letras, espacios y más de dos caracteres. |
+| `self` | `plugins/owner/self.js` | nuevo: modo privado. Encendido, el router ignora en silencio a quien no sea dueño (no contesta ni gasta cuota). |
+| `setlink` | `plugins/owner/setlink.js` | nuevo: el enlace que sale en el menú; se exige http(s) y se puede restablecer. |
+| `setchannel` | `plugins/owner/setchannel.js` | nuevo: acepta el enlace del canal o su identificador y lo usa el menú al compartir. |
+| `setowner` | `plugins/owner/setowner.js` | nuevo: añade dueños por bot sin poder quedarse sin ninguno (los de `OWNERS` siguen mandando). |
+| `logout` | `plugins/owner/logout.js` | nuevo, solo para sub-bots: cierra la sesión, borra las credenciales y no vuelve a arrancar solo. |
 | `bot on/off` | `plugins/admin/bot.js` | el apagado lo respeta el router, no cada plugin |
 | `link` / `revoke` | `plugins/admin/link.js` | si el grupo no tiene enlace, se crea en vez de dar error |
 | `setgpname` / `setgpdesc` / `setgpbanner` | `plugins/admin/setgp.js` | comprueban en `groupMetadata` que el cambio se aplicó |
@@ -153,10 +159,11 @@ y presupuesto propios (ver `lib/gacha.js`).
 | setgoodbye | `cmds/group/setgoodbye.js` | setgoodbye |
 | setwelcome | `cmds/group/setwelcome.js` | setwelcome |
 
-### main (1)
+### main (2)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
+| menucatstyle | `cmds/main/menucatstyle.js` | menucatstyle |
 | terminos | `cmds/main/terminos.js` | terminos |
 
 ### media (1)
@@ -198,17 +205,11 @@ y presupuesto propios (ver `lib/gacha.js`).
 | events | `cmds/events.js` | events |
 | gachareserved | `cmds/gachareserved.js` | gachareserved |
 
-### socket (7)
+### socket (1)
 
 | Comando | En Shin | Nombres |
 |---|---|---|
-| logout | `cmds/socket/logout.js` | logout |
-| self | `cmds/socket/self.js` | self |
-| setchannel | `cmds/socket/setchannel.js` | setchannel, setbotchannel |
 | setcurrency | `cmds/socket/setcurrency.js` | setcurrency, setbotcurrency |
-| setlink | `cmds/socket/setlink.js` | setlink, setbotlink |
-| setowner | `cmds/socket/setowner.js` | setowner, setbotowner |
-| setprefix | `cmds/socket/setprefix.js` | setprefix, setbotprefix |
 
 ### stickers (12)
 

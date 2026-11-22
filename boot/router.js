@@ -8,6 +8,7 @@
  */
 
 import { compuerta } from "../lib/compuerta.js";
+import { prefijosDe, modoPrivado } from "../lib/ajustes.js";
 
 /**
  * @param {object} deps
@@ -51,8 +52,9 @@ export function crearRouter(deps) {
     registrar = (err) => console.error("❌ Router:", err?.stack || err),
   } = deps;
 
-  const prefijos = config?.prefix?.length ? config.prefix : ["."];
-  const prefijoPrincipal = prefijos[0];
+  // Los prefijos se leen en cada mensaje: `.setprefix` los cambia en caliente y
+  // el siguiente mensaje ya tiene que entrar por el nuevo.
+  const prefijosDeConfig = prefijosDe(null, config);
 
   const mandar =
     enviar ||
@@ -66,6 +68,15 @@ export function crearRouter(deps) {
 
       const m = mensajes[0];
 
+      const db = obtenerDb?.();
+      if (!db) {
+        console.error("⚠️ Mensaje descartado: la base de datos no está cargada.");
+        return;
+      }
+
+      const prefijos = prefijosDe(db, config) || prefijosDeConfig;
+      const prefijoPrincipal = prefijos[0];
+
       // 🚪 ¿Esto es un comando que me toca?
       const entrada = compuerta(m, {
         prefijos,
@@ -76,12 +87,6 @@ export function crearRouter(deps) {
       if (!entrada.pasa) return;
 
       ritmo?.anotarEntrante?.(m.key?.remoteJid);
-
-      const db = obtenerDb?.();
-      if (!db) {
-        console.error("⚠️ Mensaje descartado: la base de datos no está cargada.");
-        return;
-      }
 
       const remoteJid = m.key?.remoteJid;
       if (!remoteJid) return;
@@ -154,6 +159,11 @@ export function crearRouter(deps) {
       // 🛡️ PERMISOS: Verificamos si es Owner, o si es un Bot autorizado (para que los bots puedan usar comandos)
       const esBotAutorizado = m.key.fromMe || sender.endsWith('@bot') || Boolean(db?.subbots?.[sender]);
       const tienePermisosOwner = esOwner(sender, sock) || esBotAutorizado;
+
+      // 🔒 Modo privado (`.self on`): el bot solo atiende a su dueño. Se mira
+      // antes de gastar nada más, y se va en silencio: contestar «no puedes»
+      // convertiría el modo privado en un bot que responde a todo el mundo.
+      if (modoPrivado(db) && !tienePermisosOwner) return;
 
       if (plugin.isOwner && !tienePermisosOwner) {
         return enviartexto("⚠️ Este comando es exclusivo de los Owners.");

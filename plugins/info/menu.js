@@ -21,6 +21,7 @@
  */
 import { LEYENDA, CREDITO, marcar, catalogo, buscarCategoria, CATEGORIAS } from "../../lib/menu-ayuda.js";
 import { descripcionDe } from "../../lib/descripciones.js";
+import { canalDelBot, enlaceDelBot } from "../../lib/ajustes.js";
 import { commands } from "../../pluginLoader.js";
 import os from "node:os";
 import fs from "node:fs";
@@ -79,8 +80,12 @@ export default {
     const ahora = new Date();
     const fecha = `${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}, ${String(ahora.getHours()).padStart(2, "0")}:${String(ahora.getMinutes()).padStart(2, "0")} ${ahora.getHours() >= 12 ? "PM" : "AM"}`;
 
-    const CANAL_JID = "120363425322183138@newsletter";
-    const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
+    // El canal y el enlace se pueden cambiar con `.setchannel` y `.setlink`; si
+    // no se ha tocado nada, se usan los de siempre.
+    const canalPropio = canalDelBot(db);
+    const CANAL_JID = canalPropio?.jid || "120363425322183138@newsletter";
+    const CANAL_NOMBRE = canalPropio?.nombre || "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
+    const enlace = enlaceDelBot(db, config);
     const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
 
     let grupos = catalogo(commands, OCULTOS);
@@ -149,6 +154,8 @@ export default {
         lineas.push("");
       }
       lineas.push(`${HILO}`);
+      lineas.push(`🔗 ${enlace}`);
+      lineas.push("");
       lineas.push(LEYENDA);
       lineas.push("");
       lineas.push(CREDITO);
