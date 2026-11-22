@@ -44,40 +44,39 @@ export default {
 ┃ 💤 *Estado:* Ausente
 ┃ 📝 *Razón:* ${user.afkReason || "Sin razón especificada"}
 ┃ ⏱️ *Hace:* ${tiempoAFK} minutos
-┗━━━━━━━━━━━━━━━━━━━━━┛`;
+┗━━━━━━━━━━━━━━━━┛`;
     }
 
     // 8. 🎨 Verificar Personalización Premium (Solo si es premium)
     let premiumSection = "";
     if (esPremium && (user.desc || user.customFecha)) {
-      premiumSection = `
-┏━━━〔 🎨 𝐏𝐄𝐑𝐒𝐎𝐍𝐀𝐋𝐈𝐙𝐀𝐂𝐈𝐎𝐍 〕━━━┓
-${user.desc ? `┃ 📝 *Descripción:* ${user.desc}\n` : ""}${user.customFecha ? `┃ 📅 *Fecha Especial:* ${user.customFecha}\n` : ""}┗━━━━━━━━━━━━━━━━━━━━━┛`;
+      premiumSection = `${user.desc ? `┃ *Descripción:* ${user.desc}\n` : ""}`;
     }
 
     // 9. Construir el texto final
     const textoPerfil = `
-┏━━━〔 🐾 𝐏𝐄𝐑𝐅𝐈𝐋 〕━━━┓
-┃ 👤 *Nombre:* ${user.nombre}
-┃ 🎂 *Edad:* ${user.edad}
-┃ ⚧ *Género:* ${user.genero}
-┃ 📅 *Registro:* ${user.fecha}
-┃ 📞 *Número:* +${user.numero}
-┃ 🏅 *Rango:* ${rangoTexto}
-${user.marry ? `┃ 💍 *Casado con:* @${user.marry.split("@")[0]}\n` : ""}┗━━━━━━━━━━━━━━━━━━━━━┛
-${afkSection}
-┏━━━〔 ⚔️ 𝐄𝐒𝐓𝐀𝐃𝐈𝐒𝐓𝐈𝐂𝐀𝐒 〕━━━┓
-┃ ✦ *Nivel:* ${nivel}
-┃ ✦ *Exp:* ${exp}/${nivelMaxXP}
-┃ ✦ *Progreso:* [${barraXP}]
-┃ ✦ *Clase:* ${user.clase || "Novato"}
-┗━━━━━━━━━━━━━━━━━━━━━┛
+「✿」 *Perfil* ◢ *${user.nombre}* ◤
 
-┏━━━〔 💰 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀 〕━━━┓
-┃ ➤ *Coins:* ¥${coins.toLocaleString()} 🪙
-┃ ➤ *Oro:* ¥${oro.toLocaleString()} 💰
-┗━━━━━━━━━━━━━━━━━━━━━┛
 ${premiumSection}
+
+ⴵ Edad › ${user.edad}
+✐ Registro › ${user.fecha}
+⚥ Género › ${user.genero}
+♡ Casadx con › ${user.marry ? `@${user.marry.split("@")[0]}\n` : ""}
+❀ Plan › ${rangoTexto}
+```#``` Número › +${user.numero}
+
+✿ Nivel › ${nivel}
+❀ Experiencia › ${exp}/${nivelMaxXP}
+➨ Progreso › [${barraXP}]
+⸙ Clase › ${user.clase || "Novato"}
+
+♛ Cumpleaños › ${user.customFecha ? ` *Fecha Especial:* ${user.customFecha}\n`  : ""}
+
+${afkSection}
+
+⛁ Coins totales › ${coins.toLocaleString()} *Yenes*
+❒ Oros › ${oro.toLocaleString()} 
 ${config.footer}
 `.trim();
 
