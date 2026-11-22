@@ -1,40 +1,60 @@
-import { enviarConBotones, rapido, lista } from "../../lib/botones.js";
-import { LEYENDA, CREDITO, marcar } from "../../lib/menu-ayuda.js";
+/**
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Mantener esta cabecera es obligatorio por AGPL. Ver NOTICE.
+ * Parte portada de Shin-MD (https://github.com/riokuroxi-svg/Shin-MD)
+ *
+ * plugins/info/menu.js — el menú, en un solo mensaje con imagen.
+ *
+ * QUÉ CAMBIÓ
+ * ----------
+ * Antes mandaba la imagen y, detrás, un segundo mensaje con la lista desplegable
+ * de categorías («Selecciona una categoría»): dos mensajes por cada `.menu`, y el
+ * segundo tapaba al primero. Ese desplegable ya no está. Ahora sale un mensaje
+ * único, con la foto del bot y el menú completo, y las categorías se piden
+ * escribiendo `.menu <categoría>`.
+ *
+ * Los comandos NO están escritos a mano aquí: se leen de los plugins que de
+ * verdad están cargados (`pluginLoader`). Si un comando se añade, aparece solo; si
+ * se borra, desaparece. Así el menú no vuelve a quedarse atrás.
+ */
+import { LEYENDA, CREDITO, marcar, catalogo, buscarCategoria, CATEGORIAS } from "../../lib/menu-ayuda.js";
+import { descripcionDe } from "../../lib/descripciones.js";
 import { commands } from "../../pluginLoader.js";
 import os from "node:os";
 import fs from "node:fs";
 import path from "node:path";
 
-const TOP = "╭╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ࣪ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╮";
-const MID = "├╾ׅ╴ׂ╌╶ׅ╌ׂ─ 〫─ׂ┄ׅ╴ׂ╌ׅ╶╼.. ╾ׅ╴ׂ╌╶ׅ╌ׂ";
-const BOT = "╰╼ׅࣶ፝֟╾╌ֵ╾͜─ํ͜┈ְ ࣭࣪⢏࣭ࣧ⢢࣭ׄ᎐፝֟͟͝᎐࣭ׄ⡔࣭ࣧ⡹࣭ׄ ְ┈ํ͜─͜╼ꨪᰰ╾࣮╌╼ࣶׅ፝֟╾╯";
+/** Nombres del propio menú: no se enseñan como si fueran comandos. */
+const OCULTOS = new Set(["menu", "help", "menú", "ayuda", "allmenu", "comandos", "menucat", "categorias", "categorías"]);
 
-const compacta = (titulo, cmds) => `${TOP}
-│❀ *${titulo}* ☆(ﾉ◕ヮ◕)ﾉ*
-${MID}
-│✿ ${cmds.join(" › ")}
-${BOT}`;
+/** Corte entre bloques. */
+const HILO = "⋆｡ﾟ☁︎｡°࿐";
 
-const detallada = (titulo, items) => `${TOP}
-│❀ *${titulo}* ☆(ﾉ◕ヮ◕)ﾉ*
-${MID}
-${items.map(([c, d]) => `│✿ ${c}\n> ✺ ${d}`).join("\n")}
-${BOT}`;
+/** `» ˚୨•(=^●ω●^=)• ⊹ `Categoría` ⊹` */
+const cabecera = (emoji, titulo) => `» ˚୨•(=^●ω●^=)• ⊹ ${emoji} \`${titulo}\` ⊹`;
+
+/** Un comando con sus alias: `✧ `.work` `.w`` */
+const enLinea = (p, c) =>
+  `\`${p}${c.nombre}\`` + (c.alias.length ? " " + c.alias.slice(0, 8).map((a) => `\`${p}${a}\``).join(" ") : "");
 
 export default {
   command: ["menu", "help", "menú", "ayuda"],
   execute: async (ctx) => {
-    const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args, comando, isGroup } = ctx;
+    const { sock, sender, from, m, enviartexto, BOT_NAME, config, PREFIX, db, args } = ctx;
     const numero = sender.split("@")[0];
-    const tipo = args[0]?.toLowerCase();
-    const p = PREFIX;
+    const pedido = args.join(" ").trim();
+    const p = PREFIX || ".";
 
     // ═══════════ DATOS DEL BOT ═══════════
-    let version = "1.1.3";
+    let version = "1.2.0";
     try {
-      const pkg = JSON.parse(fs.readFileSync(path.resolve('./package.json'), 'utf8'));
-      version = pkg.version || "1.1.3";
-    } catch {}
+      const pkg = JSON.parse(fs.readFileSync(path.resolve("./package.json"), "utf8"));
+      version = pkg.version || version;
+    } catch {
+      /* sin package.json se queda la versión de arriba */
+    }
 
     const uptime = process.uptime();
     const dias = Math.floor(uptime / 86400);
@@ -46,287 +66,119 @@ export default {
     tiempoStr += `${mins}m`;
 
     const plataforma = `${os.type()} ${os.release()} ${os.arch()}`;
-    const totalUsers = Object.keys(db.users || {}).length.toLocaleString('en-US');
+    const totalUsers = Object.keys(db.users || {}).length.toLocaleString("en-US");
 
     const miJid = sock.user?.id || "";
-    const miNumero = miJid.split('@')[0].split(':')[0];
-    const esPrincipal = (config.owners || []).some(o => (o.number || o) === miNumero);
+    const miNumero = miJid.split("@")[0].split(":")[0];
+    const esPrincipal = (config.owners || []).some((o) => (o.number || o) === miNumero);
     const botDb = db.users[`${miNumero}@s.whatsapp.net`] || {};
     const esPremium = botDb.premium === true;
+    const tipoBot = esPrincipal ? "Owner" : esPremium ? "Prem-bot" : "Sub-Bot";
 
-    let tipoBot = "Owner";
-    if (!esPrincipal) {
-      tipoBot = esPremium ? "Prem-bot" : "Sub-Bot";
-    }
-
-    let urlLink = "https://github.com/SergioOficial/ado-bot";
-    const meses = ["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","sep.","oct.","nov.","dic."];
+    const meses = ["ene.", "feb.", "mar.", "abr.", "may.", "jun.", "jul.", "ago.", "sep.", "oct.", "nov.", "dic."];
     const ahora = new Date();
-    const fecha = `${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}, ${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")} ${ahora.getHours() >= 12 ? "PM" : "AM"}`;
+    const fecha = `${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}, ${String(ahora.getHours()).padStart(2, "0")}:${String(ahora.getMinutes()).padStart(2, "0")} ${ahora.getHours() >= 12 ? "PM" : "AM"}`;
 
     const CANAL_JID = "120363425322183138@newsletter";
     const CANAL_NOMBRE = "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
 
-    // Cabecera fusionada con el bloque de info
-    const header = (titulo) => `> *¡ʜᴏʟᴀ!* @${numero}, Como estas en esta navidad?, mucho gusto mi nombre es *ㅤ ⋰ּׅ ꯬ꫭ͙۪ૂ୲⡇꯭֟፝͠\` 🌃ㅤ̤ ̊𝙰𝚍𝚘𝑩𝒐𝒕 ㅤ   ּׅׄ  ꯬ꫭ͙۪ૂ୲⡇ 🎄ㅤ̉  ̹* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)*
- ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
+    let grupos = catalogo(commands, OCULTOS);
 
-: ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${tipoBot}
-│❀  *ᴅᴇsᴀʀʀᴏʟʟᴀᴅᴏʀ ::* Sergio Dev
-│☄︎ *sɪsᴛᴇᴍᴀ/ᴏᴘʀ ::* ${plataforma}
-│✧ *ᴠᴇʀsɪóɴ ::*  ${version}
-│❖ *ᴜsᴇʀs ::* ${totalUsers}
-│❖ *ᴍɪ ᴛɪᴇᴍᴘᴏ ::* ${fecha}
-│❖ *ᴜʀʟ ::* ${urlLink}
+    // Si el mapa de plugins está vacío (el cargador aún no ha corrido, o alguien
+    // llamó al menú desde una prueba), no se puede listar comandos. Antes de
+    // mandar un error se enseña al menos el mapa de categorías, que es fijo.
+    if (!grupos.length) {
+      grupos = CATEGORIAS.map((c) => ({ ...c, comandos: [] }));
+    }
+    const totalComandos = grupos.reduce((n, g) => n + g.comandos.length, 0);
+    const sinPlugins = totalComandos === 0;
 
- ⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒
+    const cabeceraBot = `> *¡ʜᴏʟᴀ!* @${numero}, mucho gusto. Soy *${BOT_NAME || "Ado-Bot"}* (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)\n` +
+      `⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒\n\n` +
+      `: ̗̀│ꕥ *ᴛɪᴘᴏ ::* ${tipoBot}\n` +
+      `│❀ *ᴠᴇʀsɪóɴ ::* ${version}\n` +
+      `│☄︎ *sɪsᴛᴇᴍᴀ ::* ${plataforma}\n` +
+      `│❖ *ᴜsᴇʀs ::* ${totalUsers}\n` +
+      `│❖ *ᴇɴᴄᴇɴᴅɪᴅᴏ ::* ${tiempoStr}\n` +
+      `│❖ *ᴀʜᴏʀᴀ ::* ${fecha}\n` +
+      `│❖ *ᴘʀᴇғɪᴊᴏ ::* ${p} · *ᴄᴏᴍᴀɴᴅᴏs ::* ${totalComandos}\n\n` +
+      `⌒࣪᷼⏜͡ ۪ ࿚ꨪᰰ࿙ ࣭࣪⢏࣭۟⢢࣭ׄ᎐፝֟᎐࣭ׄ⡔࣭۟⡹࣭ׄ ࿚ꨪᰰ࿙ ۪ ͡⏜ׄ᷼⌒\n\n` +
+      `⋆｡ﾟ🎄 ｡° *ᴄᴏᴍ꯭ᴀ꯭ɴ꯭ᴅ꯭ᴏ꯭s* ﾟ｡˚₊ 𓂃`;
 
-⋆｡ﾟ🎄 ｡° *ᴄᴏᴍ꯭ᴀ꯭ɴ꯭ᴅ꯭ᴏ꯭s* ﾟ｡˚₊ 𓂃
-`;
+    let texto;
 
-    let texto = "";
+    // ═══════════ UNA CATEGORÍA ═══════════
+    const categoria = pedido && pedido !== "all" && pedido !== "todo" ? buscarCategoria(grupos, pedido) : null;
 
-    // ═══════════ MENÚ PRINCIPAL ═══════════
-    if (!tipo) {
-      texto = header("Menú Principal") + `\n> 💡 *Tip:* Usa *${p}menu <categoría>* para ver los detalles.\n\n`;
-
-      texto += compacta("🎁 Economía", ["work","daily","beg","bal","nivel","dep","with","pay","rob","crime","cf","slots","dice","rankcoins","interest","ppt","cofre","invertir","shop","give","weekly","monthly"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("⚔️ RPG", ["trabajar","cazar","pescar","minar","explorar","clase","ranknivel","talar","cultivar","repartir","pintar","hackear","streamer","policia","bombero","espiar","mago"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🐾 Mascotas", ["adoptar","animal","nombrar","acariciar","alimentar","pasear","animaltop","pelear","atacar","cambiar","huir","capturar","petactivo"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🎴 Gacha", ["gacha on","gacha off","rw","roll","rollwaifu","claim","c","reclamar","harem","waifus","claims","wtop","topwaifus","waifustop","charinfo","winfo","vote"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🌟 Perfil", ["reg","perfil","delperfil","level","lboard","afk"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🎄 Descargas", ["play","play2","fb","ig","tt","mf","apk","ytsearch","toimg"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("☃️ Stickers", ["s","brat","bratv","emojimix","stickers"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🧠 IA", ["ia","iaaudio","imagen", "iam"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🎉 Diversión", ["trivia","mate","8ball","meme","gato","perro","waifu","neko","ship","papel","memoria","cerito","tetris","ajedrez"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🔔 Utilidades", ["ping","info","creadores","traducir","clima","wiki","qr","tts","evento"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🐙 GitHub", ["gitsearch","ghsearch"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🤖 SubBots", ["code","jadibot","canjear","stopbot","bots"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🛡️ Admin", ["close","open","del","kick","promote","demote","warn","warns","delwarn","setwarnlimit","hidetag","antilink","bot","link","revoke","setgpname","setgpdesc","setgpbanner","pin","unpin","count","topcount","topinactive","gp","testwelcome"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("👑 Owner", ["fix","backup","restart","join","leave","gencode","error"].map(c => `${p}${c}`)) + "\n";
-      texto += compacta("🧪 Test", [`${p}botones`]) + "\n";
-      texto += compacta("🎭 Reacciones", ["angry","kill","sleep","hug","kiss","pat","slap","cry","dance","smile","wave","bonk","bite","blush","cuddle"].map(c => `${p}${c}`)) + "\n";
-
-      texto += `\n${LEYENDA}\n\n${CREDITO}`;
-    }
-    // ═══════════ CATEGORÍAS ═══════════
-    else if (tipo === 'economia' || tipo === 'economía' || tipo === 'economy' || tipo === 'economico') {
-      texto = header("Economía") + "\n" + detallada("🎁 Economía", [
-        [`${p}work › ${p}daily › ${p}beg`, "Ganar coins diarios"],
-        [`${p}bal › ${p}nivel`, "Ver balance y nivel"],
-        [`${p}dep › ${p}with`, "Depositar / retirar del banco"],
-        [`${p}pay <@user> <monto>`, "Transferir coins a otro usuario"],
-        [`${p}rob <@user> › ${p}crime`, "Robar o delinquir"],
-        [`${p}cf › ${p}slots › ${p}dice`, "Juegos de azar"],
-        [`${p}ppt`, "Piedra, papel o tijera"],
-        [`${p}roulette › ${p}casino`, "Ruleta y casino"],
-        [`${p}rankcoins › ${p}einfo`, "Top e info de economía"],
-        [`${p}interest`, "Cobrar intereses del banco"],
-        [`${p}cofre › ${p}invertir`, "Cofre (5k) e inversiones de riesgo"],
-        [`${p}shop › ${p}give`, "Tienda y regalar coins"],
-        [`${p}weekly › ${p}monthly`, "Recompensas semanal / mensual"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'github') {
-      texto = header("GitHub") + "\n" + detallada("🐙 GitHub", [
-        [`${p}gitsearch <txt>`, "Buscar repositorios en GitHub"],
-        [`${p}githubsearch <txt>`, "Alias de gitsearch"],
-        [`${p}ghsearch <txt>`, "Alias corto"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'rpg' || tipo === 'aventura' || tipo === 'aventure') {
-      texto = header("RPG") + "\n" + detallada("⚔️ Aventura y RPG", [
-        [`${p}trabajar`, "Trabajo básico del día"],
-        [`${p}cazar › ${p}pescar › ${p}minar › ${p}explorar`, "Recolectar recursos"],
-        [`${p}talar › ${p}cultivar › ${p}repartir › ${p}pintar`, "Oficios varios"],
-        [`${p}hackear › ${p}streamer › ${p}policia › ${p}bombero › ${p}espiar › ${p}mago`, "Trabajos especiales"],
-        [`${p}clase › ${p}ranknivel`, "Elegir clase y ranking"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'mascotas' || tipo === 'pets' || tipo === 'peleas') {
-      texto = header("Mascotas") + "\n" + detallada("🐾 Mascotas y Peleas", [
-        [`${p}adoptar <animal>`, "Adoptar una mascota"],
-        [`${p}animal`, "Ver tus mascotas"],
-        [`${p}nombrar <pet> <nombre>`, "Renombrar mascota"],
-        [`${p}acariciar › ${p}alimentar › ${p}pasear`, "Cuidar mascota"],
-        [`${p}animaltop`, "Ranking de mascotas"],
-        [`${p}pelear`, "Buscar pelea salvaje"],
-        [`${p}pelear <@user>`, "Duelo contra otro usuario"],
-        [`${p}atacar <1-3>`, "Atacar (eligiendo movimiento)"],
-        [`${p}cambiar › ${p}huir`, "Cambiar de mascota o huir"],
-        [`${p}capturar`, "Capturar si está bajo el 40%"],
-        [`${p}petactivo`, "Establecer mascota activa"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'gacha' || tipo === 'waifus' || tipo === 'claims') {
-      texto = header("Gacha") + "\n" + detallada("🎴 Gacha", [
-        [`${p}gacha on › ${p}gacha off`, "Activar / desactivar gacha"],
-        [`${p}rw › ${p}roll › ${p}rollwaifu`, "Tirar personaje aleatorio"],
-        [`${p}claim › ${p}c › ${p}reclamar`, "Reclamar personaje"],
-        [`${p}harem › ${p}waifus › ${p}claims`, "Tu colección"],
-        [`${p}wtop › ${p}topwaifus › ${p}waifustop`, "Top del grupo"],
-        [`${p}charinfo › ${p}winfo`, "Ficha de personaje"],
-        [`${p}vote <nombre>`, "Votar por un personaje (+valor)"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'perfil' || tipo === 'profile') {
-      texto = header("Perfil") + "\n" + detallada("🌟 Perfil", [
-        [`${p}reg <nom> <edad> <gen>`, "Registrarte"],
-        [`${p}perfil`, "Ver tu perfil"],
-        [`${p}delperfil`, "Borrar tu perfil"],
-        [`${p}level › ${p}lboard`, "Nivel y ranking"],
-        [`${p}afk [motivo]`, "Modo ausente"],
-        [`${p}setdesc › ${p}setgenre › ${p}sethobby`, "Personalizar perfil"],
-        [`${p}setbirth <DD/MM/AAAA>`, "Fecha de cumpleaños"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'descargas' || tipo === 'downloads') {
-      texto = header("Descargas") + "\n" + detallada("🎄 Descargas", [
-        [`${p}play › ${p}play2`, "Descargar música de YouTube"],
-        [`${p}fb › ${p}ig › ${p}tt`, "Facebook, Instagram, TikTok"],
-        [`${p}mf › ${p}apk`, "MediaFire y APKs"],
-        [`${p}ytsearch › ${p}toimg`, "Buscar YouTube / sticker a imagen"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'stickers' || tipo === 's') {
-      texto = header("Stickers") + "\n" + detallada("☃️ Stickers", [
-        [`${p}s › ${p}sticker`, "Crear sticker desde imagen/video"],
-        [`${p}brat <texto>`, "Sticker estilo brat"],
-        [`${p}bratv <texto>`, "Video-sticker estilo brat"],
-        [`${p}emojimix <emoji+emoji>`, "Mezclar 2 emojis"],
-        [`${p}stickers <busq>`, "Buscar packs de stickers"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'ia') {
-      texto = header("IA") + "\n" + detallada("🧠 Inteligencia Artificial", [
-        [`${p}ia <pregunta>`, "Chatear con la IA"],
-        [`${p}iaaudio <pregunta>`, "Respuesta en audio"],
-        [`${p}imagen <prompt>`, "Generar imagen con IA"],
-        [`${p}iam <prompt>`, "Generar música con IA (Suno)"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'fun' || tipo === 'juegos') {
-      texto = header("Diversión") + "\n" + detallada("🎉 Diversión", [
-        [`${p}trivia › ${p}mate › ${p}8ball`, "Trivia, matemáticas, 8ball"],
-        [`${p}meme › ${p}gato › ${p}perro`, "Meme, gato, perro"],
-        [`${p}waifu › ${p}neko › ${p}ship`, "Waifu, neko, ship"],
-        [`${p}cerito › ${p}ajedrez › ${p}tetris`, "Juegos web en WhatsApp"],
-        [`${p}papel › ${p}memoria`, "Juegos clásicos"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'utils' || tipo === 'utilidades') {
-      texto = header("Utilidades") + "\n" + detallada("🔔 Utilidades", [
-        [`${p}ping › ${p}info › ${p}creadores`, "Info básica del bot"],
-        [`${p}traducir <txt> › ${p}clima <ciudad> › ${p}wiki <busq>`, "Traducción, clima, wiki"],
-        [`${p}qr › ${p}tts <txt> › ${p}evento`, "Código QR, texto a voz, eventos"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'subbots' || tipo === 'bot' || tipo === 'stockens') {
-      texto = header("Sub-Bots") + "\n" + detallada("🤖 Sub-Bots", [
-        [`${p}code`, "Obtener código (gratis)"],
-        [`${p}jadibot`, "Ser sub-bot (premium)"],
-        [`${p}canjear <código>`, "Canjear código de sub-bot"],
-        [`${p}stopbot › ${p}bots`, "Detener tu sub-bot / listar bots"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'owner' || tipo === 'dev') {
-      texto = header("Owner") + "\n" + detallada("👑 Owner", [
-        [`${p}fix › ${p}backup › ${p}restart`, "Mantenimiento del bot"],
-        [`${p}join › ${p}leave › ${p}gencode`, "Unir/salir de grupos"],
-        [`${p}error`, "Ver logs del bot"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'admin') {
-      texto = header("Admin") + "\n" + detallada("🛡️ Admin", [
-        [`${p}close › ${p}open`, "Cerrar / abrir el grupo"],
-        [`${p}del › ${p}kick <@user> [motivo]`, "Eliminar mensaje / expulsar"],
-        [`${p}promote › ${p}demote`, "Ascender / degradar admin"],
-        [`${p}warn › ${p}warns › ${p}delwarn`, "Sistema de advertencias"],
-        [`${p}setwarnlimit <1-10>`, "Límite de advertencias"],
-        [`${p}hidetag <mensaje>`, "Mencionar a todos"],
-        [`${p}antilink on|off › ${p}bot on|off`, "Antilink y bot on/off"],
-        [`${p}link › ${p}revoke`, "Enlace y restablecer"],
-        [`${p}setgpname › ${p}setgpdesc › ${p}setgpbanner`, "Configurar grupo"],
-        [`${p}pin › ${p}unpin`, "Fijar / desfijar mensajes"],
-        [`${p}count › ${p}topcount › ${p}topinactive`, "Estadísticas"],
-        [`${p}gp › ${p}testwelcome`, "Info del grupo / test bienvenida"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'test') {
-      texto = header("Test") + "\n" + detallada("🧪 Test", [
-        [`${p}botones`, "Probar sistema de botones"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else if (tipo === 'reacciones' || tipo === 'reactions') {
-      texto = header("Reacciones") + "\n" + detallada("🎭 Reacciones", [
-        [`${p}angry › ${p}kill › ${p}sleep`, "Enojo, matar, dormir"],
-        [`${p}hug › ${p}kiss › ${p}pat`, "Abrazo, beso, caricia"],
-        [`${p}slap › ${p}cry › ${p}dance`, "Bofetada, llorar, bailar"],
-        [`${p}smile › ${p}wave › ${p}bonk`, "Sonrisa, saludo, bonk"],
-        [`${p}bite › ${p}blush › ${p}cuddle`, "Morder, sonrojarse, acurrucar"],
-      ]) + `\n> Volver: *${p}menu*`;
-    }
-    else {
-      return enviartexto(`❌ La categoría *${tipo}* no existe.\nUsa *${p}menu* para ver las opciones.`);
+    if (categoria) {
+      const lineas = [cabeceraBot, "", cabecera(categoria.emoji, categoria.titulo)];
+      if (categoria.descripcion) lineas.push(`> ✐ ${categoria.descripcion}`);
+      lineas.push("");
+      for (const c of categoria.comandos) {
+        const desc = descripcionDe(c.nombre) || descripcionDe(c.alias[0]);
+        const marcas = Boolean(c.plugin.isOwner);
+        lineas.push(`✧ ${enLinea(p, c)}${marcas ? " Ⓓ" : ""}`);
+        if (desc) lineas.push(`> ${desc}`);
+        lineas.push("");
+      }
+      lineas.push(`${HILO}\n> Volver: *${p}menu*\n> Otra: *${p}menu <categoría>*`);
+      texto = lineas.join("\n");
+    } else if (pedido && !(pedido === "all" || pedido === "todo")) {
+      // No es una categoría: se le dan los nombres posibles, sin regañar.
+      return enviartexto(
+        `❌ No hay ninguna categoría *${pedido}*.\n\n` +
+          grupos.map((g) => `│ ${g.emoji} *${g.titulo}* — \`${p}menu ${g.carpeta}\``).join("\n") +
+          `\n\n> Ejemplo: *${p}menu admin*`
+      );
+    } else {
+      // ═══════════ MENÚ PRINCIPAL ═══════════
+      const lineas = [cabeceraBot, ""];
+      for (const g of grupos) {
+        lineas.push(cabecera(g.emoji, g.titulo));
+        if (g.descripcion) lineas.push(`> ✐ ${g.descripcion}`);
+        lineas.push(
+          g.comandos.length
+            ? `✧ ${g.comandos.map((c) => `\`${p}${c.nombre}\``).join(" ")}`
+            : `> ✐ *${p}menu ${g.carpeta}*`
+        );
+        lineas.push("");
+      }
+      if (sinPlugins) {
+        lineas.push("> ⚠️ Los plugins aún no están cargados: se ven las categorías, no los comandos.");
+        lineas.push("");
+      }
+      lineas.push(`${HILO}`);
+      lineas.push(LEYENDA);
+      lineas.push("");
+      lineas.push(CREDITO);
+      texto = lineas.join("\n");
     }
 
-    texto = marcar(texto, PREFIX, commands);
+    texto = marcar(texto.trim(), p, commands);
 
     try {
-      await sock.sendMessage(from, {
-        image: { url: pfp },
-        caption: texto.trim(),
-        mentions: [sender],
-        contextInfo: {
-          forwardingScore: 1,
-          isForwarded: true,
-          forwardedNewsletterMessageInfo: {
-            newsletterJid: CANAL_JID,
-            newsletterName: CANAL_NOMBRE,
-            serverMessageId: 1
-          }
-        }
-      }, { quoted: m });
+      await sock.sendMessage(
+        from,
+        {
+          image: { url: pfp },
+          caption: texto,
+          mentions: [sender],
+          contextInfo: {
+            forwardingScore: 1,
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+              newsletterJid: CANAL_JID,
+              newsletterName: CANAL_NOMBRE,
+              serverMessageId: 1,
+            },
+          },
+        },
+        { quoted: m }
+      );
     } catch (err) {
       console.error("⚠️ No se pudo enviar el menú con imagen:", err?.stack || err);
-      await enviartexto(texto.trim());
+      await enviartexto(texto);
     }
-
-    if (!tipo) {
-      await enviarConBotones(sock, from, {
-        texto: "📂 *Selecciona una categoría*\n> O escribe el comando completo.",
-        pie: config.footer,
-        botones: [
-          lista("🗂️ Explorar categorías", [
-            {
-              title: "Comandos",
-              rows: [
-                { id: `${comando} economia`, title: "💰 Economía", description: "daily, work, bal, banco, apuestas" },
-                { id: `${comando} rpg`, title: "⚔️ RPG", description: "cazar, pescar, minar, explorar" },
-                { id: `${comando} mascotas`, title: "🐾 Mascotas", description: "adoptar, pelear, atacar, cambiar" },
-                { id: `${comando} gacha`, title: "🎴 Gacha", description: "rw, claim, harem, wtop" },
-                { id: `${comando} perfil`, title: "🧾 Perfil", description: "reg, level, afk, ficha" },
-                { id: `${comando} descargas`, title: "📥 Descargas", description: "play, tt, fb, pinterest" },
-                { id: `${comando} admin`, title: "🛡️ Admin", description: "kick, promote, warn, antilink" },
-              ],
-            },
-            {
-              title: "Más",
-              rows: [
-                { id: `${comando} utils`, title: "🔔 Utilidades", description: "qr, morse, encuesta, recordar" },
-                { id: `${comando} ia`, title: "🧠 IA", description: "ia, iaaudio, imagen" },
-                { id: `${comando} stickers`, title: "🖌️ Stickers", description: "sticker, brat, emojimix" },
-                { id: `${comando} owner`, title: "👑 Owner", description: "solo dueños" },
-                { id: `${comando} reacciones`, title: "🎭 Reacciones", description: "hug, kiss, pat, slap..." },
-                { id: `${comando} fun`, title: "🎮 Juegos", description: "cerito, ajedrez, tetris" },
-              ],
-            },
-          ]),
-          rapido("🗂️ Categorías", "menucatstyle"),
-          rapido("☰ Ver todo", "allmenu"),
-        ],
-      }).catch(() => {});
-    }
-  }
+  },
 };

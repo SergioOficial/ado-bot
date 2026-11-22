@@ -26,6 +26,11 @@ export async function loadPlugins() {
           const plugin = mod.default;
           if (!plugin) continue;
 
+          // De qué carpeta sale cada plugin: lo usa el menú para agrupar por
+          // categoría sin tener que mantener una lista a mano.
+          plugin.carpeta ||= path.basename(path.dirname(fullPath));
+          plugin.archivo ||= file.replace(/\.js$/, "");
+
           // Si es un comando
           if (plugin.command) {
             const cmds = Array.isArray(plugin.command) ? plugin.command : [plugin.command];

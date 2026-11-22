@@ -22,12 +22,13 @@ un archivo que puedes leer, cambiar o borrar.
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/SergioOficial/ado-bot)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Baileys](https://img.shields.io/badge/Baileys-%40itsliaaa%2Fbaileys-blue?style=for-the-badge)](https://www.npmjs.com/package/@itsliaaa/baileys)
-[![Comandos](https://img.shields.io/badge/Comandos-475-informational?style=for-the-badge)](#-comandos)
+[![Comandos](https://img.shields.io/badge/Comandos-570-informational?style=for-the-badge)](#-comandos)
+[![Pruebas](https://img.shields.io/badge/Pruebas-313%20en%20verde-success?style=for-the-badge)](#-comprobado)
 [![Licencia](https://img.shields.io/badge/Licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
 
 **Creado por [Sergio Gómez Gort](https://github.com/SergioOficial) y [riokuroxi-svg](https://github.com/riokuroxi-svg)**
 
-[Qué es](#-qué-es-ado-bot) • [Instalación](#-instalación) • [Estructura](#️-estructura-del-proyecto) • [Comandos](#-comandos) • [Licencia](#-licencia) • [Créditos](#-créditos)
+[Qué es](#-qué-es-ado-bot) • [Menú](#menú--un-mensaje-sin-desplegables) • [Instalación](#-instalación) • [Estructura](#️-estructura-del-proyecto) • [Comprobado](#-comprobado) • [Licencia](#-licencia) • [Créditos](#-créditos)
 
 </div>
 
@@ -38,31 +39,42 @@ un archivo que puedes leer, cambiar o borrar.
 
 | Lo que trae | Para qué sirve |
 |---|---|
-| 🧩 **Todo es un plugin** 
-| Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
-| 🔀 **Multi-prefijo**
-| Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
-| 🕵️ **Modo privado** 
-| `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
-| 🔘 **Botones nativos** 
-| Respuesta rápida, copiar, enlace, llamar, ubicación, mini web y **listas desplegables**, con los nodos binarios que WhatsApp exige y respaldo en texto si el móvil no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
-| 📅 **Versión de WhatsApp al día** 
-| La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
-| 💎 **Premium y sub-bots** 
-| Clones del bot vinculando otros números, con sus propios owners. |
-| 🎨 **Multimedia sin romperse** 
-| Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
-| 🧠 **IA, economía y RPG** 
-| Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
-| ⚔️ **Peleas de mascotas** 
-| Combates por turnos contra una salvaje o contra otro entrenador, **con botones**: elegir ataque, cambiar de mascota, capturar o huir. Ocho tipos con tabla de eficacia. |
-| 🎴 **Gacha de personajes** 
-| `.rw` tira un personaje con su imagen, `.claim` lo reclama y `harem`, `wtop` y `charinfo` llevan la colección del grupo. Se enciende y apaga por grupo. |
-| 🛡️ **Freno de envíos** 
-| Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
-| ✅ **Se puede comprobar** 
-| Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
+| 🧩 **Todo es un plugin** | Cada comando es un archivo en `plugins/`. Se carga solo, sin tocar `index.js`. Si borras el archivo, el comando desaparece del menú. |
+| 🔀 **Multi-prefijo** | Responde a `.`, `#`, `/` y 🇨🇺 a la vez. Se cambia en `config.js`. |
+| 🕵️ **Modo privado** | `.menu-` con un guion al final: borra tu mensaje del grupo y te contesta por privado. |
+| 🔘 **Botones nativos** | Respuesta rápida, copiar, enlace, llamar, ubicación, mini web y **listas desplegables**, con los nodos binarios que WhatsApp exige y respaldo en texto si el móvil no los pinta. Se apagan con `BOTONES=off` sin tocar código. |
+| 📅 **Versión de WhatsApp al día** | La revisión se pregunta a WhatsApp (`web.whatsapp.com`), no al repositorio del cliente. Eso es lo que evita el cierre «actualiza WhatsApp». |
+| 💎 **Premium y sub-bots** | Clones del bot vinculando otros números, con sus propios owners. |
+| 🎨 **Multimedia sin romperse** | Descargas de Pinterest, TikTok, Facebook y YouTube con compresión (`sharp`) para que no falle la subida. |
+| 🧠 **IA, economía y RPG** | Texto, imágenes y notas de voz; monedas con banco y caja fuerte; niveles, caza, pesca y minería. |
+| ⚔️ **Peleas de mascotas** | Combates por turnos contra una salvaje o contra otro entrenador, **con botones**: elegir ataque, cambiar de mascota, capturar o huir. Ocho tipos con tabla de eficacia. |
+| 🎴 **Gacha de personajes** | `.rw` tira un personaje con su imagen, `.claim` lo reclama y `harem`, `wtop` y `charinfo` llevan la colección del grupo. Se enciende y apaga por grupo. |
+| 🛡️ **Freno de envíos** | Cola única, espera variable, calentamiento diario y vigilante de riesgo. Sin prometer que la cuenta no sea bloqueada. |
+| ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 </details>
+
+<details>
+<summary><strong>Menú</strong> — un mensaje, sin desplegables</summary>
+
+`.menu` manda **un solo mensaje**: la foto del bot y la lista entera. Las
+categorías se piden escribiendo su nombre, sin botones ni listas que tapen el
+mensaje anterior.
+
+```text
+» ˚୨•(=^●ω●^=)• ⊹ 🎁 `Economía` ⊹
+> ✐ Gana, apuesta y guarda coins con tus amigos.
+✧ `.work` `.daily` `.beg` `.bal` `.dep` `.with` …
+```
+
+Y la categoría, con los alias y una línea por comando:
+
+```text
+✧ `.cf` `.coinflip` `.caraocruz`
+> Cara o cruz apostando coins.
+```
+
+El menú no lleva una lista escrita a mano: se arma con los plugins que están
+cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
 
 <details>
 <summary><strong>🩸 Instalaciones</strong> — Paso a paso</summary>
@@ -244,20 +256,28 @@ vigilancia (míralo con .warmup), que baja el riesgo pero no lo elimina.
 <details>
 <summary><strong>🧪 Comprobar que está bien</strong> — (sin abrir WhatsApp)
 </summary>
-Comando Qué hace
-npm run verificar Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 183 plugins y owners.
-npm run probar 305 pruebas: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad.
-npm run humo Llama a los 143 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca).
-npm run auditar Qué comandos dependen de una API externa y qué archivo no existe. Informe en docs/COMANDOS.md.
-npm run auditar-antiban Qué archivos mandan mensajes sin pasar por la cola del anti-ban: sockets propios, websocket a mano, bucles de envío y difusiones. Informe en docs/ANTIBAN.md.
-npm run sintaxis node --check en los 263 archivos del árbol, incluidos los plugins que solo se cargan al usarse.
-npm run imports Que todo import apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en package.json.
-npm run lint ESLint con las reglas que atrapan bugs: variables que no existen, claves duplicadas, código inalcanzable. Es lo que encuentra lo que node --check y las pruebas no ven.
-npm run vigia Arranca el bot con un vigilante que lo levanta si se cae (para Termux, VPS o nohup).
+
+## ✅ Comprobado
+
+Ninguno de estos abre WhatsApp: se pueden lanzar con el bot apagado y sin la
+sesión vinculada.
+
+| Comando | Qué hace |
+|---|---|
+| `npm run verificar` | Cliente, botones, versión de WhatsApp, sintaxis, carga real de los 182 plugins y owners. |
+| `npm run probar` | **313 pruebas**: compuerta de mensajes, router, anti-eco, sub-bots, recordatorios, encuestas, morse, red segura, economía, fechas y actividad. |
+| `npm run humo` | Llama a los 143 plugins con un contexto falso y señala los que revientan (los que borran archivos o reinician no se ejecutan nunca). |
+| `npm run sintaxis` | `node --check` en los 263 archivos del árbol, incluidos los plugins que solo se cargan al usarse. |
+| `npm run imports` | Que todo `import` apunte a un archivo que existe, a un nombre que de verdad se exporta y a un paquete declarado en `package.json`. |
+| `npm run lint` | ESLint con las reglas que atrapan bugs: variables que no existen, claves duplicadas, código inalcanzable. Encuentra lo que `node --check` y las pruebas no ven. |
+| `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en `docs/COMANDOS.md`. |
+| `npm run auditar-antiban` | Qué archivos mandan mensajes sin pasar por la cola del anti-ban. Informe en `docs/ANTIBAN.md`. |
+| `npm run mapa` | Qué comandos de la base (Shin-MD) faltan aquí. Informe en `docs/PORTE.md`. |
+| `npm run vigia` | Arranca el bot con un vigilante que lo levanta si se cae (Termux, VPS o `nohup`). |
 
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
 culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
-docs/RETORNO.md.
+`docs/RETORNO.md`.
 </details>
 
 ---
