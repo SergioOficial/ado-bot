@@ -1,36 +1,67 @@
+<div align="center">
 
-> [!IMPORTANT]
-> **Este proyecto está en constante evolución. Estamos comprometidos en ofrecer a nuestra comunidad un Bot increíble. Te invitamos a instalarlo y para estar al tanto de todas las novedades. [¡Únete a nuestro nuevo canal!](https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j)**
+<img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="150" alt="Ado-Bot">
 
-<p align="center" >
-<img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="190" alt="ado-Bot" style="width: 75%; height: auto; max-width: 100px;">
+# 𝘼𝙙𝙤-𝑩𝒐𝒕
 
-#  𝙰𝚍𝚘-𝑩𝒐𝒕
+**El bot de WhatsApp modular, sin cajas negras.**
+Se conecta con Baileys, arranca con un código de vinculación y cada comando es un
+archivo que puedes leer, cambiar o borrar.
 
-<p align="center"> 
-<a href="#"><img title="Ado-bot" src="https://img.shields.io/badge/¡Disfruta de un Bot totalmente gratuito, con múltiples funciones y de código abierto! -purple?colorA=%239b33b0&colorB=%231c007b&style=for-the-badge"></a> 
-</p>
+[![CI](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml/badge.svg)](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml)
+[![Versión](https://img.shields.io/github/package-json/v/SergioOficial/ado-bot?style=for-the-badge&label=versi%C3%B3n&color=8A2BE2)](package.json)
+[![Pruebas](https://img.shields.io/badge/323%20pruebas-en%20verde-2ea043?style=for-the-badge)](#-comprobado)
+[![Licencia](https://img.shields.io/badge/licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
+[![Node](https://img.shields.io/badge/node-20.9%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+
+[![Commits](https://img.shields.io/github/commit-activity/t/SergioOficial/ado-bot?style=flat-square&label=commits&color=555)](https://github.com/SergioOficial/ado-bot/commits)
+[![Último cambio](https://img.shields.io/github/last-commit/SergioOficial/ado-bot?style=flat-square&label=%C3%BAltimo%20cambio&color=555)](https://github.com/SergioOficial/ado-bot/commits)
+[![Estrellas](https://img.shields.io/github/stars/SergioOficial/ado-bot?style=flat-square&label=estrellas&color=555)](https://github.com/SergioOficial/ado-bot/stargazers)
+[![Tamaño](https://img.shields.io/github/repo-size/SergioOficial/ado-bot?style=flat-square&label=tama%C3%B1o&color=555)](https://github.com/SergioOficial/ado-bot)
+[![Visitas](https://komarev.com/ghpvc/?username=SergioOficial-ado-bot&label=visitas&color=8A2BE2&style=flat-square)](https://github.com/SergioOficial/ado-bot)
+
+</div>
 
 ---
 
-## 🌃 Descripción 
-**El bot de WhatsApp multi-dispositivo, modular y sin cajas negras.**
+## ⚡ Instalación en un comando
 
-Se conecta con Baileys, arranca con un código de vinculación y cada comando es
-un archivo que puedes leer, cambiar o borrar.
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/SergioOficial/ado-bot/main/instalar.sh)
+```
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/SergioOficial/ado-bot)
-[![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Baileys](https://img.shields.io/badge/Baileys-%40itsliaaa%2Fbaileys-blue?style=for-the-badge)](https://www.npmjs.com/package/@itsliaaa/baileys)
-[![Comandos](https://img.shields.io/badge/Comandos-570-informational?style=for-the-badge)](#-comandos)
-[![Pruebas](https://img.shields.io/badge/Pruebas-313%20en%20verde-success?style=for-the-badge)](#-comprobado)
-[![Licencia](https://img.shields.io/badge/Licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
+Descarga el bot, instala las dependencias, deja un `.env` listo y comprueba que
+todo carga. Al terminar te dice exactamente qué escribir para arrancarlo.
 
-**Creado por [Sergio Gómez Gort](https://github.com/SergioOficial) y [riokuroxi-svg](https://github.com/riokuroxi-svg)**
+<div align="center">
+<sub>
 
-[Qué es](#-qué-es-ado-bot) • [Menú](#menú--un-mensaje-sin-desplegables) • [Instalación](#-instalación) • [Estructura](#️-estructura-del-proyecto) • [Comprobado](#-comprobado) • [Licencia](#-licencia) • [Créditos](#-créditos)
+[Instalación](#-instalación-en-un-comando) • [El menú](#-el-menú) • [Comprobado](#-comprobado) • [Colaboradores](#-colaboradores-y-actividad)
 
+</sub>
 </div>
+
+<details>
+<summary><strong>🔧 Qué hace el instalador</strong> — y qué no toca</summary>
+
+| Paso | Qué hace |
+|---|---|
+| 1 | Comprueba `git` y que Node sea **20.9 o superior** (el del sistema suele quedarse corto). |
+| 2 | Clona el bot en `~/ado-bot`, o lo actualiza si ya estaba (`git pull` sin sobrescribir nada tuyo). |
+| 3 | Instala las dependencias. Es el paso lento: descarga `sharp` y sus binarios. |
+| 4 | Copia `.env.example` a `.env` **solo si no existe**. Tu `.env` nunca se toca. |
+| 5 | Lanza el verificador con el bot apagado, para no descubrir un fallo al vincular. |
+| 6 | Te enseña cómo arrancarlo. No arranca nada por su cuenta (`ADO_ARRANCAR=1` si lo quieres). |
+
+Rutas y rama se cambian con variables: `ADO_DIR=/otra/ruta`,
+`ADO_BRANCH=main`, `ADO_SIN_COLOR=1`. Se puede ejecutar las veces que quieras:
+la segunda vez actualiza en vez de instalar.
+
+> [!IMPORTANT]
+> **El proyecto está en constante evolución.** Para no perderte las novedades,
+> [únete al canal](https://whatsapp.com/channel/0029Vb758GP6rsQkqWy5Xm2j).
+
+</details>
 
 ---
 
@@ -53,8 +84,9 @@ un archivo que puedes leer, cambiar o borrar.
 | ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 </details>
 
-<details>
-<summary><strong>Menú</strong> — un mensaje, sin desplegables</summary>
+---
+
+## 🧾 El menú
 
 `.menu` manda **un solo mensaje**: la foto del bot y la lista entera. Las
 categorías se piden escribiendo su nombre, sin botones ni listas que tapen el
@@ -174,6 +206,8 @@ Variables: `OWNERS` (números separados por comas), `OWNER_NAME`, `OWNER_NUMBER`
 comentadas en `.env.example`.
 </details>
 
+</details>
+
 <details>
 <summary>🖥️ Servidor VPS (Ubuntu / Debian)<strong></strong> — paso a paso </summary>
 
@@ -273,6 +307,7 @@ sesión vinculada.
 | `npm run auditar` | Qué comandos dependen de una API externa y qué archivo no existe. Informe en `docs/COMANDOS.md`. |
 | `npm run auditar-antiban` | Qué archivos mandan mensajes sin pasar por la cola del anti-ban. Informe en `docs/ANTIBAN.md`. |
 | `npm run mapa` | Qué comandos de la base (Shin-MD) faltan aquí. Informe en `docs/PORTE.md`. |
+| `npm run readme` | Pone al día los números de este README (commits, colaboradores, días) pidiéndolos a GitHub. |
 | `npm run vigia` | Arranca el bot con un vigilante que lo levanta si se cae (Termux, VPS o `nohup`). |
 
 Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
@@ -662,9 +697,57 @@ línea.
 
 ---
 
+## 📊 Colaboradores y actividad
+
+<div align="center">
+
+<a href="https://github.com/SergioOficial/ado-bot/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=SergioOficial/ado-bot" alt="Colaboradores del proyecto" />
+</a>
+
+</div>
+
+<!-- stats:inicio -->
+_Datos pedidos a GitHub el 2026-11-22. Se actualizan con `npm run readme`._
+
+| Dato | Valor |
+|---|---|
+| Commits totales | **421** |
+| Días desde el primer commit | **12** |
+| Último cambio | **2026-11-22** (hace 0 d) |
+| Estrellas · forks · avisos abiertos | **3** · **0** · **0** |
+| Tamaño del repositorio | **1.4 MB** |
+
+| Colaborador | Qué hizo | Commits | % |
+|---|---|---|---|
+| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 358 | 85.0% |
+| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú y porteo de la base | 55 | 13.1% |
+| [@levi-hub805](https://github.com/levi-hub805) | Contribuciones puntuales | 4 | 1.0% |
+| [@afvm2025](https://github.com/afvm2025) | Contribuciones puntuales | 3 | 0.7% |
+| [@sergio](https://github.com/sergio) | Contribuciones puntuales | 1 | 0.2% |
+<!-- stats:fin -->
+
+<div align="center">
+<sub>Estos números los pone `npm run readme`, que los pide a la API de GitHub. No están escritos a mano.</sub>
+</div>
+
+<details>
+<summary><strong>📈 Actividad del repositorio</strong></summary>
+
+<div align="center">
+
+<img src="https://github-readme-stats.vercel.app/api/pin/?username=SergioOficial&repo=ado-bot&theme=tokyonight&hide_border=true&description_lines_count=3" height="170" alt="Ado-Bot en GitHub">
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=SergioOficial&theme=tokyo-night&hide_border=true&area=true&custom_title=Actividad%20de%20commits" width="100%" alt="Actividad de commits">
+
+</div>
+
+</details>
+
+---
+
 ⭐ Si te gusta el proyecto, dale una estrella ⭐
 
-Hecho con 💫 desde Cuba, Colombia y México  para el mundo
+Hecho con 💫 desde Cuba, Colombia y México para el mundo
 
 </div>
 
