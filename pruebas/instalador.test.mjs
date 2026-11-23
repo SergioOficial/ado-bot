@@ -44,8 +44,8 @@ export const pruebas = [
   ["el instalador deja el comando 'ado' para no pelearse con las rutas", () => {
     const texto = leer("instalar.sh");
     esVerdad(/instalar_lanzador/.test(texto), "no se escribe ningún lanzador");
-    esVerdad(/PREFIX\/bin/.test(texto), "en Termux debería usar \$PREFIX/bin");
-    esVerdad(/case "\$\{1:-\}" in/.test(texto) || /ado update/.test(texto), "el lanzador no explica sus órdenes");
+    esVerdad(/PREFIX[/]bin/.test(texto), "en Termux debería usar $PREFIX/bin");
+    esVerdad(/case "\${1:-}"/.test(texto) || /ado update/.test(texto), "el lanzador no explica sus órdenes");
   }],
   ["el instalador arranca solo si hay terminal de verdad", () => {
     const texto = leer("instalar.sh");
