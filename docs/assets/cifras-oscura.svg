@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1160 150" width="1160" height="150" role="img" aria-label="Cifras reales de Ado-Bot: 333 pruebas, 585 nombres de comando, 16 categorías, versión 3.7.9">
+<defs>
+<style>
+@keyframes vaiven { 0% { transform: translateX(-620px) } 100% { transform: translateX(1500px) } }
+@keyframes respirar { 0%,100% { opacity: .45 } 50% { opacity: .8 } }
+@keyframes latir { 0%,100% { opacity: .25; transform: scale(1) } 50% { opacity: .7; transform: scale(1.35) } }
+@keyframes recorrer { 0% { transform: translateX(-320px) } 100% { transform: translateX(1240px) } }
+.brillo { animation: vaiven 11s linear infinite; }
+.halo { animation: respirar 9s ease-in-out infinite; }
+.punto { animation: latir 5s ease-in-out infinite; transform-origin: center; }
+.destello { animation: recorrer 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .brillo, .halo, .punto, .destello { animation: none }
+}</style>
+<linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0C0817"/><stop offset=".55" stop-color="#150C26"/><stop offset="1" stop-color="#1F1140"/></linearGradient>
+<radialGradient id="haloA" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8A2BE2" stop-opacity=".34"/><stop offset="1" stop-color="#8A2BE2" stop-opacity="0"/></radialGradient>
+<radialGradient id="haloB" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#3E6FD9" stop-opacity=".3"/><stop offset="1" stop-color="#3E6FD9" stop-opacity="0"/></radialGradient>
+<linearGradient id="tinta" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F6F1FF"/><stop offset="1" stop-color="#B69CFF"/></linearGradient>
+<linearGradient id="lineaFina" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2E2149" stop-opacity="0"/><stop offset=".5" stop-color="#2E2149"/><stop offset="1" stop-color="#2E2149" stop-opacity="0"/></linearGradient>
+<linearGradient id="velo" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity=".1"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+<pattern id="trama" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="1.6" cy="1.6" r="1.6" fill="#B6A5D6" opacity=".3"/></pattern>
+</defs>
+<rect width="1160" height="150" fill="url(#fondo)"/>
+<ellipse class="halo" cx="180" cy="20" rx="320" ry="120" fill="url(#haloA)"/>
+<ellipse class="halo" cx="980" cy="140" rx="320" ry="120" fill="url(#haloB)"/>
+<g>
+  <rect x="29" y="20" width="257" height="110" rx="20" fill="#170F2A" stroke="#332455" stroke-width="1.2"/>
+  <rect x="29" y="20" width="7" height="110" rx="3.5" fill="#4ADE9E"/>
+  <text x="59" y="54" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" letter-spacing="1.6" fill="#4ADE9E">PRUEBAS</text>
+  <text x="58" y="94" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="31" font-weight="800" fill="#F6F1FF">333/333</text>
+  <text x="59" y="116" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#B6A5D6">en verde</text>
+</g>
+<g>
+  <rect x="311" y="20" width="257" height="110" rx="20" fill="#170F2A" stroke="#332455" stroke-width="1.2"/>
+  <rect x="311" y="20" width="7" height="110" rx="3.5" fill="#B69CFF"/>
+  <text x="341" y="54" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" letter-spacing="1.6" fill="#B69CFF">COMANDOS</text>
+  <text x="340" y="94" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="31" font-weight="800" fill="#F6F1FF">585</text>
+  <text x="341" y="116" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#B6A5D6">nombres en 187 archivos</text>
+</g>
+<g>
+  <rect x="593" y="20" width="257" height="110" rx="20" fill="#170F2A" stroke="#332455" stroke-width="1.2"/>
+  <rect x="593" y="20" width="7" height="110" rx="3.5" fill="#F472B6"/>
+  <text x="623" y="54" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" letter-spacing="1.6" fill="#F472B6">CATEGORÍAS</text>
+  <text x="622" y="94" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="31" font-weight="800" fill="#F6F1FF">16</text>
+  <text x="623" y="116" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#B6A5D6">cada una, con su comando</text>
+</g>
+<g>
+  <rect x="875" y="20" width="257" height="110" rx="20" fill="#170F2A" stroke="#332455" stroke-width="1.2"/>
+  <rect x="875" y="20" width="7" height="110" rx="3.5" fill="#7CC4FF"/>
+  <text x="905" y="54" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" letter-spacing="1.6" fill="#7CC4FF">VERSIÓN</text>
+  <text x="904" y="94" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="31" font-weight="800" fill="#F6F1FF">3.7.9</text>
+  <text x="905" y="116" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="12.5" fill="#B6A5D6">base Shin-MD 3.7.9</text>
+</g>
+</svg>

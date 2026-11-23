@@ -1,48 +1,74 @@
 <div align="center">
 
-<img src="https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg" width="140" alt="Ado-Bot">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/portada-oscura.svg">
+  <img src="docs/assets/portada-clara.svg" alt="Ado-Bot: el bot de WhatsApp modular, sin cajas negras. Cada comando es un archivo." width="100%">
+</picture>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1000&color=8A2BE2&center=true&vCenter=true&width=560&lines=Bot+de+WhatsApp+modular;Cada+comando%2C+un+archivo;Sin+cajas+negras" alt="Ado-Bot">
+<br>
 
-# 𝘼𝙙𝙤-𝑩𝒐𝒕
+<a href="#comprobado"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/insignia-pruebas-oscura.svg">
+  <img src="docs/assets/insignia-pruebas-clara.svg" height="50" alt="pruebas en verde">
+</picture></a>
+<a href="#el-menu"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/insignia-comandos-oscura.svg">
+  <img src="docs/assets/insignia-comandos-clara.svg" height="50" alt="nombres de comando">
+</picture></a>
+<a href="#licencia-y-marca"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/insignia-licencia-oscura.svg">
+  <img src="docs/assets/insignia-licencia-clara.svg" height="50" alt="Licencia AGPL-3.0-only">
+</picture></a>
+<a href="#instalacion"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/insignia-node-oscura.svg">
+  <img src="docs/assets/insignia-node-clara.svg" height="50" alt="Node 20.9 o superior">
+</picture></a>
+
+[![CI](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml/badge.svg)](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml)
 
 **El bot de WhatsApp modular, sin cajas negras.**
 Se conecta con Baileys, arranca con un código de vinculación y cada comando es un
 archivo que puedes leer, cambiar o borrar.
 
-[![CI](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml/badge.svg)](https://github.com/SergioOficial/ado-bot/actions/workflows/test.yml)
-[![Versión](https://img.shields.io/github/package-json/v/SergioOficial/ado-bot?style=for-the-badge&label=versi%C3%B3n&color=8A2BE2)](package.json)
-[![Pruebas](https://img.shields.io/badge/327%20pruebas-en%20verde-2ea043?style=for-the-badge)](#-comprobado)
-[![Licencia](https://img.shields.io/badge/licencia-AGPL--3.0-blue?style=for-the-badge)](LICENSE)
-[![Node](https://img.shields.io/badge/node-20.9%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
-
-[![Commits](https://img.shields.io/github/commit-activity/t/SergioOficial/ado-bot?style=flat-square&label=commits&color=555)](https://github.com/SergioOficial/ado-bot/commits)
-[![Último cambio](https://img.shields.io/github/last-commit/SergioOficial/ado-bot?style=flat-square&label=%C3%BAltimo%20cambio&color=555)](https://github.com/SergioOficial/ado-bot/commits)
-[![Estrellas](https://img.shields.io/github/stars/SergioOficial/ado-bot?style=flat-square&label=estrellas&color=555)](https://github.com/SergioOficial/ado-bot/stargazers)
-[![Tamaño](https://img.shields.io/github/repo-size/SergioOficial/ado-bot?style=flat-square&label=tama%C3%B1o&color=555)](https://github.com/SergioOficial/ado-bot)
-[![Visitas](https://komarev.com/ghpvc/?username=SergioOficial-ado-bot&label=visitas&color=8A2BE2&style=flat-square)](https://github.com/SergioOficial/ado-bot)
+[Estado](#estado) · [Instalación](#instalacion) · [El menú](#el-menu) ·
+[Comprobado](#comprobado) · [Estructura](#estructura-del-proyecto) ·
+[Últimos cambios](#ultimos-cambios) · [Colaboradores](#colaboradores) ·
+[Licencia](#licencia-y-marca)
 
 </div>
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cifras-oscura.svg">
+  <img src="docs/assets/cifras-clara.svg" alt="Las cifras del bot: pruebas, nombres de comando, categorías y versión" width="100%">
+</picture>
 
-## 📊 Estado
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-<!-- estado:inicio -->
-_Actualizado el 2026-11-22 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
+<h2 id="lo-que-lo-hace-distinto">Lo que lo hace distinto</h2>
 
-| | |
+No es una lista de deseos: cada línea de abajo tiene su archivo, y su prueba.
+
+| Lo que promete | Dónde está para leerlo |
 |---|---|
-| **Versión** | `3.7.9` |
-| **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
-| **Código** | 273 archivos JavaScript |
-| **Pruebas** | **327** en verde |
-| **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
-<!-- estado:fin -->
+| un anti-ban con cola de envíos, ritmo y calentamiento, y metadatos que varían sin tocar lo que se lee | `lib/antiban.js` y `lib/metadatos.js` |
+| si un comando revienta, los demás siguen funcionando | `boot/router.js` |
+| el menú sale de los plugins que hay en el disco, no de una lista escrita a mano | `plugins/info/menu.js` y `lib/menu-ayuda.js` |
+| la sesión aguanta cortes y reinicios | `lib/baileys.js` y `boot/arranque.js` |
+| cada afirmación de este README tiene su prueba | `pruebas/`, todas en verde |
+| los números de esta página no están escritos a mano | `scripts/readme-stats.mjs` y `scripts/arte.mjs` |
 
----
+_Reducir el riesgo no es eliminarlo: eso lo decide WhatsApp. Lo que sí está en
+nuestra mano está contado en [el anti-ban](docs/ANTIBAN.md), con su informe al lado._
 
-## ⚡ Instalación en un comando
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
+
+<h2 id="instalacion">⚡ Instalación en un comando</h2>
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/SergioOficial/ado-bot/main/instalar.sh)
@@ -50,14 +76,6 @@ bash <(curl -fsSL https://raw.githubusercontent.com/SergioOficial/ado-bot/main/i
 
 Descarga el bot, instala las dependencias, deja un `.env` listo y comprueba que
 todo carga. Al terminar te dice exactamente qué escribir para arrancarlo.
-
-<div align="center">
-<sub>
-
-[Estado](#-estado) • [Instalación](#-instalación-en-un-comando) • [El menú](#-el-menú) • [Comprobado](#-comprobado) • [Estructura](#-estructura-del-proyecto) • [Últimos cambios](#-últimos-cambios) • [Colaboradores](#-colaboradores-y-actividad)
-
-</sub>
-</div>
 
 <details>
 <summary><strong>🔧 Qué hace el instalador</strong> — y qué no toca</summary>
@@ -81,8 +99,6 @@ la segunda vez actualiza en vez de instalar.
 
 </details>
 
----
-
 <details>
 <summary><strong>Que es Ado-bot</strong> — Te explico</summary>
 
@@ -102,9 +118,12 @@ la segunda vez actualiza en vez de instalar.
 | ✅ **Se puede comprobar** | Cuatro scripts dicen si el bot está bien **sin abrir WhatsApp**. |
 </details>
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-## 🧾 El menú
+<h2 id="el-menu">🧾 El menú</h2>
 
 `.menu` manda **un solo mensaje**: la foto del bot y la lista entera. Las
 categorías se piden escribiendo su nombre, sin botones ni listas que tapen el
@@ -142,9 +161,9 @@ cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
 | 🖌️ **Stickers** |  5 | `.brat` `.bratv` `.emojimix` `.sticker` `.stickers` |
 | 🧠 **IA** |  4 | `.chatgpt` `.iaaudio` `.iam` `.imagen` |
 | 🎉 **Diversión** | 20 | `.8ball` `.ajedrez` `.ajedrez2` `.cerito` `.dahs` `.gato` … |
-| 🔔 **Utilidades** | 25 | `.acortar` `.angry` `.clima` `.close` `.crypto` `.del` … |
+| 🔔 **Utilidades** | 22 | `.acortar` `.angry` `.clima` `.crypto` `.encuesta` `.get` … |
 | ℹ️ **Info** | 10 | `.allmenu` `.creadores` `.health` `.info` `.infobothtml` `.menuprem` … |
-| 🛡️ **Admin** | 13 | `.antilink` `.bot` `.count` `.gp` `.hidetag` `.kick` … |
+| 🛡️ **Admin** | 16 | `.antilink` `.bot` `.close` `.count` `.del` `.gp` … |
 | 🤖 **Sub-bots** |  6 | `.addowner` `.bots` `.delowner` `.jadibot` `.serbot` `.stopbot` |
 | 👑 **Owner** | 36 | `.addpremium` `.backup` `.bc` `.botinfo` `.botsesion` `.clear` … |
 | 💎 **Premium** |  2 | `.canjear` `.prem` |
@@ -172,7 +191,6 @@ internet. Nada más.
    ```bash
    pkg update && pkg upgrade -y
    ```
----
 
 3. Instala lo necesario. python, make y clang no son adorno: un paquete
    del cliente es nativo y en ARM se compila.
@@ -180,7 +198,6 @@ internet. Nada más.
    ```bash
    pkg install git nodejs-lts python make clang ffmpeg libvips -y
    ```
----
 
 4. Evita que Android duerma el bot cuando apagues la pantalla:
 
@@ -188,15 +205,12 @@ internet. Nada más.
    termux-wake-lock
    ```
 
----
-
 5. Descarga el bot y entra en la carpeta:
 
    ```bash
    git clone https://github.com/SergioOficial/ado-bot.git
    cd ado-bot
    ```
----
 
 6. Instala las dependencias. Tarda unos minutos y parece colgado: está
    descargando sharp y sus binarios. No cierres Termux.
@@ -204,21 +218,18 @@ internet. Nada más.
    ```bash
    npm install
    ```
----
 
 7. Comprueba que todo está en su sitio (no abre WhatsApp todavía):
 
    ```bash
    npm run verificar
    ```
----
 
 8. Arranca:
 
    ```bash
    npm start
    ```
----
 
 9. Escribe tu número con código de país cuando lo pida, sin + ni espacios
    (ejemplo: 5215512345678), y usa el código de 8 caracteres que aparece en
@@ -324,15 +335,23 @@ npm start
 ```
 </details>
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-## ⚠️ Antes de usar una cuenta
+<h2 id="antes-de-usar">⚠️ Antes de usar una cuenta</h2>
 
 Usa un número secundario, no el tuyo personal. Ningún bot puede garantizar que
 una cuenta no sea bloqueada; este lleva freno de ritmo, calentamiento y
 vigilancia (míralo con .warmup), que baja el riesgo pero no lo elimina.
 
-## ✅ Comprobado
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
+
+<h2 id="comprobado">✅ Comprobado</h2>
 
 Ninguno de estos abre WhatsApp: se pueden lanzar con el bot apagado y sin la
 sesión vinculada.
@@ -355,9 +374,26 @@ Si algo falla, ahí se ve si el problema es del bot o de la sesión — antes de
 culpar al teléfono. ¿Actualizaste y algo se rompió? Punto de retorno:
 `docs/RETORNO.md`.
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-## 🏗️ Estructura del proyecto
+<h2 id="estructura-del-proyecto">🏗️ Estructura del proyecto</h2>
+
+```mermaid
+flowchart LR
+    WA(["WhatsApp"]) --> CLI["lib/baileys.js<br/>una sola conexión"]
+    CLI --> R["boot/router.js<br/>¿es un comando?"]
+    R --> P["plugins/<br/>un archivo por comando"]
+    P --> Q["lib/antiban.js<br/>cola, ritmo y freno"]
+    Q --> WA
+    R --> S["boot/subbots.js<br/>sub-bots"]
+    R --> V["boot/vigilantes.js<br/>recordatorios y memoria"]
+```
+
+<details>
+<summary><strong>El árbol, archivo por archivo</strong> — (si te gusta el detalle)</summary>
 
 ```text
 ado-bot/
@@ -390,7 +426,7 @@ ado-bot/
 │   ├── rutas.js          #   una sola ruta para las carpetas de datos
 │   └── database.js       #   base JSON con autoguardado
 ├── plugins/              # ¡El corazón del bot!
-│   ├── admin/            # kick, promote, warn, antilink, setgp, pin, actividad
+│   ├── admin/            # kick, promote, warn, antilink, setgp, pin, close, open, del
 │   ├── descargas/        # play, pinterest, tiktok, fb, gitclone
 │   ├── economia/         # daily, weekly, work, bal, dep, coffer, ruleta, casino
 │   ├── fun/              # meme, gato, trivia, 8ball, ship
@@ -409,8 +445,8 @@ ado-bot/
 ├── scripts/              # verificar · probar · humo · auditar · sintaxis · imports · vigia
 └── docs/                 # CLIENTE · COMANDOS · PORTE · RETORNO
 ```
+</details>
 
----
 <details>
 <summary><strong>🔩 Ajustes</strong> — (config.js) </summary>
 
@@ -442,8 +478,6 @@ número, así que da igual cómo esté escrito en la lista. Si un comando de adm
 funciona, comprueba que el bot sea admin del grupo: el propio comando lo dice
 cuando no puede.
 
----
-
 <details>
 <summary><strong>🧩 Comandos</strong> — Todos dentro de Plugins</summary>
 
@@ -454,8 +488,6 @@ y `.menucat`. El reparto por categorías está más arriba, en **El menú**.
 
 💡 Cualquier comando funciona en modo privado con un guion al final: `.menu-`.
 </details>
-
----
 
 <details>
 <summary><strong>🔑 Explicación de la Versión</strong> — Te explico</summary>
@@ -637,8 +669,6 @@ y `.menucat`. El reparto por categorías está más arriba, en **El menú**.
 · 📄 Licencia AGPL-3.0 con NOTICE de procedencia: ver Licencia
 </details>
 
----
-
 > 🌐 Nuestras Redes y Comunidad
 
 **¡Únete a nuestros canales oficiales y participa en la comunidad!**
@@ -659,9 +689,12 @@ y `.menucat`. El reparto por categorías está más arriba, en **El menú**.
   </a>
 </div>
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-## 📄 Licencia
+<h2 id="licencia-y-marca">📄 Licencia</h2>
 
 Este proyecto se distribuye bajo GNU AGPL-3.0 (archivo LICENSE,
 texto completo de la Free Software Foundation).
@@ -686,9 +719,12 @@ Lo portado de Shin-MD no se puede relicenciar: entra con su AGPL, y por eso el
 conjunto queda en AGPL-3.0. Cada archivo que viene de ahí lo dice en su primera
 línea.
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-## 🤝 Créditos
+<h2 id="creditos">🤝 Créditos</h2>
 
 <div align="center">
 
@@ -719,14 +755,39 @@ línea.
 
 📚 Cliente base: @itsliaaa/baileys (respaldo automático a @whiskeysockets/baileys)
 
----
+</div>
 
-## 🕒 Últimos cambios
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
+
+<h2 id="estado">📊 Estado</h2>
+
+<!-- estado:inicio -->
+_Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
+
+| | |
+|---|---|
+| **Versión** | `3.7.9` |
+| **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
+| **Código** | 275 archivos JavaScript |
+| **Pruebas** | **333** en verde |
+| **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
+<!-- estado:fin -->
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
+
+<h2 id="ultimos-cambios">🕒 Últimos cambios</h2>
 
 <!-- cambios:inicio -->
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-22 | docs(readme): las secciones que faltaban, sin tablas pegadas y el porteo a la vista |
 | 2026-11-22 | fix(3.7.9): una sola casa para los duplicados y un README que se cuenta solo |
 | 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
 | 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
@@ -734,13 +795,15 @@ línea.
 | 2026-11-22 | feat(porte): los nombres de la base para bio, nombre, foto y banner |
 | 2026-11-22 | fix(antiban): la difusión deja de ser un disparo, sub-bots con freno y relleno único |
 | 2026-11-22 | feat(auditoría): informe de los sitios que se saltan el anti-ban |
-| 2026-11-22 | docs: el mapa de porteo deja de comerse las notas escritas a mano |
 
 <!-- cambios:fin -->
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/divisor-oscura.svg">
+  <img src="docs/assets/divisor-clara.svg" alt="" width="100%">
+</picture>
 
-## 📊 Colaboradores y actividad
+<h2 id="colaboradores">📊 Colaboradores y actividad</h2>
 
 <div align="center">
 
@@ -751,7 +814,7 @@ línea.
 </div>
 
 <!-- stats:inicio -->
-_Datos pedidos a GitHub el 2026-11-22. Se actualizan con `npm run readme`._
+_Datos pedidos a GitHub el 2026-11-23. Se actualizan con `npm run readme`._
 
 | Dato | Valor |
 |---|---|
@@ -786,14 +849,12 @@ _Datos pedidos a GitHub el 2026-11-22. Se actualizan con `npm run readme`._
 
 </details>
 
----
+<div align="center">
 
 ⭐ Si te gusta el proyecto, dale una estrella ⭐
 
 Hecho con 💫 desde Cuba, Colombia y México para el mundo
 
+<sub>Escrito por [SergioOficial](https://github.com/SergioOficial) · [Ado-Bot](https://github.com/SergioOficial/ado-bot) · AGPL-3.0-only</sub>
+
 </div>
-
----
-
-<sub>Escrito por [SergioOficial](https://github.com/SergioOficial)· [Ado-Bot](https://github.com/SergioOficial/ado-bot) · AGPL-3.0-only · repositorio.</sub>

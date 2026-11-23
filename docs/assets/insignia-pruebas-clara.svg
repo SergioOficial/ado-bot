@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 263.24441 50" width="263.24441" height="50" role="img" aria-label="pruebas 333/333">
+<defs><style>
+@keyframes vaiven { 0% { transform: translateX(-620px) } 100% { transform: translateX(1500px) } }
+@keyframes respirar { 0%,100% { opacity: .45 } 50% { opacity: .8 } }
+@keyframes latir { 0%,100% { opacity: .25; transform: scale(1) } 50% { opacity: .7; transform: scale(1.35) } }
+@keyframes recorrer { 0% { transform: translateX(-320px) } 100% { transform: translateX(1240px) } }
+.brillo { animation: vaiven 11s linear infinite; }
+.halo { animation: respirar 9s ease-in-out infinite; }
+.punto { animation: latir 5s ease-in-out infinite; transform-origin: center; }
+.destello { animation: recorrer 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .brillo, .halo, .punto, .destello { animation: none }
+}</style>
+<linearGradient id="piel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4D7F5" stop-opacity=".55"/></linearGradient>
+<clipPath id="recorte"><rect x="0.8" y="0.8" width="261.6" height="48.4" rx="15"/></clipPath>
+</defs>
+<g clip-path="url(#recorte)">
+  <rect x="0" y="0" width="263.2" height="50" rx="15" fill="url(#piel)" stroke="#E4D7F5" stroke-width="1.4"/>
+  <rect class="destello" x="0" y="0" width="120" height="50" fill="url(#velo)" opacity=".35"/>
+</g>
+<circle cx="35" cy="25" r="15" fill="#0F9D74" opacity=".15"/>
+<g transform="translate(23 13)" fill="none" stroke="#0F9D74" stroke-width="2"><path d="M4.5 12.5 9.5 17.5 19.5 6.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="61" y="31" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1.1" fill="#6E5C8C">PRUEBAS</text>
+<text x="148.0" y="32" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#1B1030">333/333</text>
+</svg>

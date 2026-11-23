@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 225.96377999999999 50" width="225.96377999999999" height="50" role="img" aria-label="comandos 585">
+<defs><style>
+@keyframes vaiven { 0% { transform: translateX(-620px) } 100% { transform: translateX(1500px) } }
+@keyframes respirar { 0%,100% { opacity: .45 } 50% { opacity: .8 } }
+@keyframes latir { 0%,100% { opacity: .25; transform: scale(1) } 50% { opacity: .7; transform: scale(1.35) } }
+@keyframes recorrer { 0% { transform: translateX(-320px) } 100% { transform: translateX(1240px) } }
+.brillo { animation: vaiven 11s linear infinite; }
+.halo { animation: respirar 9s ease-in-out infinite; }
+.punto { animation: latir 5s ease-in-out infinite; transform-origin: center; }
+.destello { animation: recorrer 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .brillo, .halo, .punto, .destello { animation: none }
+}</style>
+<linearGradient id="piel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#170F2A"/><stop offset="1" stop-color="#332455" stop-opacity=".55"/></linearGradient>
+<clipPath id="recorte"><rect x="0.8" y="0.8" width="224.4" height="48.4" rx="15"/></clipPath>
+</defs>
+<g clip-path="url(#recorte)">
+  <rect x="0" y="0" width="226.0" height="50" rx="15" fill="url(#piel)" stroke="#332455" stroke-width="1.4"/>
+  <rect class="destello" x="0" y="0" width="120" height="50" fill="url(#velo)" opacity=".35"/>
+</g>
+<circle cx="35" cy="25" r="15" fill="#B69CFF" opacity=".15"/>
+<g transform="translate(23 13)" fill="none" stroke="#B69CFF" stroke-width="2"><path d="M4.5 6.2 11 12l-6.5 5.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.4 18h6" fill="none" stroke-width="2.4" stroke-linecap="round"/></g>
+<text x="61" y="31" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1.1" fill="#B6A5D6">COMANDOS</text>
+<text x="159.2" y="32" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#F6F1FF">585</text>
+</svg>

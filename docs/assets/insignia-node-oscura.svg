@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 199.35473000000002 50" width="199.35473000000002" height="50" role="img" aria-label="node 20.9+">
+<defs><style>
+@keyframes vaiven { 0% { transform: translateX(-620px) } 100% { transform: translateX(1500px) } }
+@keyframes respirar { 0%,100% { opacity: .45 } 50% { opacity: .8 } }
+@keyframes latir { 0%,100% { opacity: .25; transform: scale(1) } 50% { opacity: .7; transform: scale(1.35) } }
+@keyframes recorrer { 0% { transform: translateX(-320px) } 100% { transform: translateX(1240px) } }
+.brillo { animation: vaiven 11s linear infinite; }
+.halo { animation: respirar 9s ease-in-out infinite; }
+.punto { animation: latir 5s ease-in-out infinite; transform-origin: center; }
+.destello { animation: recorrer 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .brillo, .halo, .punto, .destello { animation: none }
+}</style>
+<linearGradient id="piel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#170F2A"/><stop offset="1" stop-color="#332455" stop-opacity=".55"/></linearGradient>
+<clipPath id="recorte"><rect x="0.8" y="0.8" width="197.8" height="48.4" rx="15"/></clipPath>
+</defs>
+<g clip-path="url(#recorte)">
+  <rect x="0" y="0" width="199.4" height="50" rx="15" fill="url(#piel)" stroke="#332455" stroke-width="1.4"/>
+  <rect class="destello" x="0" y="0" width="120" height="50" fill="url(#velo)" opacity=".35"/>
+</g>
+<circle cx="35" cy="25" r="15" fill="#7CC4FF" opacity=".15"/>
+<g transform="translate(23 13)" fill="none" stroke="#7CC4FF" stroke-width="2"><path d="M12 2.6 20.4 7.4v9.2L12 21.4 3.6 16.6V7.4z" fill="none" stroke-width="2.1" stroke-linejoin="round"/><path d="M9.3 15.3V9l5.4 6.3V9" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="61" y="31" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1.1" fill="#B6A5D6">NODE</text>
+<text x="114.6" y="32" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#F6F1FF">20.9+</text>
+</svg>

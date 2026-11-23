@@ -17,6 +17,10 @@
  *   <!-- cambios:inicio -->     los últimos commits de verdad
  *   <!-- stats:inicio -->       commits, colaboradores con su %, días, estrellas
  *
+ * Además vuelve a dibujar docs/assets (portada, cifras, insignias y divisor),
+ * las imágenes del README, con esos mismos números. Ahí no hay nada a mano:
+ * si cambia la versión o una prueba, la portada cambia sola.
+ *
  * Los números salen de donde tienen que salir: los del bot, del árbol y de la
  * suite; los de GitHub, de la API. Ninguno está escrito a mano.
  *
@@ -32,6 +36,7 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execFileSync } from "child_process";
+import { imagenes } from "./arte.mjs";
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), "..");
 const README = join(RAIZ, "README.md");
@@ -230,6 +235,27 @@ const pkg = JSON.parse(readFileSync(join(RAIZ, "package.json"), "utf8"));
 const conteo = await contarPlugins();
 const pruebas = CON_PRUEBAS ? contarPruebas() : null;
 
+/** La versión de Node que pide el bot, en corto: «20.9+». */
+function versionDeNode() {
+  const minimo = (pkg.engines && pkg.engines.node) || ">=20";
+  const m = String(minimo).match(/(\d+)(?:\.(\d+))?/);
+  return m ? `${m[1]}${m[2] && m[2] !== "0" ? "." + m[2] : ""}+` : "20+";
+}
+
+/** Vuelve a dibujar las imágenes del README con los números de hoy. */
+function dibujarArte(datos) {
+  let escritos = 0;
+  try {
+    for (const { ruta, svg } of imagenes(datos)) {
+      writeFileSync(join(RAIZ, ruta), svg, "utf8");
+      escritos++;
+    }
+  } catch (err) {
+    console.warn(`⚠️ No se pudieron dibujar las imágenes (${err.message})`);
+  }
+  return escritos;
+}
+
 let repo = null;
 let gente = [];
 let totalCommits = 0;
@@ -260,6 +286,17 @@ const bloques = {
 
 if (repo) bloques.stats = bloqueStats({ repo, gente, totalCommits });
 
+// Las imágenes, con los mismos números que el texto
+const arte = dibujarArte({
+  version: pkg.version,
+  nombres: conteo.nombres,
+  plugins: conteo.plugins,
+  categorias: conteo.categorias,
+  pruebas,
+  licencia: pkg.license || "AGPL-3.0",
+  node: versionDeNode(),
+});
+
 let texto = readFileSync(README, "utf8");
 for (const [nombre, bloque] of Object.entries(bloques)) {
   const [ini, fin] = MARCAS[nombre];
@@ -275,6 +312,7 @@ for (const [nombre, bloque] of Object.entries(bloques)) {
 if (ESCRIBIR) {
   writeFileSync(README, texto, "utf8");
   console.log(`📄 README.md actualizado · ${conteo.plugins} plugins · ${conteo.nombres} nombres · ${pruebas ?? "?"} pruebas`);
+  console.log(`🎨 ${arte} imágenes dibujadas en docs/assets`);
 } else {
   console.log(texto.slice(texto.indexOf(MARCAS.estado[0]), texto.indexOf(MARCAS.cambios[1]) + MARCAS.cambios[1].length));
   console.log("\n(--escribir para llevarlo al README)");
