@@ -78,6 +78,21 @@ Descarga el bot, instala las dependencias, deja un `.env` listo y comprueba que
 todo carga. Al terminar te dice exactamente qué escribir para arrancarlo.
 
 <details>
+<summary><strong>📱 Qué pasa en el primer arranque</strong> — el código se queda en pantalla</summary>
+
+1. Si todavía no hay sesión, **no se pinta el cartel del bot**: la terminal se
+   queda con texto llano, porque el cartel limpia la pantalla y se llevaría por
+   delante el código.
+2. Te pide el número (o toma `WHATSAPP_NUMBER`) y pide el código de vinculación.
+3. El código sale **en texto plano**, con el número al lado y sin redibujar
+   nada. Se queda ahí mientras lo escribes.
+4. Cuando WhatsApp confirma, el bot lo dice y **entonces** sí arranca el panel.
+
+Si el código caduca sin confirmarse, avisa y te dice cómo pedir otro.
+
+</details>
+
+<details>
 <summary><strong>🔧 Qué hace el instalador</strong> — y qué no toca</summary>
 
 | Paso | Qué hace |
@@ -771,8 +786,8 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 |---|---|
 | **Versión** | `3.7.9` |
 | **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
-| **Código** | 276 archivos JavaScript |
-| **Pruebas** | **336** en verde |
+| **Código** | 278 archivos JavaScript |
+| **Pruebas** | **344** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -787,6 +802,7 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-23 | fix(instalador): el temporal que no existe en Termux, y el verificador que nunca fallaba |
 | 2026-11-23 | docs(readme): portada, cifras y divisores dibujados en casa |
 | 2026-11-23 | refactor(plugins): close, open y del se van a admin |
 | 2026-11-22 | docs(readme): las secciones que faltaban, sin tablas pegadas y el porteo a la vista |
@@ -794,7 +810,6 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 | 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
 | 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
 | 2026-11-22 | feat(menú): un solo mensaje, sin desplegable, y armado con los plugins reales |
-| 2026-11-22 | feat(porte): los nombres de la base para bio, nombre, foto y banner |
 
 <!-- cambios:fin -->
 

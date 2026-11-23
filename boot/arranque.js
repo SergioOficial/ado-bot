@@ -44,6 +44,14 @@ import { loadPlugins, commands, events } from "../pluginLoader.js";
 import { config } from "../config.js";
 
 import { instalarAntiCuelgue, esErrorDeRed } from "./anti-cuelgue.js";
+import {
+  tocaPanel,
+  bloqueSinSesion,
+  bloqueCodigo,
+  bloqueEsperando,
+  bloqueVinculado,
+  bloqueCaducado,
+} from "../lib/pantalla.js";
 import { crearRouter, numeroDe } from "./router.js";
 import { crearGestorSubbots } from "./subbots.js";
 import { vigilarRecordatorios, vigilarMemoria, prepararAntiban } from "./vigilantes.js";
@@ -63,7 +71,7 @@ export function antibanEncendido() {
   return ["1", "on", "true", "si", "sí", "yes"].includes(v);
 }
 
-function pintarLetras() {
+function pintarLetras({ limpiar = Boolean(process.stdout.isTTY) } = {}) {
   try {
     const banner = cfonts.render("Ado-Bot", {
       font: "block", align: "center", gradient: ["cyan", "magenta"],
@@ -72,7 +80,9 @@ function pintarLetras() {
     const firma = cfonts.render("⚔️ by Sergio Dev", {
       font: "console", align: "center", gradient: ["yellow", "cyan"],
     });
-    console.clear();
+    // Solo se limpia si hay una terminal que limpiar: en un hosting sin TTY
+    // eso eran códigos de escape sueltos en el registro.
+    if (limpiar) console.clear();
     console.log(banner.string);
     console.log(firma.string);
     console.log("💫 Ado-Bot se está iniciando...");
@@ -164,6 +174,8 @@ const estado = {
   baseCargada: false,
   intentosConexion: 0,
   apagando: false,
+  panelPintado: false,
+  avisoCaducado: null,
 };
 
 /** Una guarda anti-bucle por socket (el principal y cada sub-bot tienen la suya). */
@@ -287,8 +299,6 @@ function programarReconexion() {
  * Se puede llamar otra vez tras una caída: reutiliza lo que ya estaba armado.
  */
 export async function arrancar() {
-  pintarLetras();
-
   // riokuroxi-svg: una reconexión no debe reemplazar cambios aún en memoria.
   if (!estado.baseCargada) {
     global.loadDatabase?.();
@@ -308,6 +318,21 @@ export async function arrancar() {
 
   // ── Conexión principal ─────────────────────────────────────────────────
   const { state, saveCreds } = await useMultiFileAuthState(SESION_PRINCIPAL);
+
+  // Esto va ANTES de pintar nada. El cartel grande limpia la pantalla, así que
+  // pintarlo antes de saber si hay sesión se lleva por delante justo lo que hay
+  // que leer: el código de vinculación. Sin sesión, la terminal se queda con
+  // texto llano hasta que WhatsApp confirme.
+  if (tocaPanel(state.creds)) {
+    pintarLetras();
+    estado.panelPintado = true;
+  } else {
+    estado.panelPintado = false;
+    for (const linea of bloqueSinSesion({ nombre: config.botName, version: config.version })) {
+      console.log(linea);
+    }
+  }
+
   const { version, texto: textoVersion } = await versionParaLog();
 
   console.log(`🔌 Cliente: ${PAQUETE_BAILEYS}`);
@@ -365,8 +390,23 @@ export async function arrancar() {
         try {
           const code = await sock.requestPairingCode(estado.numeroVinculacion);
           if (code) {
-            console.log(`\n🔐 Tu código de vinculación es: ${code}`);
-            console.log("➡️ WhatsApp → Dispositivos vinculados → Vincular con número.\n");
+            for (const linea of bloqueCodigo({
+              numero: estado.numeroVinculacion,
+              codigo: code,
+            })) {
+              console.log(linea);
+            }
+            for (const linea of bloqueEsperando(estado.numeroVinculacion)) console.log(linea);
+
+            // El código dura unos minutos. Si se pasa el tiempo sin confirmar,
+            // se avisa una sola vez en vez de dejar a alguien esperando algo
+            // que ya no va a funcionar.
+            if (estado.avisoCaducado) clearTimeout(estado.avisoCaducado);
+            estado.avisoCaducado = setTimeout(() => {
+              if (sock.authState?.creds?.registered) return;
+              for (const linea of bloqueCaducado()) console.log(linea);
+            }, 150_000);
+            estado.avisoCaducado.unref?.();
           }
         } catch (err) {
           // Se libera la bandera para poder pedirla otra vez en el siguiente
@@ -393,6 +433,19 @@ export async function arrancar() {
 
       if (connection === "open") {
         estado.intentosConexion = 0;
+
+        // Aquí es donde toca el cartel grande: la cuenta ya está vinculada, así
+        // que limpiar la pantalla no borra nada que haga falta.
+        if (!estado.panelPintado) {
+          if (estado.avisoCaducado) {
+            clearTimeout(estado.avisoCaducado);
+            estado.avisoCaducado = null;
+          }
+          for (const linea of bloqueVinculado({ nombre: config.botName })) console.log(linea);
+          pintarLetras();
+          estado.panelPintado = true;
+        }
+
         console.log(`✅ ${config.botName} conectado correctamente.`);
         alConectar();
       }
