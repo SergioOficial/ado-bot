@@ -110,11 +110,20 @@ fi
 
 # ── 5. Que de verdad carga ───────────────────────────────────────────────────
 paso "Comprobando que el bot carga (sin abrir WhatsApp)"
-if npm run --silent verificar >/tmp/ado-verificar.log 2>&1; then
+
+# El registro va a un temporal que exista de verdad: en Termux no hay /tmp, y
+# ahí es justo donde se instala esto. mktemp ya respeta TMPDIR; si no hubiera
+# ningún sitio, el propio repo sirve y luego se borra.
+REGISTRO="$(mktemp 2>/dev/null || printf '%s' "$DIR/.ado-verificar.log")"
+
+if npm run --silent verificar >"$REGISTRO" 2>&1; then
   bien "Todo en su sitio"
+  rm -f "$REGISTRO"
 else
-  aviso "El verificador encontró algo. Mira el final de /tmp/ado-verificar.log"
-  tail -n 12 /tmp/ado-verificar.log | sed 's/^/   /'
+  aviso "El verificador encontró algo. Esto es lo último que dijo:"
+  tail -n 12 "$REGISTRO" | sed 's/^/   /'
+  printf "${GRIS}   El registro completo, para mirarlo con calma: %s${SIN}\n" "$REGISTRO"
+  printf "${GRIS}   Se puede repetir cuando quieras con: npm run verificar${SIN}\n"
 fi
 
 # ── 6. Cómo seguir ───────────────────────────────────────────────────────────

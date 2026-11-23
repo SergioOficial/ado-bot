@@ -192,3 +192,12 @@ if (!/viewOnceMessage:\s*\{\s*message:\s*interactivo/.test(fuenteBotones.split("
   ok("el interactivo no va envuelto en viewOnceMessage (botones grises en WhatsApp Web)");
 }
 
+// ── Resumen ─────────────────────────────────────────────────────────────────
+// Sin esto el verificador contaba los fallos y aun así terminaba en 0, así que
+// el instalador (y cualquiera que lo encadenara con &&) se creía que todo
+// estaba bien aunque hubiera un plugin roto.
+if (fallos) {
+  console.error(`\n✗ ${fallos} comprobación(es) fallaron. Arriba está cuál.\n`);
+  process.exit(1);
+}
+console.log(`\n✓ Todo en su sitio.\n`);

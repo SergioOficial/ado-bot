@@ -771,8 +771,8 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 |---|---|
 | **Versión** | `3.7.9` |
 | **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
-| **Código** | 275 archivos JavaScript |
-| **Pruebas** | **333** en verde |
+| **Código** | 276 archivos JavaScript |
+| **Pruebas** | **336** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -787,14 +787,14 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-23 | docs(readme): portada, cifras y divisores dibujados en casa |
+| 2026-11-23 | refactor(plugins): close, open y del se van a admin |
 | 2026-11-22 | docs(readme): las secciones que faltaban, sin tablas pegadas y el porteo a la vista |
 | 2026-11-22 | fix(3.7.9): una sola casa para los duplicados y un README que se cuenta solo |
 | 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
 | 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
 | 2026-11-22 | feat(menú): un solo mensaje, sin desplegable, y armado con los plugins reales |
 | 2026-11-22 | feat(porte): los nombres de la base para bio, nombre, foto y banner |
-| 2026-11-22 | fix(antiban): la difusión deja de ser un disparo, sub-bots con freno y relleno único |
-| 2026-11-22 | feat(auditoría): informe de los sitios que se saltan el anti-ban |
 
 <!-- cambios:fin -->
 
@@ -820,7 +820,7 @@ _Datos pedidos a GitHub el 2026-11-23. Se actualizan con `npm run readme`._
 |---|---|
 | Commits totales | **421** |
 | Días desde el primer commit | **12** |
-| Último cambio | **2026-11-22** (hace 0 d) |
+| Último cambio | **2026-11-23** (hace 0 d) |
 | Estrellas · forks · avisos abiertos | **3** · **0** · **0** |
 | Tamaño del repositorio | **1.5 MB** |
 
