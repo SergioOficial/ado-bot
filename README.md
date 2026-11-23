@@ -801,8 +801,8 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 |---|---|
 | **Versión** | `3.7.9` |
 | **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
-| **Código** | 278 archivos JavaScript |
-| **Pruebas** | **346** en verde |
+| **Código** | 280 archivos JavaScript |
+| **Pruebas** | **354** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -817,14 +817,14 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-23 | fix(subbots): un conteo que dice la verdad, un panel que obedece y un techo de red |
+| 2026-11-23 | fix(pruebas): quitar dos escapes que el lint no perdona |
+| 2026-11-23 | feat(instalador): el instalador cuenta lo que hace, y deja el comando `ado` |
 | 2026-11-23 | fix(arranque): el código de vinculación ya no se pierde bajo el cartel del bot |
 | 2026-11-23 | fix(instalador): el temporal que no existe en Termux, y el verificador que nunca fallaba |
 | 2026-11-23 | docs(readme): portada, cifras y divisores dibujados en casa |
 | 2026-11-23 | refactor(plugins): close, open y del se van a admin |
 | 2026-11-22 | docs(readme): las secciones que faltaban, sin tablas pegadas y el porteo a la vista |
-| 2026-11-22 | fix(3.7.9): una sola casa para los duplicados y un README que se cuenta solo |
-| 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
-| 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
 
 <!-- cambios:fin -->
 

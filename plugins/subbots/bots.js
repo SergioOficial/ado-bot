@@ -1,5 +1,43 @@
-import fs from 'fs';
-import path from 'path';
+/**
+ * riokuroxi — https://github.com/riokuroxi-svg
+ * Copyright (C) 2026 riokuroxi-svg
+ * SPDX-License-Identifier: AGPL-3.0-only
+ *
+ * plugins/subbots/bots.js — `.bots`: cuántos sub-bots hay y cómo están.
+ *
+ * Antes este archivo importaba `boot/subbots.js` buscando `conns`, `subbots` o
+ * `sockets`, que no existen (lo que se exporta es `crearGestorSubbots`), y caía
+ * a `global.conns`, que nadie llena. Resultado: la lista salía siempre con uno,
+ * el principal, aunque hubiera diez sub-bots conectados. Eso es exactamente lo
+ * que contestaba «no sé cuántos sub-bots tengo».
+ *
+ * Ahora la cuenta sale de donde está de verdad: el gestor de sub-bots
+ * (`getActiveSubbots` / `resumen`), que es quien sabe quién está conectado, y
+ * las sesiones en disco, que son las que se pueden arrancar sin pedir código.
+ */
+import { subSesiones } from "../../lib/rutas.js";
+import { inventarioSubbots, lineaDeFila } from "../../lib/inventario-subbots.js";
+
+/** Lo que el gestor sabe, sin suponer qué versión del núcleo hay debajo. */
+function estadoDelGestor(ctx) {
+  try {
+    const delNucleo = global.nucleo?.subbots?.resumen?.();
+    if (delNucleo) return delNucleo;
+  } catch {}
+  try {
+    const activos = ctx.getActiveSubbots?.();
+    if (activos) return { numeros: [...activos.keys()], maximo: null };
+  } catch {}
+  return {};
+}
+
+function vinculadasEnDisco() {
+  try {
+    return subSesiones();
+  } catch {
+    return [];
+  }
+}
 
 export default {
   command: ["bots", "sockets", "subbots"],
@@ -7,118 +45,75 @@ export default {
   execute: async (ctx) => {
     const { sock, from, m, isGroup, db } = ctx;
 
-    // 1. Intentar importar boot/subbots.js de forma segura para que no explote si el nombre de la variable cambia
-    let listaSockets = [];
-    
-    try {
-      // 👈 Ruta corregida: sube dos niveles (../../) para llegar a la raíz
-      const bootModule = await import('../../boot/subbots.js');
-      listaSockets = bootModule.conns || bootModule.subbots || bootModule.sockets || bootModule.default || [];
-    } catch (e) {
-      // Si falla la importación, no hacemos nada, usaremos global.conns abajo
-    }
-
-    // 2. Si la importación no trajo nada, usamos global.conns (el estándar de Baileys)
-    if (!listaSockets || listaSockets.length === 0) {
-      listaSockets = global.conns || global.subbots || [];
-    }
-
-    // Normalizar si es un Mapa o un Objeto
-    if (listaSockets instanceof Map) listaSockets = Array.from(listaSockets.values());
-    else if (typeof listaSockets === 'object' && !Array.isArray(listaSockets)) listaSockets = Object.values(listaSockets);
-
     const miJid = sock.user?.id || "";
-    const miNumero = miJid.split('@')[0].split(':')[0];
+    const miNumero = String(miJid).split("@")[0].split(":")[0];
+    const nombreDe = (numero) => db?.users?.[`${numero}@s.whatsapp.net`]?.name || "";
 
-    // 3. Armar la lista completa de bots (Subs + Principal)
-    let todosLosBots = [];
-    let numerosVistos = new Set();
+    const resumen = estadoDelGestor(ctx);
+    const vinculadas = vinculadasEnDisco();
+    const inventario = inventarioSubbots({ resumen, vinculadas, nombreDe });
 
-    for (const c of listaSockets) {
-      if (!c || !c.user) continue;
-      const jidReal = c.user.id || c.user.jid;
-      if (!jidReal) continue;
-      
-      const numero = jidReal.split('@')[0].split(':')[0];
-      if (numerosVistos.has(numero)) continue;
-      
-      const userDb = db.users[`${numero}@s.whatsapp.net`] || {};
-      todosLosBots.push({
-        jid: `${numero}@s.whatsapp.net`,
-        numero: numero,
-        nombre: userDb.name || c.user.name || c.user.verifiedName || "Sub-Bot"
-      });
-      numerosVistos.add(numero);
+    // Solo los sub-bots: el principal se nombra aparte para no contarlo dos veces.
+    const subs = inventario.filas.filter((f) => f.numero !== miNumero);
+
+    let texto = `ꕥ *Sub-bots de este bot*\n\n`;
+    // «En total» es lo que la persona pregunta de verdad: cuántas cuentas hay.
+    // Antes decía «vinculados (en disco)» y, si una sesión estaba en marcha pero
+    // no se encontraba el archivo, el número salía en cero con el bot conectado.
+    texto += `ੈ❖‧₊˚ Sub-bots en total › *${subs.length}*\n`;
+    texto += `ੈ✰︎︎‧₊˚ Conectados ahora › *${subs.filter((f) => f.estado === "conectado").length}*`;
+    texto += inventario.maximo ? ` de *${inventario.maximo}*\n` : `\n`;
+    if (subs.some((f) => f.estado === "apagado" && f.vinculado)) {
+      texto += `ੈ✦‧₊˚ Con sesión guardada › *${subs.filter((f) => f.vinculado).length}*\n`;
+    }
+    if (subs.some((f) => f.estado === "conectando")) {
+      texto += `ੈ◌‧₊˚ Conectando › *${subs.filter((f) => f.estado === "conectando").length}*\n`;
+    }
+    if (subs.some((f) => f.estado === "reintentando")) {
+      texto += `ੈ✿‧₊˚ En reintento › *${subs.filter((f) => f.estado === "reintentando").length}*\n`;
+    }
+    if (subs.some((f) => f.estado === "apagado")) {
+      texto += `ੈ❁‧₊˚ Apagados › *${subs.filter((f) => f.estado === "apagado").length}*\n`;
     }
 
-    // Asegurar que el bot principal (yo) esté en la lista
-    if (!numerosVistos.has(miNumero)) {
-      const userDb = db.users[`${miNumero}@s.whatsapp.net`] || {};
-      todosLosBots.push({
-        jid: `${miNumero}@s.whatsapp.net`,
-        numero: miNumero,
-        nombre: userDb.name || sock.user?.name || "Principal"
-      });
-      numerosVistos.add(miNumero);
-    }
-
-    // 4. Contar y clasificar
-    let principales = 0, premiums = 0, subs = 0;
-    for (const b of todosLosBots) {
-      const userDb = db.users[`${b.numero}@s.whatsapp.net`] || {};
-      const esOwner = (db.settings?.owners || []).some(o => (o.number || o) === b.numero);
-      
-      if (b.numero === miNumero || esOwner) principales++;
-      else if (userDb.premium) premiums++;
-      else subs++;
-    }
-
-    // 5. Armar el texto
-    let texto = `ꕥ Números de Sockets activos *(${todosLosBots.length})*\n\n`;
-    texto += `ੈ❖‧₊˚ Principales › *${principales}*\n`;
-    texto += `ੈ✰︎︎‧₊˚ Premiums › *${premiums}*\n`;
-    texto += `ੈ✿‧₊˚ Subs › *${subs}*\n\n\n`;
-
-    // 6. Detectar bots en el grupo
-    const mentions = [];
-    if (isGroup) {
-      let botsEnGrupo = [];
-      try {
-        const metadata = await sock.groupMetadata(from);
-        const participantes = metadata.participants.map(p => p.id.split('@')[0].split(':')[0]);
-
-        for (const b of todosLosBots) {
-          if (participantes.includes(b.numero)) {
-            botsEnGrupo.push(b);
-          }
-        }
-      } catch (e) {
-        console.error("Error al obtener metadata del grupo:", e);
-      }
-
-      botsEnGrupo.sort((a, b) => (a.numero === miNumero ? -1 : 1));
-
-      texto += `➭ *Bots en el grupo ›* ${botsEnGrupo.length}\n`;
-      
-      if (botsEnGrupo.length === 0) {
-        texto += `> _No hay otros bots en este grupo._`;
-      } else {
-        for (const b of botsEnGrupo) {
-          const esSub = b.numero !== miNumero;
-          const etiqueta = esSub ? `Sub *${b.nombre}*` : `Principal *${b.nombre}*`;
-          
-          texto += `- [${etiqueta}] › @${b.numero}\n`;
-          mentions.push(b.jid);
-        }
-      }
+    if (!subs.length) {
+      texto += `\n> No hay ningún sub-bot vinculado todavía.\n`;
+      texto += `> Se crea con *${ctx.config?.prefix?.[0] || "."}code* (tu propio número)\n`;
+      texto += `> o con *${ctx.config?.prefix?.[0] || "."}jadibot <número>* (Premium o dueño).`;
     } else {
-      texto += `➭ *Bots en el grupo ›* 0\n> _Usa este comando en un grupo._`;
+      texto += `\n➭ *Detalle*\n`;
+      for (const fila of subs) texto += `${lineaDeFila(fila)}\n`;
+      texto += `\n> \`.revivirsubs\` levanta todos los vinculados · \`.serbot\` los gestiona uno a uno.`;
     }
 
-    // 7. Enviar mensaje
-    await sock.sendMessage(from, {
-      text: texto.trim(),
-      mentions: mentions
-    }, { quoted: m });
-  }
+    // Los que además están en este grupo. Se pregunta al grupo, no al gestor:
+    // son cosas distintas (un sub-bot puede estar conectado y no estar aquí).
+    if (isGroup) {
+      try {
+        const meta = await sock.groupMetadata(from);
+        const enGrupo = new Set(
+          (meta.participants || []).map((p) => String(p.id).split("@")[0].split(":")[0])
+        );
+        const aqui = losDelGrupo([miNumero, ...subs.map((f) => f.numero)], enGrupo);
+        texto += `\n➭ *En este grupo ›* ${aqui.length}`;
+        for (const numero of aqui) {
+          const esPrincipal = numero === miNumero;
+          const nombre = nombreDe(numero) || (esPrincipal ? "este bot" : "sub-bot");
+          texto += `\n- [${esPrincipal ? "Principal" : "Sub"} *${nombre}*] › @${numero}`;
+        }
+      } catch {
+        texto += `\n➭ *En este grupo* › no pude leer la lista (¿el bot es admin?)`;
+      }
+    }
+
+    const menciones = [...new Set([...subs.map((f) => `${f.numero}@s.whatsapp.net`)])];
+    return sock.sendMessage(from, { text: texto.trim(), mentions: menciones }, { quoted: m });
+  },
 };
+
+/** Los de la lista que participan en el grupo, principal primero. */
+function losDelGrupo(numeros, enGrupo) {
+  const vistos = [];
+  for (const n of numeros) if (enGrupo.has(n) && !vistos.includes(n)) vistos.push(n);
+  return vistos.sort((a, b) => (numeros[0] === a ? -1 : numeros[0] === b ? 1 : 0));
+}

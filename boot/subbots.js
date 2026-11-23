@@ -213,7 +213,7 @@ export function crearGestorSubbots(deps) {
    * @param {function} reply     cómo contestarle a quien lo pidió
    * @param {"code"|"sesion"} method
    */
-  async function startSubbot(_padre, senderJid, remoteJid, reply, method) {
+  async function startSubbot(_padre, senderJid, remoteJid, reply, method, creador = null) {
     const phoneNumber = numeroDe(senderJid);
     const contestar = typeof reply === "function" ? reply : (t) => avisar(remoteJid, t);
 
@@ -237,6 +237,17 @@ export function crearGestorSubbots(deps) {
       return null;
     }
     enCurso.add(phoneNumber);
+
+    // Se apunta quién lo pidió la primera vez. Es lo que permite que `.serbot`
+    // enseñe a cada uno lo suyo y a nadie lo ajeno.
+    try {
+      const cfg = loadSubConfig(phoneNumber);
+      const dueno = numeroDe(creador || senderJid);
+      const lista = Array.isArray(cfg.owners) ? cfg.owners.map((o) => numeroDe(o)) : [];
+      if (dueno && !lista.includes(dueno)) saveSubConfig(phoneNumber, { ...cfg, owners: [...lista, dueno] });
+    } catch (err) {
+      registrar(err);
+    }
 
     try {
       return await levantar(phoneNumber, senderJid, remoteJid, contestar, method);
@@ -506,12 +517,18 @@ export function crearGestorSubbots(deps) {
     return listos;
   }
 
-  /** Estado para `.bots` y para el registro. */
+  /** Estado para `.bots`, `.serbot` y el informe de `.revivirsubs`. */
   function resumen() {
+    const conectados = [...activos.keys()];
+    // Un socket que aún no abrió no está «activo», pero tampoco apagado: si no
+    // se nombra, el informe dice que no hay nada cuando sí lo hay.
+    const conectando = [...sockets.keys()].filter((n) => !activos.has(n));
     return {
       activos: activos.size,
+      pendientes: pendientes.size,
       maximo,
-      numeros: [...activos.keys()],
+      numeros: conectados,
+      conectando: conectando,
       reintentando: [...intentos.entries()].map(([n, d]) => ({ numero: n, intentos: d.intentos })),
       enCurso: [...enCurso],
       restaurado,

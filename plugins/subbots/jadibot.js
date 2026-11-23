@@ -10,7 +10,9 @@ export default {
       if (!num || num.length < 8 || num.length > 15 || /^1\d{14}$/.test(num)) {
         return enviartexto(`⚠️ *No puedo detectar tu número real.*\nEsto pasa en grupos. Usa: *${config.prefix}jadibot 5354386852*`);
       }
-      return startSubbot(sock, sender, from, enviartexto, "code");
+      // El tercer dato que se apunta es quién lo pidió: así `.serbot` sabe de
+      // quién es cada cuenta y no enseña las ajenas.
+      return startSubbot(sock, sender, from, enviartexto, "code", jidToNumber(sender));
     }
 
     // 2. LÓGICA PARA EL PREM-BOT (.jadibot) - Solo Owners o Premium
@@ -35,7 +37,7 @@ export default {
         return enviartexto(`⚠️ Uso: ${config.prefix}jadibot <número con código de país>\nEjemplo: ${config.prefix}jadibot 5354386852`);
       }
       
-      await startSubbot(sock, `${target}@s.whatsapp.net`, from, enviartexto, "code");
+      await startSubbot(sock, `${target}@s.whatsapp.net`, from, enviartexto, "code", jidToNumber(sender));
     }
   }
 };
