@@ -41,6 +41,18 @@ export const pruebas = [
     esVerdad(/\$DIR\/\.ado-verificar\.log/.test(texto), "falta el plan B dentro del propio repo");
     esVerdad(!/Mira el final de/.test(texto), "el aviso viejo hablaba de /tmp y ya no aplica");
   }],
+  ["el instalador deja el comando 'ado' para no pelearse con las rutas", () => {
+    const texto = leer("instalar.sh");
+    esVerdad(/instalar_lanzador/.test(texto), "no se escribe ningún lanzador");
+    esVerdad(/PREFIX\/bin/.test(texto), "en Termux debería usar \$PREFIX/bin");
+    esVerdad(/case "\$\{1:-\}" in/.test(texto) || /ado update/.test(texto), "el lanzador no explica sus órdenes");
+  }],
+  ["el instalador arranca solo si hay terminal de verdad", () => {
+    const texto = leer("instalar.sh");
+    esVerdad(/QUIERE_ARRANCAR" = "auto"/.test(texto), "no distingue arranque manual de automático");
+    esVerdad(/\[ ! -t 1 \]/.test(texto), "no mira si hay terminal antes de arrancar");
+    esVerdad(/--sin-arrancar/.test(texto), "falta la opción de dejarlo listo sin arrancar");
+  }],
   ["el verificador termina en error cuando algo falla", () => {
     const texto = leer("scripts/verificar.mjs");
     esVerdad(/if \(fallos\)/.test(texto), "no comprueba la cuenta de fallos al terminar");

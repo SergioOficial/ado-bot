@@ -74,8 +74,20 @@ nuestra mano está contado en [el anti-ban](docs/ANTIBAN.md), con su informe al 
 bash <(curl -fsSL https://raw.githubusercontent.com/SergioOficial/ado-bot/main/instalar.sh)
 ```
 
-Descarga el bot, instala las dependencias, deja un `.env` listo y comprueba que
-todo carga. Al terminar te dice exactamente qué escribir para arrancarlo.
+Descarga el bot, instala las dependencias, deja un `.env` listo, comprueba que
+todo carga y **arranca**. Y al terminar deja un comando `ado` en el PATH, así
+que la próxima vez no hace falta acordarse de la carpeta ni escribir `cd`:
+
+```bash
+ado            # arrancar
+ado update     # actualizar y arrancar
+ado verify     # comprobar que todo carga, sin abrir WhatsApp
+ado repair     # reinstalar dependencias y comprobar
+ado dir        # ¿dónde está instalado?
+```
+
+Si prefieres que **no** arranque nada (un servidor, un script, una instalación
+para mirar): `--sin-arrancar`.
 
 <details>
 <summary><strong>📱 Qué pasa en el primer arranque</strong> — el código se queda en pantalla</summary>
@@ -97,16 +109,19 @@ Si el código caduca sin confirmarse, avisa y te dice cómo pedir otro.
 
 | Paso | Qué hace |
 |---|---|
-| 1 | Comprueba `git` y que Node sea **20.9 o superior** (el del sistema suele quedarse corto). |
-| 2 | Clona el bot en `~/ado-bot`, o lo actualiza si ya estaba (`git pull` sin sobrescribir nada tuyo). |
-| 3 | Instala las dependencias. Es el paso lento: descarga `sharp` y sus binarios. |
-| 4 | Copia `.env.example` a `.env` **solo si no existe**. Tu `.env` nunca se toca. |
-| 5 | Lanza el verificador con el bot apagado, para no descubrir un fallo al vincular. |
-| 6 | Te enseña cómo arrancarlo. No arranca nada por su cuenta (`ADO_ARRANCAR=1` si lo quieres). |
+| 1 | Mira dónde corre (Termux, Linux, macOS, WSL, contenedor) y con qué arquitectura. |
+| 2 | Comprueba `git` y que Node sea **20.9 o superior**; si falta algo, da la orden exacta y no toca nada más. |
+| 3 | Clona el bot en `~/ado-bot`, o lo actualiza. Si ya estaba al día lo dice y no reescribe nada. |
+| 4 | Instala las dependencias. La primera vez es el paso lento: descarga `sharp` y sus binarios. |
+| 5 | Copia `.env.example` a `.env` **solo si no existe**. Tu `.env` nunca se toca. |
+| 6 | Comprueba que todo carga con el bot apagado, y si algo falla enseña el motivo real. |
+| 7 | Deja el comando `ado` en el PATH (en Termux: `$PREFIX/bin`). |
+| 8 | Arranca el bot si hay terminal de verdad. Sin terminal, no arranca nada. |
 
-Rutas y rama se cambian con variables: `ADO_DIR=/otra/ruta`,
-`ADO_BRANCH=main`, `ADO_SIN_COLOR=1`. Se puede ejecutar las veces que quieras:
-la segunda vez actualiza en vez de instalar.
+Se puede ejecutar las veces que quieras: la segunda vez actualiza en vez de
+instalar. Opciones: `--dir RUTA`, `--rama RAMA`, `--actualizar`,
+`--sin-arrancar`, `--arrancar`, `--sin-color`. Variables: `ADO_DIR`,
+`ADO_BRANCH`, `ADO_SIN_ARRANCAR`, `NO_COLOR`.
 
 > [!IMPORTANT]
 > **El proyecto está en constante evolución.** Para no perderte las novedades,
@@ -787,7 +802,7 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 | **Versión** | `3.7.9` |
 | **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
 | **Código** | 278 archivos JavaScript |
-| **Pruebas** | **344** en verde |
+| **Pruebas** | **346** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -802,6 +817,7 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-23 | fix(arranque): el código de vinculación ya no se pierde bajo el cartel del bot |
 | 2026-11-23 | fix(instalador): el temporal que no existe en Termux, y el verificador que nunca fallaba |
 | 2026-11-23 | docs(readme): portada, cifras y divisores dibujados en casa |
 | 2026-11-23 | refactor(plugins): close, open y del se van a admin |
@@ -809,7 +825,6 @@ _Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, 
 | 2026-11-22 | fix(3.7.9): una sola casa para los duplicados y un README que se cuenta solo |
 | 2026-11-22 | docs(readme): cabecera nueva, instalación en un comando y colaboradores con datos |
 | 2026-11-22 | feat(porte): prefijo, modo privado, enlace, canal, dueños y logout |
-| 2026-11-22 | feat(menú): un solo mensaje, sin desplegable, y armado con los plugins reales |
 
 <!-- cambios:fin -->
 
@@ -833,7 +848,7 @@ _Datos pedidos a GitHub el 2026-11-23. Se actualizan con `npm run readme`._
 
 | Dato | Valor |
 |---|---|
-| Commits totales | **421** |
+| Commits totales | **428** |
 | Días desde el primer commit | **12** |
 | Último cambio | **2026-11-23** (hace 0 d) |
 | Estrellas · forks · avisos abiertos | **3** · **0** · **0** |
@@ -841,9 +856,9 @@ _Datos pedidos a GitHub el 2026-11-23. Se actualizan con `npm run readme`._
 
 | Colaborador | Qué hizo | Commits | % |
 |---|---|---|---|
-| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 358 | 85.0% |
-| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 55 | 13.1% |
-| [@levi-hub805](https://github.com/levi-hub805) | Contribuciones puntuales | 4 | 1.0% |
+| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 358 | 83.6% |
+| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 62 | 14.5% |
+| [@levi-hub805](https://github.com/levi-hub805) | Contribuciones puntuales | 4 | 0.9% |
 | [@afvm2025](https://github.com/afvm2025) | Contribuciones puntuales | 3 | 0.7% |
 | [@sergio](https://github.com/sergio) | Contribuciones puntuales | 1 | 0.2% |
 <!-- stats:fin -->
