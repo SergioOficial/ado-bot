@@ -10,7 +10,6 @@ const execAsync = promisify(exec);
 
 export default {
   command: ["stickeraudio", "sa"],
-  category: "stickers",
   execute: async (ctx) => {
     const { sock, from, m, enviartexto } = ctx;
     const quoted = m.quoted;
