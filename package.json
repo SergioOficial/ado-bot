@@ -6,6 +6,7 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
+    "@ado/baileys": "github:SergioOficial/ado-baileys", //Baileys Oficial 
     "@hapi/boom": "^10.0.1",
     "@img/sharp-wasm32": "^0.35.5",
     "@itsliaaa/baileys": "^0.5.1",
