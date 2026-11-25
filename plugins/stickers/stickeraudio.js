@@ -2,7 +2,7 @@
  * Name   : Audio Sticker (Static & Animated GIF)
  * Type   : Plugin ESM (Adaptado para Ado-Bot)
  * Author : Nimzz (Adaptación: Sergio Dev)
- * Desc   : Sticker con sonido (máx 25s) usando FutureProofMessage
+ * Desc   : Sticker con sonido. Video (auto-extrae audio) e Imagen (pide audio).
  */
 
 import baileys from '../../lib/baileys.js'; 
@@ -318,6 +318,7 @@ export default {
         const activeSession = sessions.get(key);
         const rawText = String(args.join(" ")).trim();
 
+        // Cancelar
         if (/^(cancelar|batal|cancel|stop)$/i.test(rawText)) {
             if (!activeSession) return enviartexto('⚠️ No hay sesión activa.');
             clearUserSession(key);
@@ -334,7 +335,7 @@ export default {
         const hasOwnAudio = ownInfo.kind === 'audio';
         const hasQuotedAudio = quotedInfo.kind === 'audio';
 
-        // 1. Unir Audio
+        // 1. Unir Audio (Solo si estamos en sesión y envían el audio)
         if (activeSession && !activeSession.processing && (hasOwnAudio || hasQuotedAudio) && !hasOwnVisual) {
             const targetAudioNode = hasOwnAudio ? m : quoted;
             const targetAudioInfo = hasOwnAudio ? ownInfo : quotedInfo;
@@ -360,7 +361,7 @@ export default {
             return;
         }
 
-        // 2. Iniciar sesión
+        // 2. Procesar Video o Imagen
         if (hasOwnVisual || hasQuotedVisual) {
             const targetNode = hasOwnVisual ? m : quoted;
             const targetInfo = hasOwnVisual ? ownInfo : quotedInfo;
@@ -377,6 +378,31 @@ export default {
                 const stickerBuffer = await buildStickerWithExif(mediaBuf, targetInfo.kind, packname, author);
                 const isAnimated = targetInfo.kind === 'video' || targetInfo.isAnimated;
 
+                // ⚡ SI ES UN VIDEO: Extraemos su audio automáticamente y enviamos al instante
+                if (targetInfo.kind === 'video') {
+                    try {
+                        const { oggBuffer } = await convertToOggOpus(mediaBuf, 'mp4');
+                        const { audioMessage } = await prepareWAMessageMedia({ audio: oggBuffer, mimetype: 'audio/ogg; codecs=opus', ptt: true }, { upload: client.waUploadToServer });
+                        
+                        audioMessage.seconds = Math.max(1, Math.min(MAX_DURATION, Math.round(targetInfo.seconds || 5)));
+                        audioMessage.ptt = true;
+                        audioMessage.mimetype = 'audio/ogg; codecs=opus';
+                        const wf = Buffer.alloc(64);
+                        for (let i = 0; i < 64; i++) wf[i] = 18 + ((i * 11) % 76);
+                        audioMessage.waveform = wf;
+
+                        await sendCombinedAudioSticker(client, from, stickerBuffer, isAnimated, audioMessage);
+                        await react('✅');
+                        return; // Terminamos, no hacemos sesión
+                    } catch (audioErr) {
+                        console.error('[AUDIOSTICKER] Fallo al extraer audio del video:', audioErr);
+                        await client.sendMessage(from, { sticker: stickerBuffer }, { quoted: m });
+                        await react('⚠️');
+                        return enviartexto("⚠️ Se envió el sticker, pero no se pudo extraer el audio del video.");
+                    }
+                }
+
+                // 📸 SI ES UNA IMAGEN: Iniciamos la sesión de 60s para pedir el audio
                 clearUserSession(key);
                 const timer = setTimeout(() => {
                     if (sessions.has(key)) {
@@ -404,8 +430,8 @@ export default {
         // 3. Ayuda
         return enviartexto(
             `🎵 *STICKER CON AUDIO*\n\n` +
-            `> 1. Envía una *imagen/video* con *${p}${cmd}*.\n` +
-            `> 2. Envía un *audio* con *${p}${cmd}*.\n` +
+            `> 1. Envía un *Video* con *${p}${cmd}* para extraer su audio automáticamente.\n` +
+            `> 2. O envía una *Imagen* con *${p}${cmd}* y luego mándale un audio.\n` +
             `> _Máximo de audio: 25s._`
         );
     }
