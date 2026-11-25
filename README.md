@@ -520,7 +520,7 @@ y `.menucat`. El reparto por categorías está más arriba, en **El menú**.
 
 El menú interactivo de prueba `.flow` se explica en
 [`docs/FLUJO.md`](docs/FLUJO.md). No cambia `.menu`: funciona aparte, con una
-demo local o con un Flow publicado en WhatsApp Manager.
+demo local, un panel web (`npm run menuweb`) o un Flow publicado en WhatsApp Manager.
 </details>
 
 <details>
@@ -805,8 +805,8 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 |---|---|
 | **Versión** | `3.7.9` |
 | **Plugins** | 189 archivos, 589 nombres de comando en 16 categorías |
-| **Código** | 284 archivos JavaScript |
-| **Pruebas** | **362** en verde |
+| **Código** | 285 archivos JavaScript |
+| **Pruebas** | **364** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -821,6 +821,7 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-25 | feat(flow): menú interactivo experimental sin sustituir .menu |
 | 2026-11-25 | Actualizar stickeraudio.js |
 | 2026-11-25 | Actualizar stickeraudio.js |
 | 2026-11-25 | Actualizar stickeraudio.js |
@@ -828,7 +829,6 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 | 2026-11-25 | fix: intentar evitar error de sintaxis en el baileys |
 | 2026-11-25 | Crear stickeraudio.js |
 | 2026-11-25 | Eliminar sticker-audio.js |
-| 2026-11-24 | Actualizar sticker-audio.js |
 
 <!-- cambios:fin -->
 

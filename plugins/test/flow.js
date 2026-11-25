@@ -6,8 +6,9 @@
  *
  * .flow — tarjeta interactiva experimental, sin tocar el menú actual.
  *
- *   .flow                  tarjeta del Flow publicado, o demo local si no hay uno
+ *   .flow                  tarjeta del Flow publicado, o la variante disponible
  *   .flow demo             fuerza la demo local (categorías y buscador)
+ *   .flow web              abre el panel web dentro de WhatsApp (FLOW_WEB_URL)
  *   .flow real             fuerza el Flow publicado (necesita FLOW_ID/TOKEN)
  *   .flow cat <categoría>  comandos de una categoría
  *   .flow buscar <texto>   busca comandos por nombre
@@ -17,13 +18,13 @@
  * «🎛️ Click aquí para abrir el menú». Ese texto es el cuerpo del mensaje; la
  * interfaz de dentro solo existe si hay un Flow publicado en WhatsApp Manager.
  *
- * La demo local NO es un Flow de Meta: son botones nativos con forma parecida.
- * Sirve para probar el envío y la respuesta de los botones sin una cuenta
- * business. Ver docs/FLUJO.md.
+ * Ni la demo local ni el panel web son un Flow de Meta: son botones nativos con
+ * forma parecida. Sirven para probar el envío sin cuenta business. Ver
+ * docs/FLUJO.md.
  */
 import { commands } from "../../pluginLoader.js";
 import { catalogo, buscarCategoria } from "../../lib/menu-ayuda.js";
-import { enviarConBotones, enviarConFlow, galaxy } from "../../lib/botones.js";
+import { enviarConBotones, enviarConFlow, galaxy, webview } from "../../lib/botones.js";
 import {
   CUERPO,
   TITULO,
@@ -53,9 +54,28 @@ export default {
     const modo = (args[0] || "").toLowerCase();
     const conf = configuracion();
     const grupos = gruposDelMenu();
+    const forzarDemo = ["demo", "local", "prueba", "test"].includes(modo);
+    const forzarReal = ["real", "flow", "publicado"].includes(modo);
+    const forzarWeb = ["web", "panel", "sitio"].includes(modo);
 
     if (modo === "estado") {
       return enviartexto(textoEstado(conf));
+    }
+
+    if (forzarWeb || (!forzarDemo && !forzarReal && !conf.listo && conf.web)) {
+      if (!conf.web) {
+        return enviartexto(
+          `Define FLOW_WEB_URL con la URL HTTPS del panel, o usa ${prefijo}${comando} demo.`
+        );
+      }
+      return enviarConBotones(sock, from, {
+        texto: CUERPO,
+        titulo: TITULO,
+        pie: PIE,
+        imagen: conf.imagen || undefined,
+        botones: [webview("Abrir menú", conf.web, true)],
+        cita: m,
+      });
     }
 
     if (modo === "cat" || modo === "categoria" || modo === "categoría") {
@@ -85,6 +105,7 @@ export default {
           "",
           `▸ ${prefijo}${comando} · tarjeta del Flow (o demo local)`,
           `▸ ${prefijo}${comando} demo · categorías y buscador sin WABA`,
+          `▸ ${prefijo}${comando} web · panel web dentro de WhatsApp con FLOW_WEB_URL`,
           `▸ ${prefijo}${comando} real · Flow publicado con FLOW_ID y FLOW_TOKEN`,
           `▸ ${prefijo}${comando} cat <categoría> · comandos de una categoría`,
           `▸ ${prefijo}${comando} buscar <palabra> · busca comandos`,
@@ -95,8 +116,6 @@ export default {
       );
     }
 
-    const forzarDemo = ["demo", "local", "prueba", "test"].includes(modo);
-    const forzarReal = ["real", "flow", "publicado"].includes(modo);
     const usarReal = forzarReal || (!forzarDemo && conf.listo);
 
     if (usarReal && !conf.listo) {

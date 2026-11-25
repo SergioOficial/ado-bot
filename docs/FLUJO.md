@@ -38,13 +38,44 @@ y no aparece como cadena de un proyecto conocido: es texto elegido por quien
 compone el mensaje, no un literal de una librería. Lo reproducible es el
 formato; la redacción es libre.
 
-## 2. Lo que `.flow` hace aquí
+## 2. Cómo lo integran otros bots
 
-El comando tiene dos caminos:
+Buscando la frase literal en GitHub y en grep.app no aparece en código público:
+no es un texto de librería, lo escribe quien arma el mensaje. Sí aparecen dos
+formas de conseguir una interfaz parecida:
+
+1. **Panel web abierto desde la tarjeta.** El caso más cercano a la captura es
+   [TylexK/gonx-bot](https://github.com/TylexK/gonx-bot): manda un
+   `interactiveMessage` con encabezado «MENÚ INTERACTIVO», cuerpo
+   «Explora las categorías, busca comandos y toca uno para ver sus detalles» y
+   un botón `cta_url` con texto «Abrir menú». El botón abre un panel HTML con
+   categorías y buscador, alojado en HTTPS, con enlaces firmados que caducan.
+   Si WhatsApp no pinta el botón, envía el enlace en texto y después una lista
+   nativa. Esa descripción casi palabra por palabra es lo que se ve en la
+   captura: la interfaz rica vivía en un panel, no dentro del mensaje.
+   Fuente: [`services/whatsappMenu.js`](https://github.com/TylexK/gonx-bot/blob/main/services/whatsappMenu.js)
+   y su [README](https://github.com/TylexK/gonx-bot#readme).
+2. **Botón `galaxy_message` copiado de la documentación.** En
+   [izu2.0](https://github.com/gudo1234/izu2.0),
+   [SHADOW-BOT-MD](https://github.com/yosue891/SHADOW-BOT-MD) y
+   [itachi-Bot](https://github.com/GABRIEL-OFF18/itachi-Bot) aparece el mismo
+   `flow_id` (`1307913409923914`), el mismo token y la pantalla
+   `QUESTION_ONE` que trae el ejemplo de Baileys. No son Flows propios: copiar
+   ese bloque no abre el menú de otro bot, porque el Flow pertenece a la cuenta
+   business de su dueño. Es un atajo documental, no una integración funcional.
+
+**Lo que conviene adoptar de ahí:** el cuerpo exacto del mensaje, el respaldo en
+texto o lista cuando la tarjeta no se pinta, y un panel con búsqueda que no
+dependa de una WABA. Por eso `.flow` tiene también modo web.
+
+## 3. Lo que `.flow` hace aquí
+
+El comando tiene tres caminos:
 
 | Modo | Cuándo | Qué envía |
 |---|---|---|
-| Demo local | Sin `FLOW_ID`/`FLOW_NAME` | Tarjeta nativa con categorías, lista y buscador. No necesita cuenta business. |
+| Demo local | Sin configuración | Tarjeta nativa con categorías, lista y buscador. No necesita cuenta business. |
+| Panel web | Con `FLOW_WEB_URL` | Tarjeta con botón `open_webview` que abre `docs/menu-flow.html` dentro de WhatsApp. |
 | Flow publicado | Con `FLOW_ID` y `FLOW_TOKEN` | Botón `galaxy_message` que abre el Flow subido a WhatsApp Manager. |
 
 La tarjeta lleva siempre el cuerpo `🎛️ Click aquí para abrir el menú` y el
@@ -54,8 +85,9 @@ encabezado `🎛️ Menú`. Usa el mismo envío de botones que el resto del bot
 Subcomandos:
 
 ```text
-.flow                    abre el Flow publicado, o la demo si no hay uno
+.flow                    abre el Flow publicado, el panel web o la demo
 .flow demo               fuerza la demo local
+.flow web                abre el panel web dentro de WhatsApp
 .flow real               fuerza el Flow publicado
 .flow cat <categoría>    muestra los comandos de esa categoría
 .flow buscar <palabra>   busca comandos por nombre o alias
@@ -67,7 +99,34 @@ Los botones de las categorías devuelven comandos reales (`flow cat ...`) y el
 buscador devuelve `flow buscar ...`: la compuerta los recibe como si estuvieran
 escritos con el prefijo del bot.
 
-## 3. Puesta en marcha del modo publicado
+## 4. Panel web sin cuenta business
+
+Es la forma más fiel a la captura que se puede probar hoy: un HTML con imagen,
+chips de categorías, buscador y tarjetas de comandos, abierto dentro de WhatsApp
+con `open_webview`. No necesita WABA ni Flow publicado.
+
+1. Generar el HTML con los comandos que el bot tiene cargados:
+
+```bash
+npm run menuweb        # escribe docs/menu-flow.html
+```
+
+2. Publicar `docs/menu-flow.html` en GitHub Pages (o cualquier HTTPS público).
+   El archivo es autónomo: no carga fuentes, imágenes ni scripts externos. Si
+   se quiere la foto de cabecera, regenerar con
+   `FLOW_IMAGEN='https://.../cabecera.jpg' npm run menuweb`.
+
+3. Definir la URL y probar:
+
+```bash
+export FLOW_WEB_URL='https://tu-usuario.github.io/ado-bot/menu-flow.html'
+```
+
+Después `.flow web` manda la tarjeta con el botón «Abrir menú». Si el panel se
+publica en otra ruta, cambia el nombre del archivo o el `site` de GitHub Pages.
+Cada vez que cambien los comandos, vuelve a correr `npm run menuweb`.
+
+## 5. Puesta en marcha del modo publicado
 
 1. Crear el Flow en WhatsApp Manager y publicarlo. La interfaz de la captura
    exige un Flow JSON con pantallas, imagen, campo de texto y chips: no se
@@ -96,7 +155,7 @@ Límites reales:
   el cuerpo se manda siempre.
 - Si el Flow no responde o el id es incorrecto, `.flow` avisa y envía la demo.
 
-## 4. Sobre los stickers con audio y el proto
+## 6. Sobre los stickers con audio y el proto
 
 WhatsApp añadió en noviembre de 2026 los stickers con sonido: un `WebP` con
 una pista `OGG/Opus` adjunta. En el protocolo aparecen un envoltorio
@@ -121,7 +180,7 @@ Este cambio afecta a los stickers, no a los mensajes interactivos: `.flow`
 usa `interactiveMessage`, que no se ha tocado. No se modifica
 `stickeraudio.js`.
 
-## 5. Pruebas
+## 7. Pruebas
 
 ```bash
 npm run probar

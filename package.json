@@ -38,6 +38,7 @@
     "humo": "node scripts/humo.mjs",
     "mapa": "node scripts/mapa-porte.mjs",
     "readme": "node scripts/readme-stats.mjs --escribir",
+    "menuweb": "node scripts/generar-menu-web.mjs",
     "auditar-antiban": "node scripts/auditar-antiban.mjs",
     "test": "node scripts/probar.mjs",
     "sintaxis": "node scripts/revisar-sintaxis.mjs",
