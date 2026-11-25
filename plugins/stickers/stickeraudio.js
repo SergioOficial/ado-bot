@@ -189,16 +189,9 @@ function buildExifPayload(packname, author) {
 
 async function addStickerExif(webpBuffer, packname, author) {
     const exifData = buildExifPayload(packname, author);
-    try {
-        const webpMod = await import('node-webpmux');
-        const WebpImage = webpMod.default?.Image || webpMod.Image || webpMod.default;
-        if (WebpImage) {
-            const img = new WebpImage();
-            await img.load(webpBuffer); img.exif = exifData;
-            return await img.save(null);
-        }
-    } catch {}
-    return webpBuffer; // Fallback si falla webpmux
+    // Usamos directamente el respaldo nativo en JS puro para evitar dependencias
+    // y que el CI de GitHub Actions no falle por "node-webpmux".
+    return injectExifRiffFallback(webpBuffer, exifData);
 }
 
 async function videoBufferToAnimatedWebp(buffer) {
