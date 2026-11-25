@@ -187,10 +187,68 @@ function buildExifPayload(packname, author) {
     return exif;
 }
 
+function injectExifRiffFallback(webpBuffer, exifData) {
+    if (
+        !Buffer.isBuffer(webpBuffer) ||
+        webpBuffer.length < 16 ||
+        webpBuffer.toString('ascii', 0, 4) !== 'RIFF' ||
+        webpBuffer.toString('ascii', 8, 12) !== 'WEBP'
+    ) {
+        return webpBuffer;
+    }
+
+    const chunks = [];
+    let offset = 12;
+    let hasVp8x = false;
+    let isAnim = false;
+
+    while (offset + 8 <= webpBuffer.length) {
+        const id = webpBuffer.toString('ascii', offset, offset + 4);
+        const size = webpBuffer.readUInt32LE(offset + 4);
+        const padded = size + (size % 2);
+        const end = Math.min(webpBuffer.length, offset + 8 + padded);
+        const rawChunk = Buffer.from(webpBuffer.subarray(offset, end));
+
+        if (id === 'VP8X') hasVp8x = true;
+        if (id === 'ANIM' || id === 'ANMF') isAnim = true;
+        if (id !== 'EXIF') chunks.push({ id, rawChunk });
+
+        offset = end;
+    }
+
+    if (!hasVp8x) {
+        const vp8x = Buffer.alloc(18);
+        vp8x.write('VP8X', 0, 4, 'ascii');
+        vp8x.writeUInt32LE(10, 4);
+        vp8x[8] = 0x18;
+        vp8x.writeUIntLE(511, 12, 3);
+        vp8x.writeUIntLE(511, 15, 3);
+        chunks.unshift({ id: 'VP8X', rawChunk: vp8x });
+    } else {
+        const vp8xEntry = chunks.find(c => c.id === 'VP8X');
+        if (vp8xEntry && vp8xEntry.rawChunk.length >= 18) {
+            vp8xEntry.rawChunk[8] |= 0x08;
+            if (isAnim) vp8xEntry.rawChunk[8] |= 0x02;
+        }
+    }
+
+    const padByte = exifData.length % 2 === 1 ? Buffer.from([0x00]) : Buffer.alloc(0);
+    const exifHeader = Buffer.alloc(8);
+    exifHeader.write('EXIF', 0, 4, 'ascii');
+    exifHeader.writeUInt32LE(exifData.length, 4);
+    chunks.push({ id: 'EXIF', rawChunk: Buffer.concat([exifHeader, exifData, padByte]) });
+
+    const body = Buffer.concat(chunks.map(c => c.rawChunk));
+    const header = Buffer.alloc(12);
+    header.write('RIFF', 0, 4, 'ascii');
+    header.writeUInt32LE(body.length + 4, 4);
+    header.write('WEBP', 8, 4, 'ascii');
+
+    return Buffer.concat([header, body]);
+}
+
 async function addStickerExif(webpBuffer, packname, author) {
     const exifData = buildExifPayload(packname, author);
-    // Usamos directamente el respaldo nativo en JS puro para evitar dependencias
-    // y que el CI de GitHub Actions no falle por "node-webpmux".
     return injectExifRiffFallback(webpBuffer, exifData);
 }
 
