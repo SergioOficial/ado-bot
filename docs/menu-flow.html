@@ -3,87 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🎛️ Menú</title>
+<title>𝙰𝚍𝚘𝑩𝒐𝒕 · Menú interactivo</title>
 <style>
-:root{color-scheme:dark;--fondo:#080c16;--tarjeta:#111a29;--borde:#26364d;--texto:#edf2fa;--suave:#93a4bb;--verde:#39d98a}
+:root{color-scheme:dark;--fondo:#0b1220;--tarjeta:#131d2c;--borde:#25354a;--texto:#e8eef7;--suave:#91a2b8;--verde:#39d98a}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%}
-body{background:radial-gradient(900px 500px at 50% -10%,#142641 0,var(--fondo) 65%);color:var(--texto);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-.wrap{max-width:540px;margin:0 auto;padding:14px 14px 28px}
-.hero{position:relative;min-height:310px;border:1px solid #2c4a70;border-radius:20px;overflow:hidden;background-size:cover;background-position:center 35%;box-shadow:0 16px 40px rgba(0,0,0,.45)}
-.hero:before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,28,.22) 0%,rgba(8,14,28,.55) 45%,rgba(8,14,28,.96) 100%)}
-.hero .contenido{position:relative;padding:18px;display:flex;flex-direction:column;min-height:310px}
-.marca{display:flex;align-items:center;gap:12px}
-.logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(145deg,#6ee7ff,#2563eb);display:grid;place-items:center;border:1px solid rgba(255,255,255,.35)}
-.logo svg{width:30px;height:30px;stroke:#0b1730;fill:none;stroke-width:1.8}
-.nombre{font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1.05}
-.subtitulo{font-size:11px;letter-spacing:3px;color:var(--suave);margin-top:4px;font-weight:600}
-.marca .contador{margin-left:auto}
-.contador{border:1px solid var(--verde);color:var(--verde);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;background:rgba(57,217,138,.08);white-space:nowrap}
-.etiqueta{align-self:flex-start;margin-top:16px;padding:6px 13px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:1px;background:linear-gradient(100deg,#2b4c8a,#17324f);border:1px solid #4d78b5;color:#dceaff}
-.hero .abajo{margin-top:auto}
-.hero h1{margin:10px 0 4px;font-size:30px;font-weight:800}
-.hero p{margin:0;color:#d7e2f2;font-size:14px;max-width:92%}
-.buscar{display:flex;align-items:center;gap:10px;margin:14px 0 12px;padding:13px 15px;background:var(--tarjeta);border:1px solid var(--borde);border-radius:15px}
-.buscar svg{width:18px;height:18px;stroke:var(--suave);fill:none;stroke-width:2;flex:0 0 auto}
+body{margin:0;background:var(--fondo);color:var(--texto);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.barra{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--borde);font-weight:600}
+.barra span{color:var(--verde)}
+main{padding:16px;max-width:720px;margin:0 auto}
+.hero{border:1px solid var(--borde);border-radius:18px;padding:22px;min-height:210px;background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
+.hero .etiqueta{align-self:flex-start;border:1px solid var(--verde);color:var(--verde);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700}
+.hero h1{margin:0;font-size:28px}
+.hero p{margin:0;color:var(--suave)}
+.contador{border:1px solid var(--verde);color:var(--verde);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.buscar{display:flex;align-items:center;gap:8px;margin:16px 0 12px;padding:10px 14px;background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px}
 .buscar input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--texto);font:inherit}
-.buscar input::placeholder{color:#7b8ca4}
-.buscar button{background:none;border:0;color:var(--suave);font-size:22px;line-height:1;cursor:pointer}
-.chips{display:flex;gap:9px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;background:var(--tarjeta);color:var(--suave);border:1px solid var(--borde);border-radius:999px;padding:9px 15px;cursor:pointer;font-weight:600;white-space:nowrap}
-.chip.activo{border-color:var(--verde);color:var(--verde);background:rgba(57,217,138,.1)}
-.grupo{background:var(--tarjeta);border:1px solid var(--borde);border-radius:18px;padding:14px;margin-bottom:12px}
-.cabecera{display:flex;gap:12px;align-items:center;margin-bottom:14px}
-.icono{width:52px;height:52px;flex:0 0 auto;border-radius:15px;background:#162538;border:1px solid #29405e;display:grid;place-items:center;font-size:25px}
-.cabecera h2{margin:0;font-size:19px}
-.cabecera p{margin:3px 0 0;color:var(--suave);font-size:13px}
-.cabecera .contador{margin-left:auto}
-.barra{height:3px;width:62px;background:var(--verde);border-radius:3px;margin:0 0 12px 2px}
-.lista{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.pildora{display:flex;align-items:center;gap:8px;background:#0f1928;border:1px solid var(--borde);border-radius:13px;padding:12px 13px;color:var(--verde);font-weight:700;text-align:left;cursor:pointer;min-width:0}
-.pildora span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pildora .punto{width:8px;height:8px;flex:0 0 auto;border-radius:50%;background:var(--verde);box-shadow:0 0 9px rgba(57,217,138,.6)}
-.pildora .flecha{margin-left:auto;color:#6f8199;font-size:18px}
-.pildora.copiado{border-color:var(--verde)}
-.vacio{color:var(--suave);text-align:center;padding:28px 0}
-footer{text-align:center;color:#667994;font-size:12px;padding:8px 0 0}
-@media(max-width:420px){.nombre{font-size:24px}.hero h1{font-size:26px}.lista{grid-template-columns:1fr}}
+.buscar button{background:none;border:0;color:var(--suave);font-size:20px;cursor:pointer}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}
+.chip{flex:0 0 auto;background:var(--tarjeta);color:var(--texto);border:1px solid var(--borde);border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.chip.activo{border-color:var(--verde);color:var(--verde)}
+.grupo{margin:18px 0 6px;display:flex;align-items:center;justify-content:space-between}
+.grupo h2{font-size:19px;margin:0}
+.grupo p{margin:2px 0 0;color:var(--suave);font-size:13px}
+.lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.comando{background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:12px 14px;text-align:left;color:var(--texto);font:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.comando b{color:var(--verde);font-weight:600}
+.comando small{display:block;color:var(--suave);margin-top:4px}
+.vacio{color:var(--suave);padding:20px 0;text-align:center}
+footer{color:var(--suave);text-align:center;font-size:12px;padding:22px 0}
+@media(max-width:420px){.hero h1{font-size:24px}.lista{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<section class="hero" style="background-image:url(&quot;assets/menu-hero.jpg&quot;);">
-<div class="contenido">
-<div class="marca">
-<div class="logo"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="4"/><circle cx="9" cy="13" r="1.4"/><circle cx="15" cy="13" r="1.4"/><path d="M12 7V4M10 20h4"/></svg></div>
-<div>
-<div class="nombre">𝙰𝚍𝚘𝑩𝒐𝒕</div>
-<div class="subtitulo">MENÚ INTERACTIVO</div>
-</div>
-<div class="contador">185 cmds</div>
-</div>
-<div class="abajo">
-<span class="etiqueta">✦ MENÚ PREMIUM</span>
+<div class="barra"><span>🎛️</span><span>𝙰𝚍𝚘𝑩𝒐𝒕 · Menú</span></div>
+<main>
+<section class="hero" style="">
+<span class="etiqueta">MENÚ INTERACTIVO</span>
 <h1>𝙰𝚍𝚘𝑩𝒐𝒕</h1>
-<p>Eligue una categoría, busca o toca un comando para ver los detalles</p>
-</div>
-</div>
+<p>Elige una categoría, busca o toca un comando para ver los detalles</p>
 </section>
-<label class="buscar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="q" type="search" placeholder="Buscar comando..." autocomplete="off"><button id="limpiar" aria-label="Limpiar">×</button></label>
+<div class="buscar"><input id="q" type="search" placeholder="Buscar comando..." autocomplete="off"><button id="limpiar" aria-label="Limpiar">×</button></div>
 <div class="chips" id="chips"></div>
 <div id="resultado"></div>
-<footer>𝙰𝚍𝚘𝑩𝒐𝒕 · . delante de cada comando</footer>
-</div>
+</main>
+<footer>185 comandos · . delante de cada uno</footer>
 <script>
 const datos=[{"titulo":"Economía","emoji":"🎁","descripcion":"Gana, apuesta y guarda coins con tus amigos.","comandos":[{"nombre":"beg","alias":["mendigar","limosna"]},{"nombre":"cf","alias":["coinflip","caraocruz"]},{"nombre":"coffer","alias":["cajafuerte","vault"]},{"nombre":"cofre","alias":["mysterybox","cajasorpresa"]},{"nombre":"coins","alias":["balance","bal"]},{"nombre":"crime","alias":["crimen"]},{"nombre":"daily","alias":["diario","dayli"]},{"nombre":"dep","alias":["depositar","deposit","d"]},{"nombre":"dice","alias":["dados"]},{"nombre":"give","alias":["dar"]},{"nombre":"interest","alias":["interes"]},{"nombre":"invertir","alias":["invest"]},{"nombre":"nivel","alias":["lvl","exp","level"]},{"nombre":"pay","alias":["pagar","transferir","dar"]},{"nombre":"ppt","alias":["piedrapapel","roulette","ruleta","casino"]},{"nombre":"rankcoins","alias":["baltop"]},{"nombre":"rob","alias":["robar","steal"]},{"nombre":"shop","alias":["tienda"]},{"nombre":"slots","alias":["tragaperras","tragamonedas"]},{"nombre":"weekly","alias":["semanal","monthly","mensual","einfo","economia"]},{"nombre":"with","alias":["retirar","withdraw"]},{"nombre":"work","alias":["w"]}]},{"titulo":"Mascotas","emoji":"🐾","descripcion":"Adopta, cuida y pelea con tu mascota.","comandos":[{"nombre":"acariciar","alias":["alimentar","pasear","nombrar"]},{"nombre":"adoptar","alias":["adopt"]},{"nombre":"animal","alias":["mascotas","animaltop"]},{"nombre":"pelear","alias":["pelea","batalla","retar","atacar","cambiar","huir","capturar","petactivo"]}]},{"titulo":"RPG","emoji":"⚔️","descripcion":"Oficios, recursos y clases de aventurero.","comandos":[{"nombre":"cazar","alias":["hunt"]},{"nombre":"clase","alias":[]},{"nombre":"explorar","alias":["explore"]},{"nombre":"minar","alias":["mine"]},{"nombre":"pescar","alias":["fish"]},{"nombre":"ranknivel","alias":["lvltop"]},{"nombre":"reiniciarrpg","alias":[]},{"nombre":"talar","alias":["cultivar","recolectar","repartir","limpiar","construir","pintar","vender","hackear","disenar","editar","streamer","hornear","recompensa","bombero","policia","exorcizar","espiar","mago"]},{"nombre":"trabajar","alias":[]}]},{"titulo":"Gacha","emoji":"🎴","descripcion":"Tira, reclama y presume de colección.","comandos":[{"nombre":"charinfo","alias":["winfo","waifuinfo"]},{"nombre":"claim","alias":["c","reclamar"]},{"nombre":"gacha","alias":["togacha"]},{"nombre":"harem","alias":["waifus","claims"]},{"nombre":"rw","alias":["roll","rollwaifu"]},{"nombre":"vote","alias":["votar"]},{"nombre":"wtop","alias":["topwaifus","waifustop","waifusboard"]}]},{"titulo":"Perfil","emoji":"🌟","descripcion":"Tu ficha, tu nivel y tu gente.","comandos":[{"nombre":"afk","alias":["ausente"]},{"nombre":"delperfil","alias":["eliminarperfil","unreg"]},{"nombre":"level","alias":["lvl","experiencia","lboard","topnivel"]},{"nombre":"marry","alias":["casarse","matrimonio"]},{"nombre":"perfil","alias":["profile","me"]},{"nombre":"reg","alias":["register","registrar"]},{"nombre":"setdesc","alias":["setdescripcion"]},{"nombre":"setfecha","alias":["setcumple"]}]},{"titulo":"Descargas","emoji":"📥","descripcion":"Música, vídeos y archivos de varias fuentes.","comandos":[{"nombre":"apk","alias":["aptoide","apkdl"]},{"nombre":"fb","alias":["facebook","fbdl"]},{"nombre":"gitsearch","alias":["githubsearch","ghsearch","gitclone","gituser","github"]},{"nombre":"instagram","alias":["ig"]},{"nombre":"mediafire","alias":["mf"]},{"nombre":"pinterest","alias":["pin","pint","pinterestimg"]},{"nombre":"play","alias":["mp3","ytmp3","ytaudio","playaudio","audio"]},{"nombre":"play2","alias":["ytmp4","mp4","ytvideo","playvideo"]},{"nombre":"spotify","alias":["sp","spt"]},{"nombre":"tiktok","alias":["tt","ttdl"]},{"nombre":"toimg","alias":["s2i","sticker2img","img"]},{"nombre":"ytsearch","alias":["search"]}]},{"titulo":"Stickers","emoji":"🖌️","descripcion":"Crea stickers y paquetes.","comandos":[{"nombre":"audiosticker","alias":["sa","sticker-audio"]},{"nombre":"brat","alias":[]},{"nombre":"bratv","alias":[]},{"nombre":"emojimix","alias":["mix"]},{"nombre":"sticker","alias":["s"]},{"nombre":"stickers","alias":["searchsticker"]}]},{"titulo":"IA","emoji":"🧠","descripcion":"Texto, voz, imagen y música.","comandos":[{"nombre":"chatgpt","alias":["ia","geminis","ai"]},{"nombre":"iaaudio","alias":["iaa","vozi","voz"]},{"nombre":"iam","alias":["iamusica","suno","musicai"]},{"nombre":"imagen","alias":["flux","dalle"]}]},{"titulo":"Diversión","emoji":"🎉","descripcion":"Juegos y tonterías para el grupo.","comandos":[{"nombre":"8ball","alias":["bola"]},{"nombre":"ajedrez","alias":["chess","ajedrezhtml"]},{"nombre":"ajedrez2","alias":["chess2","ajedrezhtml2"]},{"nombre":"cerito","alias":["ceritohtml","gatohtml","tateti","tictactoe","3enlinea"]},{"nombre":"dahs","alias":["geometryhtml","dash","geometry","geo"]},{"nombre":"gato","alias":["cat","meow"]},{"nombre":"generala","alias":["generalahtml"]},{"nombre":"mate","alias":["mates","matematica"]},{"nombre":"meme","alias":["memes"]},{"nombre":"memoria","alias":["memorie","memoriahtml"]},{"nombre":"nsfw","alias":[]},{"nombre":"nsfwimge","alias":["waifusfw"]},{"nombre":"papel","alias":["piedra","papelhtml"]},{"nombre":"perro","alias":["dog"]},{"nombre":"responder","alias":["r","ans"]},{"nombre":"ship","alias":["amor"]},{"nombre":"snake","alias":["snakehtml"]},{"nombre":"tetris","alias":["tetrishtml"]},{"nombre":"trivia","alias":["pregunta"]},{"nombre":"waifu","alias":["anime","neko"]}]},{"titulo":"Utilidades","emoji":"🔔","descripcion":"Lo del día a día: clima, QR, recordatorios.","comandos":[{"nombre":"acortar","alias":["short","shorturl","tourl","subir"]},{"nombre":"angry","alias":["kill","sleep","hug","kiss","pat","slap","cry","dance","smile","wave","bonk","bite","blush","cuddle"]},{"nombre":"clima","alias":["weather"]},{"nombre":"crypto","alias":["btc","precio","letra","lyrics","lyric"]},{"nombre":"encuesta","alias":["poll","votacion","votación","quiz"]},{"nombre":"get","alias":["fetch","pedir"]},{"nombre":"inspect","alias":["inspeccionar"]},{"nombre":"morse","alias":["amorse","codificarmorse","demorse"]},{"nombre":"pendejo","alias":["elpendejo","tonto"]},{"nombre":"pfp","alias":["getpic","fotoperfil","perfilpic"]},{"nombre":"qr","alias":["qrcode","qrgen","makeqr"]},{"nombre":"readviewonce","alias":["read","readvo","verveces"]},{"nombre":"recordar","alias":["recordatorio","reminder","alarma","olvidar","delrecordatorio"]},{"nombre":"say","alias":["decir"]},{"nombre":"setstickermeta","alias":["setmeta"]},{"nombre":"tag","alias":["tagall","todos","mencionar"]},{"nombre":"tourl","alias":[]},{"nombre":"translate","alias":["trad","traducir","tl"]},{"nombre":"tts","alias":["voz"]},{"nombre":"wastalk","alias":["stalknum","numbstalk","perfilwa","infowa"]},{"nombre":"welcome","alias":["bienvenida"]},{"nombre":"wiki","alias":["wikipedia"]}]},{"titulo":"Info","emoji":"ℹ️","descripcion":"El bot contándose a sí mismo.","comandos":[{"nombre":"creadores","alias":["creators","owner","creator","creador","owners"]},{"nombre":"health","alias":["salud","runtime","uptime","status","estado","lid","cache","infobot"]},{"nombre":"info","alias":[]},{"nombre":"infobothtml","alias":["infobot","statushtml"]},{"nombre":"menuprem","alias":["vipmenu"]},{"nombre":"payment","alias":["pagos","donar","metodospago"]},{"nombre":"ping","alias":["p"]},{"nombre":"prueba","alias":["pba"]},{"nombre":"reporte","alias":["report","sug","suggest","r"]}]},{"titulo":"Admin","emoji":"🛡️","descripcion":"Herramientas para administrar el grupo.","comandos":[{"nombre":"antilink","alias":["antienlace"]},{"nombre":"bot","alias":["boton","botoff"]},{"nombre":"close","alias":["cerrar"]},{"nombre":"count","alias":["topcount","topinactive","topinactivos"]},{"nombre":"del","alias":["delete","borrar"]},{"nombre":"gp","alias":["groupinfo","infogrupo","datosgrupo"]},{"nombre":"hidetag","alias":["avisar","tagoculto"]},{"nombre":"kick","alias":["echar","expulsar"]},{"nombre":"link","alias":["enlace","revoke","resetlink","nuevoenlace"]},{"nombre":"open","alias":["abrir"]},{"nombre":"pin","alias":["fijar","unpin","desfijar"]},{"nombre":"promote","alias":["demote","ascender","degradar"]},{"nombre":"setgpname","alias":["setgpdesc","setgpbanner","setnombre","setdescgrupo"]},{"nombre":"setprimary","alias":["primary"]},{"nombre":"testwelcome","alias":["testbienvenida","probarwelcome"]},{"nombre":"warn","alias":["warns","delwarn","setwarnlimit"]}]},{"titulo":"Sub-bots","emoji":"🤖","descripcion":"Tu propio bot colgado de este.","comandos":[{"nombre":"addowner","alias":["agregarowner"]},{"nombre":"bots","alias":["sockets","subbots"]},{"nombre":"delowner","alias":["eliminarowner"]},{"nombre":"jadibot","alias":["subbot","code"]},{"nombre":"serbot","alias":["mibots","gestorbots"]},{"nombre":"stopbot","alias":["stopjadibot"]}]},{"titulo":"Owner","emoji":"👑","descripcion":"Solo para los dueños del bot.","comandos":[{"nombre":"addpremium","alias":["setpremium"]},{"nombre":"backup","alias":["gitpush","save"]},{"nombre":"bc","alias":["broadcast","difundir"]},{"nombre":"botinfo","alias":["blocklist","bloqueados","block","bloquear","unblock","desbloquear","getplugin"]},{"nombre":"botsesion","alias":["botsession"]},{"nombre":"clear","alias":["limpiar"]},{"nombre":"compat","alias":["diagnostico","diagnóstico"]},{"nombre":"delpremium","alias":["removepremium"]},{"nombre":"error","alias":["errors","logs","consola"]},{"nombre":"eval","alias":["evaluar","ex"]},{"nombre":"exec","alias":["term","cmd","terminal","npm"]},{"nombre":"fix","alias":["update","actualizar"]},{"nombre":"gencode","alias":["generarcodigo"]},{"nombre":"invite","alias":["addcolab","colaborador"]},{"nombre":"join","alias":["unirse"]},{"nombre":"leave","alias":["salir"]},{"nombre":"logout","alias":[]},{"nombre":"newsletter","alias":["canales"]},{"nombre":"nuevo","alias":["newplugin","delplugin","borrarplugin"]},{"nombre":"reload","alias":["recargar"]},{"nombre":"restart","alias":["reiniciar"]},{"nombre":"revivirsubs","alias":["restarsubs","activarsubs"]},{"nombre":"self","alias":["privado"]},{"nombre":"setbotbio","alias":["setstatus"]},{"nombre":"setboticono","alias":["setboticon"]},{"nombre":"setbotlogo","alias":["setbanner","setbotbanner"]},{"nombre":"setbotname","alias":["botnombre","setusername"]},{"nombre":"setbotpp","alias":["setpfp","setimage"]},{"nombre":"setbotwm","alias":[]},{"nombre":"setchannel","alias":["setbotchannel","setcanal"]},{"nombre":"setlink","alias":["setbotlink","setenlace"]},{"nombre":"setowner","alias":["setbotowner","dueño"]},{"nombre":"setprefix","alias":["prefix","prefijo"]},{"nombre":"sonda","alias":["probar-formato"]},{"nombre":"subir","alias":["upload","escribir"]},{"nombre":"warmup","alias":["tope","antiban"]}]},{"titulo":"Premium","emoji":"💎","descripcion":"Lo que trae el plan premium.","comandos":[{"nombre":"canjear","alias":["redeem"]},{"nombre":"prem","alias":["premium","vip"]}]},{"titulo":"Test","emoji":"🧪","descripcion":"Pruebas internas del bot.","comandos":[{"nombre":"boton1","alias":["boton2","boton3","boton4","boton5","boton6","boton7","botones"]},{"nombre":"flow","alias":[]}]}];
 const prefijo=".";
 const q=document.getElementById('q');
 const chips=document.getElementById('chips');
 const resultado=document.getElementById('resultado');
-let activa=(datos.find(g=>g.titulo==='Subbots')||datos[0]||{}).titulo||null;
+let activa=null;
 function pintarChips(){chips.innerHTML='';const todo=document.createElement('button');todo.className='chip'+(activa===null?' activo':'');todo.textContent='Todos';todo.onclick=()=>{activa=null;pintarChips();pintar()};chips.appendChild(todo);for(const g of datos){const b=document.createElement('button');b.className='chip'+(activa===g.titulo?' activo':'');b.textContent=g.emoji+' '+g.titulo;b.onclick=()=>{activa=g.titulo;pintarChips();pintar()};chips.appendChild(b)}}
-function pintar(){const aguja=q.value.trim().toLowerCase();resultado.innerHTML='';let total=0;for(const g of datos){if(activa&&activa!==g.titulo)continue;const filas=g.comandos.filter(c=>(c.nombre+' '+c.alias.join(' ')).toLowerCase().includes(aguja));if(!filas.length)continue;total+=filas.length;const grupo=document.createElement('section');grupo.className='grupo';const cab=document.createElement('div');cab.className='cabecera';cab.innerHTML='<div class="icono">'+g.emoji+'</div><div><h2>'+g.titulo+'</h2><p>'+g.descripcion+'</p></div><div class="contador">'+filas.length+'</div>';grupo.appendChild(cab);const barra=document.createElement('div');barra.className='barra';grupo.appendChild(barra);const lista=document.createElement('div');lista.className='lista';for(const c of filas){const boton=document.createElement('button');boton.className='pildora';boton.innerHTML='<span class="punto"></span><span>'+prefijo+c.nombre+'</span><span class="flecha">›</span>';boton.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(prefijo+c.nombre);boton.classList.add('copiado');setTimeout(()=>boton.classList.remove('copiado'),900)};lista.appendChild(boton)}grupo.appendChild(lista);resultado.appendChild(grupo)}if(!total){const p=document.createElement('p');p.className='vacio';p.textContent='Sin resultados para «'+q.value+'»';resultado.appendChild(p)}}
+function pintar(){const aguja=q.value.trim().toLowerCase();resultado.innerHTML='';let total=0;for(const g of datos){if(activa&&activa!==g.titulo)continue;const filas=g.comandos.filter(c=>(c.nombre+' '+c.alias.join(' ')).toLowerCase().includes(aguja));if(!filas.length)continue;total+=filas.length;const bloque=document.createElement('section');const tit=document.createElement('div');tit.className='grupo';tit.innerHTML='<h2>'+g.emoji+' '+g.titulo+'</h2><p>'+g.descripcion+'</p>';bloque.appendChild(tit);const lista=document.createElement('div');lista.className='lista';for(const c of filas){const boton=document.createElement('button');boton.className='comando';boton.innerHTML='<span><b>'+prefijo+c.nombre+'</b><small>'+(c.alias.length?'alias: '+c.alias.join(', '):'toca para copiar')+'</small></span><span>›</span>';boton.onclick=()=>{navigator.clipboard?.writeText(prefijo+c.nombre);boton.querySelector('small').textContent='copiado: '+prefijo+c.nombre};lista.appendChild(boton)}bloque.appendChild(lista);resultado.appendChild(bloque)}if(!total){const p=document.createElement('p');p.className='vacio';p.textContent='Sin resultados para «'+q.value+'»';resultado.appendChild(p)}}
 q.addEventListener('input',pintar);
 document.getElementById('limpiar').onclick=()=>{q.value='';pintar();q.focus()};
 pintarChips();pintar();

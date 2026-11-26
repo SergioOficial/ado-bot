@@ -6,9 +6,9 @@
  *
  * .flow — tarjeta interactiva experimental, sin tocar el menú actual.
  *
- *   .flow                  panel web a pantalla completa (Flow si hay FLOW_ID)
- *   .flow demo             fuerza los botones nativos de categorías
- *   .flow web              fuerza el panel web (FLOW_WEB_URL)
+ *   .flow                  tarjeta del Flow publicado, o la variante disponible
+ *   .flow demo             fuerza la demo local (categorías y buscador)
+ *   .flow web              abre el panel web dentro de WhatsApp (FLOW_WEB_URL)
  *   .flow real             fuerza el Flow publicado (necesita FLOW_ID/TOKEN)
  *   .flow cat <categoría>  comandos de una categoría
  *   .flow buscar <texto>   busca comandos por nombre
@@ -16,18 +16,19 @@
  *
  * La tarjeta lleva el texto que se ve al reenviar el mensaje:
  * «🎛️ Click aquí para abrir el menú». Ese texto es el cuerpo del mensaje; la
- * pantalla de dentro se abre con un cta_url con pistas de webview y sus nodos
- * biz/bot. El demo local es el respaldo cuando la webview no se puede enviar.
- * Ver docs/FLUJO.md.
+ * interfaz de dentro solo existe si hay un Flow publicado en WhatsApp Manager.
+ *
+ * Ni la demo local ni el panel web son un Flow de Meta: son botones nativos con
+ * forma parecida. Sirven para probar el envío sin cuenta business. Ver
+ * docs/FLUJO.md.
  */
 import { commands } from "../../pluginLoader.js";
 import { catalogo, buscarCategoria } from "../../lib/menu-ayuda.js";
-import { enviarConBotones, enviarConFlow, enviarConWebview, galaxy } from "../../lib/botones.js";
+import { enviarConBotones, enviarConFlow, galaxy, webview } from "../../lib/botones.js";
 import {
   CUERPO,
   TITULO,
   PIE,
-  WEB_PANEL,
   configuracion,
   parametrosGalaxy,
   botonesLocales,
@@ -61,6 +62,22 @@ export default {
       return enviartexto(textoEstado(conf));
     }
 
+    if (forzarWeb || (!forzarDemo && !forzarReal && !conf.listo && conf.web)) {
+      if (!conf.web) {
+        return enviartexto(
+          `Define FLOW_WEB_URL con la URL HTTPS del panel, o usa ${prefijo}${comando} demo.`
+        );
+      }
+      return enviarConBotones(sock, from, {
+        texto: CUERPO,
+        titulo: TITULO,
+        pie: PIE,
+        imagen: conf.imagen || undefined,
+        botones: [webview("Abrir menú", conf.web, true)],
+        cita: m,
+      });
+    }
+
     if (modo === "cat" || modo === "categoria" || modo === "categoría") {
       const nombre = args.slice(1).join(" ").trim();
       if (!nombre) {
@@ -86,9 +103,9 @@ export default {
         [
           "*Menú interactivo experimental*",
           "",
-          `▸ ${prefijo}${comando} · panel web a pantalla completa`,
-          `▸ ${prefijo}${comando} demo · botones nativos de categorías`,
-          `▸ ${prefijo}${comando} web · fuerza el panel web (FLOW_WEB_URL)`,
+          `▸ ${prefijo}${comando} · tarjeta del Flow (o demo local)`,
+          `▸ ${prefijo}${comando} demo · categorías y buscador sin WABA`,
+          `▸ ${prefijo}${comando} web · panel web dentro de WhatsApp con FLOW_WEB_URL`,
           `▸ ${prefijo}${comando} real · Flow publicado con FLOW_ID y FLOW_TOKEN`,
           `▸ ${prefijo}${comando} cat <categoría> · comandos de una categoría`,
           `▸ ${prefijo}${comando} buscar <palabra> · busca comandos`,
@@ -99,11 +116,11 @@ export default {
       );
     }
 
-    const usarReal = forzarReal || (!forzarDemo && !forzarWeb && conf.listo);
+    const usarReal = forzarReal || (!forzarDemo && conf.listo);
 
     if (usarReal && !conf.listo) {
       return enviartexto(
-        `No hay Flow configurado. Define FLOW_ID (o FLOW_NAME) y FLOW_TOKEN, o usa ${prefijo}${comando} web.`
+        `No hay Flow configurado. Define FLOW_ID (o FLOW_NAME) y FLOW_TOKEN, o usa ${prefijo}${comando} demo.`
       );
     }
 
@@ -118,20 +135,7 @@ export default {
         });
         return;
       } catch (err) {
-        console.warn("⚠️  Flow no enviado, se prueba el panel web:", err?.message || err);
-      }
-    }
-
-    if (!forzarDemo) {
-      try {
-        await enviarConWebview(sock, from, {
-          texto: CUERPO,
-          url: conf.web || WEB_PANEL,
-          cita: m,
-        });
-        return;
-      } catch (err) {
-        console.warn("⚠️  Webview no enviada, se manda la demo:", err?.message || err);
+        console.warn("⚠️  Flow no enviado, se manda la demo:", err?.message || err);
       }
     }
 

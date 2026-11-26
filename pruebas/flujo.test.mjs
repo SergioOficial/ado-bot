@@ -19,8 +19,7 @@ import {
   htmlMenu,
   buscar,
 } from "../lib/flujo.js";
-import { webview, ctaWebview, desarmar } from "../lib/botones.js";
-import { nodosWebview } from "../lib/wa-nodes.js";
+import { webview, desarmar } from "../lib/botones.js";
 
 const categorias = [
   { titulo: "Subbots", emoji: "🤖", descripcion: "Vinculación del bot" },
@@ -124,23 +123,6 @@ export const pruebas = [
     igual(boton.name, "open_webview", "botón nativo");
     igual(JSON.parse(boton.buttonParamsJson).link.in_app_webview, true, "dentro de WhatsApp");
     igual(desarmar([boton])[0].url, conf.web, "el respaldo enseña la url");
-  }],
-
-  ["la webview completa lleva las pistas y los nodos", () => {
-    const boton = ctaWebview("Abrir menú", "https://ejemplo.dev/menu.html");
-    const p = JSON.parse(boton.buttonParamsJson);
-    igual(boton.name, "cta_url", "botón de enlace");
-    igual(p.webview_presentation, "full", "pantalla completa");
-    igual(p.webview_interaction, true, "interacción dentro de WhatsApp");
-    igual(p.merchant_url, p.url, "merchant_url");
-
-    const privado = nodosWebview("555@s.whatsapp.net");
-    igual(privado[0].tag, "biz", "nodo biz");
-    igual(privado[0].content[0].attrs.type, "native_flow", "interactive");
-    igual(privado[0].content[0].content[0].attrs.v, "9", "native_flow v9");
-    igual(privado[1].tag, "bot", "bot en privado");
-    const grupo = nodosWebview("120363@g.us");
-    igual(grupo.length, 1, "sin bot en grupo");
   }],
 
   ["el panel web sale del catálogo y no trae recursos externos", () => {
