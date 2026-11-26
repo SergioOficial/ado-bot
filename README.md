@@ -188,7 +188,7 @@ cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
 | 🎴 **Gacha** |  7 | `.charinfo` `.claim` `.gacha` `.harem` `.rw` `.vote` … |
 | 🌟 **Perfil** |  8 | `.afk` `.delperfil` `.level` `.marry` `.perfil` `.reg` … |
 | 📥 **Descargas** | 12 | `.apk` `.fb` `.gitsearch` `.instagram` `.mediafire` `.pinterest` … |
-| 🖌️ **Stickers** |  6 | `.audiosticker` `.brat` `.bratv` `.emojimix` `.sticker` `.stickers` |
+| 🖌️ **Stickers** |  5 | `.brat` `.bratv` `.emojimix` `.sticker` `.stickers` |
 | 🧠 **IA** |  4 | `.chatgpt` `.iaaudio` `.iam` `.imagen` |
 | 🎉 **Diversión** | 20 | `.8ball` `.ajedrez` `.ajedrez2` `.cerito` `.dahs` `.gato` … |
 | 🔔 **Utilidades** | 22 | `.acortar` `.angry` `.clima` `.crypto` `.encuesta` `.get` … |
@@ -197,7 +197,7 @@ cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
 | 🤖 **Sub-bots** |  6 | `.addowner` `.bots` `.delowner` `.jadibot` `.serbot` `.stopbot` |
 | 👑 **Owner** | 36 | `.addpremium` `.backup` `.bc` `.botinfo` `.botsesion` `.clear` … |
 | 💎 **Premium** |  2 | `.canjear` `.prem` |
-| 🧪 **Test** |  2 | `.boton1` `.flow` |
+| 🧪 **Test** |  1 | `.boton1` |
 <!-- categorias:fin -->
 
 </details>
@@ -469,11 +469,11 @@ ado-bot/
 │   ├── rpg/              # pelear, adoptar, cazar, pescar, minar, explorar
 │   ├── stickers/         # sticker, brat
 │   ├── subbots/          # code, jadibot, stopbot, bots
-│   ├── test/             # botones de prueba, .flow experimental
+│   ├── test/             # botones de prueba
 │   └── utils/            # qr, morse, encuesta, recordar, say, get, pfp, crypto
 ├── pruebas/              # Pruebas que corren sin abrir WhatsApp
 ├── scripts/              # verificar · probar · humo · auditar · sintaxis · imports · vigia
-└── docs/                 # CLIENTE · COMANDOS · FLUJO · PORTE · RETORNO
+└── docs/                 # CLIENTE · COMANDOS · PORTE · RETORNO
 ```
 </details>
 
@@ -517,10 +517,6 @@ Prefijo de ejemplo, `.`. Casi todos los comandos tienen alias en español
 y `.menucat`. El reparto por categorías está más arriba, en **El menú**.
 
 💡 Cualquier comando funciona en modo privado con un guion al final: `.menu-`.
-
-El menú interactivo de prueba `.flow` se explica en
-[`docs/FLUJO.md`](docs/FLUJO.md). No cambia `.menu`: funciona aparte, con una
-demo local o con un Flow publicado en WhatsApp Manager.
 </details>
 
 <details>
@@ -799,14 +795,14 @@ línea.
 <h2 id="estado">📊 Estado</h2>
 
 <!-- estado:inicio -->
-_Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
+_Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
 
 | | |
 |---|---|
 | **Versión** | `3.7.9` |
-| **Plugins** | 189 archivos, 589 nombres de comando en 16 categorías |
-| **Código** | 284 archivos JavaScript |
-| **Pruebas** | **362** en verde |
+| **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
+| **Código** | 280 archivos JavaScript |
+| **Pruebas** | **354** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -821,14 +817,14 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
-| 2026-11-25 | Actualizar stickeraudio.js |
-| 2026-11-25 | Actualizar stickeraudio.js |
-| 2026-11-25 | Actualizar stickeraudio.js |
-| 2026-11-25 | Actualizar stickeraudio.js |
-| 2026-11-25 | fix: intentar evitar error de sintaxis en el baileys |
-| 2026-11-25 | Crear stickeraudio.js |
-| 2026-11-25 | Eliminar sticker-audio.js |
-| 2026-11-24 | Actualizar sticker-audio.js |
+| 2026-11-23 | fix(subbots): un conteo que dice la verdad, un panel que obedece y un techo de red |
+| 2026-11-23 | fix(pruebas): quitar dos escapes que el lint no perdona |
+| 2026-11-23 | feat(instalador): el instalador cuenta lo que hace, y deja el comando `ado` |
+| 2026-11-23 | fix(arranque): el código de vinculación ya no se pierde bajo el cartel del bot |
+| 2026-11-23 | fix(instalador): el temporal que no existe en Termux, y el verificador que nunca fallaba |
+| 2026-11-23 | docs(readme): portada, cifras y divisores dibujados en casa |
+| 2026-11-23 | refactor(plugins): close, open y del se van a admin |
+| 2026-11-22 | docs(readme): las secciones que faltaban, sin tablas pegadas y el porteo a la vista |
 
 <!-- cambios:fin -->
 
@@ -848,20 +844,20 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 </div>
 
 <!-- stats:inicio -->
-_Datos pedidos a GitHub el 2026-11-25. Se actualizan con `npm run readme`._
+_Datos pedidos a GitHub el 2026-11-23. Se actualizan con `npm run readme`._
 
 | Dato | Valor |
 |---|---|
-| Commits totales | **445** |
-| Días desde el primer commit | **15** |
-| Último cambio | **2026-11-25** (hace 0 d) |
+| Commits totales | **428** |
+| Días desde el primer commit | **12** |
+| Último cambio | **2026-11-23** (hace 0 d) |
 | Estrellas · forks · avisos abiertos | **3** · **0** · **0** |
-| Tamaño del repositorio | **1.9 MB** |
+| Tamaño del repositorio | **1.5 MB** |
 
 | Colaborador | Qué hizo | Commits | % |
 |---|---|---|---|
-| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 372 | 83.6% |
-| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 65 | 14.6% |
+| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 358 | 83.6% |
+| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 62 | 14.5% |
 | [@levi-hub805](https://github.com/levi-hub805) | Contribuciones puntuales | 4 | 0.9% |
 | [@afvm2025](https://github.com/afvm2025) | Contribuciones puntuales | 3 | 0.7% |
 | [@sergio](https://github.com/sergio) | Contribuciones puntuales | 1 | 0.2% |
