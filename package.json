@@ -25,7 +25,7 @@
     "yt-search": "^2.13.1"
   },
   "overrides": {
-    "sharp": "$sharp",
+    "sharp": "^0.35.5",
     "axios": "^1.21.0",
     "minimatch": "^3.1.5",
     "image-size": "^2.1.0"
