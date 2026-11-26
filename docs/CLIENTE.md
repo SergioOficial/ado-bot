@@ -96,33 +96,6 @@ Comprobado con el proto del paquete instalado, ida y vuelta por bytes: los
 campos `interactiveMessage`, `nativeFlowMessage` y
 `interactiveResponseMessage.nativeFlowResponseMessage` sobreviven enteros.
 
-## 4b. `.panel`: webview con título, no enlace con dominio
-
-`cta_url` abre el navegador integrado y pone el dominio en la barra: con
-`htmlpreview.github.io` se veía `htmlpreview.github.io` arriba, aunque el
-`buttonParamsJson` dijera `webview_presentation: "tall"`. El cliente de Android
-tiene **otro** botón para esto: `open_webview`.
-
-El código descompilado del cliente registra `open_webview` entre sus flujos
-nativos y lee tres cosas del `buttonParamsJson`:
-
-| Parámetro | Dónde se lee | Para qué |
-|---|---|---|
-| `title` | `C116645yO.A08()` | texto de la barra superior |
-| `link.in_app_webview` | `C116645yO.A0A()` | abre dentro de WhatsApp, sin navegador externo |
-| `webview_interaction` / `webview_presentation` | `C116675yR` | hoja `full`, `tall` o `compact` |
-
-`webview(titulo, url)` en `lib/botones.js` manda exactamente eso con
-`title: "Menú"` y presentación `tall`. El nodo `biz` sigue siendo el genérico
-(`mixed`), que es lo correcto para `open_webview`; la tabla de la librería sí se
-completó en `lib/wa-nodes.js` para los flujos con nombre (`form_message`,
-`cta_catalog`, pagos) que antes caían en `mixed`.
-
-El panel es HTML estático autónomo: `lib/panel-web.js` lo genera y
-`scripts/generar-panel.mjs` le mete los comandos reales de los plugins. No hay
-fuentes, imágenes ni scripts externos, así que la hoja se ve igual en cualquier
-webview.
-
 ## 5. Reconexión
 
 Antes, cada `close` lanzaba un arranque nuevo (lo que hoy es `arrancar()` en

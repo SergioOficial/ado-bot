@@ -56,7 +56,6 @@ No es una lista de deseos: cada línea de abajo tiene su archivo, y su prueba.
 | un anti-ban con cola de envíos, ritmo y calentamiento, y metadatos que varían sin tocar lo que se lee | `lib/antiban.js` y `lib/metadatos.js` |
 | si un comando revienta, los demás siguen funcionando | `boot/router.js` |
 | el menú sale de los plugins que hay en el disco, no de una lista escrita a mano | `plugins/info/menu.js` y `lib/menu-ayuda.js` |
-| `.panel` abre el mismo catálogo como panel web dentro de WhatsApp | `plugins/info/panel.js`, `lib/panel-web.js` y `scripts/generar-panel.mjs` |
 | la sesión aguanta cortes y reinicios | `lib/baileys.js` y `boot/arranque.js` |
 | cada afirmación de este README tiene su prueba | `pruebas/`, todas en verde |
 | los números de esta página no están escritos a mano | `scripts/readme-stats.mjs` y `scripts/arte.mjs` |
@@ -176,13 +175,6 @@ Y la categoría, con los alias y una línea por comando:
 El menú no lleva una lista escrita a mano: se arma con los plugins que están
 cargados de verdad. Si añades un comando, aparece; si lo borras, desaparece.
 
-`.panel` (o `.menuweb`) deja `.menu` intacto y abre una hoja dentro de WhatsApp
-con el mismo catálogo: búsqueda, categorías y comandos que se copian al tocarlos.
-Es un `open_webview` con título `Menú`, no un `cta_url`: por eso la barra no
-muestra el dominio de la página. El HTML se regenera con `npm run panel` y se
-sirve desde `https://riokuroxi-svg.github.io/`; para usar otro HTTPS basta con
-`PANEL_URL`.
-
 <details>
 <summary><strong>Todos los comandos, por categoría</strong></summary>
 
@@ -196,11 +188,11 @@ sirve desde `https://riokuroxi-svg.github.io/`; para usar otro HTTPS basta con
 | 🎴 **Gacha** |  7 | `.charinfo` `.claim` `.gacha` `.harem` `.rw` `.vote` … |
 | 🌟 **Perfil** |  8 | `.afk` `.delperfil` `.level` `.marry` `.perfil` `.reg` … |
 | 📥 **Descargas** | 12 | `.apk` `.fb` `.gitsearch` `.instagram` `.mediafire` `.pinterest` … |
-| 🖌️ **Stickers** |  6 | `.audiosticker` `.brat` `.bratv` `.emojimix` `.sticker` `.stickers` |
+| 🖌️ **Stickers** |  5 | `.brat` `.bratv` `.emojimix` `.sticker` `.stickers` |
 | 🧠 **IA** |  4 | `.chatgpt` `.iaaudio` `.iam` `.imagen` |
 | 🎉 **Diversión** | 20 | `.8ball` `.ajedrez` `.ajedrez2` `.cerito` `.dahs` `.gato` … |
 | 🔔 **Utilidades** | 22 | `.acortar` `.angry` `.clima` `.crypto` `.encuesta` `.get` … |
-| ℹ️ **Info** | 11 | `.allmenu` `.creadores` `.health` `.info` `.infobothtml` `.menuprem` … |
+| ℹ️ **Info** | 10 | `.allmenu` `.creadores` `.health` `.info` `.infobothtml` `.menuprem` … |
 | 🛡️ **Admin** | 16 | `.antilink` `.bot` `.close` `.count` `.del` `.gp` … |
 | 🤖 **Sub-bots** |  6 | `.addowner` `.bots` `.delowner` `.jadibot` `.serbot` `.stopbot` |
 | 👑 **Owner** | 36 | `.addpremium` `.backup` `.bc` `.botinfo` `.botsesion` `.clear` … |
@@ -354,7 +346,6 @@ comentadas en `.env.example`.
      clasico (buttonsMessage, lo pinta cualquiera; si un botón es lista o
      enlace, se cae al moderno).
    · BOTONES_VIEWONCE=1 — opcional, vuelve al envoltorio viejo de los interactivos.
-   · PANEL_URL=https://... — opcional, HTTPS del panel que abre `.panel`.
 4. Comando de inicio: npm start (o node index.js).
 5. Mira los logs del panel para copiar el código de vinculación.
 </details>
@@ -804,14 +795,14 @@ línea.
 <h2 id="estado">📊 Estado</h2>
 
 <!-- estado:inicio -->
-_Actualizado el 2026-11-26 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
+_Actualizado el 2026-11-23 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
 
 | | |
 |---|---|
 | **Versión** | `3.7.9` |
-| **Plugins** | 189 archivos, 590 nombres de comando en 16 categorías |
-| **Código** | 285 archivos JavaScript |
-| **Pruebas** | **361** en verde |
+| **Plugins** | 187 archivos, 585 nombres de comando en 16 categorías |
+| **Código** | 280 archivos JavaScript |
+| **Pruebas** | **354** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -826,7 +817,6 @@ _Actualizado el 2026-11-26 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
-| 2026-11-26 | panel: menú web dentro de WhatsApp con open_webview y biz reparado |
 | 2026-11-23 | fix(subbots): un conteo que dice la verdad, un panel que obedece y un techo de red |
 | 2026-11-23 | fix(pruebas): quitar dos escapes que el lint no perdona |
 | 2026-11-23 | feat(instalador): el instalador cuenta lo que hace, y deja el comando `ado` |
@@ -854,20 +844,20 @@ _Actualizado el 2026-11-26 con `npm run readme`; los números salen del árbol, 
 </div>
 
 <!-- stats:inicio -->
-_Datos pedidos a GitHub el 2026-11-26. Se actualizan con `npm run readme`._
+_Datos pedidos a GitHub el 2026-11-23. Se actualizan con `npm run readme`._
 
 | Dato | Valor |
 |---|---|
-| Commits totales | **453** |
-| Días desde el primer commit | **15** |
-| Último cambio | **2026-11-26** (hace 0 d) |
+| Commits totales | **428** |
+| Días desde el primer commit | **12** |
+| Último cambio | **2026-11-23** (hace 0 d) |
 | Estrellas · forks · avisos abiertos | **3** · **0** · **0** |
-| Tamaño del repositorio | **1.7 MB** |
+| Tamaño del repositorio | **1.5 MB** |
 
 | Colaborador | Qué hizo | Commits | % |
 |---|---|---|---|
-| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 372 | 82.1% |
-| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 73 | 16.1% |
+| [@SergioOficial](https://github.com/SergioOficial) | Autor del bot, la base y los plugins | 358 | 83.6% |
+| [@riokuroxi-svg](https://github.com/riokuroxi-svg) | Auditoría, anti-ban, menú, README y porteo de la base | 62 | 14.5% |
 | [@levi-hub805](https://github.com/levi-hub805) | Contribuciones puntuales | 4 | 0.9% |
 | [@afvm2025](https://github.com/afvm2025) | Contribuciones puntuales | 3 | 0.7% |
 | [@sergio](https://github.com/sergio) | Contribuciones puntuales | 1 | 0.2% |

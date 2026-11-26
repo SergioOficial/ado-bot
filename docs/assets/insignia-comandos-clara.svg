@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 225.96377999999999 50" width="225.96377999999999" height="50" role="img" aria-label="comandos 590">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 225.96377999999999 50" width="225.96377999999999" height="50" role="img" aria-label="comandos 585">
 <defs><style>
 @keyframes vaiven { 0% { transform: translateX(-620px) } 100% { transform: translateX(1500px) } }
 @keyframes respirar { 0%,100% { opacity: .45 } 50% { opacity: .8 } }
@@ -21,5 +21,5 @@
 <circle cx="35" cy="25" r="15" fill="#7C3AED" opacity=".15"/>
 <g transform="translate(23 13)" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M4.5 6.2 11 12l-6.5 5.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.4 18h6" fill="none" stroke-width="2.4" stroke-linecap="round"/></g>
 <text x="61" y="31" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1.1" fill="#6E5C8C">COMANDOS</text>
-<text x="159.2" y="32" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#1B1030">590</text>
+<text x="159.2" y="32" font-family="-apple-system, BlinkMacSystemFont, &quot;SF Pro Display&quot;, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#1B1030">585</text>
 </svg>
