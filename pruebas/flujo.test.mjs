@@ -126,15 +126,13 @@ export const pruebas = [
     igual(desarmar([boton])[0].url, conf.web, "el respaldo enseña la url");
   }],
 
-  ["la webview alta lleva las pistas y los nodos", () => {
+  ["la webview completa lleva las pistas y los nodos", () => {
     const boton = ctaWebview("Abrir menú", "https://ejemplo.dev/menu.html");
     const p = JSON.parse(boton.buttonParamsJson);
     igual(boton.name, "cta_url", "botón de enlace");
-    igual(p.webview_presentation, "tall", "hoja alta con título de la página");
+    igual(p.webview_presentation, "full", "pantalla completa");
     igual(p.webview_interaction, true, "interacción dentro de WhatsApp");
     igual(p.merchant_url, p.url, "merchant_url");
-    const completa = JSON.parse(ctaWebview("Abrir", "https://ejemplo.dev", "full").buttonParamsJson);
-    igual(completa.webview_presentation, "full", "full se puede forzar");
 
     const privado = nodosWebview("555@s.whatsapp.net");
     igual(privado[0].tag, "biz", "nodo biz");
@@ -153,15 +151,5 @@ export const pruebas = [
     esVerdad(html.includes("flow") && html.includes('const prefijo=".";'), "comandos del catálogo");
     igual(html.includes("https://"), false, "sin enlaces externos");
     igual(html.includes("alert(1)//\""), false, "la imagen se escapa");
-    esVerdad(html.includes("<title>🎛️ Menú</title>"), "la barra de la hoja muestra este título");
-  }],
-
-  ["el panel usa el nombre y el contador de la referencia", () => {
-    const html = htmlMenu(grupos, { nombre: "WaBot", contador: 185 });
-    esVerdad(html.includes('<div class="nombre">WaBot</div>'), "nombre");
-    esVerdad(html.includes("185 cmds"), "contador visible");
-    const conf = configuracion({});
-    igual(conf.presentacion, "tall", "hoja alta por defecto");
-    igual(configuracion({ FLOW_PRESENTACION: "compact" }).presentacion, "compact", "compact permitido");
   }],
 ];

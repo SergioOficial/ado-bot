@@ -13,14 +13,12 @@ y qué no. Es una prueba aparte: `.menu` sigue igual.
 - Menú abierto: cabecera «🎛️ Menú», imagen, botón «MENÚ PREMIUM», buscador
   «Buscar comando...», categorías en chips (Subbots, Grupo, Admin, Descargas…)
   y tarjetas de comandos con su prefijo.
-- La barra superior dice «🎛️ Menú», lleva un tirador arriba y no muestra
-  dominio: es la **hoja alta de la webview de WhatsApp**. El título sale del
-  `<title>` del HTML; la hoja `tall` no enseña el dominio, a diferencia de la
-  pestaña `full`.
+- La barra superior dice «Menú» y cierra con una X: es una pantalla de
+  **WhatsApp Flows**, no una página web abierta en el navegador.
 
-Un Flow nativo de Meta se define como **Flow JSON** y se sube a WhatsApp
-Manager (Business Manager → Herramientas de la cuenta → Flows). Para abrirlo se
-envía un mensaje interactivo de tipo `flow`; en Baileys el
+La interfaz de dentro no se genera en el bot: se define como **Flow JSON** y se
+sube a WhatsApp Manager (Business Manager → Herramientas de la cuenta → Flows).
+Para abrirla se envía un mensaje interactivo de tipo `flow`; en Baileys el
 botón nativo se llama `galaxy_message`. Los parámetros son
 `flow_message_version: "3"`, `flow_id` (o `flow_name`), `flow_token`,
 `flow_cta`, `flow_action` y `flow_action_payload` ([documentación de Meta](https://developers.facebook.com/documentation/business-messaging/whatsapp/flows/guides/sendingaflow),
@@ -76,7 +74,7 @@ El comando tiene tres caminos:
 
 | Modo | Cuándo | Qué envía |
 |---|---|---|
-| Panel web | Por defecto | `cta_url` con pistas de webview y nodos `biz`/`bot`, que abre el panel en hoja alta (`tall`). |
+| Panel web | Por defecto | `cta_url` con pistas de webview y nodos `biz`/`bot`, que abre el panel a pantalla completa. |
 | Flow publicado | Con `FLOW_ID` y `FLOW_TOKEN` (o `.flow real`) | Botón `galaxy_message` que abre el Flow subido a WhatsApp Manager. |
 | Demo local | `.flow demo`, o si falla el envío anterior | Tarjeta nativa con categorías, lista y buscador. |
 
@@ -89,12 +87,9 @@ cliente oficial usa para esta forma (`lib/wa-nodes.js`).
 Subcomandos:
 
 ```text
-.flow                    panel web en hoja alta (Flow si hay FLOW_ID)
+.flow                    panel web a pantalla completa (Flow si hay FLOW_ID)
 .flow demo               fuerza los botones nativos de categorías
 .flow web                fuerza el panel web
-.flow tall               hoja alta con título (por defecto)
-.flow full               pestaña completa con dominio
-.flow compact            hoja compacta
 .flow real               fuerza el Flow publicado
 .flow cat <categoría>    muestra los comandos de esa categoría
 .flow buscar <palabra>   busca comandos por nombre o alias
@@ -108,25 +103,16 @@ escritos con el prefijo del bot.
 
 ## 4. Panel web sin cuenta business
 
-El panel se parece a la captura por dentro y, con la presentación `tall`,
-también en la barra: el cliente pone un tirador arriba y el texto del `<title>`
-del documento (`🎛️ Menú`) en vez del dominio. La presentación `full` abre la
-pestaña grande con el dominio visible; por eso el primer intento no se parecía.
+Es la forma más fiel a la captura que se puede probar hoy: un HTML con imagen,
+chips de categorías, buscador y tarjetas de comandos, abierto a pantalla
+completa dentro de WhatsApp. No necesita WABA ni Flow publicado.
 
 El botón no es un `open_webview` cualquiera: es un `cta_url` con
-`merchant_url`, `webview_presentation: "tall"` y `webview_interaction: true`.
-Esa combinación abre la webview dentro de WhatsApp. El mensaje lleva los nodos
+`merchant_url`, `webview_presentation: "full"` y `webview_interaction: true`.
+Esa combinación es la que abre el navegador interno de WhatsApp después del
+aviso «Explorar este sitio de forma segura». El mensaje lleva los nodos
 `biz → interactive → native_flow(v=9)` y, en chats privados, `bot(biz_bot=1)`.
 Sin esos nodos el servidor acepta el mensaje y el teléfono no pinta nada.
-
-El título, el nombre visible, el contador y la imagen se ajustan al generar:
-
-```bash
-FLOW_NOMBRE='WaBot' FLOW_CONTADOR=185 FLOW_IMAGEN='assets/menu-hero.jpg' npm run menuweb
-```
-
-`FLOW_PRESENTACION` permite probar `full`, `tall` (por defecto) o `compact`.
-Esto se valida en el teléfono: el cliente decide cómo pinta la hoja.
 
 1. Generar el HTML con los comandos que el bot tiene cargados:
 

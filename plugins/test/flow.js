@@ -6,10 +6,9 @@
  *
  * .flow — tarjeta interactiva experimental, sin tocar el menú actual.
  *
- *   .flow                  panel web en hoja alta (Flow si hay FLOW_ID)
+ *   .flow                  panel web a pantalla completa (Flow si hay FLOW_ID)
  *   .flow demo             fuerza los botones nativos de categorías
  *   .flow web              fuerza el panel web (FLOW_WEB_URL)
- *   .flow tall|full|compact prueba cada presentación de la webview
  *   .flow real             fuerza el Flow publicado (necesita FLOW_ID/TOKEN)
  *   .flow cat <categoría>  comandos de una categoría
  *   .flow buscar <texto>   busca comandos por nombre
@@ -57,7 +56,6 @@ export default {
     const forzarDemo = ["demo", "local", "prueba", "test"].includes(modo);
     const forzarReal = ["real", "flow", "publicado"].includes(modo);
     const forzarWeb = ["web", "panel", "sitio"].includes(modo);
-    const presentacion = ["tall", "full", "compact"].includes(modo) ? modo : conf.presentacion;
 
     if (modo === "estado") {
       return enviartexto(textoEstado(conf));
@@ -88,12 +86,9 @@ export default {
         [
           "*Menú interactivo experimental*",
           "",
-          `▸ ${prefijo}${comando} · panel web en hoja alta de WhatsApp`,
+          `▸ ${prefijo}${comando} · panel web a pantalla completa`,
           `▸ ${prefijo}${comando} demo · botones nativos de categorías`,
           `▸ ${prefijo}${comando} web · fuerza el panel web (FLOW_WEB_URL)`,
-          `▸ ${prefijo}${comando} tall · hoja alta con título (por defecto)`,
-          `▸ ${prefijo}${comando} full · pestaña completa con dominio`,
-          `▸ ${prefijo}${comando} compact · hoja compacta`,
           `▸ ${prefijo}${comando} real · Flow publicado con FLOW_ID y FLOW_TOKEN`,
           `▸ ${prefijo}${comando} cat <categoría> · comandos de una categoría`,
           `▸ ${prefijo}${comando} buscar <palabra> · busca comandos`,
@@ -132,7 +127,6 @@ export default {
         await enviarConWebview(sock, from, {
           texto: CUERPO,
           url: conf.web || WEB_PANEL,
-          presentacion,
           cita: m,
         });
         return;
