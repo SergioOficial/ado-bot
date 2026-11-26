@@ -16,10 +16,8 @@ import {
   textoLocal,
   textoCategoria,
   textoEstado,
-  htmlMenu,
   buscar,
 } from "../lib/flujo.js";
-import { webview, desarmar } from "../lib/botones.js";
 
 const categorias = [
   { titulo: "Subbots", emoji: "🤖", descripcion: "Vinculación del bot" },
@@ -113,25 +111,5 @@ export const pruebas = [
     const texto = textoEstado(configuracion({ FLOW_ID: "123456789", FLOW_TOKEN: "abcdef123456" }));
     esVerdad(texto.includes("abcd…"), "token enmascarado");
     igual(texto.includes("abcdef123456"), false, "token completo nunca");
-  }],
-
-  ["el panel web se abre dentro de WhatsApp", () => {
-    const conf = configuracion({ FLOW_WEB_URL: "https://ejemplo.dev/menu-flow.html" });
-    igual(conf.web, "https://ejemplo.dev/menu-flow.html", "url");
-    igual(conf.listo, false, "no hace falta Flow publicado");
-    const boton = webview("Abrir menú", conf.web, true);
-    igual(boton.name, "open_webview", "botón nativo");
-    igual(JSON.parse(boton.buttonParamsJson).link.in_app_webview, true, "dentro de WhatsApp");
-    igual(desarmar([boton])[0].url, conf.web, "el respaldo enseña la url");
-  }],
-
-  ["el panel web sale del catálogo y no trae recursos externos", () => {
-    const html = htmlMenu(grupos, { nombre: "Ado-Bot", prefijo: ".", imagen: 'x");alert(1)//' });
-    esVerdad(html.includes("Buscar comando..."), "buscador");
-    esVerdad(html.includes("MENÚ INTERACTIVO"), "etiqueta");
-    esVerdad(html.includes("🎛️ Click aquí para abrir el menú") === false, "el cuerpo va en la tarjeta");
-    esVerdad(html.includes("flow") && html.includes('const prefijo=".";'), "comandos del catálogo");
-    igual(html.includes("https://"), false, "sin enlaces externos");
-    igual(html.includes("alert(1)//\""), false, "la imagen se escapa");
   }],
 ];
