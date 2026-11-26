@@ -5,7 +5,7 @@
  * Desc   : Sticker con sonido. Video (auto-extrae audio) e Imagen (pide audio).
  */
 
-import baileys from '../../lib/baileys.js'; 
+import baileys from '@ado/baileys'; 
 const { prepareWAMessageMedia, proto, downloadMediaMessage, downloadContentFromMessage } = baileys;
 
 import { randomBytes } from 'node:crypto';
@@ -100,10 +100,9 @@ function patchProtoInstance(p) {
 
     M.__audioStickerPatchedV3 = true;
 }
-
 async function ensurePatched() {
     patchProtoInstance(proto);
-    for (const pkg of ['@itsliaaa/baileys', 'baileys', '@whiskeysockets/baileys']) {
+    for (const pkg of ['@ado/baileys', '@itsliaaa/baileys', 'baileys', '@whiskeysockets/baileys']) {
         try {
             const mod = await import(pkg);
             if (mod?.proto) patchProtoInstance(mod.proto);
@@ -111,6 +110,7 @@ async function ensurePatched() {
         } catch {}
     }
 }
+
 
 // ══════════════════════════════════════════════════════════════════
 // UTILIDADES
