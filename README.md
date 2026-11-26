@@ -799,14 +799,14 @@ línea.
 <h2 id="estado">📊 Estado</h2>
 
 <!-- estado:inicio -->
-_Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
+_Actualizado el 2026-11-26 con `npm run readme`; los números salen del árbol, de la suite y de GitHub._
 
 | | |
 |---|---|
 | **Versión** | `3.7.9` |
 | **Plugins** | 189 archivos, 589 nombres de comando en 16 categorías |
 | **Código** | 285 archivos JavaScript |
-| **Pruebas** | **364** en verde |
+| **Pruebas** | **365** en verde |
 | **Porteo** | 147 de 222 comandos de la base; 75 pendientes ([detalle](docs/PORTE.md)) |
 <!-- estado:fin -->
 
@@ -821,6 +821,7 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-25 | feat(flow): panel web con búsqueda y respaldo para .flow |
 | 2026-11-25 | feat(flow): menú interactivo experimental sin sustituir .menu |
 | 2026-11-25 | Actualizar stickeraudio.js |
 | 2026-11-25 | Actualizar stickeraudio.js |
@@ -828,7 +829,6 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 | 2026-11-25 | Actualizar stickeraudio.js |
 | 2026-11-25 | fix: intentar evitar error de sintaxis en el baileys |
 | 2026-11-25 | Crear stickeraudio.js |
-| 2026-11-25 | Eliminar sticker-audio.js |
 
 <!-- cambios:fin -->
 
@@ -848,7 +848,7 @@ _Actualizado el 2026-11-25 con `npm run readme`; los números salen del árbol, 
 </div>
 
 <!-- stats:inicio -->
-_Datos pedidos a GitHub el 2026-11-25. Se actualizan con `npm run readme`._
+_Datos pedidos a GitHub el 2026-11-26. Se actualizan con `npm run readme`._
 
 | Dato | Valor |
 |---|---|

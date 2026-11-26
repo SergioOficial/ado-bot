@@ -74,20 +74,22 @@ El comando tiene tres caminos:
 
 | Modo | Cuándo | Qué envía |
 |---|---|---|
-| Demo local | Sin configuración | Tarjeta nativa con categorías, lista y buscador. No necesita cuenta business. |
-| Panel web | Con `FLOW_WEB_URL` | Tarjeta con botón `open_webview` que abre `docs/menu-flow.html` dentro de WhatsApp. |
-| Flow publicado | Con `FLOW_ID` y `FLOW_TOKEN` | Botón `galaxy_message` que abre el Flow subido a WhatsApp Manager. |
+| Panel web | Por defecto | `cta_url` con pistas de webview y nodos `biz`/`bot`, que abre el panel a pantalla completa. |
+| Flow publicado | Con `FLOW_ID` y `FLOW_TOKEN` (o `.flow real`) | Botón `galaxy_message` que abre el Flow subido a WhatsApp Manager. |
+| Demo local | `.flow demo`, o si falla el envío anterior | Tarjeta nativa con categorías, lista y buscador. |
 
-La tarjeta lleva siempre el cuerpo `🎛️ Click aquí para abrir el menú` y el
-encabezado `🎛️ Menú`. Usa el mismo envío de botones que el resto del bot
-(`lib/botones.js`), con sus nodos binarios y su respaldo en texto.
+La tarjeta lleva solo el cuerpo `🎛️ Click aquí para abrir el menú`: sin
+encabezado ni pie, igual que se ve al reenviar la captura. El título `🎛️ Menú`
+aparece en la barra de la pantalla abierta, no en el burbujeo. El envío va en
+`viewOnceMessage` con `messageContextInfo` por dentro y con los nodos que el
+cliente oficial usa para esta forma (`lib/wa-nodes.js`).
 
 Subcomandos:
 
 ```text
-.flow                    abre el Flow publicado, el panel web o la demo
-.flow demo               fuerza la demo local
-.flow web                abre el panel web dentro de WhatsApp
+.flow                    panel web a pantalla completa (Flow si hay FLOW_ID)
+.flow demo               fuerza los botones nativos de categorías
+.flow web                fuerza el panel web
 .flow real               fuerza el Flow publicado
 .flow cat <categoría>    muestra los comandos de esa categoría
 .flow buscar <palabra>   busca comandos por nombre o alias
@@ -102,8 +104,15 @@ escritos con el prefijo del bot.
 ## 4. Panel web sin cuenta business
 
 Es la forma más fiel a la captura que se puede probar hoy: un HTML con imagen,
-chips de categorías, buscador y tarjetas de comandos, abierto dentro de WhatsApp
-con `open_webview`. No necesita WABA ni Flow publicado.
+chips de categorías, buscador y tarjetas de comandos, abierto a pantalla
+completa dentro de WhatsApp. No necesita WABA ni Flow publicado.
+
+El botón no es un `open_webview` cualquiera: es un `cta_url` con
+`merchant_url`, `webview_presentation: "full"` y `webview_interaction: true`.
+Esa combinación es la que abre el navegador interno de WhatsApp después del
+aviso «Explorar este sitio de forma segura». El mensaje lleva los nodos
+`biz → interactive → native_flow(v=9)` y, en chats privados, `bot(biz_bot=1)`.
+Sin esos nodos el servidor acepta el mensaje y el teléfono no pinta nada.
 
 1. Generar el HTML con los comandos que el bot tiene cargados:
 
@@ -111,20 +120,20 @@ con `open_webview`. No necesita WABA ni Flow publicado.
 npm run menuweb        # escribe docs/menu-flow.html
 ```
 
-2. Publicar `docs/menu-flow.html` en GitHub Pages (o cualquier HTTPS público).
-   El archivo es autónomo: no carga fuentes, imágenes ni scripts externos. Si
-   se quiere la foto de cabecera, regenerar con
-   `FLOW_IMAGEN='https://.../cabecera.jpg' npm run menuweb`.
-
-3. Definir la URL y probar:
+2. Publicar `docs/menu-flow.html` y `docs/assets/menu-hero.jpg` en un sitio
+   HTTPS. Mientras no se active GitHub Pages en el repositorio, `.flow` usa un
+   visor público de HTML de GitHub como respaldo. Para usar Pages, hace falta
+   permiso de administración del repo y luego:
 
 ```bash
 export FLOW_WEB_URL='https://tu-usuario.github.io/ado-bot/menu-flow.html'
 ```
 
-Después `.flow web` manda la tarjeta con el botón «Abrir menú». Si el panel se
-publica en otra ruta, cambia el nombre del archivo o el `site` de GitHub Pages.
-Cada vez que cambien los comandos, vuelve a correr `npm run menuweb`.
+3. Probar con `.flow` (o `.flow web` para forzar esta ruta).
+
+Cada vez que cambien los comandos, vuelve a correr `npm run menuweb`. La imagen
+de cabecera se puede cambiar con
+`FLOW_IMAGEN='assets/menu-hero.jpg' npm run menuweb` o con una URL HTTPS propia.
 
 ## 5. Puesta en marcha del modo publicado
 
