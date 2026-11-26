@@ -1,7 +1,7 @@
 export default {
-  command: ["cafe"],
+  command: ["cafe", "café", "☕"],
   execute: async (ctx) => {
     const { enviartexto } = ctx;
-    await enviartexto(`Toca tu Café ☕`);
+    await enviartexto(`Toma tu Café ☕`);
   }
 };
