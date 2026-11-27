@@ -56,6 +56,7 @@ function pluginsFalsos() {
   const llamadas = [];
   const comandos = new Map([
     ["menu", { command: "menu", execute: async (ctx) => { llamadas.push({ c: "menu", ctx }); } }],
+    ["navidad", { command: "navidad", execute: async (ctx) => { await ctx.sock.sendMessage(ctx.from, { text: "respuesta de prueba" }); } }],
     ["kick", { command: "kick", isAdmin: true, execute: async (ctx) => { llamadas.push({ c: "kick", ctx }); } }],
     ["exec", { command: "exec", isOwner: true, execute: async (ctx) => { llamadas.push({ c: "exec", ctx }); } }],
     ["bot", { command: "bot", execute: async (ctx) => { llamadas.push({ c: "bot", ctx }); } }],
@@ -92,6 +93,14 @@ function taller({ db = baseFalsa(), admin = true, dueño = DUEÑO, guardaAjustes
 }
 
 export const pruebas = [
+  ["las respuestas directas de cada plugin reciben decoración navideña", async () => {
+    const { sock, atender } = taller();
+    await atender(entrante(".navidad", { id: "NAV1" }));
+    const salida = sock.enviados.find((e) => e.contenido?.text?.includes("respuesta de prueba"));
+    esVerdad(salida, "el plugin envió su respuesta");
+    esVerdad(salida.contenido.text.startsWith("🎄"), "la respuesta lleva cabecera navideña");
+    esVerdad(salida.contenido.text.includes("❄️"), "la respuesta lleva cierre navideño");
+  }],
   ["un comando llega al plugin con el contexto armado", async () => {
     const { llamadas, atender } = taller();
     await atender(entrante(".menu rpg"));
