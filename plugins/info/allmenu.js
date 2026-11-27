@@ -80,6 +80,15 @@ export default {
         `📚 La lista completa pasa de un mensaje.\n> Mira las categorías con *${PREFIX}menucat* y luego *${PREFIX}menu <categoría>*.\n> Ejemplo: *${PREFIX}menu admin*`
       );
     }
-    try {\n      return await sock.sendMessage(from, { image: { url: "https://i.postimg.cc/tCxLWwN2/1795823999862.jpg" }, caption: texto }, { quoted: m });\n    } catch (err) {\n      console.error("⚠️ No se pudo enviar allmenu con imagen:", err?.stack || err);\n      return enviartexto(texto);\n    }
+    try {
+      return await sock.sendMessage(
+        from,
+        { image: { url: "https://i.postimg.cc/tCxLWwN2/1795823999862.jpg" }, caption: texto },
+        { quoted: m }
+      );
+    } catch (err) {
+      console.error("⚠️ No se pudo enviar allmenu con imagen:", err?.stack || err);
+      return enviartexto(texto);
+    }
   },
 };
