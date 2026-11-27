@@ -51,7 +51,7 @@ function porCategoria() {
 export default {
   command: ["allmenu", "comandos", "menucat", "categorias"],
   execute: async (ctx) => {
-    const { comando, enviartexto, PREFIX, config } = ctx;
+    const { comando, enviartexto, PREFIX, config, sock, from, m } = ctx;
     const categorias = porCategoria();
     const nombres = Object.keys(categorias).sort();
 
@@ -80,6 +80,6 @@ export default {
         `📚 La lista completa pasa de un mensaje.\n> Mira las categorías con *${PREFIX}menucat* y luego *${PREFIX}menu <categoría>*.\n> Ejemplo: *${PREFIX}menu admin*`
       );
     }
-    return enviartexto(texto);
+    try {\n      return await sock.sendMessage(from, { image: { url: "https://i.postimg.cc/tCxLWwN2/1795823999862.jpg" }, caption: texto }, { quoted: m });\n    } catch (err) {\n      console.error("⚠️ No se pudo enviar allmenu con imagen:", err?.stack || err);\n      return enviartexto(texto);\n    }
   },
 };
