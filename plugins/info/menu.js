@@ -86,7 +86,7 @@ export default {
     const CANAL_JID = canalPropio?.jid || "120363425322183138@newsletter";
     const CANAL_NOMBRE = canalPropio?.nombre || "⍪❖Ƭʜᴇ 𝑺𝒆𝒓𝒈𝒊𝒐—͟͟͞͞ꫂ •≏ 𝐎𝐟𝐢𝐜𝐢𝐚𝐥 𝐜𝐡𝐚𝐧𝐧𝐞𝐥⎚";
     const enlace = enlaceDelBot(db, config);
-    const pfp = "https://i.postimg.cc/432DgtBQ/IMG-20261110-WA0107.jpg";
+    const pfp = "https://i.postimg.cc/tCxLWwN2/1795823999862.jpg";
 
     let grupos = catalogo(commands, OCULTOS);
 
