@@ -93,13 +93,12 @@ function taller({ db = baseFalsa(), admin = true, dueño = DUEÑO, guardaAjustes
 }
 
 export const pruebas = [
-  ["las respuestas directas de cada plugin reciben decoración navideña", async () => {
+  ["las respuestas directas de cada plugin no reciben decoración navideña global", async () => {
     const { sock, atender } = taller();
     await atender(entrante(".navidad", { id: "NAV1" }));
     const salida = sock.enviados.find((e) => e.contenido?.text?.includes("respuesta de prueba"));
     esVerdad(salida, "el plugin envió su respuesta");
-    esVerdad(salida.contenido.text.startsWith("🎄"), "la respuesta lleva cabecera navideña");
-    esVerdad(salida.contenido.text.includes("❄️"), "la respuesta lleva cierre navideño");
+    igual(salida.contenido.text, "respuesta de prueba", "el texto se conserva exactamente");
   }],
   ["un comando llega al plugin con el contexto armado", async () => {
     const { llamadas, atender } = taller();

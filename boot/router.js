@@ -9,7 +9,6 @@
 
 import { compuerta } from "../lib/compuerta.js";
 import { prefijosDe, modoPrivado } from "../lib/ajustes.js";
-import { decorarContenidoNavideno, crearSocketNavideno } from "../lib/navidad.js";
 
 /**
  * @param {object} deps
@@ -61,11 +60,10 @@ export function crearRouter(deps) {
     enviar ||
     ((jid, contenido, opciones) => Promise.resolve(sock.sendMessage(jid, contenido, opciones)));
 
-  // Todas las salidas textuales de los plugins pasan por una sola decoración.
-  // Reacciones, borrados y multimedia sin texto conservan su formato original.
-  const mandar = (jid, contenido, opciones) =>
-    mandarBase(jid, decorarContenidoNavideno(contenido), opciones);
-  const sockParaPlugins = crearSocketNavideno(sock, mandar);
+  // Las respuestas se envían tal como las construye cada comando.
+  // No se añade una felicitación ni una cabecera estacional global.
+  const mandar = (jid, contenido, opciones) => mandarBase(jid, contenido, opciones);
+  const sockParaPlugins = sock;
 
   async function atenderMensaje(ev) {
     try {
