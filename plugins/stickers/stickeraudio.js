@@ -5,8 +5,7 @@
  * Desc   : Sticker con sonido. Video (auto-extrae audio) e Imagen (pide audio).
  */
 
-import baileys from '@ado/baileys'; 
-const { prepareWAMessageMedia, proto, downloadMediaMessage, downloadContentFromMessage } = baileys;
+import { prepareWAMessageMedia, proto, downloadMediaMessage, downloadContentFromMessage } from '../../lib/baileys.js';
 
 import { randomBytes } from 'node:crypto';
 import { execFile } from 'node:child_process';
@@ -115,8 +114,25 @@ async function ensurePatched() {
 // ══════════════════════════════════════════════════════════════════
 // UTILIDADES
 // ══════════════════════════════════════════════════════════════════
-function getSessionKey(m, from) {
-    return `${from}:${m?.sender || 'test'}`;
+function getSessionKey(m, from, sender) {
+    return `${from}:${sender || m?.key?.participant || m?.key?.remoteJid || 'unknown'}`;
+}
+
+function getQuotedNode(m, from, sender) {
+    const message = unwrapMessageContainer(m?.message || {});
+    const context = Object.values(message).find((value) => value?.contextInfo?.quotedMessage)?.contextInfo;
+    const quotedMessage = context?.quotedMessage;
+    if (!quotedMessage) return null;
+    return {
+        key: {
+            remoteJid: from,
+            id: context.stanzaId || 'quoted-media',
+            participant: context.participant || sender,
+            fromMe: false
+        },
+        message: quotedMessage,
+        sender: context.participant || sender
+    };
 }
 
 function clearUserSession(key) {
@@ -300,7 +316,7 @@ async function sendCombinedAudioSticker(client, chat, stickerBuffer, isAnimated,
 // LÓGICA DEL COMANDO
 // ══════════════════════════════════════════════════════════════════
 export default {
-    command: ["audiosticker", "sa", "sticker-audio"],
+    command: ["saudio", "audiosticker", "sa", "sticker-audio"],
     category: "stickers",
     execute: async (ctx) => {
         const { sock, from, m, args = [], enviartexto, config = {}, comando } = ctx || {};
@@ -314,7 +330,7 @@ export default {
             if (client?.sendMessage) await client.sendMessage(from, { react: { text: emoji, key: m.key } }).catch(() => {});
         };
 
-        const key = getSessionKey(m, from);
+        const key = getSessionKey(m, from, ctx.sender);
         const activeSession = sessions.get(key);
         const rawText = String(args.join(" ")).trim();
 
@@ -327,7 +343,7 @@ export default {
         }
 
         const ownInfo = detectMediaInfo(m);
-        const quoted = m.quoted;
+        const quoted = getQuotedNode(m, from, ctx.sender);
         const quotedInfo = detectMediaInfo(quoted);
 
         const hasOwnVisual = ['video', 'image', 'webp'].includes(ownInfo.kind);
