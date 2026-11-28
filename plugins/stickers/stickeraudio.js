@@ -119,7 +119,7 @@ function getSessionKey(m, from, sender) {
 }
 
 function getQuotedNode(m, from, sender) {
-    const message = m?.message || {};
+    const message = unwrapMessageContainer(m?.message || {});
     const context = Object.values(message).find((value) => value?.contextInfo?.quotedMessage)?.contextInfo;
     const quotedMessage = context?.quotedMessage;
     if (!quotedMessage) return null;
