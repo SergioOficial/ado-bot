@@ -55,6 +55,7 @@ import {
 import { crearRouter, numeroDe } from "./router.js";
 import { crearGestorSubbots } from "./subbots.js";
 import { vigilarRecordatorios, vigilarMemoria, prepararAntiban } from "./vigilantes.js";
+import { iniciarPanelApi } from "../lib/panel-api.js";
 
 import "../lib/database.js";
 
@@ -518,6 +519,9 @@ export async function arrancar() {
     antiban: () => estado.antiban,
     apagar: apagarTodo,
   };
+
+  // La API del panel se inicia una sola vez y queda detrás del proxy HTTPS del VPS.
+  iniciarPanelApi();
 
   return sock;
 }

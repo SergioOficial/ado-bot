@@ -213,7 +213,7 @@ export function crearGestorSubbots(deps) {
    * @param {function} reply     cómo contestarle a quien lo pidió
    * @param {"code"|"sesion"} method
    */
-  async function startSubbot(_padre, senderJid, remoteJid, reply, method, creador = null) {
+  async function startSubbot(_padre, senderJid, remoteJid, reply, method, creador = null, opciones = {}) {
     const phoneNumber = numeroDe(senderJid);
     const contestar = typeof reply === "function" ? reply : (t) => avisar(remoteJid, t);
 
@@ -250,7 +250,7 @@ export function crearGestorSubbots(deps) {
     }
 
     try {
-      return await levantar(phoneNumber, senderJid, remoteJid, contestar, method);
+      return await levantar(phoneNumber, senderJid, remoteJid, contestar, method, opciones);
     } catch (err) {
       registrar(err);
       await avisar(remoteJid, `❌ No se pudo levantar el sub-bot ${phoneNumber}: ${err?.message || err}`);
@@ -260,7 +260,7 @@ export function crearGestorSubbots(deps) {
     }
   }
 
-  async function levantar(phoneNumber, senderJid, remoteJid, contestar, method) {
+  async function levantar(phoneNumber, senderJid, remoteJid, contestar, method, opciones = {}) {
     migrarSesionVieja(phoneNumber);
     const sessionPath = rutaSesion(phoneNumber);
     if (!fs.existsSync(SUB_SESIONES)) fs.mkdirSync(SUB_SESIONES, { recursive: true });
@@ -313,6 +313,9 @@ export function crearGestorSubbots(deps) {
           await new Promise((r) => setTimeout(r, 2000));
           try {
             const code = await subSock.requestPairingCode(phoneNumber);
+            if (typeof opciones.onPairingCode === "function") {
+              await opciones.onPairingCode(code, phoneNumber);
+            }
 
             const msg1 = await avisar(
               remoteJid,
