@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071b19">
+  <title>Ado-Bot · Panel de sub-bots</title>
+  <style>
+    :root{color-scheme:dark;--bg:#071b19;--panel:#102b27;--line:#24534b;--mint:#2dd4bf;--muted:#9bbab3;--danger:#fb7185}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 20% 0,#16443b 0,transparent 42%),linear-gradient(145deg,#071b19,#081311);color:#e7f7f2;font:15px system-ui,-apple-system,Segoe UI,sans-serif;padding:26px 15px}
+    main{width:min(980px,100%);margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:16px;background:#143d35;border:1px solid #32766a;display:grid;place-items:center;font-size:25px}.eyebrow{color:var(--mint);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:800}.title{font-size:clamp(25px,5vw,38px);font-weight:850;letter-spacing:-1.3px;margin:2px 0}.muted{color:var(--muted)}.card{background:linear-gradient(150deg,rgba(16,43,39,.96),rgba(10,29,26,.96));border:1px solid var(--line);border-radius:22px;padding:22px;margin:16px 0;box-shadow:0 18px 45px #0003}.card h2{font-size:18px;margin:0 0 16px;color:#8deadd}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:7px}label{font-size:12px;color:#c2ddd6;font-weight:700}input{width:100%;background:#071b19;border:1px solid #2a554d;border-radius:12px;padding:13px;color:white;font-size:15px;outline:none}input:focus{border-color:var(--mint);box-shadow:0 0 0 3px #2dd4bf22}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}button{border:0;border-radius:12px;padding:12px 17px;font-weight:800;background:var(--mint);color:#06231e;cursor:pointer}button.secondary{background:#183e37;color:#c5f8ed;border:1px solid #367568}button.danger{background:#632b37;color:#ffe0e5;border:1px solid #a94a5b}button:disabled{opacity:.5;cursor:wait}.status{padding:11px 13px;border-radius:12px;background:#0a211d;color:var(--muted);margin-top:12px;white-space:pre-wrap}.status.error{color:#fecdd3;background:#421d27}.status.ok{color:#b8f7df;background:#10372b}.code{font:800 28px ui-monospace,monospace;letter-spacing:5px;text-align:center;color:#8df5df;padding:18px;border:1px dashed #3b9c8b;border-radius:15px;margin-top:12px}.list{display:grid;gap:10px}.bot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#0a211d;border:1px solid #1f4941;border-radius:15px;padding:14px}.bot strong{display:block}.pill{display:inline-block;font-size:11px;padding:4px 9px;border-radius:99px;background:#24463f;color:#bcefe3;margin-top:5px}.pill.online{background:#145c42;color:#bbf7d0}.pill.retry{background:#62431b;color:#fde68a}.bot-actions{display:flex;gap:8px;flex-wrap:wrap}.bot-actions button{padding:9px 12px;font-size:12px}.small{font-size:12px;line-height:1.6}.foot{text-align:center;color:#779890;font-size:12px;padding:20px}.hidden{display:none!important}@media(max-width:520px){body{padding:18px 11px}.card{padding:16px}.top{align-items:flex-start}.bot{align-items:flex-start}.bot-actions{width:100%}.bot-actions button{flex:1}}
+  </style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="brand"><div class="logo">🤖</div><div><div class="eyebrow">SergioOficial · WhatsApp automation</div><h1 class="title">Ado-Bot</h1><div class="muted">Panel de sub-bots</div></div></div>
+    <span class="pill" id="apiState">API desconectada</span>
+  </header>
+
+  <section class="card">
+    <h2>🔐 Conexión segura</h2>
+    <div class="grid">
+      <div class="field"><label for="apiUrl">URL HTTPS de la API en tu VPS</label><input id="apiUrl" type="url" placeholder="https://api.tudominio.com"></div>
+      <div class="field"><label for="apiToken">Token privado del panel</label><input id="apiToken" type="password" autocomplete="off" placeholder="PANEL_API_TOKEN"></div>
+    </div>
+    <div class="actions"><button id="connectBtn">Conectar panel</button><button class="secondary" id="forgetBtn">Cerrar sesión</button></div>
+    <div class="status small">El token se conserva solo en la sesión actual del navegador. No lo escribas en GitHub ni lo compartas. La API debe estar publicada con HTTPS.</div>
+  </section>
+
+  <section class="card">
+    <h2>📲 Vincular un sub-bot</h2>
+    <div class="grid">
+      <div class="field"><label for="phone">Número con código de país, solo dígitos</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="53500123456"></div>
+    </div>
+    <div class="actions"><button id="pairBtn">Generar código de vinculación</button><button class="secondary" id="refreshBtn">Actualizar lista</button></div>
+    <div id="pairResult" class="status">El código se solicitará a WhatsApp y aparecerá aquí cuando el servidor lo reciba.</div>
+  </section>
+
+  <section class="card">
+    <h2>🛰️ Tus sub-bots</h2>
+    <div id="summary" class="muted small">Conecta la API para consultar las sesiones.</div>
+    <div id="bots" class="list" style="margin-top:14px"></div>
+  </section>
+  <div class="foot">Ado-Bot · Las sesiones permanecen en el VPS. GitHub Pages solo publica esta interfaz.</div>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  let timer = null;
+  let busy = false;
+  const savedUrl = sessionStorage.getItem("ado-panel-url") || "";
+  $("apiUrl").value = savedUrl;
+  $("apiToken").value = sessionStorage.getItem("ado-panel-token") || "";
+  const apiBase = () => $("apiUrl").value.trim().replace(/\/+$/, "");
+  function setMessage(id, message, kind = "") {
+    const el = $(id); el.className = "status " + kind; el.textContent = message;
+  }
+  function credentials() {
+    const base = apiBase(), token = $("apiToken").value.trim();
+    if (!/^https:\/\//i.test(base)) throw new Error("La API debe usar HTTPS.");
+    if (!token) throw new Error("Introduce el token privado del panel.");
+    return { base, token };
+  }
+  async function request(path, options = {}) {
+    const {base,token} = credentials();
+    const response = await fetch(base + path, {
+      ...options,
+      headers: {"Authorization":"Bearer " + token,"Content-Type":"application/json",...(options.headers || {})}
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Error HTTP " + response.status);
+    return data;
+  }
+  function saveCredentials() {
+    credentials();
+    sessionStorage.setItem("ado-panel-url", apiBase());
+    sessionStorage.setItem("ado-panel-token", $("apiToken").value.trim());
+  }
+  async function refresh() {
+    if (busy) return;
+    try {
+      const data = await request("/api/subbots");
+      $("apiState").textContent = "API conectada";
+      $("apiState").className = "pill online";
+      $("summary").textContent = data.total + " sub-bots · " + data.activos + " conectados · " + data.conectando + " conectando · " + data.reintentando + " reintentando · " + data.apagados + " apagados";
+      const root = $("bots"); root.replaceChildren();
+      if (!data.filas.length) { root.textContent = "Todavía no hay sub-bots vinculados."; return; }
+      for (const bot of data.filas) {
+        const row = document.createElement("article"); row.className = "bot";
+        const info = document.createElement("div");
+        const name = document.createElement("strong"); name.textContent = "+" + bot.numero;
+        const state = document.createElement("span"); state.className = "pill " + (bot.estado === "conectado" ? "online" : bot.estado === "reintentando" ? "retry" : "");
+        state.textContent = bot.estado + (bot.intentos ? " · " + bot.intentos + " intentos" : "");
+        info.append(name,state);
+        const actions = document.createElement("div"); actions.className = "bot-actions";
+        if (bot.vinculado && bot.estado === "apagado") {
+          const start = document.createElement("button"); start.className = "secondary"; start.textContent = "Iniciar";
+          start.addEventListener("click", async () => { start.disabled = true; try { await request("/api/subbots/" + bot.numero,{method:"POST",body:JSON.stringify({action:"start"})}); setMessage("pairResult","Inicio solicitado para +" + bot.numero,"ok"); await refresh(); } catch(e) { setMessage("pairResult",e.message,"error"); } finally { start.disabled = false; } });
+          actions.append(start);
+        }
+        const del = document.createElement("button"); del.className = "danger"; del.textContent = "Eliminar";
+        del.addEventListener("click", async () => {
+          if (!confirm("Eliminar +" + bot.numero + "? Se detendrá y se borrará su sesión de WhatsApp del VPS.")) return;
+          del.disabled = true; try { await request("/api/subbots/" + bot.numero,{method:"DELETE"}); setMessage("pairResult","Sesión eliminada del VPS.","ok"); await refresh(); } catch(e) { setMessage("pairResult",e.message,"error"); } finally { del.disabled = false; }
+        });
+        actions.append(del); row.append(info,actions); root.append(row);
+      }
+    } catch (error) {
+      $("apiState").textContent = "API desconectada";
+      $("apiState").className = "pill";
+      $("summary").textContent = error.message;
+    }
+  }
+  async function pollPair(phone) {
+    const started = Date.now();
+    if (timer) clearInterval(timer);
+    timer = setInterval(async () => {
+      try {
+        const data = await request("/api/pairing/" + phone);
+        if (data.status === "code") {
+          clearInterval(timer); timer = null;
+          setMessage("pairResult","Código de vinculación para +" + phone,"ok");
+          const box = document.createElement("div"); box.className = "code"; box.textContent = data.code;
+          $("pairResult").append(box);
+          const note = document.createElement("div"); note.className = "small muted"; note.style.marginTop = "10px";
+          note.textContent = "WhatsApp → Dispositivos vinculados → Vincular con número de teléfono. El código caduca; úsalo enseguida.";
+          $("pairResult").append(note); return;
+        }
+        if (data.status === "connected") {
+          clearInterval(timer); timer = null; setMessage("pairResult","Este sub-bot ya está conectado.","ok"); await refresh(); return;
+        }
+        if (Date.now() - started > 120000) {
+          clearInterval(timer); timer = null; setMessage("pairResult","Aún no llega el código. Comprueba el estado del VPS y vuelve a intentarlo.","error");
+        }
+      } catch (error) {
+        clearInterval(timer); timer = null; setMessage("pairResult",error.message,"error");
+      }
+    },1500);
+  }
+  $("connectBtn").addEventListener("click", async () => {
+    try { saveCredentials(); await request("/api/health"); await refresh(); }
+    catch(e) { setMessage("summary",e.message,"error"); $("apiState").textContent = "Error"; }
+  });
+  $("forgetBtn").addEventListener("click", () => {
+    sessionStorage.removeItem("ado-panel-token"); sessionStorage.removeItem("ado-panel-url");
+    $("apiToken").value = ""; $("apiUrl").value = ""; $("apiState").textContent = "Sesión cerrada";
+    $("bots").replaceChildren(); $("summary").textContent = "Conecta la API para consultar las sesiones.";
+  });
+  $("refreshBtn").addEventListener("click", refresh);
+  $("pairBtn").addEventListener("click", async () => {
+    try {
+      const phone = $("phone").value.replace(/\D/g,"");
+      if (phone.length < 8 || phone.length > 15) throw new Error("Introduce un número internacional válido.");
+      saveCredentials(); setMessage("pairResult","Solicitando código a WhatsApp…");
+      const data = await request("/api/subbots/pair",{method:"POST",body:JSON.stringify({phone})});
+      if (data.status === "connected") { setMessage("pairResult","Este sub-bot ya está conectado.","ok"); await refresh(); }
+      else pollPair(phone);
+    } catch(e) { setMessage("pairResult",e.message,"error"); }
+  });
+  if (savedUrl && $("apiToken").value) refresh();
+})();
+</script>
+</body>
+</html>
