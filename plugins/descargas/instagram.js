@@ -1,34 +1,28 @@
-import axios from 'axios';
+import { descargarMedia } from "../../lib/descargas.js";
 
 export default {
-  command: ['instagram', 'ig'],
+  command: ["instagram", "ig"],
   execute: async (ctx) => {
     const { sock, from, m, args, enviartexto } = ctx;
     const url = args[0];
+    if (!url) return enviartexto("《✧》 Envíame un enlace público de Instagram.");
+    if (!/^https?:\/\/(www\.)?instagram\.com\//i.test(url)) return enviartexto("《✧》 El enlace no parece de Instagram.");
 
-    if (!url) return enviartexto('《✧》 Por favor, ingrese un enlace de Instagram.');
-    if (!url.match(/instagram\.com\/(p|reel|share|tv|stories)\//)) return enviartexto('《✧》 El enlace no parece *válido*.');
-
+    const wait = await sock.sendMessage(from, { text: "⏳ Descargando Instagram…" }, { quoted: m }).catch(() => null);
     try {
-      const api = `https://api.siputzx.my.id/api/d/igdl?url=${encodeURIComponent(url)}`;
-      const res = await axios.get(api, { timeout: 15000 });
-      const data = res.data.data;
-
-      if (!data || !data.length) throw new Error('No se pudo obtener el contenido.');
-
-      const caption = `ㅤ۟∩　ׅ　★ ໌　ׅ　🅘🅖 🅓ownload　ׄᰙ\n\n> ❒ Enlace › ${url}`;
-      const media = data[0];
-
-      const mediaRes = await axios.get(media.url, { responseType: 'arraybuffer' });
-      const buffer = Buffer.from(mediaRes.data, 'binary');
-
-      if (media.url.includes('.mp4')) {
-        await sock.sendMessage(from, { video: buffer, caption, mimetype: 'video/mp4' }, { quoted: m });
-      } else {
-        await sock.sendMessage(from, { image: buffer, caption }, { quoted: m });
-      }
-    } catch (e) {
-      await enviartexto(`> Error: *${e.message}*`);
+      const result = await descargarMedia(url, "video");
+      const isImage = /\.(jpe?g|png|webp)$/i.test(result.fileName);
+      const payload = isImage
+        ? { image: result.buffer, caption: "✅ *Instagram descargado*" }
+        : { video: result.buffer, caption: "✅ *Instagram descargado*", mimetype: "video/mp4" };
+      await sock.sendMessage(from, payload, { quoted: m });
+      await sock.sendMessage(from, { react: { text: "✅", key: m.key } });
+      if (wait?.key) await sock.sendMessage(from, { delete: wait.key }).catch(() => {});
+    } catch (error) {
+      const message = `❌ Instagram: ${error.message}`;
+      if (wait?.key) await sock.sendMessage(from, { text: message, edit: wait.key }).catch(() => enviartexto(message));
+      else await enviartexto(message);
+      await sock.sendMessage(from, { react: { text: "❌", key: m.key } }).catch(() => {});
     }
   }
 };
