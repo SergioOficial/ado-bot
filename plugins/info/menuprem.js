@@ -7,7 +7,7 @@ export default {
 
     if (!isPremium) return enviartexto(`💎 Este menú es solo para *Premium*.\nUsa *${config.prefix[0]}prem* para comprar.`);
 
-    const pfp = await sock.profilePictureUrl(sender, "image").catch(() => "https://i.postimg.cc/9fnHnptg/1761824297335.jpg");
+    const pfp = "https://i.postimg.cc/tCxLWwN2/1795823999862.jpg";
 
     const texto = `
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━╮
